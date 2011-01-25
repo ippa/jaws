@@ -1,0 +1,72 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+  </head>
+  <title>Jaws Example #1 - Sprite(), pressed(), basic game loop</title>
+<body style="background: #dddddd">
+  <canvas id="game" width=500 height=300 style="border: 1px solid;"></canvas>
+
+  <script>
+    window.onload = function() {
+      var player
+      var canvas
+      var canvas_tag
+      var title_tag
+      var bullets = []
+
+      function setup() {
+        title_tag = document.getElementsByTagName('title')[0]
+        canvas_tag = document.getElementById("game")
+        canvas = canvas_tag.getContext('2d');
+
+        player = new jaws.Sprite({image: "plane.png", x: 10, y:100, canvas: canvas})
+        jaws.on_keydown("esc", setup)
+      }
+
+      function draw() {
+        canvas.clearRect(0,0,canvas_tag.width,canvas_tag.height)
+        if(jaws.pressed("left"))  { player.x -= 2 }
+        if(jaws.pressed("right")) { player.x += 2 }
+        if(jaws.pressed("up"))    { player.y -= 2 }
+        if(jaws.pressed("down"))  { player.y += 2 }
+        if(jaws.pressed("space")) {
+          bullets.push( new Bullet(player.right, player.y) )
+        }
+
+        forceInsideCanvas(player)
+        bullets.deleteIf(isOutsideCanvas)
+        
+        player.draw()
+        bullets.draw()  // will call draw() on all items in array
+
+        title_tag.innerHTML = "FPS: " + jaws.gameloop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas_tag.width + "/" + canvas_tag.height
+      }
+
+      function isOutsideCanvas(item) { return (item.x < 0 || item.y < 0 || item.x > canvas_tag.width || item.y > canvas_tag.height) }
+      function forceInsideCanvas(item) {
+        if(item.x < 0)                        { item.x = 0  }
+        if(item.right > canvas_tag.width)     { item.x = canvas_tag.width - item.width }
+        if(item.y < 0)                        { item.y = 0 }
+        if(item.bottom  > canvas_tag.height)  { item.y = canvas_tag.height - item.height }
+      }
+
+      function Bullet(x, y) {
+        this.x = x
+        this.y = y
+
+        this.draw = function() {
+          this.x += 4
+          canvas.beginPath();
+          canvas.arc(this.x, this.y, 4, 0, Math.PI*2, true); 
+          canvas.stroke();
+        }
+      }
+
+      jaws.assets.add("plane.png")
+      jaws.init(setup, draw, 60)
+    }
+  </script>
+</body>
+</html>
+

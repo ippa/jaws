@@ -1,0 +1,85 @@
+*
+* This is alpha-alpha-pre-release software
+* A lot of things will change before we reach 0.1
+*
+
+= Jaws - HTML5 Javascript web game development library
+
+Depends on Javascript 1.6+ (ECMA-262 Edition 5) and the canvas-element
+Tested on Chrome 6+, Firefox 3.6.x/4.x, Safari 5+.
+
+Firefox 4.0 with openGL accelerated canvas is recomended.
+
+Jaws...
+  * Does <canvas> for all gfx, it's the HW-accelerated future
+  * Does Not depend on any other javascript library
+  * Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
+  * Tries to make asset-handling in webgames as easy as possible
+  * Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
+  * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
+
+== Example
+
+<script src="jaws.js"></script>
+
+<script>
+  window.onload = jaws.init(game, 30) // call game.update() and game.draw() with FPS 30
+  
+  var game = function() {
+    this.draw = function() {
+      /* draw operations */
+      document.getElementsByTagName("title")[0].innerHTML = jaws.FPS
+    }
+    this.update = function() {
+      if(pressed("left")) { player.x--; }
+      if(pressed("right)) { player.x++; }
+    }
+  }
+</script>
+
+= Jaws Constructors
+Jaws comes with a slew of premade useful constructors, hit the road running!
+
+== jaws.Sprite() - simple movable image-based object on screen
+
+  /* Make a sprite, place it at position 10/10, scale it 4 times and draw it */
+  /* NOTE: image-parameter will resolve to a previously fetched resource
+  sprite = new Sprite({image: "resources/player.png", x: 10, y: 10, scale: 4})
+  sprite.draw()
+
+== jaws.SpriteSheet() - cut big sprite sheets into smaller images from left to right, top to bottom
+  spriteSheet = new SpriteSheet({image: "resources/droid_11x15.bmp", frameSize => [32,32]})
+  sprite.image = spriteSheet.frames[2] 
+
+
+== jaws.Rect()
+  A simple rect-class, use for collision detection. 
+    rect.collidePoint(x, y) // returns true if x/y is within rect's boundaries
+    rect.collideRect(rect2) // returns true of rect and rect overlaps
+
+
+== jaws.assets (singleton from Asset() ) - Easy trackable preload of images and other resources
+  jaws.assets.get("resources/player.png")
+  jaws.assets.loadAll({on_load: start_game})
+
+  /* start_game will be called when all assets have been loaded */
+  function start_game() {
+    jaws.assets.data["resources/player.png"]  # -> ImageObject
+  }
+
+
+= Jaws Core extensions
+Jaws extends some of Javascripts builtin classes through their prototypes
+
+== Array() extensions
+  Adds draw(), update(), drawIf(function), updateIf(function), deleteIf(function)
+  
+  Keep track of your game objects in normal Arrays like:
+    enemies.push(new Sprite{image: "enemy.png", x: 100, y: 100})
+    enemies.update()
+    enemies.draw()
+    enemies.deleteIf(isOutsideCanvas)
+
+    function isOutsideCanvas(item) {    // for this example we assume a canvas of 200 x 200 pixels
+      return (item.x < 0 || item.y < 0 || item.x > 200 || item.y > 200)
+    }
