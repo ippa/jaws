@@ -1,0 +1,120 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #2 - on_keydown(), game states</title>
+  </head>
+
+  <body>
+
+    <canvas width=500 height=300></canvas>
+
+    <div id="info">
+      Minimalistic example using all jaws convenience methods and game states.
+      Game states are an proven and robust way of separating various parts of the game. 
+      For example: An intro, a menu, the actual game play, the high score list. That's 4 different game states right there.
+      <br /><br />
+      A gamestate is just an normal javascript object with the methods setup(), update() and draw().
+      In this example we make 2 Constructors: <code>PlayState()</code> and <code>MenuState()</code>.
+      <br />We switch active game state with: <code>jaws.gamestate = a_game_state</code>
+      </div >
+
+    <h3>log</h3>
+    <div id="log"></div>
+
+    <script>
+
+    /*
+    *
+    * PlayState is the actual game play. We switch to it once user choses "Start game"
+    *
+    */
+    function PlayState() {
+      var player
+      var bullets = []
+
+      this.setup = function() {
+        player = new jaws.Sprite({image: "plane.png", x: 10, y:100})
+      }
+
+      this.update = function() {
+        if(jaws.pressed("left"))  { player.x -= 2 }
+        if(jaws.pressed("right")) { player.x += 2 }
+        if(jaws.pressed("up"))    { player.y -= 2 }
+        if(jaws.pressed("down"))  { player.y += 2 }
+        if(jaws.pressed("space")) { bullets.push( new Bullet(player.right, player.y) ) }
+        forceInsideCanvas(player)
+        bullets.deleteIf(isOutsideCanvas) 
+      }
+
+      this.draw = function() {
+        jaws.context.clearRect(0,0,jaws.width,jaws.height)
+        player.draw()
+        bullets.draw()  // will call draw() on all items in array
+      }
+
+      /* Simular to example1 but now we're using jaws properties to get width and height of canvas instead */
+      /* This mainly since we let jaws handle the canvas now */
+      function isOutsideCanvas(item) { return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height) }
+      function forceInsideCanvas(item) {
+        if(item.x < 0)                  { item.x = 0  }
+        if(item.right > jaws.width)     { item.x = jaws.width - item.width }
+        if(item.y < 0)                  { item.y = 0 }
+        if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
+      }
+
+      function Bullet(x, y) {
+        this.draw = function() {
+          x += 4
+          jaws.context.beginPath();
+          jaws.context.arc(x, y, 4, 0, Math.PI*2, true); 
+          jaws.context.stroke();
+        }
+      }
+    }
+
+    /*
+    *
+    * MenuState is our lobby/welcome menu were gamer can chose start, high score and settings.
+    * For this example we have only implemented start. Start switches active game state by simply:
+    *   jaws.gamestate = play   (jaws.gamestate = PlayState would have worked too)
+    *
+    */
+    function MenuState() {
+      var index = 0
+      var items = ["Start", "Settings", "Highscore"]
+
+      this.setup = function() {
+        index = 0
+        jaws.on_keydown(["down","s"],       function()  { index++; if(index >= items.length) {index=items.length-1} } )
+        jaws.on_keydown(["up","w"],         function()  { index--; if(index < 0) {index=0} } )
+        jaws.on_keydown(["enter","space"],  function()  { if(items[index]=="Start") {jaws.gamestate = play} } )
+        jaws.on_keydown("esc",  function()              { jaws.gamestate = menu })
+      }
+
+      this.draw = function() {
+        jaws.context.clearRect(0,0,jaws.width,jaws.height)
+        for(var i=0; items[i]; i++) {
+          jaws.context.font = "40pt Arial";
+          jaws.context.fillStyle =  (i == index) ? "Red" : "Black"
+          jaws.context.fillText(items[i], 100, 100 + i * 60)
+        }
+      
+      }
+    }
+
+    /*
+    *
+    * Our script-entry point
+    *
+    */
+    jaws.assets.add("plane.png")
+    play = new PlayState()
+    menu = new MenuState()
+    window.onload = jaws.start(menu)    /* will do jaws.init() and start a game loop */
+
+  </script>
+</body>
+</html>
+
