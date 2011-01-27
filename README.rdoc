@@ -21,8 +21,8 @@ Jaws also...
   * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Examples
-* http://ippa.se/jaws/examples/examples1.html
-* http://ippa.se/jaws/examples/examples2.html
+* http://ippa.se/jaws/examples/example1.html
+* http://ippa.se/jaws/examples/example2.html
 
 == Example Code
   <script src="jaws.js"></script>
@@ -40,7 +40,7 @@ Jaws also...
       /* draw operations */
     }
 
-    window.onload = jaws.start  // call setup(), then loop calling update() / game.draw() with FPS 60
+    window.onload = jaws.start()  // call setup(), then loop calling update() / game.draw() with FPS 60
   </script>
 
 
