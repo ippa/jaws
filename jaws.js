@@ -26,8 +26,8 @@
   var keycode_to_string = []
   var on_keydown_callbacks = []
   var on_keyup_callbacks = []
-  var gameloop = 0
   var assets = new _Asset()
+  var gameloop = 0
   var title
   var canvas
   var context
@@ -52,11 +52,14 @@ var jaws = {
   gameloop: gameloop,
   canvas: canvas,
   context: context,
+  gamestate: gamestate,
+  switchGameState: switchGameState,
   init: init,
   start: start
 }
 
 jaws.__defineSetter__("title", function(title) { title.innerHTML = title })
+jaws.__defineGetter__("title", function() { return title.innerHTML })
 jaws.__defineGetter__("width", function() { return jaws.canvas.width })
 jaws.__defineGetter__("height", function() { return jaws.canvas.height })
 
@@ -234,14 +237,10 @@ function init() {
 
 /* Quick and easy startup of a jaws gameloop. Can also be done manually with new jaws.GameLoop etc. */
 function start() {
-  // This makes jaws.start(MenuState) possible
-  if(isFunction(arguments[0])) { 
-    options = new arguments[0]
-  } 
-  // This makes jaws.start() possible ..
-  else {
-    options = arguments[0] ? arguments[0] : {}
-  }
+  // This makes both jaws.start() and jaws.start(MenuState) possible
+  var options = arguments[0] ? arguments[0] : {}
+  if( isFunction(options) ) { options = new options  }
+
   // If no arguments are given to start() we use the global functions setup/update/draw
   var setup =  options.setup || window.setup
   var update = options.update || window.update
@@ -271,9 +270,9 @@ function start() {
  * TODO: make this prettier! Also save previous game state.
  * 
  * */
-jaws.__defineSetter__("gamestate", function(gamestate) { initGameState(gamestate) })
+// jaws.__defineSetter__("gamestate", function(gamestate) { switchGameState(gamestate) })
 
-function initGameState(gamestate) {
+function switchGameState(gamestate) {
   jaws.gameloop.stop()
   
   /* clear out any keyboard-events for this game state */
@@ -282,6 +281,7 @@ function initGameState(gamestate) {
  
   if(isFunction(gamestate)) { gamestate = new gamestate }
   
+  jaws.gamestate = gamestate
   jaws.gameloop = new jaws.GameLoop(gamestate.setup, gamestate.update, gamestate.draw, jaws.gameloop.fps)
   jaws.gameloop.start()
 }

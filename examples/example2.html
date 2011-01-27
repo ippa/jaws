@@ -17,7 +17,7 @@
       <br /><br />
       A gamestate is just an normal javascript object with the methods setup(), update() and draw().
       In this example we make 2 Constructors: <code>PlayState()</code> and <code>MenuState()</code>.
-      <br />We switch active game state with: <code>jaws.gamestate = a_game_state</code>
+      <br />We switch active game state with: <code>jaws.switchGameState(a_game_state_or_function)</code>
       </div >
 
     <h3>log</h3>
@@ -37,7 +37,7 @@
       this.setup = function() {
         player = new jaws.Sprite({image: "plane.png", x: 10, y:100})
         player.can_fire = true
-        jaws.on_keydown("esc",  function() { jaws.gamestate = MenuState })
+        jaws.on_keydown("esc",  function() { jaws.switchGameState(MenuState) })
       }
 
       this.update = function() {
@@ -89,7 +89,7 @@
     *
     * MenuState is our lobby/welcome menu were gamer can chose start, high score and settings.
     * For this example we have only implemented start. Start switches active game state by simply:
-    *   jaws.gamestate = play   (jaws.gamestate = PlayState would have worked too)
+    *   jaws.switchGameState(play)   (jaws.switchGameState(PlayState) would have worked too)
     *
     */
     function MenuState() {
@@ -100,7 +100,7 @@
         index = 0
         jaws.on_keydown(["down","s"],       function()  { index++; if(index >= items.length) {index=items.length-1} } )
         jaws.on_keydown(["up","w"],         function()  { index--; if(index < 0) {index=0} } )
-        jaws.on_keydown(["enter","space"],  function()  { if(items[index]=="Start") {jaws.gamestate = PlayState} } )
+        jaws.on_keydown(["enter","space"],  function()  { if(items[index]=="Start") {jaws.switchGameState(PlayState) } } )
       }
 
       this.draw = function() {
@@ -123,7 +123,7 @@
     */
     jaws.assets.add("plane.png")
     jaws.assets.add("bullet.png")
-    window.onload = jaws.start(MenuState)    /* will do jaws.init() and start a game loop */
+    jaws.start(MenuState)
   </script>
 
 </body>
