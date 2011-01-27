@@ -1,7 +1,4 @@
-*
-* This is alpha-alpha-pre-release software
-* A lot of things will change before we reach 0.1
-*
+This is alpha-alpha-pre-release software. A lot of things will change before we reach 0.1.
 
 = Jaws - HTML5 Javascript web game development library
 
@@ -10,7 +7,12 @@ Tested on Chrome 6+, Firefox 3.6.x/4.x, Safari 5+.
 
 Firefox 4.0 with openGL accelerated canvas is recomended.
 
-Jaws...
+== Highlights
+  * Easy and robust game states to switch between menus, play, high score lists and settings.
+  * Animation(), Sprite(), SpriteSheet() constructors
+  * Comes with documented code and explained examples
+
+Jaws also...
   * Does <canvas> for all gfx, it's the HW-accelerated future
   * Does Not depend on any other javascript library
   * Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
@@ -18,27 +20,33 @@ Jaws...
   * Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
   * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
-== Example
+== Examples
+  * http://ippa.se/jaws/examples/examples1.html
+  * http://ippa.se/jaws/examples/examples2.html
 
-<script src="jaws.js"></script>
-
-<script>
-  window.onload = jaws.init(game, 30) // call game.update() and game.draw() with FPS 30
-  
-  var game = function() {
-    this.draw = function() {
-      /* draw operations */
-      document.getElementsByTagName("title")[0].innerHTML = jaws.FPS
+== Example Code
+  <script src="jaws.js"></script>
+  <script>
+    function setup() {
+      /* init-stuff*/
     }
-    this.update = function() {
+
+    function update() {
       if(pressed("left")) { player.x--; }
       if(pressed("right)) { player.x++; }
     }
-  }
-</script>
+
+    function draw() {
+      /* draw operations */
+    }
+
+    window.onload = jaws.start  // call setup(), then loop calling update() / game.draw() with FPS 60
+  </script>
+
 
 = Jaws Constructors
 Jaws comes with a slew of premade useful constructors, hit the road running!
+
 
 == jaws.Sprite() - simple movable image-based object on screen
 
@@ -46,6 +54,7 @@ Jaws comes with a slew of premade useful constructors, hit the road running!
   /* NOTE: image-parameter will resolve to a previously fetched resource
   sprite = new Sprite({image: "resources/player.png", x: 10, y: 10, scale: 4})
   sprite.draw()
+
 
 == jaws.SpriteSheet() - cut big sprite sheets into smaller images from left to right, top to bottom
   spriteSheet = new SpriteSheet({image: "resources/droid_11x15.bmp", frameSize => [32,32]})
