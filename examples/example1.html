@@ -71,10 +71,12 @@
 
     /* Our simple bullet class, basically a circle with a position (x/y) */
     function Bullet(x, y) {
+      this.x = x
+      this.y = y
       this.draw = function() {
-        x += 4
+        this.x += 4
         context.beginPath();
-        context.arc(x, y, 4, 0, Math.PI*2, true); 
+        context.arc(this.x, this.y, 4, 0, Math.PI*2, true); 
         context.stroke();
       }
     }

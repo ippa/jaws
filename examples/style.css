@@ -1,5 +1,7 @@
-body { background: #444444; margin: 100px auto; width: 600px; font: 13px verdana; color: white;  }
+body { background: #444444; margin: 100px auto; width: 600px; font: 13px verdana; color: #eeeeee;  }
 h1,h2,h3 { padding: 0px; margin: 10px 0px 0px 0px; font-size: 15px;}
 canvas { border: 1px solid; background: white; }
-#info { width: 500px; line-height: 160%; padding-top: 10px; }
+code { font-weight: bold; font-size: 15px; color: white;}
+#info { width: 500px; line-height: 130%; padding-top: 10px; }
 #log { font: 11px verdana; background: black; width: 500px; padding: 5px; }
+

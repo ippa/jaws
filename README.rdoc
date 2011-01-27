@@ -21,8 +21,8 @@ Jaws also...
   * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Examples
-  * http://ippa.se/jaws/examples/examples1.html
-  * http://ippa.se/jaws/examples/examples2.html
+* http://ippa.se/jaws/examples/examples1.html
+* http://ippa.se/jaws/examples/examples2.html
 
 == Example Code
   <script src="jaws.js"></script>

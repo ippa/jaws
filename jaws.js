@@ -28,14 +28,17 @@
   var on_keyup_callbacks = []
   var gameloop = 0
   var assets = new _Asset()
+  var title
+  var canvas
+  var context
+  var gamestate
 
 /* 
  * Expose these properties via the global "jaws".
  * As a gamedeveloper this is what you got to work with:
- *
  */
 var jaws = {
-  Gameloop: Gameloop,
+  GameLoop: GameLoop,
   Sprite: Sprite,
   SpriteSheet: SpriteSheet,
   Animation: Animation,
@@ -47,13 +50,19 @@ var jaws = {
   on_keydown: on_keydown,
   on_keyup: on_keyup,
   gameloop: gameloop,
-  init: init
+  canvas: canvas,
+  context: context,
+  init: init,
+  start: start
 }
 
+jaws.__defineSetter__("title", function(title) { title.innerHTML = title })
+jaws.__defineGetter__("width", function() { return jaws.canvas.width })
+jaws.__defineGetter__("height", function() { return jaws.canvas.height })
+
+
 /*
- *
  * Map all javascript keycodes to easy-to-remember letters/words
- *
  */
 function setupInput() {
   var k = []
@@ -125,7 +134,10 @@ function handleKeyUp(e) {
   event = (e) ? e : window.event
   var human_name = this.keycode_to_string[event.keyCode]
   pressed_keys[human_name] = false
-  if(on_keyup_callbacks[human_name]) { on_keyup_callbacks[human_name]() }
+  if(on_keyup_callbacks[human_name]) { 
+    on_keyup_callbacks[human_name]() 
+    e.preventDefault()
+  }
 }
 
 /*
@@ -135,7 +147,10 @@ function handleKeyDown(e) {
   event = (e) ? e : window.event  
   var human_name = this.keycode_to_string[event.keyCode]
   pressed_keys[human_name] = true
-  if(on_keydown_callbacks[human_name]) { on_keydown_callbacks[human_name]() }
+  if(on_keydown_callbacks[human_name]) { 
+    on_keydown_callbacks[human_name]()
+    e.preventDefault()
+  }
   // console.log(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
   // e.preventDefault();
 }
@@ -148,7 +163,7 @@ function pressed(string) {
 }
 
 function on_keydown(key, callback) {
-  if(key.length) {
+  if(isArray(key)) {
     for(var i=0; key[i]; i++) {
       on_keydown_callbacks[key[i]] = callback
     }
@@ -159,7 +174,7 @@ function on_keydown(key, callback) {
 }
 
 function on_keyup(key, callback) {
-  if(key.length) {
+  if(isArray(key)) {
     for(var i=0; key[i]; i++) {
       on_keyup_callbacks[key[i]] = callback
     }
@@ -169,10 +184,16 @@ function on_keyup(key, callback) {
   }
 }
 
+function isArray(obj) {
+  return !(obj.constructor.toString().indexOf("Array") == -1)
+}
+function isFunction (obj) {
+  return Object.prototype.toString.call(obj) === "[object Function]";
+}
 
 
 /*
- *
+ * Simple logger, adds text to a <div id="log"></div> or simple alerts() is that's not available.
  */
 function log(msg, add) {
   log_div = document.getElementById("log")
@@ -188,118 +209,137 @@ function log(msg, add) {
 /*
  * init()
  *
- * Quick and easy startup of a jaws gameloop. Can also be done manually with new jaws.Gameloop etc.
+ * sets up various variables needed by jaws. Gets canvas and context.
  *
  * */
 function init() {
-  var setupCallback = arguments[0] || setup
-  var updateCallback = arguments[1] || update
-  var wanted_fps = arguments[2] || 60
+  /* Find <title> and <canvas> tags */
+  title = document.getElementsByTagName('title')[0]
+  jaws.canvas = document.getElementsByTagName('canvas')[0]
+  
+  /* If user didn't provide a <canvas>, let's create one */
+  if(!jaws.canvas) {
+    jaws.canvas = document.createElement("canvas")
+    jaws.canvas.width = 500
+    jaws.canvas.height = 300
+    document.body.appendChild(jaws.canvas)
+    log("Creating canvas")
+  }
+  else {
+    log("Found canvas")
+  }
+  
+  jaws.context = jaws.canvas.getContext('2d');
+}
 
-  jaws.gameloop = new jaws.Gameloop(setupCallback, updateCallback, wanted_fps)
+/* Quick and easy startup of a jaws gameloop. Can also be done manually with new jaws.GameLoop etc. */
+function start() {
+  // This makes jaws.start(MenuState) possible
+  if(isFunction(arguments[0])) { 
+    options = new arguments[0]
+  } 
+  // This makes jaws.start() possible ..
+  else {
+    options = arguments[0] ? arguments[0] : {}
+  }
+  // If no arguments are given to start() we use the global functions setup/update/draw
+  var setup =  options.setup || window.setup
+  var update = options.update || window.update
+  var draw = options.draw || window.draw
+  var wanted_fps = options.fps || 60
+
+  init()
+
+  setupInput()
+
+  function assetsLoading(src, percent_done) {
+    log( percent_done + "%: " + src, true)
+    if(percent_done > 60) { assetsLoaded() } /* HACK FOR NOW ...*/
+  }
+
+  function assetsLoaded() {
+    jaws.gameloop = new jaws.GameLoop(setup, update, draw, wanted_fps)
+    jaws.gameloop.start()
+  }
+
+  if(assets.length() > 0) { assets.loadAll({loading: assetsLoading, loaded: assetsLoaded}) }
+  else                    { assetsLoaded() } 
+}
+
+/*
+ * 
+ * TODO: make this prettier! Also save previous game state.
+ * 
+ * */
+jaws.__defineSetter__("gamestate", function(gamestate) { initGameState(gamestate) })
+
+function initGameState(gamestate) {
+  jaws.gameloop.stop()
+  
+  /* clear out any keyboard-events for this game state */
+  on_keydown_callbacks = []
+  on_keyup_callbacks = []
+ 
+  if(isFunction(gamestate)) { gamestate = new gamestate }
+  
+  jaws.gameloop = new jaws.GameLoop(gamestate.setup, gamestate.update, gamestate.draw, jaws.gameloop.fps)
   jaws.gameloop.start()
 }
 
 /*
  *
- * Gameloop
+ * GameLoop
  *
- * function paint() {
+ * function draw() {
  *    ... your stuff executed every 30 FPS ...
  * }
  *
- * gameloop = jaws.Gameloop(paint, 30)
- * gameloop.start();
+ * gameloop = jaws.GameLoop(setup, update, draw, 30)
+ * gameloop.start()
  *
  * gameloop.start() starts a 2-step process, where first all assets are loaded. 
  * Then the real gameloop is started with the userspecified FPS.
  *
- * If using the shorter jaws.init() a Gameloop will automatically be created and started for you.
+ * If using the shorter jaws.init() a GameLoop will automatically be created and started for you.
  *
  */
-function Gameloop(setup, callback, wanted_fps) {
-  this.callback = callback
-  this.setup = setup
-  var that = this
-  
+function GameLoop(setup, update, draw, wanted_fps) {
   this.ticks = 0
   this.tick_duration = 0
   this.fps = 0
   
-  this.assetsLoaded = function() {
-    this.current_tick = (new Date()).getTime();
-    this.last_tick = (new Date()).getTime(); 
-    this.setup();
-
-    /*
-     * TODO, if gameloop is very slow this wont work
-     */
-    this.update_id = setInterval(this.loop, 1000 / wanted_fps);
-  }
+  var update_id
+  var paused = false
+  var that = this
 
   this.start = function() {
-    setupInput()
-    assets.loadAll({loading: this.assetsLoading, loaded: this.assetsLoaded})
+    this.current_tick = (new Date()).getTime();
+    this.last_tick = (new Date()).getTime(); 
+    log("gameloop.start", true)
+    setup()
+    update_id = setInterval(this.loop, 1000 / wanted_fps);
+    log("gameloop.loop", true)
   }
   
-  this.assetsLoading = function(src, percent_done) {
-    log( percent_done + "%: " + src, true)
-    if(percent_done > 60) { that.assetsLoaded() } /* HACK FOR NOW ...*/
-  }
-
   this.loop = function() {
     that.current_tick = (new Date()).getTime();
     that.tick_duration = that.current_tick - that.last_tick
     that.fps = parseInt(1000 / that.tick_duration)
 
-    that.callback()
+    if(!paused) {
+      if(update) { update() }
+      if(draw)   { draw() }
+      that.ticks++
+    }
 
     that.last_tick = that.current_tick;
-    that.ticks++
   }
+  
+  this.pause = function()   { paused = true }
+  this.unpause = function() { paused = false }
 
   this.stop = function() {
-    if(this.update_id) { clearInterval(update_id); }
-  }
-}
-
-
-/*
- *
- * A bread and butter Rect() - useful for basic collision detection
- *
- */
-function Rect(x,y,width,height) {
-  this.x = x
-  this.y = y
-  this.width = width
-  this.height = height
-  
-  this.right = function()   { this.x + this.width }
-  this.bottom = function()  { this.y + this.height }
-
-  /* Returns an array of x/y points, the 4 corners of the Rect */
-  this.corners = function() {
-    return [[this.x, this.y], [this.x, this.width], [this.bottom, this.y], [this.bottom, this.right]]
-  }
-  
-  /* 
-   *
-   * Returns true if point at x, y lies within calling rect
-   *
-   * */
-  this.collidePoint = function(x, y) {
-    return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
-  }
-
-  /*
-   *
-   * Returns true if calling rect overlaps with given rect in any way
-   *
-  */
-  this.collideRect = function(rect) {
-    return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right ) &&
-      (this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.t <= this.bottom ))
+    if(update_id) { clearInterval(update_id); }
   }
 }
 
@@ -327,8 +367,14 @@ function _Asset() {
   this.fileType["jpeg"] = "image"
   this.fileType["bmp"] = "image"
 
+
+  this.length = function() {
+    return this.list.length
+  }
+
   this.add = function(src) {
     this.list.push({"src": src})
+    return this
   } 
   this.get = function(src) {
     return this.data[src]
@@ -403,7 +449,7 @@ function Sprite(options) {
   this.options = options
   this.x = options.x || 0
   this.y = options.y || 0
-  this.canvas = options.canvas
+  this.context = options.context || context
   this.scale = options.scale || 1
   this.visible = options.visible || 1
   this.flipped = options.flipped || 0
@@ -419,64 +465,9 @@ function Sprite(options) {
   
   this.draw = function() {
     if(this.visible) { 
-      this.canvas.drawImage(this.image, this.x, this.y, this.width, this.height)
+      jaws.context.drawImage(this.image, this.x, this.y, this.width, this.height)
     }
   }
-}
-/*
- *
- * Viewport() is a window (a Rect) into a bigger canvas/image
- *
- * It won't every go "outside" that image.
- * It comes with convenience methods as:
- *
- *   viewport.centerAround(player) which will do just what you think. (player needs to have properties x and y)
- *
- *
- */
-function Viewport(options) {
-  this.options = options
-  this.canvas = canvas
-  this.scale = options.scale || 1
-  this.visible = options.visible || 1
-  this.sprites = options.sprites || []
-  this.x = options.x || 0
-  this.y = options.y || 0
-  this.width = options.width || 0
-  this.height = options.height || 0
-  
-  this.__defineSetter__("x", function(x) {
-    this.x = x
-    var max_x = this.width - width
-    if(this.x < 0) { this.x = 0 }
-    if(this.x > max_x) { this.x = max_x }
-  })
-
-  this.isInside = function(item) {
-    return( item.x >= this.x && item.x <= (this.x + width) && item.y >= this.y && item.y <= (this.y + height) )
-  }
-
-  this.centerAround = function(item) {
-    this.x = item.x - width / 2
-    this.y = item.y - height / 2
-  }
-
-  if(options.image) {
-    this.image = (options.image.toString() == "[object HTMLImageElement]") ? options.image : assets.data[options.image]
-  }
-
-  this.apply = function(func) {
-    canvas.translate(-this.x, -this.y)
-    func()
-  }
-
- /* 
-  this.draw = function() {
-    if(this.visible) { 
-      this.canvas.drawImage(this.image, this.x, this.y, this.width, this.height)
-    }
-  }
-*/
 }
 
 /*
@@ -600,9 +591,109 @@ function SpriteSheet(options) {
   }
 }
 
+/*
+ *
+ * A bread and butter Rect() - useful for basic collision detection
+ *
+ */
+function Rect(x,y,width,height) {
+  this.x = x
+  this.y = y
+  this.width = width
+  this.height = height
+  
+  this.right = function()   { this.x + this.width }
+  this.bottom = function()  { this.y + this.height }
+
+  /* Returns an array of x/y points, the 4 corners of the Rect */
+  this.corners = function() {
+    return [[this.x, this.y], [this.x, this.width], [this.bottom, this.y], [this.bottom, this.right]]
+  }
+  
+  /* 
+   *
+   * Returns true if point at x, y lies within calling rect
+   *
+   * */
+  this.collidePoint = function(x, y) {
+    return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
+  }
+
+  /*
+   *
+   * Returns true if calling rect overlaps with given rect in any way
+   *
+  */
+  this.collideRect = function(rect) {
+    return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right ) &&
+      (this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.t <= this.bottom ))
+  }
+}
+
+
+
+/*
+ *
+ * Viewport() is a window (a Rect) into a bigger canvas/image
+ *
+ * It won't every go "outside" that image.
+ * It comes with convenience methods as:
+ *
+ *   viewport.centerAround(player) which will do just what you think. (player needs to have properties x and y)
+ *
+ *
+ */
+function Viewport(options) {
+  this.options = options
+  this.context = options.context || jaws.context
+  this.scale = options.scale || 1
+  this.visible = options.visible || 1
+  this.sprites = options.sprites || []
+  this.x = options.x || 0
+  this.y = options.y || 0
+  this.width = options.width || 0
+  this.height = options.height || 0
+  
+  this.__defineSetter__("x", function(x) {
+    this.x = x
+    var max_x = this.width - width
+    if(this.x < 0) { this.x = 0 }
+    if(this.x > max_x) { this.x = max_x }
+  })
+
+  this.isInside = function(item) {
+    return( item.x >= this.x && item.x <= (this.x + width) && item.y >= this.y && item.y <= (this.y + height) )
+  }
+
+  this.centerAround = function(item) {
+    this.x = item.x - width / 2
+    this.y = item.y - height / 2
+  }
+
+  if(options.image) {
+    this.image = (options.image.toString() == "[object HTMLImageElement]") ? options.image : assets.data[options.image]
+  }
+
+  this.apply = function(func) {
+    jaws.context.translate(-this.x, -this.y)
+    func()
+  }
+
+ /* 
+  this.draw = function() {
+    if(this.visible) { 
+      jaws.context.drawImage(this.image, this.x, this.y, this.width, this.height)
+    }
+  }
+*/
+}
+
+
 global.jaws = jaws
 
 })(this);
+
+
 
 /*
  *
@@ -647,7 +738,7 @@ Array.prototype.updateIf = function(condition) {
 }
 
 Array.prototype.deleteIf = function(condition) {
-  for(i=0; this[i]; i++) {
+  for(var i=0; this[i]; i++) {
     if( condition(this[i]) ) { this.splice(i,1) }
   }
 }
