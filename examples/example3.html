@@ -37,17 +37,14 @@
       player = new jaws.Sprite({image: "plane.png", x:100, y:150, scale: 3})
       sheet = new jaws.SpriteSheet({image: "droid_11x15.png", frame_size: [11,15]})
 
-      player.anim = new jaws.Animation({frames: sheet.frames, frame_duration: 100})
-      player.anim_still = player.anim.slice(0,5)
-      player.anim_up = player.anim.slice(6,8)
+      anim = new jaws.Animation({frames: sheet.frames, frame_duration: 100})
+      player.anim_still = anim.slice(0,5)
+      player.anim_up = anim.slice(6,8)
+      player.anim_down = anim.slice(8,10)
+      player.anim_left = anim.slice(10,12)
+      player.anim_right = anim.slice(12,14)
       
-      //player.anim_still = new jaws.Animation({frames: sheet.frames.slice(0,5), frame_duration: 100})
-      //player.anim_up = new jaws.Animation({frames: sheet.frames.slice(6,8), frame_duration: 100})
-      player.anim_down = new jaws.Animation({frames: sheet.frames.slice(8,10), frame_duration: 100})
-      player.anim_left = new jaws.Animation({frames: sheet.frames.slice(10,12), frame_duration: 100})
-      player.anim_right = new jaws.Animation({frames: sheet.frames.slice(12,14), frame_duration: 100})
       player.image = player.anim_still.next()
-
       jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
     }
     

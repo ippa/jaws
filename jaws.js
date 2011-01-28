@@ -259,10 +259,10 @@ function start() {
 
   function assetsLoading(src, percent_done) {
     debug( percent_done + "%: " + src, true)
-    if(percent_done > 60) { assetsLoaded() } /* HACK FOR NOW ...*/
   }
 
   function assetsLoaded() {
+    debug("all assets loaded")
     jaws.gameloop = new jaws.GameLoop(setup, update, draw, wanted_fps)
     jaws.gameloop.start()
   }
@@ -419,7 +419,6 @@ function _Asset() {
           asset.audio = new Audio(asset.src + "?" + parseInt(Math.random()*10000000))
           asset.audio.asset = asset
           asset.audio.load()
-          jaws.debug("loading audio...")
 
           this.data[asset.src] = asset.audio
 
@@ -551,13 +550,13 @@ function Animation(options) {
    *  Like array.slice but returns a new Animation-object with a subset of the frames
    */
   this.slice = function(start, stop) {
-    var o = this.options
-    //o.frames = options.frames.slice().slice(start, stop)
-    o.frames = options.frames.slice(start, stop)
+    var o = {} 
+    o.frame_duration = this.frame_duration
+    o.loop = this.loop
+    o.bounce = this.bounce
+    o.frame_direction = this.frame_direction
+    o.frames = options.frames.slice().slice(start, stop)
     return new Animation(o)
-    
-    //var frames = options.frames.slice().(start, stop)
-    //return new Animation({frames: frames})
   }
 
   this.__defineGetter__("length", function() { return this.frames.length})
