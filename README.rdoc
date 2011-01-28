@@ -8,9 +8,10 @@ Tested on Chrome 6+, Firefox 3.6.x/4.x, Safari 5+.
 Firefox 4.0 with openGL accelerated canvas is recomended.
 
 == Highlights
-  * Easy and robust game states to switch between menus, play, high score lists and settings.
-  * Animation(), Sprite(), SpriteSheet() constructors
-  * Comes with documented code and explained examples
+  * Animation(), Sprite(), SpriteSheet() and other constructors
+  * Easy and robust game states to switch between menus, play, high score lists and settings
+  * Documented code and explained examples
+  * QUnit testsuite @ http://ippa.se/jaws/test/
 
 Jaws also...
   * Does <canvas> for all gfx, it's the HW-accelerated future
@@ -23,6 +24,7 @@ Jaws also...
 == Examples
 * http://ippa.se/jaws/examples/example1.html
 * http://ippa.se/jaws/examples/example2.html
+* http://ippa.se/jaws/examples/example3.html
 
 == Example Code
   <script src="jaws.js"></script>
@@ -39,8 +41,8 @@ Jaws also...
     function draw() {
       /* draw operations */
     }
-
-    window.onload = jaws.start()  // call setup(), then loop calling update() / game.draw() with FPS 60
+    
+    jaws.start()  // call setup(), then loop calling update() / game.draw() with FPS 60
   </script>
 
 
@@ -52,12 +54,12 @@ Jaws comes with a slew of premade useful constructors, hit the road running!
 
   /* Make a sprite, place it at position 10/10, scale it 4 times and draw it */
   /* NOTE: image-parameter will resolve to a previously fetched resource
-  sprite = new Sprite({image: "resources/player.png", x: 10, y: 10, scale: 4})
+  sprite = new Sprite({image: "player.png", x: 10, y: 10, scale: 4})
   sprite.draw()
 
 
 == jaws.SpriteSheet() - cut big sprite sheets into smaller images from left to right, top to bottom
-  spriteSheet = new SpriteSheet({image: "resources/droid_11x15.bmp", frameSize => [32,32]})
+  spriteSheet = new SpriteSheet({image: "droid_11x15.bmp", frameSize => [32,32]})
   sprite.image = spriteSheet.frames[2] 
 
 
@@ -68,12 +70,12 @@ Jaws comes with a slew of premade useful constructors, hit the road running!
 
 
 == jaws.assets (singleton from Asset() ) - Easy trackable preload of images and other resources
-  jaws.assets.get("resources/player.png")
+  jaws.assets.add("resources/player.png")
   jaws.assets.loadAll({on_load: start_game})
 
   /* start_game will be called when all assets have been loaded */
   function start_game() {
-    jaws.assets.data["resources/player.png"]  # -> ImageObject
+    jaws.assets.get["resources/player.png"]  # -> ImageObject
   }
 
 

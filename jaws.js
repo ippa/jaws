@@ -11,11 +11,12 @@
  *   jaws.one_variable = 1
  *   new jaws.OneConstructor
  *
- * Jaws exposes itself through the global "jaws". It should play nice with all other JS libs.
+ * Jaws uses the "module pattern" and exposes itself through the global "jaws". It should play nice with all other JS libs.
  * Jaws is using HTML5s <canvas> for all it's graphical operations, so the newer browser the better.
  * Older browsers doesn't support <canvas>. Or if they do, they don't accelerate it with hardware.
  *
  * Have fun! 
+ *
  * ippa.
  *
  */
@@ -45,7 +46,7 @@ var jaws = {
   assets: assets,
   Rect: Rect,
   Viewport: Viewport,
-  log: log,
+  debug: debug,
   pressed: pressed,
   on_keydown: on_keydown,
   on_keyup: on_keyup,
@@ -58,7 +59,7 @@ var jaws = {
   start: start
 }
 
-jaws.__defineSetter__("title", function(title) { title.innerHTML = title })
+jaws.__defineSetter__("title", function(s) { title.innerHTML = s })
 jaws.__defineGetter__("title", function() { return title.innerHTML })
 jaws.__defineGetter__("width", function() { return jaws.canvas.width })
 jaws.__defineGetter__("height", function() { return jaws.canvas.height })
@@ -154,7 +155,7 @@ function handleKeyDown(e) {
     on_keydown_callbacks[human_name]()
     e.preventDefault()
   }
-  // console.log(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
+  // jaws.debug(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
   // e.preventDefault();
 }
 
@@ -187,6 +188,10 @@ function on_keyup(key, callback) {
   }
 }
 
+
+function isImage(obj) {
+  return Object.prototype.toString.call(obj) === "[object HTMLImageElement]";
+}
 function isArray(obj) {
   return !(obj.constructor.toString().indexOf("Array") == -1)
 }
@@ -196,16 +201,17 @@ function isFunction (obj) {
 
 
 /*
- * Simple logger, adds text to a <div id="log"></div> or simple alerts() is that's not available.
+ * Simple debug output, adds text to a <div id="jaws-debug"></div> or simple alerts() is that's not available.
  */
-function log(msg, add) {
-  log_div = document.getElementById("log")
-  if(log_div) {
+function debug(msg, add) {
+  debug_div = document.getElementById("jaws-debug")
+  if(debug_div) {
     msg += "<br />"
-    if(add) { log_div.innerHTML = log_div.innerHTML.toString() + msg } 
-    else { log_div.innerHTML = msg }
-  } else {
-    alert(msg)
+    if(add) { debug_div.innerHTML = debug_div.innerHTML.toString() + msg } 
+    else { debug_div.innerHTML = msg }
+  } 
+  else {
+    // alert(msg)
   }
 }
 
@@ -226,10 +232,10 @@ function init() {
     jaws.canvas.width = 500
     jaws.canvas.height = 300
     document.body.appendChild(jaws.canvas)
-    log("Creating canvas")
+    debug("Creating canvas")
   }
   else {
-    log("Found canvas")
+    debug("Found canvas")
   }
   
   jaws.context = jaws.canvas.getContext('2d');
@@ -252,7 +258,7 @@ function start() {
   setupInput()
 
   function assetsLoading(src, percent_done) {
-    log( percent_done + "%: " + src, true)
+    debug( percent_done + "%: " + src, true)
     if(percent_done > 60) { assetsLoaded() } /* HACK FOR NOW ...*/
   }
 
@@ -315,10 +321,10 @@ function GameLoop(setup, update, draw, wanted_fps) {
   this.start = function() {
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
-    log("gameloop.start", true)
-    setup()
+    debug("gameloop.start", true)
+    if(setup) { setup() }
     update_id = setInterval(this.loop, 1000 / wanted_fps);
-    log("gameloop.loop", true)
+    debug("gameloop.loop", true)
   }
   
   this.loop = function() {
@@ -413,7 +419,7 @@ function _Asset() {
           asset.audio = new Audio(asset.src + "?" + parseInt(Math.random()*10000000))
           asset.audio.asset = asset
           asset.audio.load()
-          jaws.log("loading audio...")
+          jaws.debug("loading audio...")
 
           this.data[asset.src] = asset.audio
 
@@ -432,10 +438,11 @@ function _Asset() {
     that.loadedCount++
     var percent = parseInt(that.loadedCount / that.list.length * 100)
     if(that.loading_callback) { that.loading_callback(asset.src, percent) }
+    if(that.loaded_callback && percent==100) { that.loaded_callback() }
   }
   
   this.audioLoaded = function(e) {
-    jaws.log("audio loaded!")
+    jaws.debug("audio loaded!")
     var asset = this.asset
     that.data[asset.src] = asset.audio
     
@@ -484,12 +491,11 @@ function Sprite(options) {
  * frame_duration  int   - how long should each frame be displayed
  *
  */
-
 function Animation(options) {
   this.options = options
   this.frames = options.frames
-  this.frame_duration = options.frame_duration || 100 // default: 100ms between each frameswitch
-  this.index = options.index || 0     // default: start with the very first frame
+  this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
+  this.index = options.index || 0                       // default: start with the very first frame
   this.loop = options.loop || 1
   this.bounce = options.bounce || 0
   this.frame_direction = 1
@@ -498,6 +504,11 @@ function Animation(options) {
   this.current_tick = (new Date()).getTime();
   this.last_tick = (new Date()).getTime();
   this.sum_tick = 0
+
+  this.next = function() {
+    this.update()
+    return this.frames[this.index]
+  }
 
   this.currentFrame = function() {
     return this.frames[this.index]
@@ -541,12 +552,15 @@ function Animation(options) {
    */
   this.slice = function(start, stop) {
     var o = this.options
-    o.frames = options.frames.slice().slice(start, stop)
+    //o.frames = options.frames.slice().slice(start, stop)
+    o.frames = options.frames.slice(start, stop)
     return new Animation(o)
     
     //var frames = options.frames.slice().(start, stop)
     //return new Animation({frames: frames})
   }
+
+  this.__defineGetter__("length", function() { return this.frames.length})
 }
 
 /*
@@ -579,7 +593,7 @@ function cutImage(image, x, y, width, height) {
 /* Cut up into frame_size pieces and put them in frames[] */
 function SpriteSheet(options) {
   this.image = (options.image.toString() == "[object HTMLImageElement]") ? options.image : assets.data[options.image]
-  this.orientation = options.orientation || "down"
+  this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
 
@@ -589,6 +603,7 @@ function SpriteSheet(options) {
       this.frames[index++] = cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1])
     }
   }
+  this.__defineGetter__("length", function() { return this.frames.length})
 }
 
 /*
@@ -687,7 +702,6 @@ function Viewport(options) {
   }
 */
 }
-
 
 global.jaws = jaws
 

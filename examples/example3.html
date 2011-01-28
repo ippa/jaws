@@ -1,0 +1,83 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #3 - Animations</title>
+
+    <!-- We want non-blurry, block retro gfx when scalign! Webkit (chrome/safari) has yet to catch up with this. -->
+    <style type="text/css">
+      html, canvas {
+        image-rendering: -moz-crisp-edges;         /* Firefox */
+        -ms-interpolation-mode: nearest-neighbor;  /* IE */
+      }
+    </style>
+
+  <head>
+
+<body>
+  (Move with ARROW keys)
+  <canvas width=500 height=300></canvas>
+  
+  <div id="info">
+    <h3>Animations</h3>
+    Showing of a "complex" animation, all cut up from a spritesheet.
+    Animations from sprite sheets are a no-brainer with Jaws.
+  </div>
+  
+  <h3>jaws debug</h3>
+  <div id="jaws-debug"></div>
+ 
+  <script>
+    var player
+    var sheet
+    var speed = 2
+
+    function setup() {
+      player = new jaws.Sprite({image: "plane.png", x:100, y:150, scale: 3})
+      sheet = new jaws.SpriteSheet({image: "droid_11x15.png", frame_size: [11,15]})
+
+      player.anim = new jaws.Animation({frames: sheet.frames, frame_duration: 100})
+      player.anim_still = player.anim.slice(0,5)
+      player.anim_up = player.anim.slice(6,8)
+      
+      //player.anim_still = new jaws.Animation({frames: sheet.frames.slice(0,5), frame_duration: 100})
+      //player.anim_up = new jaws.Animation({frames: sheet.frames.slice(6,8), frame_duration: 100})
+      player.anim_down = new jaws.Animation({frames: sheet.frames.slice(8,10), frame_duration: 100})
+      player.anim_left = new jaws.Animation({frames: sheet.frames.slice(10,12), frame_duration: 100})
+      player.anim_right = new jaws.Animation({frames: sheet.frames.slice(12,14), frame_duration: 100})
+      player.image = player.anim_still.next()
+
+      jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
+    }
+    
+    function update() {
+      player.image = player.anim_still.next()
+      if(jaws.pressed("left"))  { player.x -= speed; player.image = player.anim_left.next() }
+      if(jaws.pressed("right")) { player.x += speed; player.image = player.anim_right.next() }
+      if(jaws.pressed("up"))    { player.y -= speed; player.image = player.anim_up.next() }
+      if(jaws.pressed("down"))  { player.y += speed; player.image = player.anim_down.next() }
+      forceInsideCanvas(player)
+    }
+    
+    function draw() {
+      jaws.context.clearRect(0,0,jaws.width,jaws.height)   
+      player.draw()
+    }
+    
+    function isOutsideCanvas(item) { return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height) }
+    function forceInsideCanvas(item) {
+      if(item.x < 0)                  { item.x = 0  }
+      if(item.right > jaws.width)     { item.x = jaws.width - item.width }
+      if(item.y < 0)                  { item.y = 0 }
+      if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
+    }
+
+    window.onload = function() {
+      jaws.assets.add("droid_11x15.png")
+      jaws.start()
+    }
+    </script>
+</body>
+</html>
+

@@ -11,6 +11,7 @@
     <canvas width=500 height=300></canvas>
 
     <div id="info">
+      <h1>Game states</h1>
       Minimalistic example using all jaws convenience methods and game states.
       Game states are an proven and robust way of separating various parts of the game. 
       For example: An intro, a menu, the actual game play, the high score list. That's 4 different game states right there.
@@ -18,10 +19,10 @@
       A gamestate is just an normal javascript object with the methods setup(), update() and draw().
       In this example we make 2 Constructors: <code>PlayState()</code> and <code>MenuState()</code>.
       <br />We switch active game state with: <code>jaws.switchGameState(a_game_state_or_function)</code>
-      </div >
+    </div >
 
-    <h3>log</h3>
-    <div id="log"></div>
+    <h3>jaws debug</h3>
+    <div id="jaws-debug"></div>
 
     <script>
 
