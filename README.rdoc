@@ -1,17 +1,14 @@
-This is alpha-alpha-pre-release software. A lot of things will change before we reach 0.1.
+--- This is alpha-alpha-pre-release software ---
 
 = Jaws - HTML5 Javascript web game development library
 
 Depends on Javascript 1.6+ (ECMA-262 Edition 5) and the canvas-element
-Tested on Chrome 6+, Firefox 3.6.x/4.x, Safari 5+.
-
-Firefox 4.0 with openGL accelerated canvas is recomended.
+Tested on Chrome 6+, Firefox 3.6.x/4.x, Safari 5+. FF 4.0 with openGL accelerated canvas is recommended.
 
 == Highlights
-  * Animation(), Sprite(), SpriteSheet() and other constructors
+  * Animation(), Sprite(), SpriteSheet() and other useful constructors
   * Easy and robust game states to switch between menus, play, high score lists and settings
   * Documented code and explained examples
-  * QUnit testsuite @ http://ippa.se/jaws/test/
 
 Jaws also...
   * Does <canvas> for all gfx, it's the HW-accelerated future
@@ -21,76 +18,91 @@ Jaws also...
   * Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
   * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
-== Examples
-* http://ippa.se/jaws/examples/example1.html
-* http://ippa.se/jaws/examples/example2.html
-* http://ippa.se/jaws/examples/example3.html
+== Learn more
+* http://ippa.se/jaws          - Official Jaws homepage. Jaws docs and design choices.
+* http://ippa.se/jaws/test/    - Jaws QUnit testsuite
 
-== Example Code
+== Examples online
+Check out the sourcecode for comments and explanations:
+
+* http://ippa.se/jaws/examples/example1.html  - focus: manual setup of canvas. later examples shows better ways.
+* http://ippa.se/jaws/examples/example2.html  - focus: jaws game states
+* http://ippa.se/jaws/examples/example3.html  - focus: Animation()
+
+== Code demo
+  //
+  // Jaws will provide powerful functions like jaws.start() to quickly get a robust gameloop running.
+  // It's also possible to do it more manually, fetch your own canvas context and sent it to new Sprite() for example.
+  // Nothing stops you from using jaws.assets or other jaws.helpers with your own game loop either.
+  //
+  // Below code shows the way I like, letting jaws worry about most of the boring setup stuff
+  // so I can get straight to get game logic.
+  //
+  <html>
   <script src="jaws.js"></script>
+  <body>
+
+  <canvas width=500 height=300></canvas> <!-- don't set width/height of canvas with CSS -->
+
   <script>
-    function setup() {
-      /* init-stuff*/
-    }
+    // Jaws encourages the use of game states to separate various parts of your game.
+    // We send MyGameState to jaws.start() to start with.
+    // You can later switch to another game state with jaws.switchGameState(OtherGameState)
+    function MyGameState() {
+      var player
+      var robot
 
-    function update() {
-      if(pressed("left")) { player.x--; }
-      if(pressed("right)) { player.x++; }
-    }
+      // Put your one-time initializing here. Will get called once each time this game state is activated.
+      this.setup = function() {
+        // Make a sprite, place it at position 10/200
+        // The string "player.png" will resolve to a previously fetched resource
+        // We let jaws worry about what canvas to paint to here.
+        // If we want we could simple pass {context: my_canvas_context} to Sprite constructor
+        player = new Sprite({image: "player.png", x: 10, y: 200})
+        
+        // Let's create an animated robot sprite
+        robot = new Sprite({x: 200, y: 200})
+        robot.sheet = new SpriteSheet({image: "droid_11x15.png", frameSize => [11,15]})
+        robot.animation = Animation.new({frames: robot_sheet.frames, frame_duration: 120})
+      }
 
-    function draw() {
-      /* draw operations */
+      // update() is called each gametick with given FPS. Put your game logic here.
+      this.update = function() {
+        if(pressed("left")) { player.x-- }
+        if(pressed("right)) { player.x++ }
+        robot.image = robot.animation.next()
+      }
+
+      // draw() is called each gametick just after update() is done. Put your drawing/canvas stuff here.
+      this.draw = function() {
+        player.draw()
+        robot.draw()
+      }
     }
     
-    jaws.start()  // call setup(), then loop calling update() / game.draw() with FPS 60
+    //
+    // Add to jaws internal list of assets.
+    // You can then either:
+    // - have jaws.start() load them automatically for you
+    // - or load them manually with jaws.assets.loadAll({loaded: myAssetsAreReadyCall})
+    //
+    jaws.assets.add("player.png")
+    jaws.assets.add("droid_11x15.png")
+
+    //
+    // jaws.start() is the easiest way to get something up and running. It will:
+    //
+    // 1) Call jaws.init() that will detect <canvas> (or create one for you) and set up the 2D context
+    // - then available in jaws.canvas and jaws.context
+    //
+    // 2) Pre-load all assets
+    // - player.png image is then available with jaws.assets.get("player.png")
+    //
+    // 3) When all assets are loaded, call setup()
+    // 4) Then call update() / draw() with given FPS (default 60) until game ends or another game state is activated
+    //
+    jaws.start(MyGameState)
   </script>
+  </body>
+  </html>
 
-
-= Jaws Constructors
-Jaws comes with a slew of premade useful constructors, hit the road running!
-
-
-== jaws.Sprite() - simple movable image-based object on screen
-
-  /* Make a sprite, place it at position 10/10, scale it 4 times and draw it */
-  /* NOTE: image-parameter will resolve to a previously fetched resource
-  sprite = new Sprite({image: "player.png", x: 10, y: 10, scale: 4})
-  sprite.draw()
-
-
-== jaws.SpriteSheet() - cut big sprite sheets into smaller images from left to right, top to bottom
-  spriteSheet = new SpriteSheet({image: "droid_11x15.bmp", frameSize => [32,32]})
-  sprite.image = spriteSheet.frames[2] 
-
-
-== jaws.Rect()
-  A simple rect-class, use for collision detection. 
-    rect.collidePoint(x, y) // returns true if x/y is within rect's boundaries
-    rect.collideRect(rect2) // returns true of rect and rect overlaps
-
-
-== jaws.assets (singleton from Asset() ) - Easy trackable preload of images and other resources
-  jaws.assets.add("resources/player.png")
-  jaws.assets.loadAll({on_load: start_game})
-
-  /* start_game will be called when all assets have been loaded */
-  function start_game() {
-    jaws.assets.get["resources/player.png"]  # -> ImageObject
-  }
-
-
-= Jaws Core extensions
-Jaws extends some of Javascripts builtin classes through their prototypes
-
-== Array() extensions
-  Adds draw(), update(), drawIf(function), updateIf(function), deleteIf(function)
-  
-  Keep track of your game objects in normal Arrays like:
-    enemies.push(new Sprite{image: "enemy.png", x: 100, y: 100})
-    enemies.update()
-    enemies.draw()
-    enemies.deleteIf(isOutsideCanvas)
-
-    function isOutsideCanvas(item) {    // for this example we assume a canvas of 200 x 200 pixels
-      return (item.x < 0 || item.y < 0 || item.x > 200 || item.y > 200)
-    }
