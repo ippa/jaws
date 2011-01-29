@@ -3,7 +3,7 @@
   <head>
     <script src="../jaws.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
-    <title>Jaws Example #3 - Animations</title>
+    <title>Jaws Example #3 - Animation</title>
 
     <!-- We want non-blurry, block retro gfx when scalign! Webkit (chrome/safari) has yet to catch up with this. -->
     <style type="text/css">
@@ -20,7 +20,7 @@
   <canvas width=500 height=300></canvas>
   
   <div id="info">
-    <h3>Animations</h3>
+    <h1>Animations</h1>
     Showing of a "complex" animation, all cut up from a spritesheet.
     Animations from sprite sheets are a no-brainer with Jaws.
   </div>
@@ -29,50 +29,59 @@
   <div id="jaws-debug"></div>
  
   <script>
-    var player
-    var sheet
-    var speed = 2
+    /*
+    * A good practice in even a smalish game is to use "game states"
+    * It's easy in jaws. Here we use a constructor that will respond to setup/update/draw.
+    * We pass it into jaws.start() at the bottom to set things in motion.
+    */
+    function Example3() {
+      var player
+      var speed = 2
 
-    function setup() {
-      player = new jaws.Sprite({image: "plane.png", x:100, y:150, scale: 3})
-      sheet = new jaws.SpriteSheet({image: "droid_11x15.png", frame_size: [11,15]})
+      /* Called once when a game state is activated. Use it for one-time setup code. */
+      this.setup = function() {
+        var sheet = new jaws.SpriteSheet({image: "droid_11x15.png", frame_size: [11,15]})
+        var anim = new jaws.Animation({frames: sheet.frames, frame_duration: 100})
 
-      anim = new jaws.Animation({frames: sheet.frames, frame_duration: 100})
-      player.anim_still = anim.slice(0,5)
-      player.anim_up = anim.slice(6,8)
-      player.anim_down = anim.slice(8,10)
-      player.anim_left = anim.slice(10,12)
-      player.anim_right = anim.slice(12,14)
+        player = new jaws.Sprite({x:100, y:150, scale: 3})
+        player.anim_still = anim.slice(0,5)
+        player.anim_up = anim.slice(6,8)
+        player.anim_down = anim.slice(8,10)
+        player.anim_left = anim.slice(10,12)
+        player.anim_right = anim.slice(12,14)
       
-      player.image = player.anim_still.next()
-      jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
-    }
-    
-    function update() {
-      player.image = player.anim_still.next()
-      if(jaws.pressed("left"))  { player.x -= speed; player.image = player.anim_left.next() }
-      if(jaws.pressed("right")) { player.x += speed; player.image = player.anim_right.next() }
-      if(jaws.pressed("up"))    { player.y -= speed; player.image = player.anim_up.next() }
-      if(jaws.pressed("down"))  { player.y += speed; player.image = player.anim_down.next() }
-      forceInsideCanvas(player)
-    }
-    
-    function draw() {
-      jaws.context.clearRect(0,0,jaws.width,jaws.height)   
-      player.draw()
-    }
-    
-    function isOutsideCanvas(item) { return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height) }
-    function forceInsideCanvas(item) {
-      if(item.x < 0)                  { item.x = 0  }
-      if(item.right > jaws.width)     { item.x = jaws.width - item.width }
-      if(item.y < 0)                  { item.y = 0 }
-      if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
-    }
+        player.image = player.anim_still.next()
+        jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
+      }
 
+      /* update() will get called each game tick with your specified FPS. Put game logic here. */
+      this.update = function() {
+        player.image = player.anim_still.next()
+        if(jaws.pressed("left"))  { player.x -= speed; player.image = player.anim_left.next() }
+        if(jaws.pressed("right")) { player.x += speed; player.image = player.anim_right.next() }
+        if(jaws.pressed("up"))    { player.y -= speed; player.image = player.anim_up.next() }
+        if(jaws.pressed("down"))  { player.y += speed; player.image = player.anim_down.next() }
+        forceInsideCanvas(player)
+      }
+
+      /* Directly after each update draw() will be called. Put all your on-screen operations here. */
+      this.draw = function() {
+        jaws.context.clearRect(0,0,jaws.width,jaws.height)   
+        player.draw()
+      }
+    
+      /* Force given item's x/y to stay within canvas borders */
+      function forceInsideCanvas(item) {
+        if(item.x < 0)                  { item.x = 0  }
+        if(item.right > jaws.width)     { item.x = jaws.width - item.width }
+        if(item.y < 0)                  { item.y = 0 }
+        if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
+      }
+    }
+    
     window.onload = function() {
       jaws.assets.add("droid_11x15.png")
-      jaws.start()
+      jaws.start(Example3)  // Our convenience function jaws.start() will load assets, call setup and loop update/draw in 60 FPS
     }
     </script>
 </body>

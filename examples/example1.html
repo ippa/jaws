@@ -10,7 +10,7 @@
   <canvas width=500 height=300></canvas>
   
   <div id="info">
-    <h3>Basic example</h3>
+    <h1>Basic example</h1>
     An basic example jaws example.
     We make our own canvas, instead of having jaws generate one (or several) for us.
     We get the canvas-tag from the DOM, fetch its context and send it to Sprite.
@@ -44,7 +44,7 @@
       if(jaws.pressed("up"))    { player.y -= 2 }
       if(jaws.pressed("down"))  { player.y += 2 }
       if(jaws.pressed("space")) {
-        bullets.push( new Bullet(player.right, player.y) )
+        bullets.push( new Bullet(player.right, player.y+13) )
       }
       forceInsideCanvas(player)
       bullets.deleteIf(isOutsideCanvas)
