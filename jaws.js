@@ -251,10 +251,11 @@ function start() {
   var setup =  options.setup || window.setup
   var update = options.update || window.update
   var draw = options.draw || window.draw
-  var wanted_fps = options.fps || 60
+  var wanted_fps = options.fps || parseInt(arguments[1]) || 60
 
   init()
 
+  debug("setupInput()", true)
   setupInput()
 
   function assetsLoading(src, percent_done) {
@@ -267,6 +268,7 @@ function start() {
     jaws.gameloop.start()
   }
 
+  debug("assets.loadAll()", true)
   if(assets.length() > 0) { assets.loadAll({loading: assetsLoading, loaded: assetsLoaded}) }
   else                    { assetsLoaded() } 
 }
@@ -319,12 +321,12 @@ function GameLoop(setup, update, draw, wanted_fps) {
   var that = this
 
   this.start = function() {
+    debug("gameloop start", true)
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
-    debug("gameloop.start", true)
     if(setup) { setup() }
     update_id = setInterval(this.loop, 1000 / wanted_fps);
-    debug("gameloop.loop", true)
+    debug("gameloop loop", true)
   }
   
   this.loop = function() {

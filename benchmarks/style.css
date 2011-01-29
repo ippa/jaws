@@ -1,0 +1,10 @@
+body { background: #444444; margin: 100px auto; width: 600px; font: 13px verdana; color: #eeeeee;  }
+h1,h2,h3 { padding: 0px; margin: 10px 0px 0px 0px; font: 30px terminal; letter-spacing: 2px; }
+h1 { color: #FF2FE7; font-size: 30px; }
+h2 { color: #45D4FF; font-size: 25px; }
+h3 { color: #45D4FF; font-size: 25px; }
+canvas { border: 1px solid; background: white; }
+code { font-weight: bold; font-size: 15px; color: white;}
+#info { width: 500px; line-height: 130%; padding-top: 10px; }
+#jaws-debug { font: 11px verdana; background: black; width: 500px; padding: 5px; }
+
