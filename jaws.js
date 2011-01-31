@@ -57,6 +57,12 @@ var jaws = {
   game_state: game_state,
   previous_game_state: previous_game_state,
   switchGameState: switchGameState,
+  isString: isString,
+  isFunction: isFunction,
+  isArray: isArray,
+  isImage: isImage,
+  isCanvas: isCanvas,
+  isDrawable: isDrawable,
   init: init,
   start: start
 }
@@ -188,17 +194,6 @@ function on_keyup(key, callback) {
   else {
     on_keyup_callbacks[key] = callback
   }
-}
-
-
-function isImage(obj) {
-  return Object.prototype.toString.call(obj) === "[object HTMLImageElement]";
-}
-function isArray(obj) {
-  return !(obj.constructor.toString().indexOf("Array") == -1)
-}
-function isFunction (obj) {
-  return Object.prototype.toString.call(obj) === "[object Function]";
 }
 
 
@@ -453,7 +448,12 @@ function _Asset() {
     if(that.loading_callback) { that.loading_callback(asset.src, percent) }
   }
 }
-
+/*
+ * 
+ * In many cases Sprite is our mainway of having characters on the screen.
+ *
+ *
+ */
 function Sprite(options) {
   this.options = options
   this.x = options.x || 0
@@ -705,10 +705,29 @@ function Viewport(options) {
 */
 }
 
+function isImage(obj) {
+  return Object.prototype.toString.call(obj) === "[object HTMLImageElement]";
+}
+function isCanvas(obj) {
+  return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]";
+}
+function isDrawable(obj) {
+  return isImage(obj) || isCanvas(obj)
+}
+function isString(obj) {
+  return (typeof obj == 'string')
+}
+function isArray(obj) {
+  return !(obj.constructor.toString().indexOf("Array") == -1)
+}
+function isFunction(obj) {
+  return (Object.prototype.toString.call(obj) === "[object Function]")
+}
+
+
 global.jaws = jaws
 
 })(this);
-
 
 
 /*
