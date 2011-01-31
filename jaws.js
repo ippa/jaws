@@ -348,6 +348,7 @@ function GameLoop(setup, update, draw, wanted_fps) {
 }
 
 
+
 /* 
  * _Asset
  *
@@ -468,21 +469,33 @@ function Sprite(options) {
   this.y = options.y || 0
   this.context = options.context || context
   this.scale = options.scale || 1
-  this.flipped = options.flipped || 0
   
-  if(options.image) {
-    this.image = isDrawable(options.image) ? options.image : assets.data[options.image]
+  if(options.image) { 
+    this.image = isDrawable(options.image) ? options.image : assets.data[options.image] 
   }
-  
+
   this.__defineGetter__("width", function()   { return (this.image.width) * this.scale } )
   this.__defineGetter__("height", function()  { return (this.image.height) * this.scale } )
   this.__defineGetter__("bottom", function()  { return this.y + this.height-1 } )
   this.__defineGetter__("right", function()   { return this.x + this.width-1 } )
-  
-  this.draw = function() {
-    jaws.context.drawImage(this.image, this.x, this.y, this.width, this.height)
-  }
 }
+
+// Draw the sprite on screen via its previously given context
+Sprite.prototype.draw = function() {
+  jaws.context.drawImage(this.image, this.x, this.y, this.width, this.height)
+}
+
+// Returns true if point at x, y lies within sprites boundaries
+Sprite.prototype.collidePoint = function(x, y) {
+  return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
+}
+
+// Returns true if calling rect overlaps with given rect in any way
+Sprite.prototype.collideRect = function(rect) {
+  return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right ) &&
+          (this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.t <= this.bottom ))
+}
+
 
 /*
  *
@@ -513,68 +526,60 @@ function Animation(options) {
     this.frames = sprite_sheet.frames
   }
 
+  this.__defineGetter__("length", function() { return this.frames.length })
+
   /* Initializing timer-stuff */ 
   this.current_tick = (new Date()).getTime();
   this.last_tick = (new Date()).getTime();
   this.sum_tick = 0
-
-  this.next = function() {
-    this.update()
-    return this.frames[this.index]
-  }
-
-  this.currentFrame = function() {
-    return this.frames[this.index]
-  }
-
-  /*
-   *
-   * Propells the animation forward by counting milliseconds and changing this.index accordingly
-   * Supports looping and bouncing animations
-   *
-   */
-  this.update = function() {
-    this.current_tick = (new Date()).getTime();
-    this.sum_tick += (this.current_tick - this.last_tick);
-    this.last_tick = this.current_tick;
- 
-    if(this.sum_tick > this.frame_duration) {
-      this.index += this.frame_direction
-      this.sum_tick = 0
-    }
-    if( (this.index >= this.frames.length) || (this.index <= 0) ) {
-      if(this.bounce) {
-        this.frame_direction = -this.frame_direction
-        this.index += this.frame_direction*2
-      }
-      else if(this.loop) {
-        this.index = 0
-      }
-    }
-    return this
-  }
-
-  /*
-  this.nameRange = function(name, start, stop) {
-    this.named_ranges[name] = [start, stop]
-  }
-  */
-
-  /*
-   *  Like array.slice but returns a new Animation-object with a subset of the frames
-   */
-  this.slice = function(start, stop) {
-    var o = {} 
-    o.frame_duration = this.frame_duration
-    o.loop = this.loop
-    o.bounce = this.bounce
-    o.frame_direction = this.frame_direction
-    o.frames = this.frames.slice().slice(start, stop)
-    return new Animation(o)
-  }
-
-  this.__defineGetter__("length", function() { return this.frames.length})
 }
+
+// Propells the animation forward by counting milliseconds and changing this.index accordingly
+// Supports looping and bouncing animations.
+Animation.prototype.update = function() {
+  this.current_tick = (new Date()).getTime();
+  this.sum_tick += (this.current_tick - this.last_tick);
+  this.last_tick = this.current_tick;
+ 
+  if(this.sum_tick > this.frame_duration) {
+    this.index += this.frame_direction
+    this.sum_tick = 0
+  }
+  if( (this.index >= this.frames.length) || (this.index <= 0) ) {
+    if(this.bounce) {
+      this.frame_direction = -this.frame_direction
+      this.index += this.frame_direction*2
+    }
+    else if(this.loop) {
+      this.index = 0
+    }
+  }
+  return this
+}
+
+// Like array.slice but returns a new Animation-object with a subset of the frames
+Animation.prototype.slice = function(start, stop) {
+  var o = {} 
+  o.frame_duration = this.frame_duration
+  o.loop = this.loop
+  o.bounce = this.bounce
+  o.frame_direction = this.frame_direction
+  o.frames = this.frames.slice().slice(start, stop)
+  return new Animation(o)
+}
+
+// Moves animation forward by calling update() and then return the current frame
+Animation.prototype.next = function() {
+  this.update()
+  return this.frames[this.index]
+}
+// returns the current frame
+Animation.prototype.currentFrame = function() {
+  return this.frames[this.index]
+}
+
+
+
 
 /*
  * flipImage() - returns a flipper version of image, usefull for sidescrollers when player changes direction
@@ -657,7 +662,6 @@ function Rect(x,y,width,height) {
       (this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.t <= this.bottom ))
   }
 }
-
 
 
 /*
