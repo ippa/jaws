@@ -32,7 +32,8 @@
   var title
   var canvas
   var context
-  var gamestate
+  var game_state
+  var previous_game_state
 
 /* 
  * Expose these properties via the global "jaws".
@@ -53,7 +54,8 @@ var jaws = {
   gameloop: gameloop,
   canvas: canvas,
   context: context,
-  gamestate: gamestate,
+  game_state: game_state,
+  previous_game_state: previous_game_state,
   switchGameState: switchGameState,
   init: init,
   start: start
@@ -278,19 +280,18 @@ function start() {
  * TODO: make this prettier! Also save previous game state.
  * 
  * */
-// jaws.__defineSetter__("gamestate", function(gamestate) { switchGameState(gamestate) })
-
-function switchGameState(gamestate) {
+function switchGameState(game_state) {
   jaws.gameloop.stop()
   
   /* clear out any keyboard-events for this game state */
   on_keydown_callbacks = []
   on_keyup_callbacks = []
  
-  if(isFunction(gamestate)) { gamestate = new gamestate }
+  if(isFunction(game_state)) { game_state = new game_state }
   
-  jaws.gamestate = gamestate
-  jaws.gameloop = new jaws.GameLoop(gamestate.setup, gamestate.update, gamestate.draw, jaws.gameloop.fps)
+  jaws.previous_game_state = game_state
+  jaws.game_state = game_state
+  jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.gameloop.fps)
   jaws.gameloop.start()
 }
 
