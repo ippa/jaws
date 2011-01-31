@@ -451,7 +451,15 @@ function _Asset() {
 /*
  * 
  * In many cases Sprite is our mainway of having characters on the screen.
+ * it has various properties:
  *
+ *  sprite.x        // horizontal position on canvas, 0 is farthest to the left
+ *  sprite.y        // vertical position, 0 is top of the screen
+ *  sprite.scale    // how much to scale the sprite when drawing it
+ *  sprite.width    // width of the sprite, will take scale into consideration
+ *  sprite.height   // height of the sprite, will take scale into consideration
+ *  sprite.bottom   // sprite.y + sprite.height
+ *  sprite.right    // sprite.x + sprite.width
  *
  */
 function Sprite(options) {
@@ -461,7 +469,7 @@ function Sprite(options) {
   this.context = options.context || context
   this.scale = options.scale || 1
   this.flipped = options.flipped || 0
-
+  
   if(options.image) {
     this.image = isDrawable(options.image) ? options.image : assets.data[options.image]
   }
@@ -498,7 +506,13 @@ function Animation(options) {
   this.loop = options.loop || 1
   this.bounce = options.bounce || 0
   this.frame_direction = 1
-  
+
+  if(options.sprite_sheet) {
+    var image = (isImage(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
+    var sprite_sheet = new SpriteSheet({image: image, frame_size: options.frame_size})
+    this.frames = sprite_sheet.frames
+  }
+
   /* Initializing timer-stuff */ 
   this.current_tick = (new Date()).getTime();
   this.last_tick = (new Date()).getTime();
@@ -555,7 +569,7 @@ function Animation(options) {
     o.loop = this.loop
     o.bounce = this.bounce
     o.frame_direction = this.frame_direction
-    o.frames = options.frames.slice().slice(start, stop)
+    o.frames = this.frames.slice().slice(start, stop)
     return new Animation(o)
   }
 
