@@ -464,7 +464,7 @@ function Sprite(options) {
   this.flipped = options.flipped || 0
 
   if(options.image) {
-    this.image = (options.image.toString() == "[object HTMLImageElement]") ? options.image : assets.data[options.image]
+    this.image = (isDrawable(options.image) ? options.image : assets.data[options.image]
   }
   
   this.__defineGetter__("width", function()   { return (this.image.width) * this.scale } )
@@ -594,7 +594,7 @@ function cutImage(image, x, y, width, height) {
 
 /* Cut up into frame_size pieces and put them in frames[] */
 function SpriteSheet(options) {
-  this.image = (options.image.toString() == "[object HTMLImageElement]") ? options.image : assets.data[options.image]
+  this.image = isImage(options.image) ? options.image : assets.data[options.image]
   this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
@@ -685,10 +685,6 @@ function Viewport(options) {
   this.centerAround = function(item) {
     this.x = item.x - width / 2
     this.y = item.y - height / 2
-  }
-
-  if(options.image) {
-    this.image = (options.image.toString() == "[object HTMLImageElement]") ? options.image : assets.data[options.image]
   }
 
   this.apply = function(func) {
