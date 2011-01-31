@@ -460,11 +460,10 @@ function Sprite(options) {
   this.y = options.y || 0
   this.context = options.context || context
   this.scale = options.scale || 1
-  this.visible = options.visible || 1
   this.flipped = options.flipped || 0
 
   if(options.image) {
-    this.image = (isDrawable(options.image) ? options.image : assets.data[options.image]
+    this.image = isDrawable(options.image) ? options.image : assets.data[options.image]
   }
   
   this.__defineGetter__("width", function()   { return (this.image.width) * this.scale } )
@@ -473,9 +472,7 @@ function Sprite(options) {
   this.__defineGetter__("right", function()   { return this.x + this.width-1 } )
   
   this.draw = function() {
-    if(this.visible) { 
-      jaws.context.drawImage(this.image, this.x, this.y, this.width, this.height)
-    }
+    jaws.context.drawImage(this.image, this.x, this.y, this.width, this.height)
   }
 }
 
