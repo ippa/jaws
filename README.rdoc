@@ -28,6 +28,7 @@ Check out the sourcecode for comments and explanations:
 * http://ippa.se/jaws/examples/example1.html  - focus: manual setup of canvas. later examples shows better ways.
 * http://ippa.se/jaws/examples/example2.html  - focus: jaws game states
 * http://ippa.se/jaws/examples/example3.html  - focus: Animation()
+* http://ippa.se/jaws/examples/example4.html  - focus: Rect based collision detection
 
 == Code demo
   //
