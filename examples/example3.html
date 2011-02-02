@@ -16,8 +16,8 @@
   <head>
 
 <body>
-  (Move with ARROW keys)
-  <canvas width=500 height=300></canvas>
+  <canvas width=500 height=300></canvas><br />
+  FPS: <span id="fps"></span>. Move with arrow keys.
   
   <div id="info">
     <h1>Animations</h1>
@@ -37,6 +37,7 @@
     function Example3() {
       var player
       var speed = 2
+      var fps = document.getElementById("fps")
 
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
@@ -61,6 +62,7 @@
         if(jaws.pressed("up"))    { player.y -= speed; player.image = player.anim_up.next() }
         if(jaws.pressed("down"))  { player.y += speed; player.image = player.anim_down.next() }
         forceInsideCanvas(player)
+        fps.innerHTML = jaws.gameloop.fps
       }
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */

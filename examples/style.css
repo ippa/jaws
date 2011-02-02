@@ -8,3 +8,8 @@ code { font-weight: bold; font-size: 15px; color: white;}
 #info { width: 500px; line-height: 130%; padding-top: 10px; }
 #jaws-debug { font: 11px verdana; background: black; width: 500px; padding: 5px; }
 
+/* We want non-blurry, block retro gfx when scalign! Webkit (chrome/safari) has yet to catch up with this */
+html, canvas {
+  image-rendering: -moz-crisp-edges;         /* Firefox */
+  -ms-interpolation-mode: nearest-neighbor;  /* IE */
+}

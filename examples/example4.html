@@ -1,0 +1,81 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #4 - Collision detection</title>
+  <head>
+
+<body>
+  <canvas width=500 height=300></canvas><br />
+  FPS: <span id="fps"></span>
+  
+  <div id="info">
+    <h1>Sprite collision detection</h1>
+  </div>
+  
+  <h3>jaws debug</h3>
+  <div id="jaws-debug"></div>
+ 
+  <script>
+    function Example4() {
+      var sprites = []
+      var sprite_pairs = []
+      var fps = document.getElementById("fps")
+
+      /* Called once when a game state is activated. Use it for one-time setup code. */
+      this.setup = function() {
+
+        var amount_of_rects = 40
+        while(amount_of_rects--) {
+          var x = Math.random() * jaws.canvas.width
+          var y = Math.random() * jaws.canvas.height
+          var sprite = new jaws.Sprite({image: "rect.png", x: x, y: y})
+          sprite.vx = Math.random() * 0.5 - 1
+          sprite.vy = Math.random() * 0.5 - 1
+          sprites.push(sprite)
+        }
+        
+       sprite_pairs = jaws.combinations(sprites, 2)
+      }
+
+      /* update() will get called each game tick with your specified FPS. Put game logic here. */
+      this.update = function() {
+        sprites.forEach(function(sprite, index) {
+          sprite.collision = false
+          sprite.x += sprite.vx
+          sprite.y += sprite.vy
+ 
+          if(sprite.x < 0 || sprite.right > jaws.canvas.width)  { sprite.vx = -sprite.vx }
+          if(sprite.y < 0 || sprite.bottom > jaws.canvas.height) { sprite.vy = -sprite.vy }
+        })
+
+        sprite_pairs.forEach( function(pair, index) {
+          sprite = pair[0]
+          sprite2 = pair[1]
+          if(sprite.collideRect(sprite2)) {
+            sprite.collision = true
+            sprite2.collision = true
+          }
+        });
+
+        fps.innerHTML = jaws.gameloop.fps
+      }
+
+      /* Directly after each update draw() will be called. Put all your on-screen operations here. */
+      this.draw = function() {
+        jaws.context.clearRect(0,0,jaws.width,jaws.height)   
+        sprites.forEach( function(sprite, index) {
+          sprite.collision ? jaws.context.fillRect(sprite.x, sprite.y, sprite.width, sprite.height) : sprite.draw()
+        });
+      }
+    }
+    
+    window.onload = function() {
+      jaws.assets.add("rect.png")
+      jaws.start(Example4)
+    }
+    </script>
+</body>
+</html>
+
