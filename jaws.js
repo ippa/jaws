@@ -63,6 +63,7 @@ var jaws = {
   isImage: isImage,
   isCanvas: isCanvas,
   isDrawable: isDrawable,
+  combinations: combinations,
   init: init,
   start: start
 }
@@ -229,10 +230,10 @@ function init() {
     jaws.canvas.width = 500
     jaws.canvas.height = 300
     document.body.appendChild(jaws.canvas)
-    debug("Creating canvas")
+    debug("creating canvas", true)
   }
   else {
-    debug("Found canvas")
+    debug("found canvas", true)
   }
   
   jaws.context = jaws.canvas.getContext('2d');
@@ -260,7 +261,7 @@ function start() {
   }
 
   function assetsLoaded() {
-    debug("all assets loaded")
+    debug("all assets loaded", true)
     jaws.gameloop = new jaws.GameLoop(setup, update, draw, wanted_fps)
     jaws.gameloop.start()
   }
@@ -491,11 +492,23 @@ Sprite.prototype.collidePoint = function(x, y) {
 }
 
 // Returns true if calling rect overlaps with given rect in any way
+// rect could be any object that has these 4 prototypes: x,y,right,bottom
 Sprite.prototype.collideRect = function(rect) {
-  return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right ) &&
-          (this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.t <= this.bottom ))
+  return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right )) &&
+          ((this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.y <= this.bottom ))
 }
-
+Sprite.prototype.collideRightSide = function(rect) {
+  return(this.right >= rect.x && this.x < rect.x)
+}
+Sprite.prototype.collideLeftSide = function(rect) {
+  return(this.x > rect.x && this.x <= rect.right)
+}
+Sprite.prototype.collideTopSide = function(rect) {
+  return(this.y >= rect.y && this.y <= rect.bottom)
+}
+Sprite.prototype.collideBottomSide = function(rect) {
+  return(this.bottom >= rect.y && this.y < rect.y)
+}
 
 /*
  *
@@ -735,6 +748,22 @@ function isFunction(obj) {
   return (Object.prototype.toString.call(obj) === "[object Function]")
 }
 
+function combinations(s, n) {
+  var f = function(i){return s[i];};
+  var r = [];
+  var m = new Array(n);
+  for (var i = 0; i < n; i++) m[i] = i; 
+  for (var i = n - 1, sn = s.length; 0 <= i; sn = s.length) {
+    r.push( m.map(f) );
+    while (0 <= i && m[i] == sn - 1) { i--; sn--; }
+    if (0 <= i) { 
+      m[i] += 1;
+      for (var j = i + 1; j < n; j++) m[j] = m[j-1] + 1;
+      i = n - 1;
+    }
+  }
+  return r;
+}
 
 global.jaws = jaws
 
