@@ -470,10 +470,13 @@ function Sprite(options) {
   this.y = options.y || 0
   this.context = options.context || context
   this.scale = options.scale || 1
+  this.center_x = options.center_x || 0
+  this.center_y = options.center_y || 0
   
   if(options.image) { 
     this.image = isDrawable(options.image) ? options.image : assets.data[options.image] 
   }
+  if(options.rotation_center) { this.rotationCenter(options.rotation_center) }
 
   this.__defineGetter__("width", function()   { return (this.image.width) * this.scale } )
   this.__defineGetter__("height", function()  { return (this.image.height) * this.scale } )
@@ -481,9 +484,43 @@ function Sprite(options) {
   this.__defineGetter__("right", function()   { return this.x + this.width-1 } )
 }
 
+//
+// Set the point on the image which should be drawn at sprites x/y
+// For example, a topdown shooter could use rotationCenter("center_center") --> Place middle of the ship on x/y
+// .. and a sidescroller would probably use rotationCenter("center_bottom") --> Place "feet" at x/y
+//
+Sprite.prototype.rotationCenter = function(align) {
+  var rotation_centers = {
+    top_left: [0,0],
+    left_top: [0,0],
+    center_left: [0,0.5],
+    left_center: [0,0.5],
+    bottom_left: [0,1],
+    left_bottom: [0,1],
+    top_center: [0.5,0],
+    center_top: [0.5,0],
+    center_center: [0.5,0.5],
+    center: [0.5,0.5],
+    bottom_center: [0.5,1],
+    center_bottom: [0.5,1],
+    top_right: [1,0],
+    right_top: [1,0],
+    center_right: [1,0.5],
+    right_center: [1,0.5],
+    bottom_right: [1,1],
+    right_bottom: [1,1]
+  }
+
+  if(a = rotation_centers[align]) {
+    this.center_x = a[0]
+    this.center_y = a[1]
+  }
+  return this
+}
+
 // Draw the sprite on screen via its previously given context
 Sprite.prototype.draw = function() {
-  jaws.context.drawImage(this.image, this.x, this.y, this.width, this.height)
+  jaws.context.drawImage(this.image, this.x-(this.center_x*this.width), this.y-(this.center_y*this.height), this.width, this.height);
 }
 
 // Returns true if point at x, y lies within sprites boundaries
