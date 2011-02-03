@@ -50,34 +50,34 @@ Check out the sourcecode for comments and explanations:
     // We send MyGameState to jaws.start() to start with.
     // You can later switch to another game state with jaws.switchGameState(OtherGameState)
     function MyGameState() {
-      var player
-      var robot
-
+      var player;
+      var robot;
+    
       // Put your one-time initializing here. Will get called once each time this game state is activated.
       this.setup = function() {
         // Make a sprite, place it at position 10/200
         // The string "player.png" will resolve to a previously fetched resource
         // We let jaws worry about what canvas to paint to here.
         // If we want we could simple pass {context: my_canvas_context} to Sprite constructor
-        player = new Sprite({image: "player.png", x: 10, y: 200})
-        
+        player = new jaws.Sprite({image: "player.png", x: 10, y: 200});
+    
         // Let's create an animated robot sprite
-        robot = new Sprite({x: 200, y: 200})
-        robot.sheet = new SpriteSheet({image: "droid_11x15.png", frameSize => [11,15]})
-        robot.animation = Animation.new({frames: robot_sheet.frames, frame_duration: 120})
+        robot = new jaws.Sprite({x: 200, y: 200});
+        robot.sheet = new jaws.SpriteSheet({image: "images/droid_11x15.png", frame_size : [11,15]});
+        robot.animation = new jaws.Animation({frames: robot.sheet.frames, frame_duration: 120});
       }
-
+    
       // update() is called each gametick with given FPS. Put your game logic here.
       this.update = function() {
-        if(pressed("left")) { player.x-- }
-        if(pressed("right)) { player.x++ }
-        robot.image = robot.animation.next()
+        if(jaws.pressed("left")) { player.x--; }
+        if(jaws.pressed("right")) { player.x++; }
+        robot.image = robot.animation.next();
       }
-
+    
       // draw() is called each gametick just after update() is done. Put your drawing/canvas stuff here.
       this.draw = function() {
-        player.draw()
-        robot.draw()
+        player.draw();
+        robot.draw();
       }
     }
     
@@ -87,9 +87,9 @@ Check out the sourcecode for comments and explanations:
     // - have jaws.start() load them automatically for you
     // - or load them manually with jaws.assets.loadAll({loaded: myAssetsAreReadyCall})
     //
-    jaws.assets.add("player.png")
-    jaws.assets.add("droid_11x15.png")
-
+    jaws.assets.add("images/droid_11x15.png");
+    jaws.assets.add("images/player.png");
+    
     //
     // jaws.start() is the easiest way to get something up and running. It will:
     //
@@ -102,7 +102,7 @@ Check out the sourcecode for comments and explanations:
     // 3) When all assets are loaded, call setup()
     // 4) Then call update() / draw() with given FPS (default 60) until game ends or another game state is activated
     //
-    jaws.start(MyGameState)
+    jaws.start(MyGameState);
   </script>
   </body>
   </html>
