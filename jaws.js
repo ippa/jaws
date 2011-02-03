@@ -497,6 +497,7 @@ function Sprite(options) {
 
 Sprite.prototype.rotate = function(value) {
   this.rotation += value
+  return this
 }
 
 // Draw the sprite on screen via its previously given context
@@ -509,6 +510,7 @@ Sprite.prototype.draw = function() {
   jaws.context.drawImage(this.image, 0, 0, this.width, this.height);
 
   jaws.context.restore()
+  return this
 }
 
 // Returns true if point at x, y lies within sprites boundaries
