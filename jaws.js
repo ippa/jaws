@@ -473,10 +473,8 @@ function Sprite(options) {
   this.center_x = options.center_x || 0
   this.center_y = options.center_y || 0
   
-  if(options.image) { 
-    this.image = isDrawable(options.image) ? options.image : assets.data[options.image] 
-  }
-  if(options.rotation_center) { this.rotationCenter(options.rotation_center) }
+  options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
+  options.rotation_center && this.rotationCenter(options.rotation_center)
 
   this.__defineGetter__("width", function()   { return (this.image.width) * this.scale } )
   this.__defineGetter__("height", function()  { return (this.image.height) * this.scale } )
