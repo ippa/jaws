@@ -452,8 +452,8 @@ function _Asset() {
 }
 /*
  * 
- * In many cases Sprite is our mainway of having characters on the screen.
- * it has various properties:
+ * This is usually the Constructor we use when we want characters on the screen.
+ * Comes with various properties:
  *
  *  sprite.x        // horizontal position on canvas, 0 is farthest to the left
  *  sprite.y        // vertical position, 0 is top of the screen
@@ -472,6 +472,7 @@ function Sprite(options) {
   this.scale = options.scale || 1
   this.center_x = options.center_x || 0
   this.center_y = options.center_y || 0
+  this.rotation = options.rotation || 0
   
   options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
   options.rotation_center && this.rotationCenter(options.rotation_center)
@@ -480,6 +481,58 @@ function Sprite(options) {
   this.__defineGetter__("height", function()  { return (this.image.height) * this.scale } )
   this.__defineGetter__("bottom", function()  { return this.y + this.height-1 } )
   this.__defineGetter__("right", function()   { return this.x + this.width-1 } )
+}
+
+//
+//  Pre-cache rotated images? ...
+//
+//  var canvas = document.createElement("canvas")
+//  var context = canvas.getContext("2d")
+//  context.width = image.width  // needs to adapt to new width when rotated
+//  context.height = image.height
+//  context.rotate(rotation * Math.PI / 180)
+//  context.drawImage(this.image, 0, 0, this.width, this.height)
+//  this.image = context
+//
+
+Sprite.prototype.rotate = function(value) {
+  this.rotation += value
+}
+
+// Draw the sprite on screen via its previously given context
+Sprite.prototype.draw = function() {
+  jaws.context.save()
+  
+  jaws.context.translate(this.x, this.y)
+  this.rotation && jaws.context.rotate(this.rotation * Math.PI / 180)
+  jaws.context.translate( -(this.center_x * this.width), -(this.center_y * this.height) )
+  jaws.context.drawImage(this.image, 0, 0, this.width, this.height);
+
+  jaws.context.restore()
+}
+
+// Returns true if point at x, y lies within sprites boundaries
+Sprite.prototype.collidePoint = function(x, y) {
+  return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
+}
+
+// Returns true if calling rect overlaps with given rect in any way
+// rect could be any object that has these 4 prototypes: x,y,right,bottom
+Sprite.prototype.collideRect = function(rect) {
+  return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right )) &&
+          ((this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.y <= this.bottom ))
+}
+Sprite.prototype.collideRightSide = function(rect) {
+  return(this.right >= rect.x && this.x < rect.x)
+}
+Sprite.prototype.collideLeftSide = function(rect) {
+  return(this.x > rect.x && this.x <= rect.right)
+}
+Sprite.prototype.collideTopSide = function(rect) {
+  return(this.y >= rect.y && this.y <= rect.bottom)
+}
+Sprite.prototype.collideBottomSide = function(rect) {
+  return(this.bottom >= rect.y && this.y < rect.y)
 }
 
 //
@@ -516,34 +569,8 @@ Sprite.prototype.rotationCenter = function(align) {
   return this
 }
 
-// Draw the sprite on screen via its previously given context
-Sprite.prototype.draw = function() {
-  jaws.context.drawImage(this.image, this.x-(this.center_x*this.width), this.y-(this.center_y*this.height), this.width, this.height);
-}
 
-// Returns true if point at x, y lies within sprites boundaries
-Sprite.prototype.collidePoint = function(x, y) {
-  return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
-}
 
-// Returns true if calling rect overlaps with given rect in any way
-// rect could be any object that has these 4 prototypes: x,y,right,bottom
-Sprite.prototype.collideRect = function(rect) {
-  return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right )) &&
-          ((this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.y <= this.bottom ))
-}
-Sprite.prototype.collideRightSide = function(rect) {
-  return(this.right >= rect.x && this.x < rect.x)
-}
-Sprite.prototype.collideLeftSide = function(rect) {
-  return(this.x > rect.x && this.x <= rect.right)
-}
-Sprite.prototype.collideTopSide = function(rect) {
-  return(this.y >= rect.y && this.y <= rect.bottom)
-}
-Sprite.prototype.collideBottomSide = function(rect) {
-  return(this.bottom >= rect.y && this.y < rect.y)
-}
 
 /*
  *
@@ -625,8 +652,6 @@ Animation.prototype.next = function() {
 Animation.prototype.currentFrame = function() {
   return this.frames[this.index]
 }
-
-
 
 
 /*
