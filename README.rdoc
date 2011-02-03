@@ -63,8 +63,8 @@ Check out the sourcecode for comments and explanations:
     
         // Let's create an animated robot sprite
         robot = new jaws.Sprite({x: 200, y: 200});
-        robot.sheet = new jaws.SpriteSheet({image: "images/droid_11x15.png", frame_size : [11,15]});
-        robot.animation = new jaws.Animation({frames: robot.sheet.frames, frame_duration: 120});
+
+        robot.animation = new jaws.Animation({sprite_sheet: "images/droid_11x15.png", frame_size: [11,15], frame_duration: 120});
       }
     
       // update() is called each gametick with given FPS. Put your game logic here.
