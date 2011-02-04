@@ -490,8 +490,11 @@ function Sprite(options) {
 
   this.__defineGetter__("width", function()   { return (this.image.width) * this.scale } )
   this.__defineGetter__("height", function()  { return (this.image.height) * this.scale } )
-  this.__defineGetter__("bottom", function()  { return this.y + this.height-1 } )
-  this.__defineGetter__("right", function()   { return this.x + this.width-1 } )
+
+  this.__defineGetter__("right", function()   { return this.x + this.width * (1.0 - this.center_x) } )
+  this.__defineGetter__("bottom", function()  { return this.y + this.height * (1.0 - this.center_y ) } )
+  this.__defineGetter__("left", function() { return this.x - (this.width * this.center_x) } )
+  this.__defineGetter__("top", function()  { return this.y - (this.height * this.center_y) } )
 }
 
 //
@@ -513,6 +516,8 @@ Sprite.prototype.asCanvasContext = function() {
   canvas.height = this.height
 
   var context = canvas.getContext("2d")
+  context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
+
   context.drawImage(this.image, 0, 0, this.width, this.height)
   return context
 }
@@ -590,7 +595,6 @@ Sprite.prototype.center = function(align) {
   if(a = centers[align]) {
     this.center_x = a[0]
     this.center_y = a[1]
-    alert(a)
   }
   return this
 }
