@@ -486,7 +486,7 @@ function Sprite(options) {
   this.rotation = options.rotation || 0
   
   options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
-  options.rotation_center && this.rotationCenter(options.rotation_center)
+  options.center          && this.center(options.center)
 
   this.__defineGetter__("width", function()   { return (this.image.width) * this.scale } )
   this.__defineGetter__("height", function()  { return (this.image.height) * this.scale } )
@@ -506,6 +506,18 @@ function Sprite(options) {
 //  this.image = context
 //
 
+// Create a new canvas context, draw sprite on it and return. Use to get a raw canvas copy of the current sprite state.
+Sprite.prototype.asCanvasContext = function() {
+  var canvas = document.createElement("canvas")
+  canvas.width = this.width
+  canvas.height = this.height
+
+  var context = canvas.getContext("2d")
+  context.drawImage(this.image, 0, 0, this.width, this.height)
+  return context
+}
+
+// Rotate sprite 'value' degrees
 Sprite.prototype.rotate = function(value) {
   this.rotation += value
   return this
@@ -518,7 +530,7 @@ Sprite.prototype.draw = function() {
   this.context.translate(this.x, this.y)
   this.rotation && jaws.context.rotate(this.rotation * Math.PI / 180)
   this.context.translate( -(this.center_x * this.width), -(this.center_y * this.height) )
-  this.context.drawImage(this.image, 0, 0, this.width, this.height);
+  this.context.drawImage(this.image, 0, 0 , this.width, this.height);
 
   this.context.restore()
   return this
@@ -553,8 +565,8 @@ Sprite.prototype.collideBottomSide = function(rect) {
 // For example, a topdown shooter could use rotationCenter("center_center") --> Place middle of the ship on x/y
 // .. and a sidescroller would probably use rotationCenter("center_bottom") --> Place "feet" at x/y
 //
-Sprite.prototype.rotationCenter = function(align) {
-  var rotation_centers = {
+Sprite.prototype.center = function(align) {
+  var centers = {
     top_left: [0,0],
     left_top: [0,0],
     center_left: [0,0.5],
@@ -575,9 +587,10 @@ Sprite.prototype.rotationCenter = function(align) {
     right_bottom: [1,1]
   }
 
-  if(a = rotation_centers[align]) {
+  if(a = centers[align]) {
     this.center_x = a[0]
     this.center_y = a[1]
+    alert(a)
   }
   return this
 }
