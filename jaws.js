@@ -513,14 +513,14 @@ Sprite.prototype.rotate = function(value) {
 
 // Draw the sprite on screen via its previously given context
 Sprite.prototype.draw = function() {
-  jaws.context.save()
+  this.context.save()
   
-  jaws.context.translate(this.x, this.y)
+  this.context.translate(this.x, this.y)
   this.rotation && jaws.context.rotate(this.rotation * Math.PI / 180)
-  jaws.context.translate( -(this.center_x * this.width), -(this.center_y * this.height) )
-  jaws.context.drawImage(this.image, 0, 0, this.width, this.height);
+  this.context.translate( -(this.center_x * this.width), -(this.center_y * this.height) )
+  this.context.drawImage(this.image, 0, 0, this.width, this.height);
 
-  jaws.context.restore()
+  this.context.restore()
   return this
 }
 
