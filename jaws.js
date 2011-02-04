@@ -479,7 +479,7 @@ function Sprite(options) {
   this.options = options
   this.x = options.x || 0
   this.y = options.y || 0
-  this.context = options.context || context
+  this.context = options.context || jaws.context
   this.scale = options.scale || 1
   this.center_x = options.center_x || 0
   this.center_y = options.center_y || 0
@@ -764,42 +764,45 @@ function Rect(x,y,width,height) {
 function Viewport(options) {
   this.options = options
   this.context = options.context || jaws.context
-  this.scale = options.scale || 1
-  this.visible = options.visible || 1
-  this.sprites = options.sprites || []
+  this.width = options.width || jaws.canvas.width
+  this.height = options.height || jaws.canvas.height
+  this.max_width = options.max_width || jaws.canvas.width
+  this.max_height = options.max_height || jawst.canvas.height
   this.x = options.x || 0
   this.y = options.y || 0
-  this.width = options.width || 0
-  this.height = options.height || 0
   
-  this.__defineSetter__("x", function(x) {
-    this.x = x
-    var max_x = this.width - width
-    if(this.x < 0) { this.x = 0 }
-    if(this.x > max_x) { this.x = max_x }
-  })
+  this.__defineGetter__("x", function() {return this._x} );
+  this.__defineGetter__("y", function() {return this._y} );
+
+  this.__defineSetter__("x", function(value) {
+    this._x = value
+    var max = this.max_width - this.width
+    if(this._x < 0)    { this._x = 0 }
+    if(this._x > max)  { this._x = max }
+  });
+  
+  this.__defineSetter__("y", function(value) {
+    this._y = value
+    var max = this.max_height - this.height
+    if(this._y < 0)    { this._y = 0 }
+    if(this._y > max)  { this._y = max }
+  });
 
   this.isInside = function(item) {
-    return( item.x >= this.x && item.x <= (this.x + width) && item.y >= this.y && item.y <= (this.y + height) )
-  }
+    return( item.x >= this._x && item.x <= (this._x + width) && item.y >= this._y && item.y <= (this._y + height) )
+  };
 
   this.centerAround = function(item) {
-    this.x = item.x - width / 2
-    this.y = item.y - height / 2
-  }
+    this.x = (item.x - this.width / 2)
+    this.y = (item.y - this.height / 2)
+  };
 
   this.apply = function(func) {
-    jaws.context.translate(-this.x, -this.y)
+    this.context.save()
+    this.context.translate(-this._x, -this._y)
     func()
-  }
-
- /* 
-  this.draw = function() {
-    if(this.visible) { 
-      jaws.context.drawImage(this.image, this.x, this.y, this.width, this.height)
-    }
-  }
-*/
+    this.context.restore()
+  };
 }
 
 function isImage(obj) {
