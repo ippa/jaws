@@ -51,6 +51,7 @@ var jaws = {
   pressed: pressed,
   on_keydown: on_keydown,
   on_keyup: on_keyup,
+  preventDefaultKeys: preventDefaultKeys,
   gameloop: gameloop,
   canvas: canvas,
   context: context,
@@ -151,6 +152,7 @@ function handleKeyUp(e) {
     on_keyup_callbacks[human_name]() 
     e.preventDefault()
   }
+  if(prevent_default_keys[human_name]) { e.preventDefault() }
 }
 
 /*
@@ -164,8 +166,17 @@ function handleKeyDown(e) {
     on_keydown_callbacks[human_name]()
     e.preventDefault()
   }
+  if(prevent_default_keys[human_name]) { e.preventDefault() }
+
   // jaws.debug(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
   // e.preventDefault();
+}
+
+var prevent_default_keys = []
+function preventDefaultKeys(array_of_strings) {
+  array_of_strings.forEach( function(item, index) {
+    prevent_default_keys[item] = true
+  });
 }
 
 /*
