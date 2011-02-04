@@ -498,18 +498,6 @@ function Sprite(options) {
   this.__defineGetter__("top", function()  { return this.y - (this.height * this.center_y) } )
 }
 
-//
-//  Pre-cache rotated images? ...
-//
-//  var canvas = document.createElement("canvas")
-//  var context = canvas.getContext("2d")
-//  context.width = image.width  // needs to adapt to new width when rotated
-//  context.height = image.height
-//  context.rotate(rotation * Math.PI / 180)
-//  context.drawImage(this.image, 0, 0, this.width, this.height)
-//  this.image = context
-//
-
 // Create a new canvas context, draw sprite on it and return. Use to get a raw canvas copy of the current sprite state.
 Sprite.prototype.asCanvasContext = function() {
   var canvas = document.createElement("canvas")
@@ -600,8 +588,6 @@ Sprite.prototype.center = function(align) {
   }
   return this
 }
-
-
 
 
 /*
