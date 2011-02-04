@@ -471,8 +471,8 @@ function _Asset() {
  *  sprite.scale    // how much to scale the sprite when drawing it
  *  sprite.width    // width of the sprite, will take scale into consideration
  *  sprite.height   // height of the sprite, will take scale into consideration
- *  sprite.bottom   // sprite.y + sprite.height
- *  sprite.right    // sprite.x + sprite.width
+ *  sprite.bottom 
+ *  sprite.right 
  *
  */
 function Sprite(options) {
@@ -484,6 +484,7 @@ function Sprite(options) {
   this.center_x = options.center_x || 0
   this.center_y = options.center_y || 0
   this.rotation = options.rotation || 0
+  this.flipped = options.flipped || false
   
   options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
   options.center          && this.center(options.center)
@@ -534,6 +535,7 @@ Sprite.prototype.draw = function() {
   
   this.context.translate(this.x, this.y)
   this.rotation && jaws.context.rotate(this.rotation * Math.PI / 180)
+  this.flipped && this.context.scale(-1, 1)
   this.context.translate( -(this.center_x * this.width), -(this.center_y * this.height) )
   this.context.drawImage(this.image, 0, 0 , this.width, this.height);
 
@@ -681,23 +683,6 @@ Animation.prototype.next = function() {
 // returns the current frame
 Animation.prototype.currentFrame = function() {
   return this.frames[this.index]
-}
-
-
-/*
- * flipImage() - returns a flipper version of image, usefull for sidescrollers when player changes direction
- */
-function flipImage(image) {
-  var flipped = document.createElement("canvas")
-  flipped.width = image.width
-  flipped.height = image.height
-
-  var ctx = flipped.getContext("2d")
-  ctx.translate(image.width, 0)
-  ctx.scale(-1, 1)
-  ctx.drawImage(image, 0, 0)
-
-  return flipped
 }
 
 function cutImage(image, x, y, width, height) {
