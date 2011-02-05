@@ -1,9 +1,9 @@
 /*
  *
- * JAWS - a HTML5 canvas javascript 2D Game Framework
+ * Jaws - a HTML5 canvas/javascript 2D game development framework
  *
  * Homepage:    http://ippa.se/jaws
- * Works with:  Chrome 4.0, Firefox 3.6+, 4+, IE 9+
+ * Works with:  Chrome 6.0+, Firefox 3.6+, 4+, IE 9+
  *
  * Formating guide:
  *
@@ -375,14 +375,14 @@ function _Asset() {
   this.data = []
   that = this
 
-  this.fileType = {}
-  this.fileType["wav"] = "audio"
-  this.fileType["mp3"] = "audio"
-  this.fileType["ogg"] = "audio"
-  this.fileType["png"] = "image"
-  this.fileType["jpg"] = "image"
-  this.fileType["jpeg"] = "image"
-  this.fileType["bmp"] = "image"
+  this.file_type = {}
+  this.file_type["wav"] = "audio"
+  this.file_type["mp3"] = "audio"
+  this.file_type["ogg"] = "audio"
+  this.file_type["png"] = "image"
+  this.file_type["jpg"] = "image"
+  this.file_type["jpeg"] = "image"
+  this.file_type["bmp"] = "image"
 
 
   this.length = function() {
@@ -400,7 +400,7 @@ function _Asset() {
   this.getType = function(src) {
     postfix_regexp = /\.([a-zA-Z]+)/;
     postfix = postfix_regexp.exec(src)[1]
-    return this.fileType[postfix]
+    return (this.file_type[postfix] ? this.file_type[postfix] : postfix)
   }
   
   this.loadAll = function(options) {
@@ -414,48 +414,68 @@ function _Asset() {
 
     for(i=0; this.list[i]; i++) {
       var asset = this.list[i]
-
+        //debug(this.getType(asset.src), true)
+        
       switch(this.getType(asset.src)) {
         case "image":
-          var src = asset.src //asset.src + "?" + parseInt(Math.random()*10000000)
+          var src = asset.src + "?" + parseInt(Math.random()*10000000)
           asset.image = new Image()
           asset.image.asset = asset
           asset.image.onload = this.imageLoaded
           asset.image.src = src
           break;
         case "audio":
-          var src = asset.src // asset.src + "?" + parseInt(Math.random()*10000000)
+          var src = asset.src + "?" + parseInt(Math.random()*10000000)
           asset.audio = new Audio(src)
           asset.audio.asset = asset
           this.data[asset.src] = asset.audio
           asset.audio.addEventListener("canplay", this.audioLoaded, false);
           asset.audio.load()
           break;
+        default:
+          var src = asset.src + "?" + parseInt(Math.random()*10000000)
+          var req = new XMLHttpRequest()
+          req.open('GET', src, false)
+          req.send(null)
+          if(req.status == 200) {
+            this.data[asset.src] = this.parseAsset(asset.src, req.responseText)
+            this.itemLoaded(asset.src)
+          }
+          break;
       }
     }
   }
 
+  this.parseAsset = function(src, data) {
+    switch(this.getType(src)) {
+      case "json":
+        return JSON.parse(data)
+      default:
+        return data
+    }
+  };
+
+  this.itemLoaded = function(src) {
+    this.loadedCount++
+    var percent = parseInt(this.loadedCount / this.list.length * 100)
+    if(this.loading_callback) { this.loading_callback(src, percent) }
+    if(this.loaded_callback && percent==100) { this.loaded_callback() } 
+  };
+
   this.imageLoaded = function(e) {
     var asset = this.asset
     that.data[asset.src] = asset.image
-    
-    that.loadedCount++
-    var percent = parseInt(that.loadedCount / that.list.length * 100)
-    if(that.loading_callback) { that.loading_callback(asset.src, percent) }
-    if(that.loaded_callback && percent==100) { that.loaded_callback() }
-  }
+    debug("loaded: " + asset.src)
+    that.itemLoaded(asset.src)
+  };
   
   this.audioLoaded = function(e) {
     var asset = this.asset
     that.data[asset.src] = asset.audio
     
     asset.audio.removeEventListener("canplay", that.audioLoaded, false);
-    
-    that.loadedCount++
-    var percent = parseInt(that.loadedCount / that.list.length * 100)
-    if(that.loading_callback) { that.loading_callback(asset.src, percent) }
-    if(that.loaded_callback && percent==100) { that.loaded_callback() }
-  }
+    that.itemLoaded(asset.src)
+  };
 }
 /*
  * 
@@ -750,8 +770,8 @@ function Viewport(options) {
   this.context = options.context || jaws.context
   this.width = options.width || jaws.canvas.width
   this.height = options.height || jaws.canvas.height
-  this.max_x = options.max_x 
-  this.max_y = options.max_y
+  this.max_x = options.max_x || jaws.canvas.width 
+  this.max_y = options.max_y || jaws.canvas.height
   this.x = options.x || 0
   this.y = options.y || 0
   
