@@ -772,8 +772,12 @@ function Viewport(options) {
     if(this._y > max)  { this._y = max }
   });
 
+  this.isOutside = function(item) {
+    return(!this.isInside(item))
+  };
+
   this.isInside = function(item) {
-    return( item.x >= this._x && item.x <= (this._x + width) && item.y >= this._y && item.y <= (this._y + height) )
+    return( item.x >= this._x && item.x <= (this._x + this.width) && item.y >= this._y && item.y <= (this._y + this.height) )
   };
 
   this.centerAround = function(item) {
