@@ -750,8 +750,8 @@ function Viewport(options) {
   this.context = options.context || jaws.context
   this.width = options.width || jaws.canvas.width
   this.height = options.height || jaws.canvas.height
-  this.max_width = options.max_width || jaws.canvas.width
-  this.max_height = options.max_height || jawst.canvas.height
+  this.right = options.right 
+  this.bottom = options.bottom
   this.x = options.x || 0
   this.y = options.y || 0
   
@@ -760,14 +760,14 @@ function Viewport(options) {
 
   this.__defineSetter__("x", function(value) {
     this._x = value
-    var max = this.max_width - this.width
+    var max = this.right - this.width
     if(this._x < 0)    { this._x = 0 }
     if(this._x > max)  { this._x = max }
   });
   
   this.__defineSetter__("y", function(value) {
     this._y = value
-    var max = this.max_height - this.height
+    var max = this.bottom - this.height
     if(this._y < 0)    { this._y = 0 }
     if(this._y > max)  { this._y = max }
   });
@@ -777,7 +777,7 @@ function Viewport(options) {
   };
 
   this.isInside = function(item) {
-    return( item.x >= this._x && item.x <= (this._x + this.width) && item.y >= this._y && item.y <= (this._y + this.height) )
+    return( item.x >= this._x && item.x <= (this._x + this.right) && item.y >= this._y && item.y <= (this._y + this.bottom) )
   };
 
   this.centerAround = function(item) {
