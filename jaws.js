@@ -417,25 +417,20 @@ function _Asset() {
 
       switch(this.getType(asset.src)) {
         case "image":
+          var src = asset.src + "?" + parseInt(Math.random()*10000000)
           asset.image = new Image()
           asset.image.asset = asset
           asset.image.onload = this.imageLoaded
-          asset.image.src = asset.src + "?" + parseInt(Math.random()*10000000)
+          asset.image.src = src
           break;
         case "audio":
-          /*
-          asset.audio = document.createElement('audio');
-          asset.audio.setAttribute('src', asset.src + "?" + parseInt(Math.random()*10000000));
-          */
-          asset.audio = new Audio(asset.src + "?" + parseInt(Math.random()*10000000))
+          var src = asset.src + "?" + parseInt(Math.random()*10000000)
+          
+          asset.audio = new Audio(src)
           asset.audio.asset = asset
-          asset.audio.load()
-
           this.data[asset.src] = asset.audio
-
-          //asset.audio.addEventListener("load", function() { alert("fitt") }, true)
-          //asset.audio.canplay = this.audioLoaded
-          //asset.audio.src = asset.src + "?" + parseInt(Math.random()*10000000)
+          asset.audio.addEventListener("canplay", this.audioLoaded, false);
+          asset.audio.load()
           break;
       }
     }
@@ -452,13 +447,15 @@ function _Asset() {
   }
   
   this.audioLoaded = function(e) {
-    jaws.debug("audio loaded!")
     var asset = this.asset
     that.data[asset.src] = asset.audio
+    
+    asset.audio.removeEventListener("canplay", that.audioLoaded, false);
     
     that.loadedCount++
     var percent = parseInt(that.loadedCount / that.list.length * 100)
     if(that.loading_callback) { that.loading_callback(asset.src, percent) }
+    if(that.loaded_callback && percent==100) { that.loaded_callback() }
   }
 }
 /*
