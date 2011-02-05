@@ -1,0 +1,75 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #5 - Sprite center</title>
+  <head>
+
+  <body>
+  <center>
+
+  <canvas width=1000 height=200></canvas><br />
+  FPS: <span id="fps"></span>
+  
+  <div id="info">
+    <h1>Sprite.center</h1>
+    Showing off the effects of setting different centers for different sprites.
+  </div>
+  
+  <h3>jaws debug</h3>
+  <div id="jaws-debug"></div>
+ 
+  <script>
+    function Example5() {
+      var centers = ["top_left", "top_center", "top_right", "center_left", "center", "center_bottom", "bottom_left", "bottom_center", "bottom_right"]
+      var sprites = []
+      var fps = document.getElementById("fps")
+
+      /* Called once when a game state is activated. Use it for one-time setup code. */
+      this.setup = function() {
+        jaws.context.lineWidth = 1
+        jaws.context.font = "12px verdana";
+        jaws.context.strokeStyle =  "black"
+
+        for(var i=0; i < 9; i++) {
+          var sprite = new jaws.Sprite({image: "rect.png", x: (50.5 + i*100), y: 100, center: centers[i]})
+          sprites.push(sprite)
+          
+          jaws.context.fillText(centers[i], sprite.x, 150)
+          jaws.context.fillText("center_x: " + sprite.center_x, sprite.x, 165)
+          jaws.context.fillText("center_y: " + sprite.center_y, sprite.x, 180)
+          jaws.context.moveTo(sprite.x, 0)
+          jaws.context.lineTo(sprite.x, jaws.height)
+        }
+        jaws.context.moveTo(0, 100)
+        jaws.context.lineTo(jaws.width, 100)
+ 
+        jaws.context.stroke();
+      }
+
+      /* update() will get called each game tick with your specified FPS. Put game logic here. */
+      this.update = function() {
+        sprites.forEach( function(sprite, index) {
+          sprite.rotate(1)
+        });
+
+        fps.innerHTML = jaws.gameloop.fps
+      }
+
+      /* Directly after each update draw() will be called. Put all your on-screen operations here. */
+      this.draw = function() {
+        sprites.draw()
+      }
+    }
+    
+    window.onload = function() {
+      jaws.assets.add("rect.png")
+      jaws.start(Example5)
+    }
+  </script>
+
+  </center>
+  </body>
+</html>
+
