@@ -6,9 +6,12 @@
     <title>Jaws Example #1 - Sprite(), pressed(), basic game loop</title>
   <head>
 
-<body>
-  <canvas width=500 height=300></canvas>
-  
+    <body>
+    <center>
+
+  <canvas width=500 height=300></canvas><br />
+  FPS: <span id="fps"></span>. Move with arrow keys.  
+
   <div id="info">
     <h1>Basic example</h1>
     An basic example jaws example.
@@ -26,6 +29,7 @@
     var context
     var title_tag
     var bullets = []
+    var fps = document.getElementById("fps")
 
     /* step0. set everything up, load sprites etc. */
     function setup() {
@@ -58,6 +62,7 @@
       bullets.draw()  // will call draw() on all items in array
 
       title_tag.innerHTML = "FPS: " + jaws.gameloop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas.width + "/" + canvas.height
+      fps.innerHTML = jaws.gameloop.fps
     }
     
     /* 2 functions that will help us remove bullets outside the canvas + keep the plane within the canvas. */
@@ -84,7 +89,8 @@
     jaws.assets.add("plane.png")
     jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
                   // If you wan't you can modify the defaults: jaws.init({setup: initGame, fps: 30}) 
-    </script>
+  </script>
+</center>
 </body>
 </html>
 
