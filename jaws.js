@@ -417,15 +417,14 @@ function _Asset() {
 
       switch(this.getType(asset.src)) {
         case "image":
-          var src = asset.src + "?" + parseInt(Math.random()*10000000)
+          var src = asset.src //asset.src + "?" + parseInt(Math.random()*10000000)
           asset.image = new Image()
           asset.image.asset = asset
           asset.image.onload = this.imageLoaded
           asset.image.src = src
           break;
         case "audio":
-          var src = asset.src + "?" + parseInt(Math.random()*10000000)
-          
+          var src = asset.src // asset.src + "?" + parseInt(Math.random()*10000000)
           asset.audio = new Audio(src)
           asset.audio.asset = asset
           this.data[asset.src] = asset.audio
