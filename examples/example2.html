@@ -43,6 +43,7 @@
         player = new jaws.Sprite({image: "plane.png", x: 10, y:100})
         player.can_fire = true
         jaws.on_keydown("esc",  function() { jaws.switchGameState(MenuState) })
+        jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       }
 
       this.update = function() {

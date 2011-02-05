@@ -14,7 +14,7 @@
 
   <div id="info">
     <h1>Basic example</h1>
-    An basic example jaws example.
+    An basic example jaws.
     We make our own canvas, instead of having jaws generate one (or several) for us.
     We get the canvas-tag from the DOM, fetch its context and send it to Sprite.
     If you for some reason want to have your own canvas tag this is the way to do it.
@@ -39,6 +39,7 @@
 
       player = new jaws.Sprite({image: "plane.png", x: 10, y:100, context: context})
       jaws.on_keydown("esc", setup)
+      jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
     }
     
     /* step1. execute the game logic */
