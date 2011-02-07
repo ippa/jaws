@@ -15,6 +15,18 @@
       ok(jaws.Rect, "jaws.Rect")
     })
 
+    test("Rect", function() {
+      rect1 = new jaws.Rect(0,0,10,10)
+      rect2 = new jaws.Rect(5,5,10,10)
+      rect3 = new jaws.Rect(2,2,10,10)
+      rect4 = new jaws.Rect(11,11,10,10)  // This won't collide with anything
+
+      ok(rect1.collideRect(rect2), "collideRect()")
+      ok(rect3.collideRect(rect1), "collideRect()")
+      ok(rect3.collideRect(rect2), "collideRect()")
+      ok(!rect4.collideRect(rect1), "collideRect()")
+    })
+
     test("isSomething() helpers", function() {
       a_function = function() {}
       a_string = "a string"

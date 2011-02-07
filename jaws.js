@@ -537,34 +537,39 @@ function Sprite(options) {
   this.center_y = options.center_y || 0
   this.rotation = options.rotation || 0
   this.flipped = options.flipped || false
-  this.scale = options.scale || 1
-  this._rect = options.rect
+  this._scale = options.scale || 1
+  this._rect = new Rect(0,0,0,0)
 
   var left_offset, top_offset, right_offset, bottom_offset
 
-  this.__defineGetter__("width", function()   { return this._image.width * this.scale } )
-  this.__defineGetter__("height", function()  { return this._image.height * this.scale } )
+  this.__defineGetter__("width", function()   { return this._image.width * this._scale } )
+  this.__defineGetter__("height", function()  { return this._image.height * this._scale } )
   this.__defineGetter__("left", function()    { return this.x - left_offset } )
   this.__defineGetter__("top", function()     { return this.y - top_offset } )
   this.__defineGetter__("right", function()   { return this.x + right_offset;  } )
   this.__defineGetter__("bottom", function()  { return this.y + bottom_offset } )
- 
-  this.__defineGetter__("image", function(value)   { return _image })
-  this.__defineSetter__("image", function(value)   { 
-    this._image = value
+
+  this.calcBorderOffsets = function() {
     left_offset = this.width * this.center_x
     top_offset = this.height * this.center_y
     right_offset =  this.width * (1.0 - this.center_x)
     bottom_offset = this.height * (1.0 - this.center_y)
-  })
+  } 
+
+  this.__defineGetter__("image", function(value)   { return _image })
+  this.__defineSetter__("image", function(value)   { this._image = value; this.calcBorderOffsets(); })
+  this.__defineGetter__("scale", function(value)   { return _scale })
+  this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); })
+
 
   options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
   options.center          && this.center(options.center)
  
-  this.__defineGetter__("rect", function()    { 
-    if(!this._rect) { this._rect = new Rect(this.left, this.top, this.width, this.height) }
+  this.__defineGetter__("rect", function() { 
     this._rect.x = this.left
     this._rect.y = this.top
+    this._rect.width = this.width
+    this._rect.height = this.height
     return this._rect
   })
 }
@@ -632,6 +637,7 @@ Sprite.prototype.center = function(align) {
   if(a = centers[align]) {
     this.center_x = a[0]
     this.center_y = a[1]
+    this._image && this.calcBorderOffsets()
   }
   return this
 }
