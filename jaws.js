@@ -414,7 +414,6 @@ function _Asset() {
 
     for(i=0; this.list[i]; i++) {
       var asset = this.list[i]
-        //debug(this.getType(asset.src), true)
         
       switch(this.getType(asset.src)) {
         case "image":
@@ -465,7 +464,6 @@ function _Asset() {
   this.imageLoaded = function(e) {
     var asset = this.asset
     that.data[asset.src] = asset.image
-    debug("loaded: " + asset.src)
     that.itemLoaded(asset.src)
   };
   
@@ -477,6 +475,45 @@ function _Asset() {
     that.itemLoaded(asset.src)
   };
 }
+
+/*
+ * A bread and butter Rect() - useful for basic collision detection
+ */
+function Rect(x,y,width,height) {
+  this.x = x
+  this.y = y
+  this.width = width
+  this.height = height
+  
+  this.__defineGetter__("right", function() { return this.x + this.width } )
+  this.__defineGetter__("bottom", function() { return this.y + this.height } )
+
+  // Draw a red rectangle
+  this.draw = function() {
+    jaws.context.strokeStyle = "red"
+    jaws.context.strokeRect(this.x, this.y, this.width, this.height)
+  }
+
+  // Returns true if point at x, y lies within calling rect
+  this.collidePoint = function(x, y) {
+    return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
+  }
+
+  // Returns true if calling rect overlaps with given rect in any way
+  this.collideRect = function(rect) {
+    return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right)) &&
+           ((this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.y <= this.bottom))
+  }
+}
+
+/* TODO: add tests for bellow functions */
+Rect.prototype.collideRightSide = function(rect)  { return(this.right >= rect.x && this.x < rect.x) }
+Rect.prototype.collideLeftSide = function(rect)   { return(this.x > rect.x && this.x <= rect.right) }
+Rect.prototype.collideTopSide = function(rect)    { return(this.y >= rect.y && this.y <= rect.bottom) }
+Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y && this.y < rect.y) }
+
+
+
 /*
  * 
  * This is usually the Constructor we use when we want characters on the screen.
@@ -496,22 +533,40 @@ function Sprite(options) {
   this.x = options.x || 0
   this.y = options.y || 0
   this.context = options.context || jaws.context
-  this.scale = options.scale || 1
   this.center_x = options.center_x || 0
   this.center_y = options.center_y || 0
   this.rotation = options.rotation || 0
   this.flipped = options.flipped || false
-  
+  this.scale = options.scale || 1
+  this._rect = options.rect
+
+  var left_offset, top_offset, right_offset, bottom_offset
+
+  this.__defineGetter__("width", function()   { return this._image.width * this.scale } )
+  this.__defineGetter__("height", function()  { return this._image.height * this.scale } )
+  this.__defineGetter__("left", function()    { return this.x - left_offset } )
+  this.__defineGetter__("top", function()     { return this.y - top_offset } )
+  this.__defineGetter__("right", function()   { return this.x + right_offset;  } )
+  this.__defineGetter__("bottom", function()  { return this.y + bottom_offset } )
+ 
+  this.__defineGetter__("image", function(value)   { return _image })
+  this.__defineSetter__("image", function(value)   { 
+    this._image = value
+    left_offset = this.width * this.center_x
+    top_offset = this.height * this.center_y
+    right_offset =  this.width * (1.0 - this.center_x)
+    bottom_offset = this.height * (1.0 - this.center_y)
+  })
+
   options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
   options.center          && this.center(options.center)
-
-  this.__defineGetter__("width", function()   { return (this.image.width) * this.scale } )
-  this.__defineGetter__("height", function()  { return (this.image.height) * this.scale } )
-
-  this.__defineGetter__("right", function()   { return this.x + this.width * (1.0 - this.center_x) } )
-  this.__defineGetter__("bottom", function()  { return this.y + this.height * (1.0 - this.center_y ) } )
-  this.__defineGetter__("left", function() { return this.x - (this.width * this.center_x) } )
-  this.__defineGetter__("top", function()  { return this.y - (this.height * this.center_y) } )
+ 
+  this.__defineGetter__("rect", function()    { 
+    if(!this._rect) { this._rect = new Rect(this.left, this.top, this.width, this.height) }
+    this._rect.x = this.left
+    this._rect.y = this.top
+    return this._rect
+  })
 }
 
 // Create a new canvas context, draw sprite on it and return. Use to get a raw canvas copy of the current sprite state.
@@ -523,7 +578,7 @@ Sprite.prototype.asCanvasContext = function() {
   var context = canvas.getContext("2d")
   context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
 
-  context.drawImage(this.image, 0, 0, this.width, this.height)
+  context.drawImage(this._image, 0, 0, this.width, this.height)
   return context
 }
 
@@ -541,34 +596,10 @@ Sprite.prototype.draw = function() {
   this.rotation && jaws.context.rotate(this.rotation * Math.PI / 180)
   this.flipped && this.context.scale(-1, 1)
   this.context.translate( -(this.center_x * this.width), -(this.center_y * this.height) )
-  this.context.drawImage(this.image, 0, 0 , this.width, this.height);
+  this.context.drawImage(this._image, 0, 0 , this.width, this.height);
 
   this.context.restore()
   return this
-}
-
-// Returns true if point at x, y lies within sprites boundaries
-Sprite.prototype.collidePoint = function(x, y) {
-  return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
-}
-
-// Returns true if calling rect overlaps with given rect in any way
-// rect could be any object that has these 4 prototypes: x,y,right,bottom
-Sprite.prototype.collideRect = function(rect) {
-  return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right )) &&
-          ((this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.y <= this.bottom ))
-}
-Sprite.prototype.collideRightSide = function(rect) {
-  return(this.right >= rect.x && this.x < rect.x)
-}
-Sprite.prototype.collideLeftSide = function(rect) {
-  return(this.x > rect.x && this.x <= rect.right)
-}
-Sprite.prototype.collideTopSide = function(rect) {
-  return(this.y >= rect.y && this.y <= rect.bottom)
-}
-Sprite.prototype.collideBottomSide = function(rect) {
-  return(this.bottom >= rect.y && this.y < rect.y)
 }
 
 //
@@ -712,45 +743,6 @@ function SpriteSheet(options) {
     }
   }
   this.__defineGetter__("length", function() { return this.frames.length})
-}
-
-/*
- *
- * A bread and butter Rect() - useful for basic collision detection
- *
- */
-function Rect(x,y,width,height) {
-  this.x = x
-  this.y = y
-  this.width = width
-  this.height = height
-  
-  this.right = function()   { this.x + this.width }
-  this.bottom = function()  { this.y + this.height }
-
-  /* Returns an array of x/y points, the 4 corners of the Rect */
-  this.corners = function() {
-    return [[this.x, this.y], [this.x, this.width], [this.bottom, this.y], [this.bottom, this.right]]
-  }
-  
-  /* 
-   *
-   * Returns true if point at x, y lies within calling rect
-   *
-   * */
-  this.collidePoint = function(x, y) {
-    return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
-  }
-
-  /*
-   *
-   * Returns true if calling rect overlaps with given rect in any way
-   *
-  */
-  this.collideRect = function(rect) {
-    return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right ) &&
-      (this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.t <= this.bottom ))
-  }
 }
 
 
