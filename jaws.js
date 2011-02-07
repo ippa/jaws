@@ -556,9 +556,9 @@ function Sprite(options) {
     bottom_offset = this.height * (1.0 - this.center_y)
   } 
 
-  this.__defineGetter__("image", function(value)   { return _image })
+  this.__defineGetter__("image", function(value)   { return this._image })
   this.__defineSetter__("image", function(value)   { this._image = value; this.calcBorderOffsets(); })
-  this.__defineGetter__("scale", function(value)   { return _scale })
+  this.__defineGetter__("scale", function(value)   { return this._scale })
   this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); })
 
 
