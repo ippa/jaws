@@ -47,17 +47,25 @@
       same(jaws.isImage(an_array), false, "isImage() should fail")
     })
     
-    test("assets", function() {
-      expect(2)
+    test("image assets", function() {
+      var assets_loaded = 0
       jaws.assets.add("droid_11x15.png")
+      jaws.assets.add("laser.wav")
+      jaws.assets.add("gamedata.json")
       jaws.assets.loadAll({loaded: loaded})
       stop()
       function loaded() {
         ok(1, "loaded was called")
         ok(jaws.assets.get("droid_11x15.png"), "image loaded")
-        start()
-        //setTimeout(asset_depending_tests, 1000)
+        ok(jaws.assets.get("laser.wav"), "audio loaded")
+        ok(jaws.assets.get("gamedata.json"), "json loaded")
+
+        ok(jaws.isImage(jaws.assets.get("droid_11x15.png")), "png loaded as Image")
+        same(jaws.assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
+        same(jaws.assets.get("gamedata.json").mode, "angry", "jsondata got parsed into an object")
+        
         asset_depending_tests()
+        start()
       }
     });
 
