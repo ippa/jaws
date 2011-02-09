@@ -20,9 +20,7 @@
  * ippa.
  *
  */
-
 (function(global, undefined) {
-
   var pressed_keys = {}
   var keycode_to_string = []
   var on_keydown_callbacks = []
@@ -770,8 +768,8 @@ function Viewport(options) {
   this.height = options.height || jaws.canvas.height
   this.max_x = options.max_x || jaws.canvas.width 
   this.max_y = options.max_y || jaws.canvas.height
-  this.x = options.x || 0
-  this.y = options.y || 0
+  this._x = options.x || 0
+  this._y = options.y || 0
   
   this.__defineGetter__("x", function() {return this._x} );
   this.__defineGetter__("y", function() {return this._y} );
@@ -795,7 +793,7 @@ function Viewport(options) {
   };
 
   this.isInside = function(item) {
-    return( item.x >= this._x && item.x <= (this._x + this.max_x) && item.y >= this._y && item.y <= (this._y + this.max_y) )
+    return( item.x >= this._x && item.x <= (this._x + this.width) && item.y >= this._y && item.y <= (this._y + this.height) )
   };
 
   this.centerAround = function(item) {

@@ -20,7 +20,7 @@ Jaws also...
 
 == Learn more
 * http://ippa.se/jaws          - Official Jaws homepage. Jaws docs and design choices.
-* http://ippa.se/jaws/test/    - Jaws QUnit testsuite
+* [http://ippa.se/jaws/test/]    - Jaws QUnit testsuite
 
 == Examples online
 Check out the sourcecode for comments and explanations:

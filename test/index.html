@@ -6,7 +6,6 @@
   <link href="qunit.css" rel="stylesheet" type="text/css" />
 
   <script type="text/javascript">
-    module("basics")
     test("Properties should exist", function() {
       ok(jaws, "window.jaws")
       ok(jaws.Animation, "jaws.Animation")
@@ -50,6 +49,7 @@
     test("image assets", function() {
       var assets_loaded = 0
       jaws.assets.add("droid_11x15.png")
+      jaws.assets.add("rect.png")
       jaws.assets.add("laser.wav")
       jaws.assets.add("gamedata.json")
       jaws.assets.loadAll({loaded: loaded})
@@ -71,6 +71,56 @@
 
   // Various test that need to wait some before assets are loaded
   function asset_depending_tests() {
+    
+    test("Sprite", function() {
+      sprite = new jaws.Sprite({image: "rect.png", x:0, y:0})
+      equal(sprite.width, 20, "sprite.width")  
+      equal(sprite.height, 20, "sprite.height")
+      
+      sprite.scale = 2
+      equal(sprite.width, 40, "sprite.width after scaling x2")
+      equal(sprite.height, 40, "sprite.height after scaling x2")
+      same(sprite.rect, new jaws.Rect(0,0,40,40), "sprite.rect")
+
+      sprite.center("top_left")
+      equal(sprite.x, sprite.left, "sprite.x == sprite.left when center is top_left")
+      equal(sprite.y, sprite.top, "sprite.y == sprite.top when center is top_left")
+      
+      sprite.center("bottom_right")
+      equal(sprite.x, sprite.right, "sprite.x == sprite.right when center is bottom_right")
+      equal(sprite.y, sprite.bottom, "sprite.y == sprite.bottom when center is bottom_right")
+    })
+    
+    test("Viewport", function() {
+      viewport = new jaws.Viewport({max_x: 1000, max_y: 1000, width: 50, height: 40})
+      sprite = new jaws.Sprite({image: "rect.png", x:30, y:40})
+      
+      equal(viewport.x, 0, "viewport.x defaults to 0")
+      equal(viewport.y, 0, "viewport.y defaults to 0")
+
+      viewport.x = 1111
+      equal(viewport.x, 950, "viewport.x setter will respect max_x and width")
+      viewport.x = -10
+      equal(viewport.x, 0, "viewport.x setter won't go negative")
+
+      viewport.y = 1111
+      equal(viewport.y, 960, "viewport.x setter will respect max_y and height")
+
+      viewport.centerAround(sprite)
+      equal(viewport.x, 5, "centerAround will center viewport around given sprite or 'object with x/y'")
+      equal(viewport.y, 20, "centerAround will center viewport around given sprite or 'object with x/y'")
+
+      viewport.x = 0
+      viewport.y = 0
+      sprite.x = 55
+      sprite.y = 0
+      equal(viewport.isInside(sprite), false, "isInside should return false")
+      equal(viewport.isOutside(sprite), true, "isOutside should return true")
+
+      sprite.x = 49
+      equal(viewport.isInside(sprite), true, "isInside should return true") 
+    })
+
     test("SpriteSheet", function() {
       sprite_sheet = new jaws.SpriteSheet( {image: "droid_11x15.png", frame_size: [11,15]} )
 
