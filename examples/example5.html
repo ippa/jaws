@@ -3,7 +3,7 @@
   <head>
     <script src="../jaws.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
-    <title>Jaws Example #5 - Sprite center</title>
+    <title>Jaws Example #5 - Sprite.anchor()</title>
   <head>
 
   <body>
@@ -14,7 +14,7 @@
   
   <div id="info">
     <h1>Sprite.center</h1>
-    Showing off the effects of setting different centers for different sprites.
+    Showing off the effects of setting different anchors for different sprites.
   </div>
   
   <h3>jaws debug</h3>
@@ -22,7 +22,7 @@
  
   <script>
     function Example5() {
-      var centers = ["top_left", "top_center", "top_right", "center_left", "center", "center_bottom", "bottom_left", "bottom_center", "bottom_right"]
+      var anchors = ["top_left", "top_center", "top_right", "center_left", "center", "center_bottom", "bottom_left", "bottom_center", "bottom_right"]
       var sprites = []
       var fps = document.getElementById("fps")
 
@@ -33,10 +33,10 @@
         jaws.context.strokeStyle =  "black"
 
         for(var i=0; i < 9; i++) {
-          var sprite = new jaws.Sprite({image: "rect.png", x: (50.5 + i*100), y: 100, center: centers[i]})
+          var sprite = new jaws.Sprite({image: "rect.png", x: (50.5 + i*100), y: 100, anchor: anchors[i]})
           sprites.push(sprite)
           
-          jaws.context.fillText(centers[i], sprite.x, 150)
+          jaws.context.fillText(anchors[i], sprite.x, 150)
           jaws.context.fillText("center_x: " + sprite.center_x, sprite.x, 165)
           jaws.context.fillText("center_y: " + sprite.center_y, sprite.x, 180)
           jaws.context.moveTo(sprite.x, 0)

@@ -561,7 +561,7 @@ function Sprite(options) {
 
 
   options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
-  options.center          && this.center(options.center)
+  options.anchor          && this.anchor(options.anchor)
  
   this.__defineGetter__("rect", function() { 
     this._rect.x = this.left
@@ -606,12 +606,14 @@ Sprite.prototype.draw = function() {
 }
 
 //
-// Set the point on the image which should be drawn at sprites x/y
-// For example, a topdown shooter could use rotationCenter("center_center") --> Place middle of the ship on x/y
-// .. and a sidescroller would probably use rotationCenter("center_bottom") --> Place "feet" at x/y
+// The sprites anchor could be describe as "the part of the sprite will be placed at x/y"
+// or "when rotating, what point of the of the sprite will it rotate round"
 //
-Sprite.prototype.center = function(align) {
-  var centers = {
+// For example, a topdown shooter could use anchor("center") --> Place middle of the ship on x/y
+// .. and a sidescroller would probably use anchor("center_bottom") --> Place "feet" at x/y
+//
+Sprite.prototype.anchor = function(align) {
+  var anchors = {
     top_left: [0,0],
     left_top: [0,0],
     center_left: [0,0.5],
@@ -632,7 +634,7 @@ Sprite.prototype.center = function(align) {
     right_bottom: [1,1]
   }
 
-  if(a = centers[align]) {
+  if(a = anchors[align]) {
     this.center_x = a[0]
     this.center_y = a[1]
     this._image && this.calcBorderOffsets()

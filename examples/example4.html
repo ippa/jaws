@@ -34,7 +34,7 @@
         while(amount_of_rects--) {
           var x = Math.random() * jaws.canvas.width
           var y = Math.random() * jaws.canvas.height
-          var sprite = new jaws.Sprite({image: "rect.png", x: x, y: y, center: "center"})
+          var sprite = new jaws.Sprite({image: "rect.png", x: x, y: y, anchor: "center"})
           sprite.vx = Math.random() * 0.5 - 1
           sprite.vy = Math.random() * 0.5 - 1
           sprites.push(sprite)

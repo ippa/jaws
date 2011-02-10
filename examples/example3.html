@@ -24,7 +24,7 @@
   <div id="info">
     <h1>Animations</h1>
     Showing of a "complex" animation, all cut up from a spritesheet.
-    We also use {center: "center_bottom"} which means when we paint the sprite at 100/200, the feet will be placed there.
+    We also use {anchor: "center_bottom"} which means when we paint the sprite at 100/200, the feet will be placed there.
   </div>
   
   <h3>jaws debug</h3>
@@ -45,7 +45,7 @@
       this.setup = function() {
         var anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
 
-        player = new jaws.Sprite({x:100, y:300, scale: 4, center: "center_bottom"})
+        player = new jaws.Sprite({x:100, y:300, scale: 4, anchor: "center_bottom"})
         player.anim_default = anim.slice(0,5)
         player.anim_up = anim.slice(6,8)
         player.anim_down = anim.slice(8,10)
