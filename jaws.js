@@ -2,7 +2,7 @@
  *
  * Jaws - a HTML5 canvas/javascript 2D game development framework
  *
- * Homepage:    http://ippa.se/jaws
+ * Homepage:    http://jawsjs.com/
  * Works with:  Chrome 6.0+, Firefox 3.6+, 4+, IE 9+
  *
  * Formating guide:
@@ -17,7 +17,7 @@
  *
  * Have fun! 
  *
- * ippa.
+ * ippa. 
  *
  */
 (function(global, undefined) {

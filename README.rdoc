@@ -19,17 +19,17 @@ Jaws also...
   * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Learn more
-* http://ippa.se/jaws          - Official Jaws homepage. Jaws docs and design choices.
-* {http://ippa.se/jaws/test/}[http://ippa.se/jaws/test/]    - Jaws QUnit testsuite
+* http://jawsjs.com/          - Official Jaws homepage. Jaws docs and design choices.
+* {http://jawsjs.com/test/}[http://jawsjs.com/test/]    - Jaws QUnit testsuite
 
 == Examples online
 Check out the sourcecode for comments and explanations:
 
-* http://ippa.se/jaws/examples/example1.html  - focus: manual setup of canvas. later examples shows better ways.
-* http://ippa.se/jaws/examples/example2.html  - focus: jaws game states
-* http://ippa.se/jaws/examples/example3.html  - focus: Animation()
-* http://ippa.se/jaws/examples/example4.html  - focus: Rect based collision detection
-* http://ippa.se/jaws/examples/example5.html  - focus: Sprite({center: ...}) parameter
+* http://jawsjs.com/source/examples/example1.html  - focus: manual setup of canvas. later examples shows better ways.
+* http://jawsjs.com/source/examples/example2.html  - focus: jaws game states
+* http://jawsjs.com/source/examples/example3.html  - focus: Animation()
+* http://jawsjs.com/source/examples/example4.html  - focus: Rect based collision detection
+* http://jawsjs.com/source/examples/example5.html  - focus: Sprite({center: ...}) parameter
 
 == Code demo
   //
