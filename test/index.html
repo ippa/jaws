@@ -82,13 +82,13 @@
       equal(sprite.height, 40, "sprite.height after scaling x2")
       same(sprite.rect, new jaws.Rect(0,0,40,40), "sprite.rect")
 
-      sprite.center("top_left")
-      equal(sprite.x, sprite.left, "sprite.x == sprite.left when center is top_left")
-      equal(sprite.y, sprite.top, "sprite.y == sprite.top when center is top_left")
+      sprite.anchor("top_left")
+      equal(sprite.x, sprite.left, "sprite.x == sprite.left when anchor is top_left")
+      equal(sprite.y, sprite.top, "sprite.y == sprite.top when anchor is top_left")
       
-      sprite.center("bottom_right")
-      equal(sprite.x, sprite.right, "sprite.x == sprite.right when center is bottom_right")
-      equal(sprite.y, sprite.bottom, "sprite.y == sprite.bottom when center is bottom_right")
+      sprite.anchor("bottom_right")
+      equal(sprite.x, sprite.right, "sprite.x == sprite.right when anchor is bottom_right")
+      equal(sprite.y, sprite.bottom, "sprite.y == sprite.bottom when anchor is bottom_right")
     })
     
     test("Viewport", function() {
