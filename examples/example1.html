@@ -6,8 +6,8 @@
     <title>Jaws Example #1 - Sprite(), pressed(), basic game loop</title>
   <head>
 
-    <body>
-    <center>
+  <body>
+  <center>
 
   <canvas width=500 height=300></canvas><br />
   FPS: <span id="fps"></span>. Move with arrow keys.  
@@ -18,10 +18,8 @@
     We make our own canvas, instead of having jaws generate one (or several) for us.
     We get the canvas-tag from the DOM, fetch its context and send it to Sprite.
     If you for some reason want to have your own canvas tag this is the way to do it.
+    Add "?debug=1" to the URL and jaws will create a small window with debuginfo.
   </div>
-  
-  <h3>jaws debug</h3>
-  <div id="jaws-debug"></div>
  
   <script>
     var player

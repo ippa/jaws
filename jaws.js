@@ -32,6 +32,8 @@
   var context
   var game_state
   var previous_game_state
+  var url_parameters
+  var debug_tag
 
 /* 
  * Expose these properties via the global "jaws".
@@ -63,6 +65,7 @@ var jaws = {
   isCanvas: isCanvas,
   isDrawable: isDrawable,
   combinations: combinations,
+  url_parameters: url_parameters,
   init: init,
   start: start
 }
@@ -208,17 +211,13 @@ function on_keyup(key, callback) {
 
 
 /*
- * Simple debug output, adds text to a <div id="jaws-debug"></div> or simple alerts() is that's not available.
+ * Simple debug output, adds text to previously found or created <div id="jaws-debug">
  */
 function debug(msg, add) {
-  debug_div = document.getElementById("jaws-debug")
-  if(debug_div) {
+  if(debug_tag) {
     msg += "<br />"
-    if(add) { debug_div.innerHTML = debug_div.innerHTML.toString() + msg } 
-    else { debug_div.innerHTML = msg }
-  } 
-  else {
-    // alert(msg)
+    if(add) { debug_tag.innerHTML = debug_tag.innerHTML.toString() + msg } 
+    else { debug_tag.innerHTML = msg }
   }
 }
 
@@ -229,11 +228,31 @@ function debug(msg, add) {
  *
  * */
 function init() {
-  /* Find <title> and <canvas> tags */
+  /* Find <title> tag */
   title = document.getElementsByTagName('title')[0]
+
+  url_parameters = getUrlParameters()
+
+  /*
+   * If debug=1 parameter is present in the URL, let's either find <div id="jaws-debug"> or create the tag.
+   * jaws.debug(message) will use this div for debug/info output to the gamer or developer
+   *
+   */
+  if(url_parameters["debug"]) {
+    debug_tag = document.getElementById('jaws-debug')
+    if(!debug_tag) {
+      debug_tag = document.createElement("div")
+      debug_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;"
+      document.body.appendChild(debug_tag)
+    }
+  }
+
+  /* 
+   * Find the <canvas> so following draw-operations can use it.
+   * If the developer didn't provide a <canvas> in his HTML, let's create one.
+   *
+   */
   jaws.canvas = document.getElementsByTagName('canvas')[0]
-  
-  /* If user didn't provide a <canvas>, let's create one */
   if(!jaws.canvas) {
     jaws.canvas = document.createElement("canvas")
     jaws.canvas.width = 500
@@ -244,7 +263,8 @@ function init() {
   else {
     debug("found canvas", true)
   }
-  
+
+ 
   jaws.context = jaws.canvas.getContext('2d');
 }
 
@@ -846,6 +866,22 @@ function combinations(s, n) {
   }
   return r;
 }
+
+/* 
+ * private methods that returns a hash of url-parameters and their values 
+ *
+ * */
+function getUrlParameters() {
+  var vars = [], hash;
+  var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+  for(var i = 0; i < hashes.length; i++) {
+    hash = hashes[i].split('=');
+    vars.push(hash[0]);
+    vars[hash[0]] = hash[1];
+  }
+  return vars;
+}
+
 
 global.jaws = jaws
 
