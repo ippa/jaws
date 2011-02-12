@@ -542,12 +542,13 @@ function Parallax(options) {
 }
 
 Parallax.prototype.draw = function(options) {
-  var layer;
+  var layer, save_x, save_y;
+
   for(var i=0; i < this.layers.length; i++) {
     layer = this.layers[i]
     
-    var save_x = layer.x
-    var save_y = layer.y
+    save_x = layer.x
+    save_y = layer.y
 
     layer.x = -(this.camera_x / layer.damping)
     layer.y = -(this.camera_y / layer.damping)
