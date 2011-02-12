@@ -534,6 +534,8 @@ Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y
 
 function Parallax(options) {
   this.scale = options.scale || 1
+  this.repeat_x = options.repeat_x
+  this.repeat_y = options.repeat_y
   this.camera_x = options.camera_x || 0
   this.camera_y = options.camera_y || 0
   this.layers = []
@@ -543,9 +545,30 @@ Parallax.prototype.draw = function(options) {
   var layer;
   for(var i=0; i < this.layers.length; i++) {
     layer = this.layers[i]
+    
+    var save_x = layer.x
+    var save_y = layer.y
+
     layer.x = -(this.camera_x / layer.damping)
     layer.y = -(this.camera_y / layer.damping)
-    layer.draw();
+
+    while(this.repeat_x && layer.x > 0) { layer.x -= layer.image.width }
+    while(this.repeat_y && layer.y > 0) { layer.y -= layer.image.width }
+
+    while(this.repeat_x && layer.x < jaws.width) {
+      while(this.repeat_y && layer.y < jaws.height) {
+        layer.draw()
+        layer.y += layer.image.height
+      }    
+      layer.y = save_y
+      layer.draw()
+      layer.x += (layer.image.width-1)  // -1 to compensate for glitches in repeating tiles
+    }
+    while(layer.repeat_y && !layer.repeat_x && layer.y < jaws.height) {
+      layer.draw()
+      layer.y += layer.image.height
+    }
+    layer.x = save_x
   }
 }
 Parallax.prototype.addLayer = function(options) {

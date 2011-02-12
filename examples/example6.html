@@ -9,7 +9,7 @@
   <body>
     <center>
 
-    <canvas width=500 height=300></canvas><br />
+    <canvas width=800 height=100></canvas><br />
     FPS: <span id="fps"></span>
 
     <div id="info">
@@ -28,17 +28,17 @@
       var parallax
 
       this.setup = function() {
-        parallax = new jaws.Parallax({scale: 2})
-        parallax.addLayer({image: "parallax_1.png", damping: 10})
+        parallax = new jaws.Parallax({scale: 1, repeat_x: true})
+        parallax.addLayer({image: "parallax_1.png", damping: 100})
         parallax.addLayer({image: "parallax_2.png", damping: 6})
-        parallax.addLayer({image: "parallax_3.png", damping: 4})
-        parallax.addLayer({image: "parallax_4.png", damping: 2})
+        parallax.addLayer({image: "parallax_3.png", damping: 4, y: 5})
+        parallax.addLayer({image: "parallax_4.png", damping: 2, y: 10})
       }
 
       this.update = function() {
-        //if(jaws.pressed("left"))  { parallax.x -= 5 }
-        //if(jaws.pressed("right")) { parallax.x += 5 }
-        parallax.camera_x += 3
+        if(jaws.pressed("left"))  { parallax.camera_x -= 5 }
+        if(jaws.pressed("right")) { parallax.camera_x += 5 }
+        parallax.camera_x += 2
         fps.innerHTML = jaws.gameloop.fps
       }
 
