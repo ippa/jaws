@@ -42,6 +42,7 @@
 var jaws = {
   GameLoop: GameLoop,
   Sprite: Sprite,
+  Parallax: Parallax,
   SpriteSheet: SpriteSheet,
   Animation: Animation,
   assets: assets,
@@ -531,6 +532,34 @@ Rect.prototype.collideTopSide = function(rect)    { return(this.y >= rect.y && t
 Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y && this.y < rect.y) }
 
 
+function Parallax(options) {
+  this.scale = options.scale || 1
+  this.camera_x = options.camera_x || 0
+  this.camera_y = options.camera_y || 0
+  this.layers = []
+}
+
+Parallax.prototype.draw = function(options) {
+  var layer;
+  for(var i=0; i < this.layers.length; i++) {
+    layer = this.layers[i]
+    layer.x = -(this.camera_x / layer.damping)
+    layer.y = -(this.camera_y / layer.damping)
+    layer.draw();
+  }
+}
+Parallax.prototype.addLayer = function(options) {
+  var layer = new ParallaxLayer(options)
+  layer.scale = this.scale
+  this.layers.push(layer)
+}
+
+
+function ParallaxLayer(options) {
+  this.damping = options.damping || 0
+  Sprite.call(this, options)
+}
+ParallaxLayer.prototype = Sprite.prototype
 
 /*
  * 

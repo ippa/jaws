@@ -1,0 +1,60 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #6 - Parallax()</title>
+  </head>
+
+  <body>
+    <center>
+
+    <canvas width=500 height=300></canvas><br />
+    FPS: <span id="fps"></span>
+
+    <div id="info">
+      <h1>Parallax()</h1>
+    </div >
+
+    <script>
+
+    /*
+    *
+    * PlayState is the actual game play. We switch to it once user choses "Start game"
+    *
+    */
+    var fps = document.getElementById("fps")
+    function ParallaxDemo() {
+      var parallax
+
+      this.setup = function() {
+        parallax = new jaws.Parallax({scale: 2})
+        parallax.addLayer({image: "parallax_1.png", damping: 10})
+        parallax.addLayer({image: "parallax_2.png", damping: 6})
+        parallax.addLayer({image: "parallax_3.png", damping: 4})
+        parallax.addLayer({image: "parallax_4.png", damping: 2})
+      }
+
+      this.update = function() {
+        //if(jaws.pressed("left"))  { parallax.x -= 5 }
+        //if(jaws.pressed("right")) { parallax.x += 5 }
+        parallax.camera_x += 3
+        fps.innerHTML = jaws.gameloop.fps
+      }
+
+      this.draw = function() {
+        jaws.context.clearRect(0,0,jaws.width,jaws.height)
+        parallax.draw()
+      }
+    }
+
+    jaws.assets.add("parallax_1.png")
+    jaws.assets.add("parallax_2.png")
+    jaws.assets.add("parallax_3.png")
+    jaws.assets.add("parallax_4.png")
+    jaws.start(ParallaxDemo)
+  </script>
+</center>
+</body>
+</html>
+
