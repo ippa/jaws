@@ -623,6 +623,7 @@ function Sprite(options) {
   this.calcBorderOffsets = function() {
     this._width = this._image.width * this._scale
     this._height = this._image.height * this._scale
+
     this.left_offset = this.width * this.anchor_x
     this.top_offset = this.height * this.anchor_y
     this.right_offset =  this.width * (1.0 - this.anchor_x)
@@ -734,7 +735,7 @@ Sprite.prototype.anchor = function(align) {
  */
 function Animation(options) {
   this.options = options
-  this.frames = options.frames
+  this.frames = options.frames || []
   this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
   this.index = options.index || 0                       // default: start with the very first frame
   this.loop = options.loop || 1
