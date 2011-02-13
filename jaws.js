@@ -402,7 +402,7 @@ function _Asset() {
   this.file_type["jpg"] = "image"
   this.file_type["jpeg"] = "image"
   this.file_type["bmp"] = "image"
-
+  var that = this
 
   this.length = function() {
     return this.list.length
@@ -411,9 +411,21 @@ function _Asset() {
   this.add = function(src) {
     this.list.push({"src": src})
     return this
-  } 
+  }
+  /* 
+   * Get one or many resources
+   *
+   * @param   String or Array of strings
+   * @returns The raw resource or an array of resources
+   *
+   * */
   this.get = function(src) {
-    return this.data[src]
+    if(isArray(src)) {
+      return src.map( function(i) { return that.data[i] } )
+    }
+    else {
+      return this.data[src]
+    }
   }
   
   this.getType = function(src) {
@@ -607,7 +619,7 @@ function Sprite(options) {
   this.context = options.context || jaws.context
   this.anchor_x = options.anchor_x || 0
   this.anchor_y = options.anchor_y || 0
-  this.rotation = options.rotation || 0
+  this.angle = options.angle || 0
   this.flipped = options.flipped || false
   this._scale = options.scale || 1
   this._rect = new Rect(0,0,0,0)
@@ -662,7 +674,7 @@ Sprite.prototype.asCanvasContext = function() {
 
 // Rotate sprite 'value' degrees
 Sprite.prototype.rotate = function(value) {
-  this.rotation += value
+  this.angle += value
   return this
 }
 
@@ -671,7 +683,7 @@ Sprite.prototype.draw = function() {
   this.context.save()
   
   this.context.translate(this.x, this.y)
-  this.rotation && jaws.context.rotate(this.rotation * Math.PI / 180)
+  this.angle && jaws.context.rotate(this.angle * Math.PI / 180)
   this.flipped && this.context.scale(-1, 1)
   this.context.globalAlpha = this.alpha
   this.context.translate(-this.left_offset, -this.top_offset)
