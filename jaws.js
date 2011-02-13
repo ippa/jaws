@@ -603,6 +603,7 @@ function Sprite(options) {
   this.options = options
   this.x = options.x || 0
   this.y = options.y || 0
+  this.alpha = options.alpha || 1
   this.context = options.context || jaws.context
   this.anchor_x = options.anchor_x || 0
   this.anchor_y = options.anchor_y || 0
@@ -611,27 +612,27 @@ function Sprite(options) {
   this._scale = options.scale || 1
   this._rect = new Rect(0,0,0,0)
 
-  var left_offset, top_offset, right_offset, bottom_offset
-
-  this.__defineGetter__("width", function()   { return this._image.width * this._scale } )
-  this.__defineGetter__("height", function()  { return this._image.height * this._scale } )
-  this.__defineGetter__("left", function()    { return this.x - left_offset } )
-  this.__defineGetter__("top", function()     { return this.y - top_offset } )
-  this.__defineGetter__("right", function()   { return this.x + right_offset;  } )
-  this.__defineGetter__("bottom", function()  { return this.y + bottom_offset } )
-
+  this.__defineGetter__("width", function()   { return this._width } )
+  this.__defineGetter__("height", function()  { return this._height } )
+  this.__defineGetter__("left", function()    { return this.x - this.left_offset } )
+  this.__defineGetter__("top", function()     { return this.y - this.top_offset } )
+  this.__defineGetter__("right", function()   { return this.x + this.right_offset;  } )
+  this.__defineGetter__("bottom", function()  { return this.y + this.bottom_offset } )
+  
+  /* When image, scale or anchor changes we re-cache these values for speed */
   this.calcBorderOffsets = function() {
-    left_offset = this.width * this.anchor_x
-    top_offset = this.height * this.anchor_y
-    right_offset =  this.width * (1.0 - this.anchor_x)
-    bottom_offset = this.height * (1.0 - this.anchor_y)
+    this._width = this._image.width * this._scale
+    this._height = this._image.height * this._scale
+    this.left_offset = this.width * this.anchor_x
+    this.top_offset = this.height * this.anchor_y
+    this.right_offset =  this.width * (1.0 - this.anchor_x)
+    this.bottom_offset = this.height * (1.0 - this.anchor_y)
   } 
 
   this.__defineGetter__("image", function(value)   { return this._image })
   this.__defineSetter__("image", function(value)   { this._image = value; this.calcBorderOffsets(); })
   this.__defineGetter__("scale", function(value)   { return this._scale })
   this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); })
-
 
   options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
   options.anchor          && this.anchor(options.anchor)
@@ -671,8 +672,9 @@ Sprite.prototype.draw = function() {
   this.context.translate(this.x, this.y)
   this.rotation && jaws.context.rotate(this.rotation * Math.PI / 180)
   this.flipped && this.context.scale(-1, 1)
-  this.context.translate( -(this.anchor_x * this.width), -(this.anchor_y * this.height) )
-  this.context.drawImage(this._image, 0, 0 , this.width, this.height);
+  this.context.globalAlpha = this.alpha
+  this.context.translate(-this.left_offset, -this.top_offset)
+  this.context.drawImage(this._image, 0, 0, this._width, this._height);
 
   this.context.restore()
   return this
