@@ -643,11 +643,15 @@ function Sprite(options) {
   } 
 
   this.__defineGetter__("image", function(value)   { return this._image })
-  this.__defineSetter__("image", function(value)   { this._image = value; this.calcBorderOffsets(); })
+  this.__defineSetter__("image", function(value)   { 
+    this._image = (isDrawable(value) ? value : assets.data[value])
+    this.calcBorderOffsets(); 
+  })
+
   this.__defineGetter__("scale", function(value)   { return this._scale })
   this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); })
 
-  options.image           && (this.image = isDrawable(options.image) ? options.image : assets.data[options.image])
+  options.image           && (this.image = options.image)
   options.anchor          && this.anchor(options.anchor)
  
   this.__defineGetter__("rect", function() { 
