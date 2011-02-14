@@ -833,10 +833,10 @@ function SpriteSheet(options) {
   var index = 0
   for(var x=0; x < this.image.width; x += this.frame_size[0]) {
     for(var y=0; y < this.image.height; y += this.frame_size[1]) {
-      this.frames[index++] = cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1])
+      this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
     }
   }
-  this.__defineGetter__("length", function() { return this.frames.length})
+  this.__defineGetter__("length", function() { return this.frames.length })
 }
 
 
