@@ -232,14 +232,14 @@ function init() {
   /* Find <title> tag */
   title = document.getElementsByTagName('title')[0]
 
-  url_parameters = getUrlParameters()
+  jaws.url_parameters = getUrlParameters()
 
   /*
    * If debug=1 parameter is present in the URL, let's either find <div id="jaws-debug"> or create the tag.
    * jaws.debug(message) will use this div for debug/info output to the gamer or developer
    *
    */
-  if(url_parameters["debug"]) {
+  if(jaws.url_parameters["debug"]) {
     debug_tag = document.getElementById('jaws-debug')
     if(!debug_tag) {
       debug_tag = document.createElement("div")
