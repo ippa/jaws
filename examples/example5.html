@@ -13,7 +13,7 @@
   FPS: <span id="fps"></span>
   
   <div id="info">
-    <h1>Sprite.center</h1>
+    <h1>Sprite.anchor</h1>
     Showing off the effects of setting different anchors for different sprites.
   </div>
   
@@ -37,8 +37,8 @@
           sprites.push(sprite)
           
           jaws.context.fillText(anchors[i], sprite.x, 150)
-          jaws.context.fillText("center_x: " + sprite.center_x, sprite.x, 165)
-          jaws.context.fillText("center_y: " + sprite.center_y, sprite.x, 180)
+          jaws.context.fillText("anchor_x: " + sprite.anchor_x, sprite.x, 165)
+          jaws.context.fillText("anchor_y: " + sprite.anchor_y, sprite.x, 180)
           jaws.context.moveTo(sprite.x, 0)
           jaws.context.lineTo(sprite.x, jaws.height)
         }
