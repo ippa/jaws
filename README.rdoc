@@ -29,7 +29,8 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/source/examples/example2.html  - focus: jaws game states
 * http://jawsjs.com/source/examples/example3.html  - focus: jaws.Animation()
 * http://jawsjs.com/source/examples/example4.html  - focus: jaws.Rect based collision detection
-* http://jawsjs.com/source/examples/example5.html  - focus: the jaws.Sprite({anchor: "top_left"}) parameter
+* http://jawsjs.com/source/examples/example5.html  - focus: the jaws.Sprite({anchor: "..."}) parameter
+* http://jawsjs.com/source/examples/example6.html  - focus: jaws.Parallax
 
 == Games using Jaws
 * http://ippa.se/webgames/unwaivering/  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
