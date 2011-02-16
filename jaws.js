@@ -228,10 +228,9 @@ function debug(msg, add) {
  * sets up various variables needed by jaws. Gets canvas and context.
  *
  * */
-function init() {
+function init(options) {
   /* Find <title> tag */
   title = document.getElementsByTagName('title')[0]
-
   jaws.url_parameters = getUrlParameters()
 
   /*
@@ -248,12 +247,20 @@ function init() {
     }
   }
 
-  /* 
-   * Find the <canvas> so following draw-operations can use it.
-   * If the developer didn't provide a <canvas> in his HTML, let's create one.
-   *
-   */
-  jaws.canvas = document.getElementsByTagName('canvas')[0]
+  if(options.dom) { 
+  }
+  else {
+    findOrCreateCanvas() 
+  }
+}
+
+/* 
+* Find the <canvas> so following draw-operations can use it.
+* If the developer didn't provide a <canvas> in his HTML, let's create one.
+*
+*/
+function findOrCreateCanvas() {
+ jaws.canvas = document.getElementsByTagName('canvas')[0]
   if(!jaws.canvas) {
     jaws.canvas = document.createElement("canvas")
     jaws.canvas.width = 500
@@ -263,9 +270,7 @@ function init() {
   }
   else {
     debug("found canvas", true)
-  }
-
- 
+  } 
   jaws.context = jaws.canvas.getContext('2d');
 }
 
@@ -281,7 +286,7 @@ function start() {
   var draw = options.draw || window.draw
   var wanted_fps = options.fps || parseInt(arguments[1]) || 60
 
-  init()
+  init(options)
 
   debug("setupInput()", true)
   setupInput()
@@ -302,10 +307,10 @@ function start() {
 }
 
 /*
+ * Switch to a new active game state
+ * Save previous game state in jaws.previous_game_state
  * 
- * TODO: make this prettier! Also save previous game state.
- * 
- * */
+ */
 function switchGameState(game_state) {
   jaws.gameloop.stop()
   
@@ -628,7 +633,7 @@ function Sprite(options) {
   this.__defineGetter__("height", function()  { return this._height } )
   this.__defineGetter__("left", function()    { return this.x - this.left_offset } )
   this.__defineGetter__("top", function()     { return this.y - this.top_offset } )
-  this.__defineGetter__("right", function()   { return this.x + this.right_offset;  } )
+  this.__defineGetter__("right", function()   { return this.x + this.right_offset  } )
   this.__defineGetter__("bottom", function()  { return this.y + this.bottom_offset } )
   
   /* When image, scale or anchor changes we re-cache these values for speed */
@@ -663,6 +668,47 @@ function Sprite(options) {
   })
 }
 
+/* Make this sprite a DOM-based <div> sprite */
+Sprite.prototype.createDiv = function() {
+  this.div = document.createElement("div")
+  this.div.style.position = "absolute"
+  this.div.style.width = this.image.width + "px"
+  this.div.style.height = this.image.height + "px"
+  this.div.style.backgroundImage = "url(" + this.image.src + ")"
+  this.updateDiv()
+  document.body.appendChild(this.div)
+}
+
+/* Update properties for DOM-based sprite */
+Sprite.prototype.updateDiv = function() {
+  this.div.style.left = this.x + "px"
+  this.div.style.top = this.y + "px"
+
+  var transform = ""
+  transform += "rotate(" + this.angle + "deg) "
+  if(this.flipped)          { transform += "scale(-" + this.scale + "," + this.scale + ")"; }
+  else if(this.scale != 1)  { transform += "scale(" + this.scale + ")"; }
+
+  this.div.style.MozTransform = transform
+  this.div.style.WebkitTransform = transform
+  this.div.style.transform = transform
+}
+
+// Draw the sprite on screen via its previously given context
+Sprite.prototype.draw = function() {
+  if(this.div) { return this.updateDiv() }
+
+  this.context.save()
+  this.context.translate(this.x, this.y)
+  this.angle && jaws.context.rotate(this.angle * Math.PI / 180)
+  this.flipped && this.context.scale(-1, 1)
+  this.context.globalAlpha = this.alpha
+  this.context.translate(-this.left_offset, -this.top_offset)
+  this.context.drawImage(this._image, 0, 0, this._width, this._height);
+  this.context.restore()
+  return this
+}
+
 // Create a new canvas context, draw sprite on it and return. Use to get a raw canvas copy of the current sprite state.
 Sprite.prototype.asCanvasContext = function() {
   var canvas = document.createElement("canvas")
@@ -679,21 +725,6 @@ Sprite.prototype.asCanvasContext = function() {
 // Rotate sprite 'value' degrees
 Sprite.prototype.rotate = function(value) {
   this.angle += value
-  return this
-}
-
-// Draw the sprite on screen via its previously given context
-Sprite.prototype.draw = function() {
-  this.context.save()
-  
-  this.context.translate(this.x, this.y)
-  this.angle && jaws.context.rotate(this.angle * Math.PI / 180)
-  this.flipped && this.context.scale(-1, 1)
-  this.context.globalAlpha = this.alpha
-  this.context.translate(-this.left_offset, -this.top_offset)
-  this.context.drawImage(this._image, 0, 0, this._width, this._height);
-
-  this.context.restore()
   return this
 }
 

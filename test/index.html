@@ -63,6 +63,8 @@
         ok(jaws.isImage(jaws.assets.get("droid_11x15.png")), "png loaded as Image")
         same(jaws.assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
         same(jaws.assets.get("gamedata.json").mode, "angry", "jsondata got parsed into an object")
+
+        // same(jaws.assets.get(["rect.png", "laser.wav"]).length, 2, "assets.get(array) returns array of assets")
         
         asset_depending_tests()
         start()
