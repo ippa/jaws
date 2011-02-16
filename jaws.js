@@ -73,8 +73,13 @@ var jaws = {
 
 jaws.__defineSetter__("title", function(s) { title.innerHTML = s })
 jaws.__defineGetter__("title", function() { return title.innerHTML })
-jaws.__defineGetter__("width", function() { return jaws.canvas.width })
-jaws.__defineGetter__("height", function() { return jaws.canvas.height })
+
+jaws.__defineGetter__("width", function() { 
+  return (jaws.canvas ? jaws.canvas.width : jaws.element.offsetWidth)
+})
+jaws.__defineGetter__("height", function() { 
+  return (jaws.canvas ? jaws.canvas.height  : jaws.element.offsetHeight)
+})
 
 
 /*
@@ -247,10 +252,12 @@ function init(options) {
     }
   }
 
-  if(options.dom) { 
+  jaws.canvas = document.getElementsByTagName('canvas')[0]
+  if(jaws.canvas) {
+    jaws.context = jaws.canvas.getContext('2d');
   }
   else {
-    findOrCreateCanvas() 
+    jaws.element = document.getElementById("canvas")
   }
 }
 
@@ -666,17 +673,20 @@ function Sprite(options) {
     this._rect.height = this.height
     return this._rect
   })
+
+  // No canvas context? Switch to DOM-based spritemode
+  if(!this.context) { this.createDiv() }
 }
 
 /* Make this sprite a DOM-based <div> sprite */
 Sprite.prototype.createDiv = function() {
   this.div = document.createElement("div")
-  this.div.style.position = "absolute"
+  this.div.style.position = "relative"
   this.div.style.width = this.image.width + "px"
   this.div.style.height = this.image.height + "px"
   this.div.style.backgroundImage = "url(" + this.image.src + ")"
+  jaws.element.appendChild(this.div)
   this.updateDiv()
-  document.body.appendChild(this.div)
 }
 
 /* Update properties for DOM-based sprite */
@@ -696,7 +706,7 @@ Sprite.prototype.updateDiv = function() {
 
 // Draw the sprite on screen via its previously given context
 Sprite.prototype.draw = function() {
-  if(this.div) { return this.updateDiv() }
+  if(jaws.element) { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
