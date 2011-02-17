@@ -75,10 +75,10 @@ jaws.__defineSetter__("title", function(s) { title.innerHTML = s })
 jaws.__defineGetter__("title", function() { return title.innerHTML })
 
 jaws.__defineGetter__("width", function() { 
-  return (jaws.canvas ? jaws.canvas.width : jaws.element.offsetWidth)
+  return (jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth)
 })
 jaws.__defineGetter__("height", function() { 
-  return (jaws.canvas ? jaws.canvas.height  : jaws.element.offsetHeight)
+  return (jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight)
 })
 
 
@@ -257,7 +257,8 @@ function init(options) {
     jaws.context = jaws.canvas.getContext('2d');
   }
   else {
-    jaws.element = document.getElementById("canvas")
+    jaws.dom = document.getElementById("canvas")
+    jaws.dom.style.position = "relative"  // This is needed to have sprites with position = "absolute" stay within the canvas
   }
 }
 
@@ -681,11 +682,11 @@ function Sprite(options) {
 /* Make this sprite a DOM-based <div> sprite */
 Sprite.prototype.createDiv = function() {
   this.div = document.createElement("div")
-  this.div.style.position = "relative"
+  this.div.style.position = "absolute"
   this.div.style.width = this.image.width + "px"
   this.div.style.height = this.image.height + "px"
   this.div.style.backgroundImage = "url(" + this.image.src + ")"
-  jaws.element.appendChild(this.div)
+  jaws.dom.appendChild(this.div)
   this.updateDiv()
 }
 
@@ -706,7 +707,7 @@ Sprite.prototype.updateDiv = function() {
 
 // Draw the sprite on screen via its previously given context
 Sprite.prototype.draw = function() {
-  if(jaws.element) { return this.updateDiv() }
+  if(jaws.dom) { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
