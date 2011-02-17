@@ -243,8 +243,8 @@ function init(options) {
    * jaws.debug(message) will use this div for debug/info output to the gamer or developer
    *
    */
+  debug_tag = document.getElementById('jaws-debug')
   if(jaws.url_parameters["debug"]) {
-    debug_tag = document.getElementById('jaws-debug')
     if(!debug_tag) {
       debug_tag = document.createElement("div")
       debug_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;"
