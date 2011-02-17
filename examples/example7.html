@@ -7,8 +7,11 @@
   </head>
 
   <body>
+    <br /><br /><br />
+    <br /><br /><br />
     <div id="canvas"></div>
-    <div id="jaws-debug"></div>
+    
+    <br /><div id="jaws-debug"></div>
   </body>
 
   <script>
@@ -22,7 +25,7 @@
     var player
     var bullets = []
     this.setup = function() {
-      player = new jaws.Sprite({image: "plane.png", x: 1, y:1})
+      player = new jaws.Sprite({image: "plane.png", x: 1, y:1, anchor: "center"})
       player.can_fire = true
       jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
     }
@@ -34,17 +37,23 @@
       if(jaws.pressed("down"))  { player.y += 2 }
       if(jaws.pressed("space")) { 
         if(player.can_fire) {
-          bullets.push( new Bullet({x: player.right, y: player.y}) )
+          var vx = player.flipped ? -10 : 10
+          bullets.push( new Bullet({x: player.right, y: player.bottom-5, vx: vx}) )
           player.can_fire = false
           setTimeout(function() { player.can_fire = true }, 100)
-          jaws.debug("fire!", true)
         }
       }
 
-      //forceInsideCanvas(player)
-      //bullets.deleteIf(isOutsideCanvas)
+      forceInsideCanvas(player)
+      bullets.forEach( function(item, index, array) {
+        if(isOutsideCanvas(item)) {
+          jaws.dom.removeChild(item.div)
+          array.splice(index,1)
+        }
+      });
+
       bullets.update()
-      jaws.title = jaws.width + "/" + jaws.height
+      jaws.debug("bullets: " + bullets.length + " fps: " + jaws.gameloop.fps)
     }
 
     this.draw = function() {
@@ -66,9 +75,11 @@
     }
 
     function Bullet(options) {
-      this.image = "bullet.png"
+      this.vx = options.vx
+
+      options.image = "bullet.png"
       jaws.Sprite.call(this, options)
-      this.update = function() { this.x += 4 }
+      this.update = function() { this.x += this.vx }
     }
     Bullet.prototype = jaws.Sprite.prototype
   }
