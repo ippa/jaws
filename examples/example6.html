@@ -1,0 +1,57 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #6 - Parallax()</title>
+  </head>
+
+  <body>
+    <center>
+
+    <canvas width=800 height=100></canvas><br />
+    FPS: <span id="fps"></span>
+
+    <div id="info">
+      <h1>Parallax()</h1>
+      jaws.Parallax({repeat_x: true}) to repeat "tiles" horizontally.
+      Then add 4 layers with different damping (high damping, slow movement).
+      Take control of parallax.camera_x with Left/Right arrow keys.
+    </div >
+
+    <script>
+
+    var fps = document.getElementById("fps")
+    function ParallaxDemo() {
+      var parallax
+
+      this.setup = function() {
+        parallax = new jaws.Parallax({repeat_x: true})
+        parallax.addLayer({image: "parallax_1.png", damping: 100})
+        parallax.addLayer({image: "parallax_2.png", damping: 6})
+        parallax.addLayer({image: "parallax_3.png", damping: 4, y: 5})
+        parallax.addLayer({image: "parallax_4.png", damping: 2, y: 10})
+      }
+
+      this.update = function() {
+        if(jaws.pressed("left"))  { parallax.camera_x -= 10 }
+        if(jaws.pressed("right")) { parallax.camera_x += 10 }
+        else { parallax.camera_x += 2 }
+        fps.innerHTML = jaws.gameloop.fps
+      }
+      
+      this.draw = function() {
+        parallax.draw()
+      }
+    }
+
+    jaws.assets.add("parallax_1.png")
+    jaws.assets.add("parallax_2.png")
+    jaws.assets.add("parallax_3.png")
+    jaws.assets.add("parallax_4.png")
+    jaws.start(ParallaxDemo)
+  </script>
+</center>
+</body>
+</html>
+

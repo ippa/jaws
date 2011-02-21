@@ -1,0 +1,94 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>DOMtest</title>
+  </head>
+
+  <body>
+    <br /><br /><br />
+    <br /><br /><br />
+    <div id="canvas"></div>
+    
+    <br /><div id="jaws-debug"></div>
+  </body>
+
+  <script>
+  /*
+  *
+  * PlayState is the actual game play. We switch to it once user choses "Start game"
+  *
+  */
+  var fps = document.getElementById("fps")
+  function PlayState() {
+    var player
+    var bullets = []
+    this.setup = function() {
+      player = new jaws.Sprite({image: "plane.png", x: 1, y:1, anchor: "center"})
+      player.can_fire = true
+      jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
+    }
+
+    this.update = function() {
+      if(jaws.pressed("left"))  { player.x -= 2; player.flipped = true }
+      if(jaws.pressed("right")) { player.x += 2; player.flipped = false }
+      if(jaws.pressed("up"))    { player.y -= 2 }
+      if(jaws.pressed("down"))  { player.y += 2 }
+      if(jaws.pressed("space")) { 
+        if(player.can_fire) {
+          var vx = player.flipped ? -10 : 10
+          bullets.push( new Bullet({x: player.right, y: player.bottom-5, vx: vx}) )
+          player.can_fire = false
+          setTimeout(function() { player.can_fire = true }, 100)
+        }
+      }
+
+      forceInsideCanvas(player)
+      bullets.forEach( function(item, index, array) {
+        if(isOutsideCanvas(item)) {
+          jaws.dom.removeChild(item.div)
+          array.splice(index,1)
+        }
+      });
+
+      bullets.update()
+      jaws.debug("bullets: " + bullets.length + " fps: " + jaws.gameloop.fps)
+    }
+
+    this.draw = function() {
+      //fps.innerHTML = jaws.gameloop.fps
+      player.draw()
+      bullets.draw()
+    }
+
+    /* Simular to example1 but now we're using jaws properties to get widthteElement('div'); and height of canvas instead */
+    /* This mainly since we let jaws handle the canvas now */
+    function isOutsideCanvas(item) { 
+      return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height) 
+    }
+    function forceInsideCanvas(item) {
+      if(item.x < 0)                  { item.x = 0  }
+      if(item.right > jaws.width)     { item.x = jaws.width - item.width }
+      if(item.y < 0)                  { item.y = 0 }
+      if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
+    }
+
+    function Bullet(options) {
+      this.vx = options.vx
+
+      options.image = "bullet.png"
+      jaws.Sprite.call(this, options)
+      this.update = function() { this.x += this.vx }
+    }
+    Bullet.prototype = jaws.Sprite.prototype
+  }
+
+  jaws.assets.add("plane.png")
+  jaws.assets.add("bullet.png")
+  jaws.start(PlayState)
+  </script>
+
+</center>
+</html>
+

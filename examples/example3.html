@@ -16,13 +16,15 @@
   <head>
 
 <body>
+<center>
+
   <canvas width=500 height=300></canvas><br />
   FPS: <span id="fps"></span>. Move with arrow keys.
   
   <div id="info">
     <h1>Animations</h1>
     Showing of a "complex" animation, all cut up from a spritesheet.
-    Animations from sprite sheets are a no-brainer with Jaws.
+    We also use {anchor: "center_bottom"} which means when we paint the sprite at 100/200, the feet will be placed there.
   </div>
   
   <h3>jaws debug</h3>
@@ -43,7 +45,7 @@
       this.setup = function() {
         var anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
 
-        player = new jaws.Sprite({x:100, y:150, scale: 3})
+        player = new jaws.Sprite({x:100, y:300, scale: 4, anchor: "center_bottom"})
         player.anim_default = anim.slice(0,5)
         player.anim_up = anim.slice(6,8)
         player.anim_down = anim.slice(8,10)
@@ -52,6 +54,7 @@
       
         player.image = player.anim_default.next()
         jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
+        jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       }
 
       /* update() will get called each game tick with your specified FPS. Put game logic here. */
@@ -61,13 +64,19 @@
         if(jaws.pressed("right")) { player.x += speed; player.image = player.anim_right.next() }
         if(jaws.pressed("up"))    { player.y -= speed; player.image = player.anim_up.next() }
         if(jaws.pressed("down"))  { player.y += speed; player.image = player.anim_down.next() }
-        forceInsideCanvas(player)
-        fps.innerHTML = jaws.gameloop.fps
+        //forceInsideCanvas(player)
+        fps.innerHTML = jaws.gameloop.fps + ". player: " + player.x + "/" + player.y
       }
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */
       this.draw = function() {
-        jaws.context.clearRect(0,0,jaws.width,jaws.height)   
+        jaws.context.clearRect(0,0,jaws.width,jaws.height)
+        jaws.context.lineWidth = 1
+        jaws.context.moveTo(0,300)
+        jaws.context.lineTo(jaws.width,300)
+        jaws.context.strokeStyle = "black";
+        jaws.context.stroke();
+
         player.draw()
       }
     
@@ -84,7 +93,9 @@
       jaws.assets.add("droid_11x15.png")
       jaws.start(Example3)  // Our convenience function jaws.start() will load assets, call setup and loop update/draw in 60 FPS
     }
-    </script>
+  </script>
+
+</center>
 </body>
 </html>
 

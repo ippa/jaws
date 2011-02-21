@@ -7,8 +7,10 @@
   </head>
 
   <body>
+    <center>
 
-    <canvas width=500 height=300></canvas>
+    <canvas width=500 height=300></canvas><br />
+    FPS: <span id="fps"></span>. Move with arrow. Select with Return.
 
     <div id="info">
       <h1>Game states</h1>
@@ -31,14 +33,17 @@
     * PlayState is the actual game play. We switch to it once user choses "Start game"
     *
     */
+    var fps = document.getElementById("fps")
     function PlayState() {
       var player
       var bullets = []
+
 
       this.setup = function() {
         player = new jaws.Sprite({image: "plane.png", x: 10, y:100})
         player.can_fire = true
         jaws.on_keydown("esc",  function() { jaws.switchGameState(MenuState) })
+        jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       }
 
       this.update = function() {
@@ -56,6 +61,7 @@
 
         forceInsideCanvas(player)
         bullets.deleteIf(isOutsideCanvas)
+        fps.innerHTML = jaws.gameloop.fps
       }
 
       this.draw = function() {
@@ -126,7 +132,7 @@
     jaws.assets.add("bullet.png")
     jaws.start(MenuState)
   </script>
-
+</center>
 </body>
 </html>
 

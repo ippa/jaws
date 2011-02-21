@@ -7,11 +7,15 @@
   <head>
 
 <body>
+<center>
   <canvas width=500 height=300></canvas><br />
   FPS: <span id="fps"></span>
   
   <div id="info">
     <h1>Sprite collision detection</h1>
+    Every Sprite (that has an image) will have a property "rect" which will return a Rect-object.
+    Then you can <code>sprite.rect.collideRect(rect2)</code> or <code>sprite.rect.collidePoint(x, y)</code>
+  
   </div>
   
   <h3>jaws debug</h3>
@@ -26,11 +30,11 @@
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
 
-        var amount_of_rects = 40
+        var amount_of_rects = 60
         while(amount_of_rects--) {
           var x = Math.random() * jaws.canvas.width
           var y = Math.random() * jaws.canvas.height
-          var sprite = new jaws.Sprite({image: "rect.png", x: x, y: y})
+          var sprite = new jaws.Sprite({image: "rect.png", x: x, y: y, anchor: "center"})
           sprite.vx = Math.random() * 0.5 - 1
           sprite.vy = Math.random() * 0.5 - 1
           sprites.push(sprite)
@@ -53,7 +57,7 @@
         sprite_pairs.forEach( function(pair, index) {
           sprite = pair[0]
           sprite2 = pair[1]
-          if(sprite.collideRect(sprite2)) {
+          if(sprite.rect.collideRect(sprite2.rect)) {
             sprite.collision = true
             sprite2.collision = true
           }
@@ -66,7 +70,7 @@
       this.draw = function() {
         jaws.context.clearRect(0,0,jaws.width,jaws.height)   
         sprites.forEach( function(sprite, index) {
-          sprite.collision ? jaws.context.fillRect(sprite.x, sprite.y, sprite.width, sprite.height) : sprite.draw()
+          sprite.collision ? sprite.rect.draw() : sprite.draw()
         });
       }
     }
@@ -75,7 +79,9 @@
       jaws.assets.add("rect.png")
       jaws.start(Example4)
     }
-    </script>
+  </script>
+
+</center>
 </body>
 </html>
 

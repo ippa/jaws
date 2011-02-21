@@ -6,19 +6,20 @@
     <title>Jaws Example #1 - Sprite(), pressed(), basic game loop</title>
   <head>
 
-<body>
-  <canvas width=500 height=300></canvas>
-  
+  <body>
+  <center>
+
+  <canvas width=500 height=300></canvas><br />
+  FPS: <span id="fps"></span>. Move with arrow keys.  
+
   <div id="info">
     <h1>Basic example</h1>
-    An basic example jaws example.
+    An basic example jaws.
     We make our own canvas, instead of having jaws generate one (or several) for us.
     We get the canvas-tag from the DOM, fetch its context and send it to Sprite.
     If you for some reason want to have your own canvas tag this is the way to do it.
+    Add "?debug=1" to the URL and jaws will create a small window with debuginfo.
   </div>
-  
-  <h3>jaws debug</h3>
-  <div id="jaws-debug"></div>
  
   <script>
     var player
@@ -26,6 +27,7 @@
     var context
     var title_tag
     var bullets = []
+    var fps = document.getElementById("fps")
 
     /* step0. set everything up, load sprites etc. */
     function setup() {
@@ -35,6 +37,7 @@
 
       player = new jaws.Sprite({image: "plane.png", x: 10, y:100, context: context})
       jaws.on_keydown("esc", setup)
+      jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
     }
     
     /* step1. execute the game logic */
@@ -58,6 +61,7 @@
       bullets.draw()  // will call draw() on all items in array
 
       title_tag.innerHTML = "FPS: " + jaws.gameloop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas.width + "/" + canvas.height
+      fps.innerHTML = jaws.gameloop.fps
     }
     
     /* 2 functions that will help us remove bullets outside the canvas + keep the plane within the canvas. */
@@ -84,7 +88,8 @@
     jaws.assets.add("plane.png")
     jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
                   // If you wan't you can modify the defaults: jaws.init({setup: initGame, fps: 30}) 
-    </script>
+  </script>
+</center>
 </body>
 </html>
 

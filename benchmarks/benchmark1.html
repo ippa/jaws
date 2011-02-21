@@ -7,7 +7,8 @@
   <head>
 <body>
 
-  <canvas width=500 height=300></canvas>    
+  <canvas width=500 height=300></canvas><br />
+  FPS: <span id="fps"></span>
   
   <div id="info">
     Benchmark context.draw(image) vs context.draw(canvas)
@@ -17,16 +18,19 @@
   <div id="jaws-debug"></div>
  
   <script>
-    var loop = 5000
+    var loop = 4000
+    var fps = document.getElementById("fps")
+
     function BenchImage() {
       var image
       this.setup = function() {
         image = jaws.assets.get("plane.png")
+        jaws.title = "context.drawImage(image)"
       }
 
       this.draw = function() {
         for(var i=0; i < loop; i++) { jaws.context.drawImage(image, 0, 0) }
-        jaws.title = "drawImage(image): " + jaws.gameloop.fps
+        fps.innerHTML = jaws.gameloop.fps + ". " + "context.drawImage(image)"
       }
     }
     
@@ -39,11 +43,12 @@
         canvas.height = image.height
         context = canvas.getContext("2d")
         context.drawImage(image, 0, 0)
+        fps.title = "context.drawImage(context)"
       }
 
       this.draw = function() {
         for(var i=0; i < loop; i++) { jaws.context.drawImage(canvas, 0, 0) }
-        jaws.title = "drawImage(context): " + jaws.gameloop.fps
+        fps.innerHTML = jaws.gameloop.fps + ". " + "context.drawImage(context)"
       }
     }
     
