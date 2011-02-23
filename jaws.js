@@ -68,7 +68,8 @@ var jaws = {
   combinations: combinations,
   url_parameters: url_parameters,
   init: init,
-  start: start
+  start: start,
+  unpack: unpack
 }
 
 jaws.__defineSetter__("title", function(s) { title.innerHTML = s })
@@ -80,6 +81,23 @@ jaws.__defineGetter__("width", function() {
 jaws.__defineGetter__("height", function() { 
   return (jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight)
 })
+
+/*
+ * Unpacks Jaws core-constructors into the global namespace
+ * After calling unpack you can use:
+ * "Sprite()" instead of "jaws.Sprite()"
+ * "Animation()" instead of "jaws.Animation()"
+ * .. and so on.
+ *
+ */
+function unpack() {
+  var make_global = ["Sprite", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array"]
+
+  make_global.forEach( function(item, array, total) {
+    if(window[item])  { debug(item + "already exists in global namespace") }
+    else              { window[item] = jaws[item] }
+  });
+}
 
 
 /*

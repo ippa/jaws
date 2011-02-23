@@ -25,7 +25,7 @@
     var player
     var bullets = []
     this.setup = function() {
-      player = new jaws.Sprite({image: "plane.png", x: 1, y:1, anchor: "center"})
+      player = new Sprite({image: "plane.png", x: 1, y:1, anchor: "center"})
       player.can_fire = true
       jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
     }
@@ -78,12 +78,13 @@
       this.vx = options.vx
 
       options.image = "bullet.png"
-      jaws.Sprite.call(this, options)
+      Sprite.call(this, options)
       this.update = function() { this.x += this.vx }
     }
-    Bullet.prototype = jaws.Sprite.prototype
+    Bullet.prototype = Sprite.prototype
   }
-
+  
+  jaws.unpack()  // Make (among others) Sprite global
   jaws.assets.add("plane.png")
   jaws.assets.add("bullet.png")
   jaws.start(PlayState)
