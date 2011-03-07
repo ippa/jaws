@@ -11,9 +11,8 @@
  *   jaws.one_variable = 1
  *   new jaws.OneConstructor
  *
- * Jaws uses the "module pattern" and exposes itself through the global "jaws". It should play nice with all other JS libs.
- * Jaws is using HTML5s <canvas> for all it's graphical operations, so the newer browser the better.
- * Older browsers doesn't support <canvas>. Or if they do, they don't accelerate it with hardware.
+ * Jaws uses the "module pattern" and exposes itself through the global "jaws". 
+ * It should play nice with all other JS libs.
  *
  * Have fun! 
  *
