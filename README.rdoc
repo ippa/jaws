@@ -1,4 +1,5 @@
---- This is alpha-alpha-pre-release software ---
+== Jaws is still very Alpha'ish
+... So don't base your commercial projects on it ;). APIs will most likely settle down during the coming months.
 
 = Jaws - HTML5 Javascript web game development library
 
