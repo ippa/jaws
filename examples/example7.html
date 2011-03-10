@@ -23,7 +23,7 @@
   var fps = document.getElementById("fps")
   function PlayState() {
     var player
-    var bullets = []
+    var bullets = new jaws.SpriteList()
     this.setup = function() {
       player = new Sprite({image: "plane.png", x: 1, y:1, anchor: "center"})
       player.can_fire = true

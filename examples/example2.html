@@ -36,7 +36,7 @@
     var fps = document.getElementById("fps")
     function PlayState() {
       var player
-      var bullets = []
+      var bullets = new jaws.SpriteList()
 
 
       this.setup = function() {
@@ -60,14 +60,14 @@
         }
 
         forceInsideCanvas(player)
-        bullets.deleteIf(isOutsideCanvas)
+        bullets.deleteIf(isOutsideCanvas) // delete items for which isOutsideCanvas(item) is true
         fps.innerHTML = jaws.gameloop.fps
       }
 
       this.draw = function() {
         jaws.context.clearRect(0,0,jaws.width,jaws.height)
         player.draw()
-        bullets.draw()  // will call draw() on all items in array
+        bullets.draw()  // will call draw() on all items in the list
       }
 
       /* Simular to example1 but now we're using jaws properties to get width and height of canvas instead */

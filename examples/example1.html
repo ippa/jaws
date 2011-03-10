@@ -26,7 +26,7 @@
     var canvas
     var context
     var title_tag
-    var bullets = []
+    var bullets = new jaws.SpriteList()
     var fps = document.getElementById("fps")
 
     /* step0. set everything up, load sprites etc. */
@@ -58,7 +58,7 @@
       context.clearRect(0,0,canvas.width,canvas.height)
        
       player.draw()
-      bullets.draw()  // will call draw() on all items in array
+      bullets.draw()  // will call draw() on all items in the list
 
       title_tag.innerHTML = "FPS: " + jaws.gameloop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas.width + "/" + canvas.height
       fps.innerHTML = jaws.gameloop.fps
