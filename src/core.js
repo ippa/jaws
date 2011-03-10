@@ -21,14 +21,15 @@
  */
 
 var jaws = (function(jaws) {
-  var gameloop = 0
   var title
-  var canvas
-  var context
-  var game_state
-  var previous_game_state
-  var url_parameters
   var debug_tag  
+
+  //var canvas
+  //var context
+  //var gameloop = 0
+  //var game_state
+  //var previous_game_state
+  //var url_parameters
 
 
 jaws.__defineSetter__("title", function(s) { title.innerHTML = s })
