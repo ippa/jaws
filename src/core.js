@@ -224,8 +224,6 @@ function getUrlParameters() {
   return vars;
 }
 
-//global.jaws = jaws
-
 return jaws;
 
 })(jaws || {});
