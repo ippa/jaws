@@ -39,7 +39,7 @@ jaws.__defineGetter__("height", function() { return (jaws.canvas ? jaws.canvas.h
  *
  */
 jaws.unpack = function() {
-  var make_global = ["Sprite", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array"]
+  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array"]
 
   make_global.forEach( function(item, array, total) {
     if(window[item])  { jaws.debug(item + "already exists in global namespace") }
@@ -166,21 +166,27 @@ jaws.switchGameState = function(game_state) {
   jaws.gameloop.start()
 }
 
+/* returns true if obj is an Image */
 jaws.isImage = function(obj) {
   return Object.prototype.toString.call(obj) === "[object HTMLImageElement]";
 }
+/* returns true of obj is a Canvas-element */
 jaws.isCanvas = function(obj) {
   return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]";
 }
+/* returns true of obj is either an Image or a Canvas-element */
 jaws.isDrawable = function(obj) {
   return jaws.isImage(obj) || jaws.isCanvas(obj)
 }
+/* returns true if obj is a String */
 jaws.isString = function(obj) {
   return (typeof obj == 'string')
 }
+/* returns true if obj is an Array */
 jaws.isArray = function(obj) {
   return !(obj.constructor.toString().indexOf("Array") == -1)
 }
+/* returns true of obj is a Function */
 jaws.isFunction = function(obj) {
   return (Object.prototype.toString.call(obj) === "[object Function]")
 }
