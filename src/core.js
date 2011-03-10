@@ -4,6 +4,7 @@
  *
  * Homepage:    http://jawsjs.com/
  * Works with:  Chrome 6.0+, Firefox 3.6+, 4+, IE 9+
+ * License: LGPL - http://www.gnu.org/licenses/lgpl.html
  *
  * Formating guide:
  *

@@ -3,8 +3,8 @@
 
 = Jaws - HTML5 Javascript web game development library
 
-Depends on Javascript 1.6+ (ECMA-262 Edition 5) and the canvas-element
-Tested on Chrome 6+, Firefox 3.6.x/4.x, Safari 5+. FF 4.0 with openGL accelerated canvas is recommended.
+Depends on Javascript 1.6+ (ECMA-262 Edition 5). Tested on Chrome 9+, Firefox 3.6.x/4.x, Safari 5+.
+Licensed under LGPL so you're free to use it for commercial projects.
 
 == Highlights
   * Animation(), Sprite(), SpriteSheet() and other useful constructors
