@@ -39,6 +39,19 @@ Check out the sourcecode for comments and explanations:
 
 .. missing your game here? Msg me on github!
 
+== Loading Jaws
+* jaws.js - includes the whole framework in one easy-to-include file.
+* jaws-min.js - same as jaws.js but minified with Googles closure compiler.
+* jaws-dynamic.js - dynamically loads all separate jaws files. This is best for debugging errors in jaws.
+  It assumes a directory "jawsjs" in your webpages "public" folder.
+
+You can also link to invidual files in your HTML:
+  <script src="/jawsjs/src/core.js"></script>
+  <script src="/jawsjs/src/sprite.js"></script>
+
+NOTE: core.js always needed. But then you can pick and choose depending on what you need.
+A rule of thumb is that a file foo.js will include a contructor named Foo().
+
 == Code demo
   //
   // Jaws will provide powerful functions like jaws.start() to quickly get a robust gameloop running.

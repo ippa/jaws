@@ -3,7 +3,7 @@
 #
 # Build standalone,all-including jaws-all.js by combining all files in src/-directory into one
 #
-out = File.new("jaws-all.js", "w")
+out = File.new("jaws.js", "w")
 Dir["src/*"].each do |file|
   out.write(File.read(file))
 end
@@ -24,7 +24,7 @@ def compress(js_code, compilation_level)
   response.body
 end
 
-js_code = File.read("jaws-all.js")
+js_code = File.read("jaws.js")
 
 out = File.new("jaws-min.js", "w")
 out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # ADVANCED_OPTIMIZATIONS
