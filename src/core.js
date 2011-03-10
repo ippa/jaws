@@ -21,16 +21,9 @@
  */
 
 var jaws = (function(jaws) {
-  var title
-  var debug_tag  
 
-  //var canvas
-  //var context
-  //var gameloop = 0
-  //var game_state
-  //var previous_game_state
-  //var url_parameters
-
+var title
+var debug_tag  
 
 jaws.__defineSetter__("title", function(s) { title.innerHTML = s })
 jaws.__defineGetter__("title", function()  { return title.innerHTML })
@@ -45,7 +38,6 @@ jaws.__defineGetter__("height", function() { return (jaws.canvas ? jaws.canvas.h
  * .. and so on.
  *
  */
-
 jaws.unpack = function() {
   var make_global = ["Sprite", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array"]
 

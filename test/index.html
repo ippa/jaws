@@ -45,7 +45,7 @@
       same(jaws.isString(an_array), false, "isString() should fail")
       same(jaws.isImage(an_array), false, "isImage() should fail")
     })
-    
+       
     test("image assets", function() {
       var assets_loaded = 0
       jaws.assets.add("droid_11x15.png")
@@ -93,6 +93,15 @@
       equal(sprite.y, sprite.bottom, "sprite.y == sprite.bottom when anchor is bottom_right")
     })
     
+    test("SpriteList", function() {
+      sprite_list = new jaws.SpriteList()
+      sprite = new jaws.Sprite({image: "rect.png"})
+      same(sprite_list.length, 0, "should start with zero sprites")
+
+      sprite_list.push(sprite)
+      same(sprite_list.length, 1, "should update length like array")
+    })
+ 
     test("Viewport", function() {
       viewport = new jaws.Viewport({max_x: 1000, max_y: 1000, width: 50, height: 40})
       sprite = new jaws.Sprite({image: "rect.png", x:30, y:40})
