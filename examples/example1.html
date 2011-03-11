@@ -26,11 +26,14 @@
     var canvas
     var context
     var title_tag
-    var bullets = new jaws.SpriteList()
-    var fps = document.getElementById("fps")
+    var bullets
+    var fps
 
     /* step0. set everything up, load sprites etc. */
     function setup() {
+      bullets = new jaws.SpriteList()
+      fps = document.getElementById("fps")
+
       title_tag = document.getElementsByTagName('title')[0]
       canvas = document.getElementsByTagName('canvas')[0]
       context = canvas.getContext('2d');
@@ -84,10 +87,11 @@
         context.stroke();
       }
     }
-
-    jaws.assets.add("plane.png")
-    jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
-                  // If you wan't you can modify the defaults: jaws.init({setup: initGame, fps: 30}) 
+    
+    window.onload = function() {
+      jaws.assets.add("plane.png")
+      jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
+    }
   </script>
 </center>
 </body>

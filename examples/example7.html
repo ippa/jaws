@@ -83,11 +83,13 @@
     }
     Bullet.prototype = Sprite.prototype
   }
-  
-  jaws.unpack()  // Make (among others) Sprite global
-  jaws.assets.add("plane.png")
-  jaws.assets.add("bullet.png")
-  jaws.start(PlayState)
+
+  window.onload = function() {
+    jaws.unpack()  // Make (among others) Sprite global
+    jaws.assets.add("plane.png")
+    jaws.assets.add("bullet.png")
+    jaws.start(PlayState)
+  }
   </script>
 
 </center>

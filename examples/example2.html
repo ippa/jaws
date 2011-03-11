@@ -38,7 +38,6 @@
       var player
       var bullets = new jaws.SpriteList()
 
-
       this.setup = function() {
         player = new jaws.Sprite({image: "plane.png", x: 10, y:100})
         player.can_fire = true
@@ -128,9 +127,11 @@
     * Our script-entry point
     *
     */
-    jaws.assets.add("plane.png")
-    jaws.assets.add("bullet.png")
-    jaws.start(MenuState)
+    window.onload = function() {
+      jaws.assets.add("plane.png")
+      jaws.assets.add("bullet.png")
+      jaws.start(MenuState)
+    }
   </script>
 </center>
 </body>

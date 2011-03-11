@@ -119,7 +119,7 @@ function findOrCreateCanvas() {
 jaws.start = function() {
   // This makes both jaws.start() and jaws.start(MenuState) possible
   var options = arguments[0] ? arguments[0] : {}
-  if( jaws.isFunction(options) ) { options = new options  }
+  if( jaws.isFunction(options) ) { options = new options }
 
   // If no arguments are given to start() we use the global functions setup/update/draw
   var setup =  options.setup || window.setup
