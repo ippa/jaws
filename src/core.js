@@ -157,9 +157,7 @@ jaws.start = function(game_state, options) {
 jaws.switchGameState = function(game_state) {
   jaws.gameloop.stop()
   
-  /* clear out any keyboard-events for this game state */
-  on_keydown_callbacks = []
-  on_keyup_callbacks = []
+  jaws.clearKeyCallbacks() // clear out all keyboard callbacks
  
   if(jaws.isFunction(game_state)) { game_state = new game_state }
   

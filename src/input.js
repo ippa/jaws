@@ -135,6 +135,12 @@ jaws.on_keyup = function(key, callback) {
   }
 }
 
+/* Clean up all callbacks set by on_keydown / on_keyup */
+jaws.clearKeyCallbacks = function() {
+  on_keyup_callbacks = []
+  on_keydown_callbacks = []
+}
+
 return jaws;
 })(jaws || {});
 
