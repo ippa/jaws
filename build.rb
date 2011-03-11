@@ -4,8 +4,12 @@
 # Build standalone,all-including jaws-all.js by combining all files in src/-directory into one
 #
 out = File.new("jaws.js", "w")
-Dir["src/*"].each do |file|
-  out.write(File.read(file))
+prefix = "src/"
+files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_list.js","sprite_sheet.js","parallax.js","animation.js","viewport.js"]
+
+#Dir["src/*"].each do |file|
+files.each do |file|
+  out.write(File.read(prefix + file))
 end
 out.close
 
