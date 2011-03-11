@@ -122,7 +122,7 @@ function findOrCreateCanvas() {
  *  jaws.start(Game, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
  *  jaws.start(window)          //
  *
- * */
+ */
 jaws.start = function(game_state, options) {
   // Instance given game state contructor, or try to use setup, update, draw from global window
   // This makes both jaws.start() and jaws.start(MenuState) possible
@@ -227,6 +227,5 @@ function getUrlParameters() {
 }
 
 return jaws;
-
 })(jaws || {});
 

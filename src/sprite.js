@@ -167,5 +167,5 @@ jaws.Sprite.prototype.anchor = function(align) {
 }
 
 return jaws;
-
 })(jaws || {});
+

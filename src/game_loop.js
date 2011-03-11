@@ -59,3 +59,4 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
 
 return jaws;
 })(jaws || {});
+

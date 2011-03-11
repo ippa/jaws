@@ -59,7 +59,6 @@ jaws.Viewport = function(options) {
   };
 }
 
-
-
 return jaws;
 })(jaws || {});
+

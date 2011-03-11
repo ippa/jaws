@@ -82,6 +82,6 @@ jaws.Animation.prototype.currentFrame = function() {
   return this.frames[this.index]
 };
 
-
 return jaws;
 })(jaws || {});
+

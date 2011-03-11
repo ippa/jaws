@@ -29,6 +29,6 @@ jaws.SpriteSheet = function(options) {
   this.__defineGetter__("length", function() { return this.frames.length })
 }
 
-
 return jaws;
 })(jaws || {});
+

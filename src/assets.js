@@ -37,7 +37,7 @@ Asset = function() {
    * @param   String or Array of strings
    * @returns The raw resource or an array of resources
    *
-   * */
+   */
   this.get = function(src) {
     if(jaws.isArray(src)) {
       return src.map( function(i) { return that.data[i] } )
@@ -127,6 +127,6 @@ Asset = function() {
 }
 jaws.assets = new Asset()
 
-
 return jaws;
 })(jaws || {});
+

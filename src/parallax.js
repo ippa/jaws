@@ -52,6 +52,6 @@ jaws.ParallaxLayer = function(options) {
 }
 jaws.ParallaxLayer.prototype = jaws.Sprite.prototype
 
-
 return jaws;
 })(jaws || {});
+

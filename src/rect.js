@@ -36,6 +36,6 @@ jaws.Rect.prototype.collideLeftSide = function(rect)   { return(this.x > rect.x 
 jaws.Rect.prototype.collideTopSide = function(rect)    { return(this.y >= rect.y && this.y <= rect.bottom) }
 jaws.Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y && this.y < rect.y) }
 
-
 return jaws;
 })(jaws || {});
+

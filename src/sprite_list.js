@@ -54,6 +54,5 @@ jaws.SpriteList.prototype.deleteIf = function(condition) {
 }
 
 return jaws;
-
 })(jaws || {});
 
