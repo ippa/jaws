@@ -64,19 +64,17 @@ jaws.setupInput = function() {
   for(var i = 0; numpadkeys[i]; i++)  { k[96+i] = numpadkeys[i] }
   for(var i = 0; fkeys[i]; i++)       { k[112+i] = fkeys[i] }
   
-  this.keycode_to_string = k
+  keycode_to_string = k
 
-  window.onkeydown = function(e)  { jaws.handleKeyDown(e) }
-  window.onkeyup = function(e)    { jaws.handleKeyUp(e) }
+  window.onkeydown = function(e)  { handleKeyDown(e) }
+  window.onkeyup = function(e)    { handleKeyUp(e) }
   window.onkeypress = function(e) {};
 }
 
-/*
- * handle event "onkeydown" by remembering what key was pressed
- */
-jaws.handleKeyUp = function(e) {
+// handle event "onkeydown" by remembering what key was pressed
+function handleKeyUp(e) {
   event = (e) ? e : window.event
-  var human_name = this.keycode_to_string[event.keyCode]
+  var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = false
   if(on_keyup_callbacks[human_name]) { 
     on_keyup_callbacks[human_name]() 
@@ -85,12 +83,10 @@ jaws.handleKeyUp = function(e) {
   if(prevent_default_keys[human_name]) { e.preventDefault() }
 }
 
-/*
- * handle event "onkeydown" by remembering what key was un-pressed
- */
-jaws.handleKeyDown = function(e) {
+// handle event "onkeydown" by remembering what key was un-pressed
+function handleKeyDown(e) {
   event = (e) ? e : window.event  
-  var human_name = this.keycode_to_string[event.keyCode]
+  var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = true
   if(on_keydown_callbacks[human_name]) { 
     on_keydown_callbacks[human_name]()
@@ -101,6 +97,7 @@ jaws.handleKeyDown = function(e) {
   // jaws.debug(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
   // e.preventDefault();
 }
+
 
 var prevent_default_keys = []
 jaws.preventDefaultKeys = function(array_of_strings) {
