@@ -124,7 +124,9 @@ A rule of thumb is that a file foo.js will include a contructor named Foo().
     // 3) When all assets are loaded, call setup()
     // 4) Then call update() / draw() with given FPS (default 60) until game ends or another game state is activated
     //
-    jaws.start(MyGameState);
+    window.onload = function() {
+      jaws.start(MyGameState);
+    }
   </script>
   </body>
   </html>
