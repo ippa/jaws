@@ -115,20 +115,22 @@ function findOrCreateCanvas() {
   jaws.context = jaws.canvas.getContext('2d');
 }
 
-/* Quick and easy startup of a jaws gameloop. Can also be done manually with new jaws.GameLoop etc. */
-jaws.start = function() {
+/* 
+ * Quick and easy startup of a jaws gameloop. Can be called in different ways:
+ *
+ *  jaws.start(Game)            // Start game state Game() with default options
+ *  jaws.start(Game, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
+ *  jaws.start(window)          //
+ *
+ * */
+jaws.start = function(game_state, options) {
+  // Instance given game state contructor, or try to use setup, update, draw from global window
   // This makes both jaws.start() and jaws.start(MenuState) possible
-  var options = arguments[0] ? arguments[0] : {}
-  if( jaws.isFunction(options) ) { options = new options }
+  if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
+  if(!game_state)                                 { game_state = window }
+  var wanted_fps = (options && options.fps) || 60
 
-  // If no arguments are given to start() we use the global functions setup/update/draw
-  var setup =  options.setup || window.setup
-  var update = options.update || window.update
-  var draw = options.draw || window.draw
-  var wanted_fps = options.fps || parseInt(arguments[1]) || 60
-
-  jaws.init(options)
-
+  jaws.init()
   jaws.debug("setupInput()", true)
   jaws.setupInput()
 
@@ -138,13 +140,13 @@ jaws.start = function() {
 
   function assetsLoaded() {
     jaws.debug("all assets loaded", true)
-    jaws.gameloop = new jaws.GameLoop(setup, update, draw, wanted_fps)
+    jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
     jaws.gameloop.start()
   }
 
   jaws.debug("assets.loadAll()", true)
-  if(jaws.assets.length() > 0) { jaws.assets.loadAll({loading: assetsLoading, loaded: assetsLoaded}) }
-  else                        { assetsLoaded() } 
+  if(jaws.assets.length() > 0)  { jaws.assets.loadAll({loading: assetsLoading, loaded: assetsLoaded}) }
+  else                          { assetsLoaded() } 
 }
 
 /*
