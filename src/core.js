@@ -152,7 +152,6 @@ jaws.start = function(game_state, options) {
 /*
  * Switch to a new active game state
  * Save previous game state in jaws.previous_game_state
- * 
  */
 jaws.switchGameState = function(game_state) {
   jaws.gameloop.stop()
@@ -165,6 +164,13 @@ jaws.switchGameState = function(game_state) {
   jaws.game_state = game_state
   jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.gameloop.fps)
   jaws.gameloop.start()
+}
+
+/*
+ * Clears canvas through context.clearRect()
+ */
+jaws.clear = function() {
+  jaws.context.clearRect(0,0,jaws.width,jaws.height)
 }
 
 /* returns true if obj is an Image */
