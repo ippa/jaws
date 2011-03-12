@@ -34,6 +34,22 @@ jaws.Sprite = function(options) {
   this.__defineGetter__("right", function()   { return this.x + this.right_offset  } )
   this.__defineGetter__("bottom", function()  { return this.y + this.bottom_offset } )
   
+  this.__defineGetter__("scale", function(value)   { return this._scale })
+  this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); }) 
+  
+  this.__defineGetter__("image", function(value)   { return this._image })
+  this.__defineSetter__("image", function(value)   { 
+    this._image = (jaws.isDrawable(value) ? value : jaws.assets.data[value])
+    this.calcBorderOffsets(); 
+  })
+  this.__defineGetter__("rect", function() { 
+    this._rect.x = this.x - this.left_offset
+    this._rect.y = this.y - this.top_offset
+    this._rect.width = this._width
+    this._rect.height = this._height
+    return this._rect
+  })
+
   /* When image, scale or anchor changes we re-cache these values for speed */
   this.calcBorderOffsets = function() {
     this._width = this._image.width * this._scale
@@ -45,26 +61,9 @@ jaws.Sprite = function(options) {
     this.bottom_offset = this.height * (1.0 - this.anchor_y)
   } 
 
-  this.__defineGetter__("image", function(value)   { return this._image })
-  this.__defineSetter__("image", function(value)   { 
-    this._image = (jaws.isDrawable(value) ? value : jaws.assets.data[value])
-    this.calcBorderOffsets(); 
-  })
-
-  this.__defineGetter__("scale", function(value)   { return this._scale })
-  this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); })
-
   options.image           && (this.image = options.image)
   options.anchor          && this.anchor(options.anchor)
  
-  this.__defineGetter__("rect", function() { 
-    this._rect.x = this.left
-    this._rect.y = this.top
-    this._rect.width = this.width
-    this._rect.height = this.height
-    return this._rect
-  })
-
   // No canvas context? Switch to DOM-based spritemode
   if(!this.context) { this.createDiv() }
 }
