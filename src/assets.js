@@ -14,6 +14,7 @@ function Asset() {
   that = this
 
   this.image_to_canvas = true
+  this.fuchia_to_transparent = true
 
   this.file_type = {}
   this.file_type["wav"] = "audio"
@@ -115,7 +116,10 @@ function Asset() {
 
   this.imageLoaded = function(e) {
     var asset = this.asset
-    that.data[asset.src] = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
+    var new_image = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
+    if(that.fuchia_to_transparent) { new_image = fuchiaToTransparent(new_image) }
+
+    that.data[asset.src] = new_image
     that.itemLoaded(asset.src)
   };
   
@@ -128,6 +132,11 @@ function Asset() {
   };
 }
 
+/*
+ * Takes an image, returns a canvas.
+ * Benchmarks has proven canvas to be faster to work with then images.
+ * Returns: a canvas
+ */
 function imageToCanvas(image) {
   var canvas = document.createElement("canvas")
   canvas.width = image.width
@@ -135,6 +144,26 @@ function imageToCanvas(image) {
 
   var context = canvas.getContext("2d")
   context.drawImage(image, 0, 0, image.width, image.height)
+  return canvas
+}
+
+/* 
+ * Make Fuchia (0xFF00FF) transparent
+ * This is the de-facto "standard" to be able to make have transparent areas in BMPs
+ * Returns: a canvas
+ *
+ */
+function fuchiaToTransparent(image) {
+  canvas = jaws.isImage(image) ? imageToCanvas(image) : image
+  var context = canvas.getContext("2d")
+  var img_data = context.getImageData(0,0,canvas.width,canvas.height)
+  var pixels = img_data.data
+  for(var i = 0; i < pixels.length; i += 4) {
+    if(pixels[i]==255 && pixels[i+1]==0 && pixels[i+2]==255) { // Color: Fuchia
+      pixels[i+3] = 0 // Set total see-through transparency
+    }
+  }
+  context.putImageData(img_data,0,0);
   return canvas
 }
 
