@@ -11,7 +11,6 @@
   var path = scripts[scripts.length-1].src.split('?')[0]
   var prefix = path.split('/').slice(0, -1).join('/') + '/src/'
 
-  alert(prefix)
   load(prefix + "core.js")
   .then(prefix + "input.js")
   .then(prefix + "assets.js")
