@@ -12,10 +12,9 @@ function cutImage(image, x, y, width, height) {
   return cut
 };
 
-
 /* Cut up into frame_size pieces and put them in frames[] */
 jaws.SpriteSheet = function(options) {
-  this.image = jaws.isImage(options.image) ? options.image : jaws.assets.data[options.image]
+  this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
   this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
