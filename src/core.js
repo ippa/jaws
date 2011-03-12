@@ -40,7 +40,7 @@ jaws.__defineGetter__("height", function() { return (jaws.canvas ? jaws.canvas.h
  *
  */
 jaws.unpack = function() {
-  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array"]
+  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array", "pressed"]
 
   make_global.forEach( function(item, array, total) {
     if(window[item])  { jaws.debug(item + "already exists in global namespace") }
