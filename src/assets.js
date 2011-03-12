@@ -1,17 +1,19 @@
 var jaws = (function(jaws) {
 
 /* 
- * _Asset
+ * Asset()
  *
  * Provides a one-stop access point to all assets (images, sound, video)
  *
  * exposed as jaws.assets
  * 
  */
-Asset = function() {
+function Asset() {
   this.list = []
   this.data = []
   that = this
+
+  this.image_to_canvas = true
 
   this.file_type = {}
   this.file_type["wav"] = "audio"
@@ -113,7 +115,7 @@ Asset = function() {
 
   this.imageLoaded = function(e) {
     var asset = this.asset
-    that.data[asset.src] = asset.image
+    that.data[asset.src] = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
     that.itemLoaded(asset.src)
   };
   
@@ -125,6 +127,17 @@ Asset = function() {
     that.itemLoaded(asset.src)
   };
 }
+
+function imageToCanvas(image) {
+  var canvas = document.createElement("canvas")
+  canvas.width = image.width
+  canvas.height = image.height
+
+  var context = canvas.getContext("2d")
+  context.drawImage(image, 0, 0, image.width, image.height)
+  return canvas
+}
+
 jaws.assets = new Asset()
 
 return jaws;
