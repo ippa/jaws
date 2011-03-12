@@ -40,7 +40,7 @@ jaws.__defineGetter__("height", function() { return (jaws.canvas ? jaws.canvas.h
  *
  */
 jaws.unpack = function() {
-  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array"]
+  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array", "pressed"]
 
   make_global.forEach( function(item, array, total) {
     if(window[item])  { jaws.debug(item + "already exists in global namespace") }
@@ -115,20 +115,22 @@ function findOrCreateCanvas() {
   jaws.context = jaws.canvas.getContext('2d');
 }
 
-/* Quick and easy startup of a jaws gameloop. Can also be done manually with new jaws.GameLoop etc. */
-jaws.start = function() {
+/* 
+ * Quick and easy startup of a jaws gameloop. Can be called in different ways:
+ *
+ *  jaws.start(Game)            // Start game state Game() with default options
+ *  jaws.start(Game, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
+ *  jaws.start(window)          //
+ *
+ */
+jaws.start = function(game_state, options) {
+  // Instance given game state contructor, or try to use setup, update, draw from global window
   // This makes both jaws.start() and jaws.start(MenuState) possible
-  var options = arguments[0] ? arguments[0] : {}
-  if( jaws.isFunction(options) ) { options = new options }
+  if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
+  if(!game_state)                                 { game_state = window }
+  var wanted_fps = (options && options.fps) || 60
 
-  // If no arguments are given to start() we use the global functions setup/update/draw
-  var setup =  options.setup || window.setup
-  var update = options.update || window.update
-  var draw = options.draw || window.draw
-  var wanted_fps = options.fps || parseInt(arguments[1]) || 60
-
-  jaws.init(options)
-
+  jaws.init()
   jaws.debug("setupInput()", true)
   jaws.setupInput()
 
@@ -138,26 +140,23 @@ jaws.start = function() {
 
   function assetsLoaded() {
     jaws.debug("all assets loaded", true)
-    jaws.gameloop = new jaws.GameLoop(setup, update, draw, wanted_fps)
+    jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
     jaws.gameloop.start()
   }
 
   jaws.debug("assets.loadAll()", true)
-  if(jaws.assets.length() > 0) { jaws.assets.loadAll({loading: assetsLoading, loaded: assetsLoaded}) }
-  else                        { assetsLoaded() } 
+  if(jaws.assets.length() > 0)  { jaws.assets.loadAll({loading: assetsLoading, loaded: assetsLoaded}) }
+  else                          { assetsLoaded() } 
 }
 
 /*
  * Switch to a new active game state
  * Save previous game state in jaws.previous_game_state
- * 
  */
 jaws.switchGameState = function(game_state) {
   jaws.gameloop.stop()
   
-  /* clear out any keyboard-events for this game state */
-  on_keydown_callbacks = []
-  on_keyup_callbacks = []
+  jaws.clearKeyCallbacks() // clear out all keyboard callbacks
  
   if(jaws.isFunction(game_state)) { game_state = new game_state }
   
@@ -165,6 +164,13 @@ jaws.switchGameState = function(game_state) {
   jaws.game_state = game_state
   jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.gameloop.fps)
   jaws.gameloop.start()
+}
+
+/*
+ * Clears canvas through context.clearRect()
+ */
+jaws.clear = function() {
+  jaws.context.clearRect(0,0,jaws.width,jaws.height)
 }
 
 /* returns true if obj is an Image */
@@ -225,7 +231,6 @@ function getUrlParameters() {
 }
 
 return jaws;
-
 })(jaws || {});
 
 var jaws = (function(jaws) {
@@ -294,19 +299,17 @@ jaws.setupInput = function() {
   for(var i = 0; numpadkeys[i]; i++)  { k[96+i] = numpadkeys[i] }
   for(var i = 0; fkeys[i]; i++)       { k[112+i] = fkeys[i] }
   
-  this.keycode_to_string = k
+  keycode_to_string = k
 
-  window.onkeydown = function(e)  { jaws.handleKeyDown(e) }
-  window.onkeyup = function(e)    { jaws.handleKeyUp(e) }
+  window.onkeydown = function(e)  { handleKeyDown(e) }
+  window.onkeyup = function(e)    { handleKeyUp(e) }
   window.onkeypress = function(e) {};
 }
 
-/*
- * handle event "onkeydown" by remembering what key was pressed
- */
-jaws.handleKeyUp = function(e) {
+// handle event "onkeydown" by remembering what key was pressed
+function handleKeyUp(e) {
   event = (e) ? e : window.event
-  var human_name = this.keycode_to_string[event.keyCode]
+  var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = false
   if(on_keyup_callbacks[human_name]) { 
     on_keyup_callbacks[human_name]() 
@@ -315,12 +318,10 @@ jaws.handleKeyUp = function(e) {
   if(prevent_default_keys[human_name]) { e.preventDefault() }
 }
 
-/*
- * handle event "onkeydown" by remembering what key was un-pressed
- */
-jaws.handleKeyDown = function(e) {
+// handle event "onkeydown" by remembering what key was un-pressed
+function handleKeyDown(e) {
   event = (e) ? e : window.event  
-  var human_name = this.keycode_to_string[event.keyCode]
+  var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = true
   if(on_keydown_callbacks[human_name]) { 
     on_keydown_callbacks[human_name]()
@@ -331,6 +332,7 @@ jaws.handleKeyDown = function(e) {
   // jaws.debug(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
   // e.preventDefault();
 }
+
 
 var prevent_default_keys = []
 jaws.preventDefaultKeys = function(array_of_strings) {
@@ -368,22 +370,32 @@ jaws.on_keyup = function(key, callback) {
   }
 }
 
+/* Clean up all callbacks set by on_keydown / on_keyup */
+jaws.clearKeyCallbacks = function() {
+  on_keyup_callbacks = []
+  on_keydown_callbacks = []
+}
+
 return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
 
 /* 
- * _Asset
+ * Asset()
  *
  * Provides a one-stop access point to all assets (images, sound, video)
  *
  * exposed as jaws.assets
  * 
  */
-Asset = function() {
+function Asset() {
   this.list = []
   this.data = []
   that = this
+
+  this.image_to_canvas = true
+  this.fuchia_to_transparent = true
 
   this.file_type = {}
   this.file_type["wav"] = "audio"
@@ -409,7 +421,7 @@ Asset = function() {
    * @param   String or Array of strings
    * @returns The raw resource or an array of resources
    *
-   * */
+   */
   this.get = function(src) {
     if(jaws.isArray(src)) {
       return src.map( function(i) { return that.data[i] } )
@@ -485,7 +497,10 @@ Asset = function() {
 
   this.imageLoaded = function(e) {
     var asset = this.asset
-    that.data[asset.src] = asset.image
+    var new_image = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
+    if(that.fuchia_to_transparent) { new_image = fuchiaToTransparent(new_image) }
+
+    that.data[asset.src] = new_image
     that.itemLoaded(asset.src)
   };
   
@@ -497,11 +512,47 @@ Asset = function() {
     that.itemLoaded(asset.src)
   };
 }
-jaws.assets = new Asset()
 
+/*
+ * Takes an image, returns a canvas.
+ * Benchmarks has proven canvas to be faster to work with then images.
+ * Returns: a canvas
+ */
+function imageToCanvas(image) {
+  var canvas = document.createElement("canvas")
+  canvas.width = image.width
+  canvas.height = image.height
+
+  var context = canvas.getContext("2d")
+  context.drawImage(image, 0, 0, image.width, image.height)
+  return canvas
+}
+
+/* 
+ * Make Fuchia (0xFF00FF) transparent
+ * This is the de-facto "standard" to be able to make have transparent areas in BMPs
+ * Returns: a canvas
+ *
+ */
+function fuchiaToTransparent(image) {
+  canvas = jaws.isImage(image) ? imageToCanvas(image) : image
+  var context = canvas.getContext("2d")
+  var img_data = context.getImageData(0,0,canvas.width,canvas.height)
+  var pixels = img_data.data
+  for(var i = 0; i < pixels.length; i += 4) {
+    if(pixels[i]==255 && pixels[i+1]==0 && pixels[i+2]==255) { // Color: Fuchia
+      pixels[i+3] = 0 // Set total see-through transparency
+    }
+  }
+  context.putImageData(img_data,0,0);
+  return canvas
+}
+
+jaws.assets = new Asset()
 
 return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
 
 /*
@@ -563,6 +614,7 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
 
 return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
 
 /*
@@ -601,9 +653,9 @@ jaws.Rect.prototype.collideLeftSide = function(rect)   { return(this.x > rect.x 
 jaws.Rect.prototype.collideTopSide = function(rect)    { return(this.y >= rect.y && this.y <= rect.bottom) }
 jaws.Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y && this.y < rect.y) }
 
-
 return jaws;
 })(jaws || {});
+
 /*
  * 
  * This is usually the Constructor we use when we want characters on the screen.
@@ -640,6 +692,22 @@ jaws.Sprite = function(options) {
   this.__defineGetter__("right", function()   { return this.x + this.right_offset  } )
   this.__defineGetter__("bottom", function()  { return this.y + this.bottom_offset } )
   
+  this.__defineGetter__("scale", function(value)   { return this._scale })
+  this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); }) 
+  
+  this.__defineGetter__("image", function(value)   { return this._image })
+  this.__defineSetter__("image", function(value)   { 
+    this._image = (jaws.isDrawable(value) ? value : jaws.assets.data[value])
+    this.calcBorderOffsets(); 
+  })
+  this.__defineGetter__("rect", function() { 
+    this._rect.x = this.x - this.left_offset
+    this._rect.y = this.y - this.top_offset
+    this._rect.width = this._width
+    this._rect.height = this._height
+    return this._rect
+  })
+
   /* When image, scale or anchor changes we re-cache these values for speed */
   this.calcBorderOffsets = function() {
     this._width = this._image.width * this._scale
@@ -651,26 +719,9 @@ jaws.Sprite = function(options) {
     this.bottom_offset = this.height * (1.0 - this.anchor_y)
   } 
 
-  this.__defineGetter__("image", function(value)   { return this._image })
-  this.__defineSetter__("image", function(value)   { 
-    this._image = (jaws.isDrawable(value) ? value : jaws.assets.data[value])
-    this.calcBorderOffsets(); 
-  })
-
-  this.__defineGetter__("scale", function(value)   { return this._scale })
-  this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); })
-
   options.image           && (this.image = options.image)
   options.anchor          && this.anchor(options.anchor)
  
-  this.__defineGetter__("rect", function() { 
-    this._rect.x = this.left
-    this._rect.y = this.top
-    this._rect.width = this.width
-    this._rect.height = this.height
-    return this._rect
-  })
-
   // No canvas context? Switch to DOM-based spritemode
   if(!this.context) { this.createDiv() }
 }
@@ -773,8 +824,8 @@ jaws.Sprite.prototype.anchor = function(align) {
 }
 
 return jaws;
-
 })(jaws || {});
+
 var jaws = (function(jaws) {
 
 /*
@@ -831,7 +882,6 @@ jaws.SpriteList.prototype.deleteIf = function(condition) {
 }
 
 return jaws;
-
 })(jaws || {});
 
 var jaws = (function(jaws) {
@@ -848,10 +898,9 @@ function cutImage(image, x, y, width, height) {
   return cut
 };
 
-
 /* Cut up into frame_size pieces and put them in frames[] */
 jaws.SpriteSheet = function(options) {
-  this.image = jaws.isImage(options.image) ? options.image : jaws.assets.data[options.image]
+  this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
   this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
@@ -865,9 +914,9 @@ jaws.SpriteSheet = function(options) {
   this.__defineGetter__("length", function() { return this.frames.length })
 }
 
-
 return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
 
 jaws.Parallax = function(options) {
@@ -922,9 +971,9 @@ jaws.ParallaxLayer = function(options) {
 }
 jaws.ParallaxLayer.prototype = jaws.Sprite.prototype
 
-
 return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
 
 /*
@@ -1009,9 +1058,9 @@ jaws.Animation.prototype.currentFrame = function() {
   return this.frames[this.index]
 };
 
-
 return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
 
 /*
@@ -1073,7 +1122,6 @@ jaws.Viewport = function(options) {
   };
 }
 
-
-
 return jaws;
 })(jaws || {});
+
