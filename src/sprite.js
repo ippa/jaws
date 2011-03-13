@@ -97,6 +97,7 @@ jaws.Sprite.prototype.updateDiv = function() {
 // Draw the sprite on screen via its previously given context
 jaws.Sprite.prototype.draw = function() {
   if(jaws.dom) { return this.updateDiv() }
+  if(!this._image) { return }
 
   this.context.save()
   this.context.translate(this.x, this.y)
