@@ -530,9 +530,8 @@ function imageToCanvas(image) {
 
 /* 
  * Make Fuchia (0xFF00FF) transparent
- * This is the de-facto "standard" to be able to make have transparent areas in BMPs
+ * This is the de-facto standard way to do transparency in BMPs
  * Returns: a canvas
- *
  */
 function fuchiaToTransparent(image) {
   canvas = jaws.isImage(image) ? imageToCanvas(image) : image
@@ -546,6 +545,33 @@ function fuchiaToTransparent(image) {
   }
   context.putImageData(img_data,0,0);
   return canvas
+}
+
+/* Scale image by factor and keep jaggy retro-borders */
+function retroScale(image, factor) {
+  canvas = jaws.isImage(image) ? imageToCanvas(image) : image
+  var context = canvas.getContext("2d")
+  var img_data = context.getImageData(0,0,canvas.width,canvas.height)
+  var pixels = img_data.data
+
+  var canvas2 = document.createElement("canvas")
+  canvas2.width = image.width * factor
+  canvas2.height = image.height * factor
+  var context2 = canvas.getContext("2d")
+  var img_data2 = context2.getImageData(0,0,canvas2.width,canvas2.height)
+  var pixels2 = img_data2.data
+
+  for (var x = 0; x < canvas.width * factor; x++) { 
+    for (var y = 0; y < canvas.height * factor; y++) { 
+      pixels2[x*y] = pixels[x*y / factor]
+      pixels2[x*y+1] = pixels[x*y+1 / factor]
+      pixels2[x*y+2] = pixels[x*y+2 / factor]
+      pixels2[x*y+3] = pixels[x*y+3 / factor]
+    } 
+  }
+
+  context2.putImageData(img_data2,0,0);
+  return canvas2
 }
 
 jaws.assets = new Asset()
@@ -755,6 +781,7 @@ jaws.Sprite.prototype.updateDiv = function() {
 // Draw the sprite on screen via its previously given context
 jaws.Sprite.prototype.draw = function() {
   if(jaws.dom) { return this.updateDiv() }
+  if(!this._image) { return }
 
   this.context.save()
   this.context.translate(this.x, this.y)
