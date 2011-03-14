@@ -12,10 +12,10 @@ Licensed under LGPL so you're free to use it for commercial projects.
   * Documented code and explained examples
 
 Jaws also...
-  * Does <canvas> for all gfx, it's the HW-accelerated future
-  * Does Not depend on any other javascript library
+  * Does <canvas> and HTML-based sprites
+  * Does not depend on any other javascript library
   * Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
-  * Tries to make asset-handling in webgames as easy as possible
+  * Tries to make assets (images, music, json data) in webgames as easy as possible
   * Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
   * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
@@ -42,8 +42,7 @@ Check out the sourcecode for comments and explanations:
 == Loading Jaws
 * jaws.js - includes the whole framework in one easy-to-include file.
 * jaws-min.js - same as jaws.js but minified with Googles closure compiler.
-* jaws-dynamic.js - dynamically loads all separate jaws files. This is best for debugging errors in jaws.
-  It assumes a directory "jawsjs" in your webpages "public" folder.
+* jaws-dynamic.js - dynamically loads all separate jaws files. Useful for debugging errors in Jaws.
 
 You can also link to invidual files in your HTML:
   <script src="/jawsjs/src/core.js"></script>
@@ -102,16 +101,7 @@ A rule of thumb is that a file foo.js will include a contructor named Foo().
         robot.draw();
       }
     }
-    
-    //
-    // Add to jaws internal list of assets.
-    // You can then either:
-    // - have jaws.start() load them automatically for you
-    // - or load them manually with jaws.assets.loadAll({loaded: myAssetsAreReadyCall})
-    //
-    jaws.assets.add("images/droid_11x15.png");
-    jaws.assets.add("images/player.png");
-    
+       
     //
     // jaws.start() is the easiest way to get something up and running. It will:
     //
@@ -125,6 +115,13 @@ A rule of thumb is that a file foo.js will include a contructor named Foo().
     // 4) Then call update() / draw() with given FPS (default 60) until game ends or another game state is activated
     //
     window.onload = function() {
+      // Add to jaws internal list of assets.
+      // You can then either:
+      // - have jaws.start() load them automatically for you
+      // - or load them manually with jaws.assets.loadAll({loaded: myAssetsAreReadyCall})
+      jaws.assets.add("images/droid_11x15.png");
+      jaws.assets.add("images/player.png");
+ 
       jaws.start(MyGameState);
     }
   </script>
