@@ -1,20 +1,21 @@
 <!DOCTYPE html> 
 <html>
   <head>
-    <script src="../jaws-dynamic.js"></script>
+    <script src="../jaws.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #1 - Sprite(), pressed(), basic game loop</title>
-  <head>
+  </head>
 
   <body>
   <center>
 
   <canvas width=500 height=300></canvas><br />
-  FPS: <span id="fps"></span>. Move with arrow keys.  
+  FPS: <span id="fps"></span>. Move with arrow keys.<br />
+  <span id="info"></span>
 
   <div id="info">
     <h1>Basic example</h1>
-    An basic example jaws.
+    An basic example jaws. Loading jaws.js via normal script-tag we can call jaws.start() without windows.onload / jaws.onload.
     We make our own canvas, instead of having jaws generate one (or several) for us.
     We get the canvas-tag from the DOM, fetch its context and send it to Sprite.
     If you for some reason want to have your own canvas tag this is the way to do it.
@@ -25,7 +26,7 @@
     var player
     var canvas
     var context
-    var title_tag
+    var info_tag
     var bullets
     var fps
 
@@ -33,8 +34,8 @@
     function setup() {
       bullets = new jaws.SpriteList()
       fps = document.getElementById("fps")
+      info_tag = document.getElementsByTagName('info')
 
-      title_tag = document.getElementsByTagName('title')[0]
       canvas = document.getElementsByTagName('canvas')[0]
       context = canvas.getContext('2d');
 
@@ -63,7 +64,7 @@
       player.draw()
       bullets.draw()  // will call draw() on all items in the list
 
-      title_tag.innerHTML = "FPS: " + jaws.gameloop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas.width + "/" + canvas.height
+      info_tag.innerHTML = "FPS: " + jaws.gameloop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas.width + "/" + canvas.height
       fps.innerHTML = jaws.gameloop.fps
     }
     
@@ -88,10 +89,8 @@
       }
     }
     
-    window.onload = function() {
-      jaws.assets.add("plane.png")
-      jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
-    }
+    jaws.assets.add("plane.png")
+    jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
   </script>
 </center>
 </body>
