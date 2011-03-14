@@ -9,19 +9,27 @@
   */
   var scripts = document.getElementsByTagName('script')
   var path = scripts[scripts.length-1].src.split('?')[0]
-  var prefix = path.split('/').slice(0, -1).join('/') + '/src/'
+  var p = path.split('/').slice(0, -1).join('/') + '/src/'
 
-  load(prefix + "core.js")
-  .then(prefix + "input.js")
-  .then(prefix + "assets.js")
-  .then(prefix + "game_loop.js")
-  .then(prefix + "rect.js")
-  .then(prefix + "sprite.js")
-  .then(prefix + "sprite_list.js")
-  .then(prefix + "sprite_sheet.js")
-  .then(prefix + "parallax.js")
-  .then(prefix + "animation.js")
-  .then(prefix + "viewport.js")
-
+  jaws = {}
+   load(p+"core.js")
+  .then(p+"sprite.js")
+  .then(p+"input.js", 
+        p+"assets.js", 
+        p+"game_loop.js", 
+        p+"rect.js", 
+        p+"sprite_list.js",
+        p+"sprite_sheet.js",
+        p+"parallax.js",
+        p+"animation.js",
+        p+"viewport.js")
+  .thenRun(function () {
+    /*
+     * We can't rely on window.onload callback when using javascript loaders.
+     * window.onload won't wait for dynamically inserted <script>-tags to finish before executing.
+     * Instead we introduce our own jaws.onload-callback which you in combination with jaws-dynamic.js
+     */
+    if(jaws.onload) { jaws.onload(); }
+  });
 })();
 
