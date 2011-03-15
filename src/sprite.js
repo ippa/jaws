@@ -42,7 +42,9 @@ jaws.Sprite = function(options) {
     this._image = (jaws.isDrawable(value) ? value : jaws.assets.data[value])
     this.calcBorderOffsets(); 
   })
-  this.__defineGetter__("rect", function() { 
+  this.__defineGetter__("rect", function() {
+    if(!this._image) { return undefined } // No rect without an image
+
     this._rect.x = this.x - this.left_offset
     this._rect.y = this.y - this.top_offset
     this._rect.width = this._width
@@ -72,7 +74,7 @@ jaws.Sprite = function(options) {
 jaws.Sprite.prototype.createDiv = function() {
   this.div = document.createElement("div")
   this.div.style.position = "absolute"
-  if(this.image) {
+  if(this._image) {
     this.div.style.width = this.image.width + "px"
     this.div.style.height = this.image.height + "px"
     this.div.style.backgroundImage = "url(" + this.image.src + ")"
