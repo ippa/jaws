@@ -120,7 +120,6 @@ function Asset() {
   this.imageLoaded = function(e) {
     var asset = this.asset
 
-    console.log(that.image_to_canvas)
     var new_image = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
     if(that.fuchia_to_transparent && that.getPostfix(asset.src) == "bmp") { new_image = fuchiaToTransparent(new_image) }
 
