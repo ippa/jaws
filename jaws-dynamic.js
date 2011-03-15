@@ -22,6 +22,7 @@
         p+"sprite_sheet.js",
         p+"parallax.js",
         p+"animation.js",
+        p+"tile_map.js",
         p+"viewport.js")
   .thenRun(function () {
     /*
