@@ -72,9 +72,11 @@ jaws.Sprite = function(options) {
 jaws.Sprite.prototype.createDiv = function() {
   this.div = document.createElement("div")
   this.div.style.position = "absolute"
-  this.div.style.width = this.image.width + "px"
-  this.div.style.height = this.image.height + "px"
-  this.div.style.backgroundImage = "url(" + this.image.src + ")"
+  if(this.image) {
+    this.div.style.width = this.image.width + "px"
+    this.div.style.height = this.image.height + "px"
+    this.div.style.backgroundImage = "url(" + this.image.src + ")"
+  }
   if(jaws.dom) { jaws.dom.appendChild(this.div) }
   this.updateDiv()
 }
