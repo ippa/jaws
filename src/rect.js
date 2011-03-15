@@ -9,6 +9,8 @@ jaws.Rect = function(x,y,width,height) {
   this.width = width
   this.height = height
   
+  this.__defineGetter__("left", function() { return this.x } )
+  this.__defineGetter__("top", function() { return this.y } )
   this.__defineGetter__("right", function() { return this.x + this.width } )
   this.__defineGetter__("bottom", function() { return this.y + this.height } )
 
