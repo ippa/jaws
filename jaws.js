@@ -501,7 +501,6 @@ function Asset() {
   this.imageLoaded = function(e) {
     var asset = this.asset
 
-    console.log(that.image_to_canvas)
     var new_image = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
     if(that.fuchia_to_transparent && that.getPostfix(asset.src) == "bmp") { new_image = fuchiaToTransparent(new_image) }
 
@@ -1198,7 +1197,6 @@ jaws.TileMap = function(options) {
 jaws.TileMap.prototype.push = function(obj) {
   if(jaws.isArray(obj)) { 
     for(var i=0; i < obj.length; i++) { 
-      console.log("array push: " + obj[i])
       this.push(obj[i]) 
     }
     return obj
@@ -1233,7 +1231,7 @@ jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
 
 /* Push obj to a specific cell specified by col and row */
 jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
-  console.log("pushToCell col/row: " + col + "/" + row)
+  // console.log("pushToCell col/row: " + col + "/" + row)
   if(current_obj = this.cells[col][row]) { this.cells[col][row] = [current_obj, obj] }
   else                                   { this.cells[col][row] = obj }
   return this.cells[col][row]
