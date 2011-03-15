@@ -392,10 +392,9 @@ var jaws = (function(jaws) {
 function Asset() {
   this.list = []
   this.data = []
-  that = this
-
   this.image_to_canvas = true
   this.fuchia_to_transparent = true
+  this.woff = "mooo!"
 
   this.file_type = {}
   this.file_type["wav"] = "audio"
@@ -431,9 +430,13 @@ function Asset() {
     }
   }
   
-  this.getType = function(src) {
+  this.getPostfix = function(src) {
     postfix_regexp = /\.([a-zA-Z]+)/;
-    postfix = postfix_regexp.exec(src)[1]
+    return postfix_regexp.exec(src)[1]
+  }
+
+  this.getType = function(src) {
+    var postfix = this.getPostfix(src)
     return (this.file_type[postfix] ? this.file_type[postfix] : postfix)
   }
   
@@ -497,8 +500,10 @@ function Asset() {
 
   this.imageLoaded = function(e) {
     var asset = this.asset
+
+    console.log(that.image_to_canvas)
     var new_image = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
-    if(that.fuchia_to_transparent) { new_image = fuchiaToTransparent(new_image) }
+    if(that.fuchia_to_transparent && that.getPostfix(asset.src) == "bmp") { new_image = fuchiaToTransparent(new_image) }
 
     that.data[asset.src] = new_image
     that.itemLoaded(asset.src)
@@ -652,6 +657,8 @@ jaws.Rect = function(x,y,width,height) {
   this.width = width
   this.height = height
   
+  this.__defineGetter__("left", function() { return this.x } )
+  this.__defineGetter__("top", function() { return this.y } )
   this.__defineGetter__("right", function() { return this.x + this.width } )
   this.__defineGetter__("bottom", function() { return this.y + this.height } )
 
@@ -678,6 +685,7 @@ jaws.Rect.prototype.collideRightSide = function(rect)  { return(this.right >= re
 jaws.Rect.prototype.collideLeftSide = function(rect)   { return(this.x > rect.x && this.x <= rect.right) }
 jaws.Rect.prototype.collideTopSide = function(rect)    { return(this.y >= rect.y && this.y <= rect.bottom) }
 jaws.Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y && this.y < rect.y) }
+jaws.Rect.prototype.toString = function() { return "[Rect " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
 
 return jaws;
 })(jaws || {});
@@ -726,7 +734,9 @@ jaws.Sprite = function(options) {
     this._image = (jaws.isDrawable(value) ? value : jaws.assets.data[value])
     this.calcBorderOffsets(); 
   })
-  this.__defineGetter__("rect", function() { 
+  this.__defineGetter__("rect", function() {
+    if(!this._image) { return undefined } // No rect without an image
+
     this._rect.x = this.x - this.left_offset
     this._rect.y = this.y - this.top_offset
     this._rect.width = this._width
@@ -756,9 +766,11 @@ jaws.Sprite = function(options) {
 jaws.Sprite.prototype.createDiv = function() {
   this.div = document.createElement("div")
   this.div.style.position = "absolute"
-  this.div.style.width = this.image.width + "px"
-  this.div.style.height = this.image.height + "px"
-  this.div.style.backgroundImage = "url(" + this.image.src + ")"
+  if(this._image) {
+    this.div.style.width = this.image.width + "px"
+    this.div.style.height = this.image.height + "px"
+    this.div.style.backgroundImage = "url(" + this.image.src + ")"
+  }
   if(jaws.dom) { jaws.dom.appendChild(this.div) }
   this.updateDiv()
 }
@@ -1152,3 +1164,127 @@ jaws.Viewport = function(options) {
 return jaws;
 })(jaws || {});
 
+var jaws = (function(jaws) {
+
+/*
+ * TileMap - fast access to tiles
+ *
+ * var tile_map = new TileMap({size: [10, 10], cell_size: [16,16]})
+ * var sprite = new jaws.Sprite({x: 40, y: 40})
+ * var sprite2 = new jaws.Sprite({x: 41, y: 41})
+ * tile_map.push(sprite)
+ *
+ * tile_map.at(10,10)  // nil
+ * tile_map.at(40,40)  // sprite
+ * tile_map.cell(0,0)  // nil
+ * tile_map.cell(1,1)  // sprite
+ *
+ */
+jaws.TileMap = function(options) {
+  this.cell_size = options.cell_size || [32,32]
+  this.size = options.size
+  this.cells = new Array(this.size[0])
+
+  for(var i=0; i < this.size[0]; i++) {
+    this.cells[i] = new Array(this.size[1])
+  }
+}
+
+/*
+ * Push obj (or array of objs) into our cell-grid.
+ *
+ * Tries to read obj.x and obj.y to calculate what cell to occopy
+ */
+jaws.TileMap.prototype.push = function(obj) {
+  if(jaws.isArray(obj)) { 
+    for(var i=0; i < obj.length; i++) { 
+      console.log("array push: " + obj[i])
+      this.push(obj[i]) 
+    }
+    return obj
+  }
+  if(obj.rect) {
+    return this.pushAsRect(obj, obj.rect)
+  }
+  else {
+    var col = parseInt(obj.x / this.cell_size[0])
+    var row = parseInt(obj.y / this.cell_size[1])
+    return this.pushToCell(col, row, obj)
+  }
+
+}
+
+/* save 'obj' in cells touched by 'rect' */
+jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
+  var from_col = parseInt(rect.left / this.cell_size[0])
+  var to_col = parseInt((rect.right-1) / this.cell_size[0])
+
+  for(var col = from_col; col <= to_col; col++) {
+    var from_row = parseInt(rect.top / this.cell_size[1])
+    var to_row = parseInt((rect.bottom-1) / this.cell_size[1])
+    
+    for(var row = from_row; row <= to_row; row++) {
+      //console.log("atRect() col/row: " + col + "/" + row + " - " + this.cells[col][row])
+      this.pushToCell(col, row, obj)
+    }
+  }
+  return obj
+}
+
+/* Push obj to a specific cell specified by col and row */
+jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
+  console.log("pushToCell col/row: " + col + "/" + row)
+  if(current_obj = this.cells[col][row]) { this.cells[col][row] = [current_obj, obj] }
+  else                                   { this.cells[col][row] = obj }
+  return this.cells[col][row]
+}
+
+
+
+//
+// READERS
+// 
+
+/* Get objects in cell that exists at coordinates x / y  */
+jaws.TileMap.prototype.at = function(x, y) {
+  var col = parseInt(x / this.cell_size[0])
+  var row = parseInt(y / this.cell_size[1])
+  // console.log("at() col/row: " + col + "/" + row)
+  return this.cells[col][row]
+}
+
+/* Returns occupants of all cells touched by 'rect' */
+jaws.TileMap.prototype.atRect = function(rect) {
+  var objects = []
+  var from_col = parseInt(rect.x / this.cell_size[0])
+  var to_col = parseInt(rect.right / this.cell_size[0])
+  for(var col = from_col; col <= to_col; col++) {
+    var from_row = parseInt(rect.y / this.cell_size[1])
+    var to_row = parseInt(rect.bottom / this.cell_size[1])
+    
+    for(var row = from_row; row <= to_row; row++) {
+      var items = this.cells[col][row]
+      if(items) {
+        if(jaws.isArray(items)) {
+          items.forEach( function(item, total) { 
+            if(objects.indexOf(item) == -1) { objects.push(item) }
+          })
+        }
+        else {
+          if(objects.indexOf(items) == -1) { objects.push(items) }
+        }
+      }
+    }
+  }
+  return objects
+}
+
+/*
+ * Get objects in cell at col / row
+ */
+jaws.TileMap.prototype.cell = function(col, row) {
+  return this.cells[col][row]
+}
+
+return jaws;
+})(jaws || {});
