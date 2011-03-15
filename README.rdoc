@@ -28,11 +28,12 @@ Check out the sourcecode for comments and explanations:
 
 * http://jawsjs.com/jawsjs/examples/example1.html  - focus: manual setup of canvas. later examples shows better ways.
 * http://jawsjs.com/jawsjs/examples/example2.html  - focus: jaws game states
-* http://jawsjs.com/jawsjs/examples/example3.html  - focus: jaws.Animation()
+* http://jawsjs.com/jawsjs/examples/example3.html  - focus: jaws.Animation
 * http://jawsjs.com/jawsjs/examples/example4.html  - focus: jaws.Rect based collision detection
 * http://jawsjs.com/jawsjs/examples/example5.html  - focus: the jaws.Sprite({anchor: "..."}) parameter
 * http://jawsjs.com/jawsjs/examples/example6.html  - focus: jaws.Parallax
 * http://jawsjs.com/jawsjs/examples/example7.html  - focus: DOM-based sprites
+* http://jawsjs.com/jawsjs/examples/example7.html  - focus: jaws.TileMap
 
 == Games using Jaws
 * {http://ippa.se/webgames/unwaivering/}[http://ippa.se/webgames/unwaivering/]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
