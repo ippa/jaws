@@ -48,6 +48,7 @@
        
     test("image assets", function() {
       var assets_loaded = 0
+      jaws.assets.image_to_canvas = false
       jaws.assets.add("droid_11x15.png")
       jaws.assets.add("rect.png")
       jaws.assets.add("laser.wav")
@@ -56,21 +57,30 @@
       stop()
       function loaded() {
         ok(1, "loaded was called")
-        ok(jaws.assets.get("droid_11x15.png"), "image loaded")
+        ok(jaws.assets.get("rect.png"), "image loaded")
         ok(jaws.assets.get("laser.wav"), "audio loaded")
         ok(jaws.assets.get("gamedata.json"), "json loaded")
-
-        ok(jaws.isImage(jaws.assets.get("droid_11x15.png")), "png loaded as Image")
+        
+        console.log(jaws.assets.get("rect.png").toString());
+        ok(jaws.isImage(jaws.assets.get("rect.png")), "png loaded as Image")
         same(jaws.assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
         same(jaws.assets.get("gamedata.json").mode, "angry", "jsondata got parsed into an object")
-
-        // same(jaws.assets.get(["rect.png", "laser.wav"]).length, 2, "assets.get(array) returns array of assets")
-        
+        start()
         asset_depending_tests()
+      }
+    });
+    test("image assets #2", function() {
+      var assets_loaded = 0
+      jaws.assets.add("droid_11x15.png")
+      jaws.assets.image_to_canvas = true
+      jaws.assets.loadAll({loaded: loaded})
+      stop()
+      function loaded() {
+        ok(jaws.isCanvas(jaws.assets.get("droid_11x15.png")), "png loaded as Canvas")
         start()
       }
     });
-
+ 
   // Various test that need to wait some before assets are loaded
   function asset_depending_tests() {
     
@@ -136,7 +146,7 @@
       sprite_sheet = new jaws.SpriteSheet( {image: "droid_11x15.png", frame_size: [11,15]} )
 
       ok(jaws.assets.get("droid_11x15.png"), "asset available")
-      same(jaws.assets.get("droid_11x15.png").toString(), "[object HTMLImageElement]",  "is image")
+      ok(jaws.isDrawable(jaws.assets.get("droid_11x15.png")), "isDrawable")
       same(sprite_sheet.frame_size, [11,15], "frame_size")
       equal(sprite_sheet.frames[0].toString(), "[object HTMLCanvasElement]", "one frame is canvas")
       equal(sprite_sheet.frames.length, 14,"correct number of frames")
