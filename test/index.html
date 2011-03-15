@@ -14,6 +14,21 @@
       ok(jaws.Rect, "jaws.Rect")
     })
 
+    test("TileMap", function() {
+      var tile_map = new jaws.TileMap({size: [30,20], cell_size: [32,32]})
+      var sprite = new jaws.Sprite({x: 40, y: 40})
+      var sprite2 = new jaws.Sprite({x: 45, y: 45})
+      tile_map.push(sprite)
+      same(tile_map.at(10,10), undefined, "empty coordinates returns nil")
+      same(tile_map.at(40,40), sprite, "occupied coordinates returns corrent object")
+      same(tile_map.cell(0,0), undefined, "empty cell returns nil")
+      same(tile_map.cell(1,1), sprite, "occupied cell returns correct object")
+
+      tile_map.push(sprite2)
+      ok(jaws.isArray(tile_map.at(40,40)), "returns array of sprites")
+      same(tile_map.cell(1,1), [sprite, sprite2], "array of sprites occipying cell 1,1")
+    })
+
     test("Rect", function() {
       rect1 = new jaws.Rect(0,0,10,10)
       rect2 = new jaws.Rect(5,5,10,10)
