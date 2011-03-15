@@ -37,6 +37,7 @@ jaws.Rect.prototype.collideRightSide = function(rect)  { return(this.right >= re
 jaws.Rect.prototype.collideLeftSide = function(rect)   { return(this.x > rect.x && this.x <= rect.right) }
 jaws.Rect.prototype.collideTopSide = function(rect)    { return(this.y >= rect.y && this.y <= rect.bottom) }
 jaws.Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y && this.y < rect.y) }
+jaws.Rect.prototype.toString = function() { return "[Rect " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
 
 return jaws;
 })(jaws || {});
