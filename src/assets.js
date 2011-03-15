@@ -11,10 +11,9 @@ var jaws = (function(jaws) {
 function Asset() {
   this.list = []
   this.data = []
-  that = this
-
   this.image_to_canvas = true
   this.fuchia_to_transparent = true
+  this.woff = "mooo!"
 
   this.file_type = {}
   this.file_type["wav"] = "audio"
@@ -50,9 +49,13 @@ function Asset() {
     }
   }
   
-  this.getType = function(src) {
+  this.getPostfix = function(src) {
     postfix_regexp = /\.([a-zA-Z]+)/;
-    postfix = postfix_regexp.exec(src)[1]
+    return postfix_regexp.exec(src)[1]
+  }
+
+  this.getType = function(src) {
+    var postfix = this.getPostfix(src)
     return (this.file_type[postfix] ? this.file_type[postfix] : postfix)
   }
   
@@ -116,8 +119,10 @@ function Asset() {
 
   this.imageLoaded = function(e) {
     var asset = this.asset
+
+    console.log(that.image_to_canvas)
     var new_image = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
-    if(that.fuchia_to_transparent) { new_image = fuchiaToTransparent(new_image) }
+    if(that.fuchia_to_transparent && that.getPostfix(asset.src) == "bmp") { new_image = fuchiaToTransparent(new_image) }
 
     that.data[asset.src] = new_image
     that.itemLoaded(asset.src)
