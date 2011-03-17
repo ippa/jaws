@@ -122,14 +122,16 @@ jaws.Sprite.prototype.toRect = function() {
   this.width = this.image.width * this.scale_factor_x
   this.height = this.image.height * this.scale_factor_y
   
-  this.left   = this.x - this.width * this.anchor_x
-  this.top    = this.y - this.height * this.anchor_y
-  this.right  = this.x + this.width * (1.0 - this.anchor_x)
-  this.bottom = this.y + this.height * (1.0 - this.anchor_y)
   this.left_offset   = this.width * this.anchor_x
   this.top_offset    = this.height * this.anchor_y
   this.right_offset  = this.width * (1.0 - this.anchor_x)
   this.bottom_offset = this.height * (1.0 - this.anchor_y)
+
+  this.left   = this.x - this.left_offset
+  this.top    = this.y - this.top_offset
+  this.right  = this.x + this.right_offset
+  this.bottom = this.y + this.bottom_offset
+ 
   this.rect = new jaws.Rect(this.left, this.top, this.width, this.height)
 
   return this.rect
