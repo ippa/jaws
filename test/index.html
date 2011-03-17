@@ -120,18 +120,18 @@
       equal(sprite.width, 20, "sprite.width")  
       equal(sprite.height, 20, "sprite.height")
       
-      sprite.scale = 2
-      equal(sprite.width, 40, "sprite.width after scaling x2")
-      equal(sprite.height, 40, "sprite.height after scaling x2")
-      same(sprite.rect, new jaws.Rect(0,0,40,40), "sprite.rect")
-
-      sprite.anchor("top_left")
-      equal(sprite.x, sprite.left, "sprite.x == sprite.left when anchor is top_left")
-      equal(sprite.y, sprite.top, "sprite.y == sprite.top when anchor is top_left")
+      sprite.setScale(2)
+      equal(sprite.toRect().width, 40, "sprite.toRect().width after scaling x2")
+      equal(sprite.toRect().height, 40, "sprite.toRect().height after scaling x2")
+      same(sprite.toRect(), new jaws.Rect(0,0,40,40), "sprite.toRect()")
+     
+      sprite.setAnchor("bottom_right")
+      equal(sprite.x, sprite.toRect().right, "sprite.x == sprite.toRect().right when anchor is bottom_right")
+      equal(sprite.y, sprite.toRect().bottom, "sprite.y == sprite.toRect().bottom when anchor is bottom_right")
       
-      sprite.anchor("bottom_right")
-      equal(sprite.x, sprite.right, "sprite.x == sprite.right when anchor is bottom_right")
-      equal(sprite.y, sprite.bottom, "sprite.y == sprite.bottom when anchor is bottom_right")
+      sprite.setAnchor("top_left")
+      equal(sprite.x+sprite.width, sprite.toRect().right, "sprite.x+sprite.width == sprite.toRect().right when anchor is top_left")
+      equal(sprite.y+sprite.height, sprite.toRect().bottom, "sprite.y+sprite.height == sprite.toRect().bottom when anchor is top_left") 
     })
     
     test("SpriteList", function() {
@@ -150,22 +150,20 @@
       equal(viewport.x, 0, "viewport.x defaults to 0")
       equal(viewport.y, 0, "viewport.y defaults to 0")
 
-      viewport.x = 1111
+      viewport.moveTo(1111,1111)
       equal(viewport.x, 950, "viewport.x setter will respect max_x and width")
-      viewport.x = -10
+      viewport.moveTo(-10,-10)
       equal(viewport.x, 0, "viewport.x setter won't go negative")
 
-      viewport.y = 1111
+      viewport.moveTo(1111,1111)
       equal(viewport.y, 960, "viewport.x setter will respect max_y and height")
 
       viewport.centerAround(sprite)
       equal(viewport.x, 5, "centerAround will center viewport around given sprite or 'object with x/y'")
       equal(viewport.y, 20, "centerAround will center viewport around given sprite or 'object with x/y'")
 
-      viewport.x = 0
-      viewport.y = 0
+      viewport.moveTo(0,0)
       sprite.x = 55
-      sprite.y = 0
       equal(viewport.isInside(sprite), false, "isInside should return false")
       equal(viewport.isOutside(sprite), true, "isOutside should return true")
 
@@ -181,7 +179,7 @@
       same(sprite_sheet.frame_size, [11,15], "frame_size")
       equal(sprite_sheet.frames[0].toString(), "[object HTMLCanvasElement]", "one frame is canvas")
       equal(sprite_sheet.frames.length, 14,"correct number of frames")
-      equal(sprite_sheet.frames.length, sprite_sheet.length, "frames.length == length")
+      // equal(sprite_sheet.frames.length, sprite_sheet.length, "frames.length == length")
     })
 
     test("Animation", function() {
@@ -200,7 +198,7 @@
       same(animation3.frame_duration, 100, "sub-animation gets frame_duration from parent")
       equal(animation.frames.length, 14, "after slice, frames in animation")
       equal(animation.frames[0], animation3.frames[0], "sub-animation contains same canvas-elements as parent")
-      equal(animation.frames.length, animation.length, "animation.frames.length == animation.length")
+      // equal(animation.frames.length, animation.length, "animation.frames.length == animation.length")
     })
   }
 
