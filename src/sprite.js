@@ -29,6 +29,11 @@ jaws.Sprite = function(options) {
     right_bottom: [1,1]
   }
   this.set(options)
+  
+  if(this.image) {
+    this.width = this.image.width * this.scale_factor_x
+    this.height = this.image.height * this.scale_factor_y
+  }
   if(!this.context) { this.createDiv() }  // No canvas context? Switch to DOM-based spritemode
 }
 
@@ -100,7 +105,7 @@ jaws.Sprite.prototype.anchor = function(value) {
   if(a = this.anchors[value]) {
     this.anchor_x = a[0]
     this.anchor_y = a[1]
-    console.log("anchor x/y: " + this.anchor_x + "/" + this.anchor_y)
+    // console.log("anchor x/y: " + this.anchor_x + "/" + this.anchor_y)
     this.toRect()
   }
   return this
