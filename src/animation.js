@@ -24,7 +24,7 @@ jaws.Animation = function(options) {
   this.frame_direction = 1
 
   if(options.sprite_sheet) {
-    var image = (jaws.isImage(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
+    var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
     var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: options.frame_size})
     this.frames = sprite_sheet.frames
   }
