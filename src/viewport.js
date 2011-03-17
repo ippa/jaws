@@ -65,6 +65,8 @@ jaws.Viewport = function(options) {
   this.moveTo(options.x||0, options.y||0)
 }
 
+jaws.Viewport.prototype.toString = function() { return "[Viewport " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
+
 return jaws;
 })(jaws || {});
 

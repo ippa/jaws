@@ -27,6 +27,8 @@ jaws.SpriteSheet = function(options) {
   }
 }
 
+jaws.SpriteSheet.prototype.toString = function() { return "[SpriteSheet " + this.frames.length + " frames]" }
+
 return jaws;
 })(jaws || {});
 

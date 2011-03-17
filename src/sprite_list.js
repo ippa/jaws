@@ -52,6 +52,7 @@ jaws.SpriteList.prototype.deleteIf = function(condition) {
     if( condition(this[i]) ) { this.splice(i,1) }
   }
 }
+jaws.SpriteList.prototype.toString = function() { return "[SpriteList " + this.length + " sprites]" }
 
 return jaws;
 })(jaws || {});

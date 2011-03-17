@@ -119,5 +119,7 @@ jaws.TileMap.prototype.cell = function(col, row) {
   return this.cells[col][row]
 }
 
+jaws.TileMap.prototype.toString = function() { return "[TileMap " + this.size[0] + " cols, " + this.size[1] + " rows]" }
+
 return jaws;
 })(jaws || {});

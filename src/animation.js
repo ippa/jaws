@@ -80,6 +80,8 @@ jaws.Animation.prototype.currentFrame = function() {
   return this.frames[this.index]
 };
 
+jaws.Animation.prototype.toString = function() { return "[Animation, " + this.frames.length + " frames]" }
+
 return jaws;
 })(jaws || {});
 

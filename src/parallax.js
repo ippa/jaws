@@ -45,12 +45,14 @@ jaws.Parallax.prototype.addLayer = function(options) {
   layer.scale(this.scale)
   this.layers.push(layer)
 }
+jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + ", " + this.y + ". " + this.layers.length + " layers]" }
 
 jaws.ParallaxLayer = function(options) {
   this.damping = options.damping || 0
   jaws.Sprite.call(this, options)
 }
 jaws.ParallaxLayer.prototype = jaws.Sprite.prototype
+jaws.Parallax.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
 
 return jaws;
 })(jaws || {});
