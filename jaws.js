@@ -26,10 +26,10 @@ var jaws = (function(jaws) {
 var title
 var debug_tag  
 
-jaws.__defineSetter__("title", function(s) { title.innerHTML = s })
-jaws.__defineGetter__("title", function()  { return title.innerHTML })
-jaws.__defineGetter__("width", function()  { return (jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth) })
-jaws.__defineGetter__("height", function() { return (jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight)})
+jaws.title = function(value) {
+  if(value) { return (title.innerHTML = value) }
+  return title.innerHTML
+}
 
 /*
  * Unpacks Jaws core-constructors into the global namespace
@@ -40,7 +40,7 @@ jaws.__defineGetter__("height", function() { return (jaws.canvas ? jaws.canvas.h
  *
  */
 jaws.unpack = function() {
-  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array", "pressed"]
+  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "TileMap", "Rect", "pressed"]
 
   make_global.forEach( function(item, array, total) {
     if(window[item])  { jaws.debug(item + "already exists in global namespace") }
@@ -63,7 +63,11 @@ jaws.debug = function(msg, add) {
 /*
  * init()
  *
- * sets up various variables needed by jaws. Gets canvas and context.
+ * Initializes / creates:
+ * - jaws.canvas / jaws.context / jaws.dom (our drawable gamearea)
+ * - jaws.width / jaws.height (width/height of drawable gamearea)
+ * - jaws.url_parameters (hash of key/values of all parameters in current url)
+ * - title / debug_tag (used internally by jaws)
  *
  * */
 jaws.init = function(options) {
@@ -93,6 +97,9 @@ jaws.init = function(options) {
     jaws.dom = document.getElementById("canvas")
     jaws.dom.style.position = "relative"  // This is needed to have sprites with position = "absolute" stay within the canvas
   }
+  
+  jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
+  jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeigh
 }
 
 /* 
@@ -655,28 +662,39 @@ jaws.Rect = function(x,y,width,height) {
   this.y = y
   this.width = width
   this.height = height
-  
-  this.__defineGetter__("left", function() { return this.x } )
-  this.__defineGetter__("top", function() { return this.y } )
-  this.__defineGetter__("right", function() { return this.x + this.width } )
-  this.__defineGetter__("bottom", function() { return this.y + this.height } )
+  this.right = x + width
+  this.bottom = y + height
+}
 
-  // Draw a red rectangle
-  this.draw = function() {
-    jaws.context.strokeStyle = "red"
-    jaws.context.strokeRect(this.x, this.y, this.width, this.height)
-  }
+jaws.Rect.move = function(x,y) {
+  this.x += x
+  this.y += y
+  this.right += x
+  this.bottom += y
+}
 
-  // Returns true if point at x, y lies within calling rect
-  this.collidePoint = function(x, y) {
-    return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
-  }
+jaws.Rect.moveTo = function(x,y) {
+  this.x = x
+  this.y = y
+  this.right = this.x + this.width
+  this.bottom = this.y + this.height
+}
 
-  // Returns true if calling rect overlaps with given rect in any way
-  this.collideRect = function(rect) {
-    return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right)) &&
-           ((this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.y <= this.bottom))
-  }
+// Draw a red rectangle, usefull for debug
+jaws.Rect.prototype.draw = function() {
+  jaws.context.strokeStyle = "red"
+  jaws.context.strokeRect(this.x, this.y, this.width, this.height)
+}
+
+// Returns true if point at x, y lies within calling rect
+jaws.Rect.prototype.collidePoint = function(x, y) {
+  return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
+}
+
+// Returns true if calling rect overlaps with given rect in any way
+jaws.Rect.prototype.collideRect = function(rect) {
+  return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right)) &&
+         ((this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.y <= this.bottom))
 }
 
 /* TODO: add tests for bellow functions */
@@ -694,14 +712,8 @@ return jaws;
  * This is usually the Constructor we use when we want characters on the screen.
  * Comes with various properties:
  *
- *  sprite.x        // horizontal position on canvas, 0 is farthest to the left
- *  sprite.y        // vertical position, 0 is top of the screen
- *  sprite.scale    // how much to scale the sprite when drawing it
- *  sprite.width    // width of the sprite, will take scale into consideration
- *  sprite.height   // height of the sprite, will take scale into consideration
- *  sprite.bottom 
- *  sprite.right 
- *
+ * Properties: x, y, alpha, angle, flipped
+ * Setters: setImage(), anchor(), scale()
  */
 var jaws = (function(jaws) {
 
@@ -715,57 +727,66 @@ jaws.Sprite = function(options) {
   this.anchor_y = options.anchor_y || 0
   this.angle = options.angle || 0
   this.flipped = options.flipped || false
-  this._scale = options.scale || 1
-  this._rect = new jaws.Rect(0,0,0,0)
-
-  this.__defineGetter__("width", function()   { return this._width } )
-  this.__defineGetter__("height", function()  { return this._height } )
-  this.__defineGetter__("left", function()    { return this.x - this.left_offset } )
-  this.__defineGetter__("top", function()     { return this.y - this.top_offset } )
-  this.__defineGetter__("right", function()   { return this.x + this.right_offset  } )
-  this.__defineGetter__("bottom", function()  { return this.y + this.bottom_offset } )
   
-  this.__defineGetter__("scale", function(value)   { return this._scale })
-  this.__defineSetter__("scale", function(value)   { this._scale = value; this.calcBorderOffsets(); }) 
-  
-  this.__defineGetter__("image", function(value)   { return this._image })
-  this.__defineSetter__("image", function(value)   { 
-    this._image = (jaws.isDrawable(value) ? value : jaws.assets.data[value])
-    this.calcBorderOffsets(); 
-  })
-  this.__defineGetter__("rect", function() {
-    if(!this._image) { return undefined } // No rect without an image
-
-    this._rect.x = this.x - this.left_offset
-    this._rect.y = this.y - this.top_offset
-    this._rect.width = this._width
-    this._rect.height = this._height
-    return this._rect
-  })
-
-  /* When image, scale or anchor changes we re-cache these values for speed */
-  this.calcBorderOffsets = function() {
-    this._width = this._image.width * this._scale
-    this._height = this._image.height * this._scale
-
-    this.left_offset = this.width * this.anchor_x
-    this.top_offset = this.height * this.anchor_y
-    this.right_offset =  this.width * (1.0 - this.anchor_x)
-    this.bottom_offset = this.height * (1.0 - this.anchor_y)
-  } 
-
-  options.image           && (this.image = options.image)
-  options.anchor          && this.anchor(options.anchor)
+  options.image           &&  this.setImage(options.image)
+  options.anchor          &&  this.setAnchor(options.anchor)
+  this.setScale(options.scale)
  
   // No canvas context? Switch to DOM-based spritemode
   if(!this.context) { this.createDiv() }
+}
+
+/* Flip the sprite horizontally */
+jaws.Sprite.prototype.flip = function() {
+  this.flipped = this.flipped ? false : true
+}
+
+/* Set sprites x/y position */
+jaws.Sprite.prototype.move = function(x,y) {
+  this.x += x
+  this.y += y
+}
+/* Modify sprites x/y position */
+jaws.Sprite.prototype.moveTo = function(x,y) {
+  this.x = x
+  this.y = y
+}
+
+/* When image, scale or anchor changes we re-cache these values for speed */
+jaws.Sprite.prototype.calcBorderOffsets = function() {
+  if(!this.image) { return }
+
+  this.width = this.image.width * this.scale
+  this.height = this.image.height * this.scale
+
+  this.left_offset = this.width * this.anchor_x
+  this.top_offset = this.height * this.anchor_y
+  //this.right_offset =  this.width * (1.0 - this.anchor_x)
+  //this.bottom_offset = this.height * (1.0 - this.anchor_y)
+} 
+
+/* Set sprites image from an image or asset-string. Recalculate height/width etc. */
+jaws.Sprite.prototype.setImage = function(value)   { 
+  this.image = (jaws.isDrawable(value) ? value : jaws.assets.data[value])
+  this.calcBorderOffsets(); 
+}
+
+/* */
+jaws.Sprite.prototype.setScale = function(value) { 
+  this.scale = value || 1; 
+  this.calcBorderOffsets(); 
+}
+
+jaws.Sprite.prototype.toRect = function() {
+  if(!this.image) { return undefined } // No rect without an image
+  return (new jaws.Rect(this.x - this.left_offset, this.y - this.top_offset, this.width, this.height))
 }
 
 /* Make this sprite a DOM-based <div> sprite */
 jaws.Sprite.prototype.createDiv = function() {
   this.div = document.createElement("div")
   this.div.style.position = "absolute"
-  if(this._image) {
+  if(this.image) {
     this.div.style.width = this.image.width + "px"
     this.div.style.height = this.image.height + "px"
     this.div.style.backgroundImage = "url(" + this.image.src + ")"
@@ -792,7 +813,7 @@ jaws.Sprite.prototype.updateDiv = function() {
 // Draw the sprite on screen via its previously given context
 jaws.Sprite.prototype.draw = function() {
   if(jaws.dom) { return this.updateDiv() }
-  if(!this._image) { return }
+  if(!this.image) { return }
 
   this.context.save()
   this.context.translate(this.x, this.y)
@@ -800,7 +821,7 @@ jaws.Sprite.prototype.draw = function() {
   this.flipped && this.context.scale(-1, 1)
   this.context.globalAlpha = this.alpha
   this.context.translate(-this.left_offset, -this.top_offset)
-  this.context.drawImage(this._image, 0, 0, this._width, this._height);
+  this.context.drawImage(this.image, 0, 0, this.width, this.height);
   this.context.restore()
   return this
 }
@@ -814,7 +835,7 @@ jaws.Sprite.prototype.asCanvasContext = function() {
   var context = canvas.getContext("2d")
   context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
 
-  context.drawImage(this._image, 0, 0, this.width, this.height)
+  context.drawImage(this.image, 0, 0, this.width, this.height)
   return context
 }
 
@@ -831,7 +852,7 @@ jaws.Sprite.prototype.rotate = function(value) {
 // For example, a topdown shooter could use anchor("center") --> Place middle of the ship on x/y
 // .. and a sidescroller would probably use anchor("center_bottom") --> Place "feet" at x/y
 //
-jaws.Sprite.prototype.anchor = function(align) {
+jaws.Sprite.prototype.setAnchor = function(align) {
   var anchors = {
     top_left: [0,0],
     left_top: [0,0],
@@ -856,10 +877,11 @@ jaws.Sprite.prototype.anchor = function(align) {
   if(a = anchors[align]) {
     this.anchor_x = a[0]
     this.anchor_y = a[1]
-    this._image && this.calcBorderOffsets()
+    this.calcBorderOffsets()
   }
   return this
 }
+jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
 
 return jaws;
 })(jaws || {});
@@ -949,7 +971,6 @@ jaws.SpriteSheet = function(options) {
       this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
     }
   }
-  this.__defineGetter__("length", function() { return this.frames.length })
 }
 
 return jaws;
@@ -978,28 +999,28 @@ jaws.Parallax.prototype.draw = function(options) {
     layer.x = -(this.camera_x / layer.damping)
     layer.y = -(this.camera_y / layer.damping)
 
-    while(this.repeat_x && layer.x > 0) { layer.x -= layer.image.width }
-    while(this.repeat_y && layer.y > 0) { layer.y -= layer.image.width }
+    while(this.repeat_x && layer.x > 0) { layer.x -= layer.width }
+    while(this.repeat_y && layer.y > 0) { layer.y -= layer.width }
 
     while(this.repeat_x && layer.x < jaws.width) {
       while(this.repeat_y && layer.y < jaws.height) {
         layer.draw()
-        layer.y += layer.image.height
+        layer.y += layer.height
       }    
       layer.y = save_y
       layer.draw()
-      layer.x += (layer.image.width-1)  // -1 to compensate for glitches in repeating tiles
+      layer.x += (layer.width-1)  // -1 to compensate for glitches in repeating tiles
     }
     while(layer.repeat_y && !layer.repeat_x && layer.y < jaws.height) {
       layer.draw()
-      layer.y += layer.image.height
+      layer.y += layer.height
     }
     layer.x = save_x
   }
 }
 jaws.Parallax.prototype.addLayer = function(options) {
   var layer = new jaws.ParallaxLayer(options)
-  layer.scale = this.scale
+  layer.scale(this.scale)
   this.layers.push(layer)
 }
 
@@ -1042,8 +1063,6 @@ jaws.Animation = function(options) {
     var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: options.frame_size})
     this.frames = sprite_sheet.frames
   }
-
-  this.__defineGetter__("length", function() { return this.frames.length })
 
   /* Initializing timer-stuff */ 
   this.current_tick = (new Date()).getTime();
@@ -1115,49 +1134,55 @@ var jaws = (function(jaws) {
 jaws.Viewport = function(options) {
   this.options = options
   this.context = options.context || jaws.context
-  this.width = options.width || jaws.canvas.width
-  this.height = options.height || jaws.canvas.height
-  this.max_x = options.max_x || jaws.canvas.width 
-  this.max_y = options.max_y || jaws.canvas.height
-  this._x = options.x || 0
-  this._y = options.y || 0
+  this.width = options.width || jaws.width
+  this.height = options.height || jaws.height
+  this.max_x = options.max_x || jaws.width 
+  this.max_y = options.max_y || jaws.height
   
-  this.__defineGetter__("x", function() {return this._x} );
-  this.__defineGetter__("y", function() {return this._y} );
-
-  this.__defineSetter__("x", function(value) {
-    this._x = value
+  this.verifyPosition = function() {
     var max = this.max_x - this.width
-    if(this._x < 0)    { this._x = 0 }
-    if(this._x > max)  { this._x = max }
-  });
-  
-  this.__defineSetter__("y", function(value) {
-    this._y = value
+    if(this.x < 0)      { this.x = 0 }
+    if(this.x > max)    { this.x = max }
+
     var max = this.max_y - this.height
-    if(this._y < 0)    { this._y = 0 }
-    if(this._y > max)  { this._y = max }
-  });
+    if(this.y < 0)      { this.y = 0 }
+    if(this.y > max)    { this.y = max }
+  };
+ 
+  this.move = function(x, y) {
+    x && (this.x += x)
+    y && (this.y += y)
+    this.verifyPosition()
+  };
+  
+  this.moveTo = function(x, y) {
+    if(!(x==undefined)) { this.x = x }
+    if(!(y==undefined)) { this.y = y }
+    this.verifyPosition()
+  };
 
   this.isOutside = function(item) {
     return(!this.isInside(item))
   };
 
   this.isInside = function(item) {
-    return( item.x >= this._x && item.x <= (this._x + this.width) && item.y >= this._y && item.y <= (this._y + this.height) )
+    return( item.x >= this.x && item.x <= (this.x + this.width) && item.y >= this.y && item.y <= (this.y + this.height) )
   };
 
   this.centerAround = function(item) {
     this.x = (item.x - this.width / 2)
     this.y = (item.y - this.height / 2)
+    this.verifyPosition()
   };
 
   this.apply = function(func) {
     this.context.save()
-    this.context.translate(-this._x, -this._y)
+    this.context.translate(-this.x, -this.y)
     func()
     this.context.restore()
   };
+  
+  this.moveTo(options.x||0, options.y||0)
 }
 
 return jaws;
@@ -1201,8 +1226,8 @@ jaws.TileMap.prototype.push = function(obj) {
     }
     return obj
   }
-  if(obj.rect) {
-    return this.pushAsRect(obj, obj.rect)
+  if(obj.toRect) {
+    return this.pushAsRect(obj, obj.toRect())
   }
   else {
     var col = parseInt(obj.x / this.cell_size[0])
@@ -1214,11 +1239,11 @@ jaws.TileMap.prototype.push = function(obj) {
 
 /* save 'obj' in cells touched by 'rect' */
 jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
-  var from_col = parseInt(rect.left / this.cell_size[0])
+  var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt((rect.right-1) / this.cell_size[0])
 
   for(var col = from_col; col <= to_col; col++) {
-    var from_row = parseInt(rect.top / this.cell_size[1])
+    var from_row = parseInt(rect.y / this.cell_size[1])
     var to_row = parseInt((rect.bottom-1) / this.cell_size[1])
     
     for(var row = from_row; row <= to_row; row++) {
