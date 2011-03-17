@@ -3,7 +3,13 @@
 
 = Jaws - HTML5 Javascript web game development library
 
-Depends on Javascript 1.6+ (ECMA-262 Edition 5). Tested on Chrome 9+, Firefox 3.6.x/4.x, Safari 5+.
+Depends on Javascript 1.6+ (ECMA-262 Edition 5).
+Tested with with:
+ - Chrome 9 + 10
+ - Firefox 3.6.x + 4.x
+ - Safari 5+
+ - IE9
+
 Licensed under LGPL so you're free to use it for commercial projects.
 
 == Highlights
@@ -33,7 +39,7 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/jawsjs/examples/example5.html  - focus: the jaws.Sprite({anchor: "..."}) parameter
 * http://jawsjs.com/jawsjs/examples/example6.html  - focus: jaws.Parallax
 * http://jawsjs.com/jawsjs/examples/example7.html  - focus: DOM-based sprites
-* http://jawsjs.com/jawsjs/examples/example7.html  - focus: jaws.TileMap
+* http://jawsjs.com/jawsjs/examples/example8.html  - focus: jaws.TileMap
 
 == Games using Jaws
 * {http://ippa.se/webgames/unwaivering/}[http://ippa.se/webgames/unwaivering/]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
