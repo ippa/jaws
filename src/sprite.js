@@ -41,8 +41,8 @@ jaws.Sprite.prototype.set = function(options) {
   this.setX(options.x || 0)
   this.setY(options.y || 0)
   this.setAlpha(options.alpha || 1)
-  this.setAnchorX(options.anchor_x || 0)
-  this.setAnchorY(options.anchor_y || 0)
+  if(!options.anchor_x==undefined) {this.setAnchorX(options.anchor_x)}
+  if(!options.anchor_u==undefined) {this.setAnchorY(options.anchor_y)}
   this.setAngle(options.angle || 0)
   this.setFlipped(options.flipped)
 
