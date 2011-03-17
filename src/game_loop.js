@@ -27,12 +27,12 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   var that = this
 
   this.start = function() {
-    jaws.debug("gameloop start", true)
+    jaws.log("gameloop start", true)
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
     if(setup) { setup() }
     update_id = setInterval(this.loop, 1000 / wanted_fps);
-    jaws.debug("gameloop loop", true)
+    jaws.log("gameloop loop", true)
   }
   
   this.loop = function() {

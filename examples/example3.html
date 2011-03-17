@@ -27,8 +27,8 @@
     We also use {anchor: "center_bottom"} which means when we paint the sprite at 100/200, the feet will be placed there.
   </div>
   
-  <h3>jaws debug</h3>
-  <div id="jaws-debug"></div>
+  <h3>jaws log</h3>
+  <div id="jaws-log"></div>
  
   <script>
     /*
@@ -74,9 +74,10 @@
         jaws.context.lineWidth = 1
         jaws.context.moveTo(0,300)
         jaws.context.lineTo(jaws.width,300)
-        jaws.context.strokeStyle = "black";
-        jaws.context.stroke();
-
+        jaws.context.strokeStyle = "black"
+        jaws.context.stroke()
+        
+        jaws.log(player)
         player.draw()
       }
     

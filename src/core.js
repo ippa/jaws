@@ -24,7 +24,7 @@
 var jaws = (function(jaws) {
 
 var title
-var debug_tag  
+var log_tag  
 
 jaws.title = function(value) {
   if(value) { return (title.innerHTML = value) }
@@ -43,20 +43,20 @@ jaws.unpack = function() {
   var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "TileMap", "Rect", "pressed"]
 
   make_global.forEach( function(item, array, total) {
-    if(window[item])  { jaws.debug(item + "already exists in global namespace") }
+    if(window[item])  { jaws.log(item + "already exists in global namespace") }
     else              { window[item] = jaws[item] }
   });
 }
 
 
 /*
- * Simple debug output, adds text to previously found or created <div id="jaws-debug">
+ * Logger, adds text to previously found or created <div id="jaws-log">
  */
-jaws.debug = function(msg, add) {
-  if(debug_tag) {
+jaws.log = function(msg, add) {
+  if(log_tag) {
     msg += "<br />"
-    if(add) { debug_tag.innerHTML = debug_tag.innerHTML.toString() + msg } 
-    else { debug_tag.innerHTML = msg }
+    if(add) { log_tag.innerHTML = log_tag.innerHTML.toString() + msg } 
+    else { log_tag.innerHTML = msg }
   }
 }
 
@@ -67,7 +67,7 @@ jaws.debug = function(msg, add) {
  * - jaws.canvas / jaws.context / jaws.dom (our drawable gamearea)
  * - jaws.width / jaws.height (width/height of drawable gamearea)
  * - jaws.url_parameters (hash of key/values of all parameters in current url)
- * - title / debug_tag (used internally by jaws)
+ * - title / log_tag (used internally by jaws)
  *
  * */
 jaws.init = function(options) {
@@ -76,16 +76,16 @@ jaws.init = function(options) {
   jaws.url_parameters = getUrlParameters()
 
   /*
-   * If debug=1 parameter is present in the URL, let's either find <div id="jaws-debug"> or create the tag.
-   * jaws.debug(message) will use this div for debug/info output to the gamer or developer
+   * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
+   * jaws.log(message) will use this div for debug/info output to the gamer or developer
    *
    */
-  debug_tag = document.getElementById('jaws-debug')
+  log_tag = document.getElementById('jaws-log')
   if(jaws.url_parameters["debug"]) {
-    if(!debug_tag) {
-      debug_tag = document.createElement("div")
-      debug_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;"
-      document.body.appendChild(debug_tag)
+    if(!log_tag) {
+      log_tag = document.createElement("div")
+      log_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;"
+      document.body.appendChild(log_tag)
     }
   }
 
@@ -114,10 +114,10 @@ function findOrCreateCanvas() {
     jaws.canvas.width = 500
     jaws.canvas.height = 300
     document.body.appendChild(jaws.canvas)
-    debug("creating canvas", true)
+    jaws.log("creating canvas", true)
   }
   else {
-    debug("found canvas", true)
+    jaws.log("found canvas", true)
   } 
   jaws.context = jaws.canvas.getContext('2d');
 }
@@ -138,20 +138,20 @@ jaws.start = function(game_state, options) {
   var wanted_fps = (options && options.fps) || 60
 
   jaws.init()
-  jaws.debug("setupInput()", true)
+  jaws.log("setupInput()", true)
   jaws.setupInput()
 
   function assetsLoading(src, percent_done) {
-    jaws.debug( percent_done + "%: " + src, true)
+    jaws.log( percent_done + "%: " + src, true)
   }
 
   function assetsLoaded() {
-    jaws.debug("all assets loaded", true)
+    jaws.log("all assets loaded", true)
     jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
     jaws.gameloop.start()
   }
 
-  jaws.debug("assets.loadAll()", true)
+  jaws.log("assets.loadAll()", true)
   if(jaws.assets.length() > 0)  { jaws.assets.loadAll({loading: assetsLoading, loaded: assetsLoaded}) }
   else                          { assetsLoaded() } 
 }

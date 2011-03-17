@@ -26,7 +26,7 @@ jaws.Rect.moveTo = function(x,y) {
   this.bottom = this.y + this.height
 }
 
-// Draw a red rectangle, usefull for debug
+// Draw a red rectangle, useful for debug
 jaws.Rect.prototype.draw = function() {
   jaws.context.strokeStyle = "red"
   jaws.context.strokeRect(this.x, this.y, this.width, this.height)

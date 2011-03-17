@@ -27,8 +27,8 @@
     Once we have the objects in our tile map we can lookup game objects very fast.
   </div>
   
-  <h3>jaws debug</h3>
-  <div id="jaws-debug"></div>
+  <h3>jaws log</h3>
+  <div id="jaws-log"></div>
  
   <script>
     function Example() {
@@ -56,7 +56,7 @@
 
         player = new jaws.Sprite({x:110, y:120, scale: 2, anchor: "center_bottom"})
         player.move = function(x, y) {
-          jaws.debug("Player: " + player.toRect().toString())
+          jaws.log("Player: " + player.toRect().toString())
           
           // Have our tile map return the items that occupy the cells which are touched by player.rect
           // If there's any items inside player.rect, reverse the movement (-> stand still)

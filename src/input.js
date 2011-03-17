@@ -94,7 +94,7 @@ function handleKeyDown(e) {
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
 
-  // jaws.debug(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
+  // jaws.log(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
   // e.preventDefault();
 }
 

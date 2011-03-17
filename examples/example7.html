@@ -11,7 +11,7 @@
     <br /><br /><br />
     <div id="canvas"></div>
     
-    <br /><div id="jaws-debug"></div>
+    <br /><div id="jaws-log"></div>
   </body>
 
   <script>
@@ -53,7 +53,7 @@
       });
 
       bullets.update()
-      jaws.debug("bullets: " + bullets.length + " fps: " + jaws.gameloop.fps)
+      jaws.log("bullets: " + bullets.length + " fps: " + jaws.gameloop.fps)
     }
 
     this.draw = function() {
