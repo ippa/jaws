@@ -52,14 +52,14 @@
         player.anim_left = anim.slice(10,12)
         player.anim_right = anim.slice(12,14)
       
-        player.image = player.anim_default.next()
+        player.setImage( player.anim_default.next() )
         jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
         jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       }
 
       /* update() will get called each game tick with your specified FPS. Put game logic here. */
       this.update = function() {
-        player.image = player.anim_default.next()
+        player.setImage( player.anim_default.next() )
         if(jaws.pressed("left"))  { player.x -= speed; player.image = player.anim_left.next() }
         if(jaws.pressed("right")) { player.x += speed; player.image = player.anim_right.next() }
         if(jaws.pressed("up"))    { player.y -= speed; player.image = player.anim_up.next() }

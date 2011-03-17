@@ -51,7 +51,7 @@
       if(jaws.pressed("up"))    { player.y -= 2 }
       if(jaws.pressed("down"))  { player.y += 2 }
       if(jaws.pressed("space")) {
-        bullets.push( new Bullet(player.right, player.y+13) )
+        bullets.push( new Bullet(player.toRect().right, player.y+13) )
       }
       forceInsideCanvas(player)
       bullets.deleteIf(isOutsideCanvas)
@@ -59,7 +59,7 @@
     
     /* step2. draw the update state on screen */
     function draw() {
-      context.clearRect(0,0,canvas.width,canvas.height)
+      jaws.clear()        // Same as: context.clearRect(0,0,jaws.width,jaws.height)
        
       player.draw()
       bullets.draw()  // will call draw() on all items in the list

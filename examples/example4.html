@@ -4,7 +4,7 @@
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #4 - Collision detection</title>
-  </head>
+  <head>
 
 <body>
 <center>
@@ -13,7 +13,7 @@
   
   <div id="info">
     <h1>Sprite collision detection</h1>
-    Every Sprite (that has an image) will have a property "rect" which will return a Rect-object.
+    Every Sprite (that has an image) will have a function toRect() which will return a Rect-object just embracing the sprite.
     Then you can <code>sprite.rect.collideRect(rect2)</code> or <code>sprite.rect.collidePoint(x, y)</code>
   
   </div>
@@ -47,17 +47,16 @@
       this.update = function() {
         sprites.forEach(function(sprite, index) {
           sprite.collision = false
-          sprite.x += sprite.vx
-          sprite.y += sprite.vy
+          sprite.move(sprite.vx, sprite.vy)
  
-          if(sprite.x < 0 || sprite.right > jaws.canvas.width)  { sprite.vx = -sprite.vx }
-          if(sprite.y < 0 || sprite.bottom > jaws.canvas.height) { sprite.vy = -sprite.vy }
+          if(sprite.x < 0 || sprite.toRect().right > jaws.width)  { sprite.vx = -sprite.vx }
+          if(sprite.y < 0 || sprite.toRect().bottom > jaws.height) { sprite.vy = -sprite.vy }
         })
 
         sprite_pairs.forEach( function(pair, index) {
           sprite = pair[0]
           sprite2 = pair[1]
-          if(sprite.rect.collideRect(sprite2.rect)) {
+          if(sprite.toRect().collideRect(sprite2.toRect())) {
             sprite.collision = true
             sprite2.collision = true
           }
@@ -68,14 +67,14 @@
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */
       this.draw = function() {
-        jaws.context.clearRect(0,0,jaws.width,jaws.height)   
+        jaws.clear()
         sprites.forEach( function(sprite, index) {
-          sprite.collision ? sprite.rect.draw() : sprite.draw()
+          sprite.collision ? sprite.toRect().draw() : sprite.draw()
         });
       }
     }
     
-    jaws.onload = function() {
+    window.onload = function() {
       jaws.assets.add("rect.png")
       jaws.start(Example4)
     }

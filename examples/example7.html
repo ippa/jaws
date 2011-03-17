@@ -25,7 +25,7 @@
     var player
     var bullets = new jaws.SpriteList()
     this.setup = function() {
-      player = new Sprite({image: "plane.png", x: 1, y:1, anchor: "center"})
+      player = new jaws.Sprite({image: "plane.png", x:1, y:1, anchor: "center"})
       player.can_fire = true
       jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
     }
@@ -38,7 +38,7 @@
       if(jaws.pressed("space")) { 
         if(player.can_fire) {
           var vx = player.flipped ? -10 : 10
-          bullets.push( new Bullet({x: player.right, y: player.bottom-5, vx: vx}) )
+          bullets.push( new Bullet({x: player.toRect().right, y: player.toRect().bottom-5, vx: vx}) )
           player.can_fire = false
           setTimeout(function() { player.can_fire = true }, 100)
         }
@@ -68,24 +68,24 @@
       return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height) 
     }
     function forceInsideCanvas(item) {
-      if(item.x < 0)                  { item.x = 0  }
-      if(item.right > jaws.width)     { item.x = jaws.width - item.width }
-      if(item.y < 0)                  { item.y = 0 }
-      if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
+      if(item.x < 0)                          { item.x = 0  }
+      if(item.toRect().right > jaws.width)    { item.x = jaws.width - item.width }
+      if(item.y < 0)                          { item.y = 0 }
+      if(item.toRect().bottom  > jaws.height) { item.y = jaws.height - item.height }
     }
 
     function Bullet(options) {
       this.vx = options.vx
 
-      options.image = "bullet.png"
-      Sprite.call(this, options)
+      options.setImage( "bullet.png" )
+      jaws.Sprite.call(this, options)
       this.update = function() { this.x += this.vx }
     }
-    Bullet.prototype = Sprite.prototype
+    Bullet.prototype = jaws.Sprite.prototype
   }
 
   jaws.onload = function() {
-    jaws.unpack()  // Make (among others) Sprite global
+    // jaws.unpack()  // Make (among others) Sprite global
     jaws.assets.add("plane.png")
     jaws.assets.add("bullet.png")
     jaws.start(PlayState)
