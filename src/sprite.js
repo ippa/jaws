@@ -34,15 +34,18 @@ jaws.Sprite = function(options) {
 
 /* Call setters from JSON object. Used to parse options. */
 jaws.Sprite.prototype.set = function(options) {
+  this.setImage(options.image)
+
   this.setScaleFactor(options.scale_factor || 1)
   options.scale && this.scale(options.scale)
-  options.anchor && this.anchor(options.anchor)
-  this.setImage(options.image)
+
+  this.anchor(options.anchor || "top_left")
+  if(!options.anchor_x == undefined) {this.setAnchorX(options.anchor_x)}
+  if(!options.anchor_y == undefined) {this.setAnchorY(options.anchor_y)}
+  
   this.setX(options.x || 0)
   this.setY(options.y || 0)
   this.setAlpha(options.alpha || 1)
-  if(!options.anchor_x==undefined) {this.setAnchorX(options.anchor_x)}
-  if(!options.anchor_u==undefined) {this.setAnchorY(options.anchor_y)}
   this.setAngle(options.angle || 0)
   this.setFlipped(options.flipped)
 
@@ -78,7 +81,7 @@ jaws.Sprite.prototype.setSize   =         function(width, height) {
 jaws.Sprite.prototype.flip =        function()      { this.flipped = this.flipped ? false : true; return this }
 jaws.Sprite.prototype.rotate =      function(value) { this.angle += value; return this }
 jaws.Sprite.prototype.moveTo =      function(x,y)   { this.x = x; this.y = y; return this }
-jaws.Sprite.prototype.move =        function(x,y)   { this.x += x; this.y += y; return this }
+jaws.Sprite.prototype.move =        function(x,y)   { if(x) { this.x += x };  if(y) { this.y += y }; return this }
 jaws.Sprite.prototype.moveX =       function(x,y)   { this.x += x; return this }
 jaws.Sprite.prototype.moveY =       function(x,y)   { this.y += y; return this }
 jaws.Sprite.prototype.scale =       function(value) { this.scaleX(value); this.scaleY(value); return this }
@@ -97,6 +100,7 @@ jaws.Sprite.prototype.anchor = function(value) {
   if(a = this.anchors[value]) {
     this.anchor_x = a[0]
     this.anchor_y = a[1]
+    console.log("anchor x/y: " + this.anchor_x + "/" + this.anchor_y)
     this.toRect()
   }
   return this
@@ -109,6 +113,7 @@ jaws.Sprite.prototype.anchor = function(value) {
  */
 jaws.Sprite.prototype.toRect = function() {
   if(!this.image) { return }
+  
   this.width = this.image.width * this.scale_factor_x
   this.height = this.image.height * this.scale_factor_y
   
