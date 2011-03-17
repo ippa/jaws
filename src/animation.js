@@ -29,8 +29,6 @@ jaws.Animation = function(options) {
     this.frames = sprite_sheet.frames
   }
 
-  this.__defineGetter__("length", function() { return this.frames.length })
-
   /* Initializing timer-stuff */ 
   this.current_tick = (new Date()).getTime();
   this.last_tick = (new Date()).getTime();

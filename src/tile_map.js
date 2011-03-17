@@ -36,8 +36,8 @@ jaws.TileMap.prototype.push = function(obj) {
     }
     return obj
   }
-  if(obj.rect) {
-    return this.pushAsRect(obj, obj.rect)
+  if(obj.toRect) {
+    return this.pushAsRect(obj, obj.toRect())
   }
   else {
     var col = parseInt(obj.x / this.cell_size[0])
@@ -49,11 +49,11 @@ jaws.TileMap.prototype.push = function(obj) {
 
 /* save 'obj' in cells touched by 'rect' */
 jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
-  var from_col = parseInt(rect.left / this.cell_size[0])
+  var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt((rect.right-1) / this.cell_size[0])
 
   for(var col = from_col; col <= to_col; col++) {
-    var from_row = parseInt(rect.top / this.cell_size[1])
+    var from_row = parseInt(rect.y / this.cell_size[1])
     var to_row = parseInt((rect.bottom-1) / this.cell_size[1])
     
     for(var row = from_row; row <= to_row; row++) {

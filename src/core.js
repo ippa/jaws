@@ -26,10 +26,10 @@ var jaws = (function(jaws) {
 var title
 var debug_tag  
 
-jaws.__defineSetter__("title", function(s) { title.innerHTML = s })
-jaws.__defineGetter__("title", function()  { return title.innerHTML })
-jaws.__defineGetter__("width", function()  { return (jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth) })
-jaws.__defineGetter__("height", function() { return (jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight)})
+jaws.title = function(value) {
+  if(value) { return (title.innerHTML = value) }
+  return title.innerHTML
+}
 
 /*
  * Unpacks Jaws core-constructors into the global namespace
@@ -40,7 +40,7 @@ jaws.__defineGetter__("height", function() { return (jaws.canvas ? jaws.canvas.h
  *
  */
 jaws.unpack = function() {
-  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "Rect", "Array", "pressed"]
+  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "TileMap", "Rect", "pressed"]
 
   make_global.forEach( function(item, array, total) {
     if(window[item])  { jaws.debug(item + "already exists in global namespace") }
@@ -63,7 +63,11 @@ jaws.debug = function(msg, add) {
 /*
  * init()
  *
- * sets up various variables needed by jaws. Gets canvas and context.
+ * Initializes / creates:
+ * - jaws.canvas / jaws.context / jaws.dom (our drawable gamearea)
+ * - jaws.width / jaws.height (width/height of drawable gamearea)
+ * - jaws.url_parameters (hash of key/values of all parameters in current url)
+ * - title / debug_tag (used internally by jaws)
  *
  * */
 jaws.init = function(options) {
@@ -93,6 +97,9 @@ jaws.init = function(options) {
     jaws.dom = document.getElementById("canvas")
     jaws.dom.style.position = "relative"  // This is needed to have sprites with position = "absolute" stay within the canvas
   }
+  
+  jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
+  jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeigh
 }
 
 /* 

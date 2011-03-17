@@ -14,49 +14,55 @@ var jaws = (function(jaws) {
 jaws.Viewport = function(options) {
   this.options = options
   this.context = options.context || jaws.context
-  this.width = options.width || jaws.canvas.width
-  this.height = options.height || jaws.canvas.height
-  this.max_x = options.max_x || jaws.canvas.width 
-  this.max_y = options.max_y || jaws.canvas.height
-  this._x = options.x || 0
-  this._y = options.y || 0
+  this.width = options.width || jaws.width
+  this.height = options.height || jaws.height
+  this.max_x = options.max_x || jaws.width 
+  this.max_y = options.max_y || jaws.height
   
-  this.__defineGetter__("x", function() {return this._x} );
-  this.__defineGetter__("y", function() {return this._y} );
-
-  this.__defineSetter__("x", function(value) {
-    this._x = value
+  this.verifyPosition = function() {
     var max = this.max_x - this.width
-    if(this._x < 0)    { this._x = 0 }
-    if(this._x > max)  { this._x = max }
-  });
-  
-  this.__defineSetter__("y", function(value) {
-    this._y = value
+    if(this.x < 0)      { this.x = 0 }
+    if(this.x > max)    { this.x = max }
+
     var max = this.max_y - this.height
-    if(this._y < 0)    { this._y = 0 }
-    if(this._y > max)  { this._y = max }
-  });
+    if(this.y < 0)      { this.y = 0 }
+    if(this.y > max)    { this.y = max }
+  };
+ 
+  this.move = function(x, y) {
+    x && (this.x += x)
+    y && (this.y += y)
+    this.verifyPosition()
+  };
+  
+  this.moveTo = function(x, y) {
+    if(!(x==undefined)) { this.x = x }
+    if(!(y==undefined)) { this.y = y }
+    this.verifyPosition()
+  };
 
   this.isOutside = function(item) {
     return(!this.isInside(item))
   };
 
   this.isInside = function(item) {
-    return( item.x >= this._x && item.x <= (this._x + this.width) && item.y >= this._y && item.y <= (this._y + this.height) )
+    return( item.x >= this.x && item.x <= (this.x + this.width) && item.y >= this.y && item.y <= (this.y + this.height) )
   };
 
   this.centerAround = function(item) {
     this.x = (item.x - this.width / 2)
     this.y = (item.y - this.height / 2)
+    this.verifyPosition()
   };
 
   this.apply = function(func) {
     this.context.save()
-    this.context.translate(-this._x, -this._y)
+    this.context.translate(-this.x, -this.y)
     func()
     this.context.restore()
   };
+  
+  this.moveTo(options.x||0, options.y||0)
 }
 
 return jaws;

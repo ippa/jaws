@@ -25,7 +25,6 @@ jaws.SpriteSheet = function(options) {
       this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
     }
   }
-  this.__defineGetter__("length", function() { return this.frames.length })
 }
 
 return jaws;
