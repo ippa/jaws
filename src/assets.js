@@ -166,6 +166,7 @@ jaws.Assets = function() {
  */
 function imageToCanvas(image) {
   var canvas = document.createElement("canvas")
+  canvas.src = image.src        // Make canvas look more like an image
   canvas.width = image.width
   canvas.height = image.height
 
