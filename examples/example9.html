@@ -58,7 +58,7 @@
           blocks.push( new Sprite({image: "block.bmp", x: parseInt(Math.random()*100)*32, y: world.height - parseInt(Math.random()*10)*32}) ) 
         }
 
-        // A tilemap, each cell is 32x32 pixels. There's 10 such cells across and 10 downwards.
+        // A tile map, each cell is 32x32 pixels. There's 100 such cells across and 100 downwards.
         // Fit all items in array blocks into correct cells in the tilemap
         // Later on we can look them up really fast (see player.move)
         tile_map = new jaws.TileMap({size: [100,100], cell_size: [32,32]})
