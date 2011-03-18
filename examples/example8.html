@@ -104,8 +104,7 @@
     
     jaws.onload = function() {
       jaws.unpack()
-      jaws.assets.add("droid_11x15.png")
-      jaws.assets.add("block.bmp")
+      jaws.assets.add(["droid_11x15.png","block.bmp"])
       jaws.start(Example)  // Our convenience function jaws.start() will load assets, call setup and loop update/draw in 60 FPS
     }
   </script>

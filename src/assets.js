@@ -13,7 +13,7 @@ function Asset() {
   this.data = []
   this.image_to_canvas = true
   this.fuchia_to_transparent = true
-  this.woff = "mooo!"
+  this.root = ""
 
   this.file_type = {}
   this.file_type["wav"] = "audio"
@@ -28,9 +28,11 @@ function Asset() {
   this.length = function() {
     return this.list.length
   }
-
+  
+  /* Add array of paths or single path to asset-list. Later load with loadAll() */
   this.add = function(src) {
-    this.list.push({"src": src})
+    if(jaws.isArray(src)) { for(var i=0; src[i]; i++) { that.add(src[i]) } }
+    else                  { src = this.root + src; this.list.push({"src": src}) }
     return this
   }
   /* 
@@ -59,6 +61,7 @@ function Asset() {
     return (this.file_type[postfix] ? this.file_type[postfix] : postfix)
   }
   
+  /* Load all assets */
   this.loadAll = function(options) {
     this.loadedCount = 0
 
@@ -68,36 +71,39 @@ function Asset() {
       this.loading_callback = options.loading
     }
 
-    for(i=0; this.list[i]; i++) {
-      var asset = this.list[i]
-        
-      switch(this.getType(asset.src)) {
-        case "image":
-          var src = asset.src + "?" + parseInt(Math.random()*10000000)
-          asset.image = new Image()
-          asset.image.asset = asset
-          asset.image.onload = this.imageLoaded
-          asset.image.src = src
-          break;
-        case "audio":
-          var src = asset.src + "?" + parseInt(Math.random()*10000000)
-          asset.audio = new Audio(src)
-          asset.audio.asset = asset
-          this.data[asset.src] = asset.audio
-          asset.audio.addEventListener("canplay", this.audioLoaded, false);
-          asset.audio.load()
-          break;
-        default:
-          var src = asset.src + "?" + parseInt(Math.random()*10000000)
-          var req = new XMLHttpRequest()
-          req.open('GET', src, false)
-          req.send(null)
-          if(req.status == 200) {
-            this.data[asset.src] = this.parseAsset(asset.src, req.responseText)
-            this.itemLoaded(asset.src)
-          }
-          break;
-      }
+    for(i=0; this.list[i]; i++) { 
+      this.load(this.list[i])
+    }
+  }
+
+  /* Load one asset-object, i.e: {src: "foo.png"} */
+  this.load = function(asset) {
+    switch(this.getType(asset.src)) {
+      case "image":
+        var src = asset.src + "?" + parseInt(Math.random()*10000000)
+        asset.image = new Image()
+        asset.image.asset = asset
+        asset.image.onload = this.imageLoaded
+        asset.image.src = src
+        break;
+      case "audio":
+        var src = asset.src + "?" + parseInt(Math.random()*10000000)
+        asset.audio = new Audio(src)
+        asset.audio.asset = asset
+        this.data[asset.src] = asset.audio
+        asset.audio.addEventListener("canplay", this.audioLoaded, false);
+        asset.audio.load()
+        break;
+      default:
+        var src = asset.src + "?" + parseInt(Math.random()*10000000)
+        var req = new XMLHttpRequest()
+        req.open('GET', src, false)
+        req.send(null)
+        if(req.status == 200) {
+          this.data[asset.src] = this.parseAsset(asset.src, req.responseText)
+          this.itemLoaded(asset.src)
+        }
+        break;
     }
   }
 
