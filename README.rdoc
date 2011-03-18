@@ -39,8 +39,9 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/jawsjs/examples/example4.html  - focus: jaws.Rect based collision detection
 * http://jawsjs.com/jawsjs/examples/example5.html  - focus: the jaws.Sprite({anchor: "..."}) parameter
 * http://jawsjs.com/jawsjs/examples/example6.html  - focus: jaws.Parallax
-* http://jawsjs.com/jawsjs/examples/example7.html  - focus: DOM-based sprites (in flux while DOM-support is finished)
+* http://jawsjs.com/jawsjs/examples/example7.html  - focus: simple DOM-based sprite
 * http://jawsjs.com/jawsjs/examples/example8.html  - focus: jaws.TileMap
+* http://jawsjs.com/jawsjs/examples/example9.html  - focus: jaws.Viewport (The basics for a sidescrolling platformer right here)
 
 == Games using Jaws
 * {http://ippa.se/webgames/unwaivering/}[http://ippa.se/webgames/unwaivering/]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
