@@ -141,18 +141,26 @@ jaws.start = function(game_state, options) {
   jaws.log("setupInput()", true)
   jaws.setupInput()
 
-  function assetsLoading(src, percent_done) {
+  /* Callback for when one single assets has been loaded */
+  function assetLoaded(src, percent_done) {
     jaws.log( percent_done + "%: " + src, true)
   }
 
+  /* Callback for when an asset can't be loaded*/
+  function assetError(src) {
+    jaws.log( "Error loading: " + src)
+  }
+
+  /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
     jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
     jaws.gameloop.start()
   }
 
+
   jaws.log("assets.loadAll()", true)
-  if(jaws.assets.length() > 0)  { jaws.assets.loadAll({loading: assetsLoading, loaded: assetsLoaded}) }
+  if(jaws.assets.length() > 0)  { jaws.assets.loadAll({onload:assetLoaded, onerror:assetError, onfinish:assetsLoaded}) }
   else                          { assetsLoaded() } 
 }
 
