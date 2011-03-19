@@ -55,6 +55,7 @@ jaws.Sprite.prototype.set = function(options) {
   this.setFlipped(options.flipped)
 
   this.context = options.context || jaws.context
+  return this
 }
 
 /* Our setters. Sets a value and returns this for chainability. */
@@ -163,12 +164,13 @@ jaws.Sprite.prototype.updateDiv = function() {
   this.div.style.MozTransform = transform
   this.div.style.WebkitTransform = transform
   this.div.style.transform = transform
+  return this
 }
 
 // Draw the sprite on screen via its previously given context
 jaws.Sprite.prototype.draw = function() {
   if(jaws.dom)    { return this.updateDiv() }
-  if(!this.image) { return }
+  if(!this.image) { return this }
 
   this.context.save()
   this.context.translate(this.x-this.left_offset, this.y-this.top_offset)
