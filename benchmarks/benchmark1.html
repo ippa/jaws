@@ -1,7 +1,7 @@
 <!DOCTYPE html> 
 <html>
   <head>
-    <script src="../jaws.js"></script>
+    <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Benchmark</title> 
   <head>
@@ -14,18 +14,17 @@
     Benchmark context.draw(image) vs context.draw(canvas)
   </div>
   
-  <h3>jaws debug</h3>
-  <div id="jaws-debug"></div>
+  <h3>jaws log</h3>
+  <div id="jaws-log"></div>
  
   <script>
-    var loop = 4000
+    var loop = 10000
     var fps = document.getElementById("fps")
 
     function BenchImage() {
       var image
       this.setup = function() {
         image = jaws.assets.get("plane.png")
-        jaws.title = "context.drawImage(image)"
       }
 
       this.draw = function() {
@@ -43,7 +42,6 @@
         canvas.height = image.height
         context = canvas.getContext("2d")
         context.drawImage(image, 0, 0)
-        fps.title = "context.drawImage(context)"
       }
 
       this.draw = function() {
@@ -51,12 +49,12 @@
         fps.innerHTML = jaws.gameloop.fps + ". " + "context.drawImage(context)"
       }
     }
-    
-    jaws.debug("")
 
-    jaws.assets.add("plane.png")
-    jaws.on_keydown("space", function() { jaws.switchGameState(BenchImage) })
-    jaws.start(BenchCanvas, 200) // Try impossible framerate
+    jaws.onload = function() {
+      jaws.assets.add("plane.png")
+      jaws.on_keydown("space", function() { jaws.switchGameState(BenchImage) })
+      jaws.start(BenchCanvas, 200) // Try impossible framerate
+    }
     </script>
 </body>
 </html>

@@ -14,8 +14,8 @@
     Benchmark context.rotate; draw(image); -vs- sprite.rotate();sprite.draw();
   </div>
   
-  <h3>jaws debug</h3>
-  <div id="jaws-debug"></div>
+  <h3>jaws log</h3>
+  <div id="jaws-log"></div>
  
   <script>
     var loop = 4;
@@ -70,13 +70,13 @@
         rotation += 1
       }
     }
-    
-    jaws.debug("")
 
-    jaws.assets.add("plane.png")
-    jaws.on_keydown("space", function() { jaws.switchGameState(BenchCanvas) })
-    jaws.on_keydown("esc", function() { jaws.gameloop.stop() })
-    jaws.start(BenchSprite, 200) // Try impossible framerate
+    jaws.onload = function() {
+      jaws.assets.add("plane.png")
+      jaws.on_keydown("space", function() { jaws.switchGameState(BenchCanvas) })
+      jaws.on_keydown("esc", function()   { jaws.gameloop.stop() })
+      jaws.start(BenchSprite, 200) // Try impossible framerate
+    }
     </script>
 </body>
 </html>
