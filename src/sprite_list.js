@@ -23,6 +23,11 @@ var jaws = (function(jaws) {
 jaws.SpriteList = function() {}
 jaws.SpriteList.prototype = new Array
 
+jaws.SpriteList.prototype.delete = function(obj) {
+  var index = this.indexOf(obj)
+  if(index > -1) { this.splice(index, 1) }
+}
+
 jaws.SpriteList.prototype.draw = function() {
   for(i=0; this[i]; i++) { 
     this[i].draw() 
