@@ -14,7 +14,7 @@ Tested with with:
 Licensed under LGPL so you're free to use it for commercial projects.
 
 == Highlights
-* Animation(), Sprite(), SpriteSheet() and other useful constructors
+* Animation(), Sprite(), SpriteSheet(), TileMap(), Assets() and other useful constructors
 * Easy and robust game states to switch between menus, play, high score lists and settings
 * Documented code and explained examples
 
@@ -27,6 +27,8 @@ Jaws also...
 * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Learn more
+Since Jaws is currently moving so fast, jawsjs.com might be slightly outdated.
+
 * {http://jawsjs.com/}[http://jawsjs.com/]              - Official Jaws homepage. Jaws docs and design choices.
 * {http://jawsjs.com/jawsjs/test/}[http://jawsjs.com/jawsjs/test/]    - Jaws QUnit testsuite
 
