@@ -40,7 +40,7 @@
           sprites.push(sprite)
         }
         
-       sprite_pairs = jaws.combinations(sprites, 2)
+       sprite_pairs = combinations(sprites, 2)
       }
 
       /* update() will get called each game tick with your specified FPS. Put game logic here. */
@@ -71,6 +71,23 @@
         sprites.forEach( function(sprite, index) {
           sprite.collision ? sprite.toRect().draw() : sprite.draw()
         });
+      }
+
+      function combinations(s, n) {
+        var f = function(i){return s[i];};
+        var r = [];
+        var m = new Array(n);
+        for (var i = 0; i < n; i++) m[i] = i; 
+        for (var i = n - 1, sn = s.length; 0 <= i; sn = s.length) {
+          r.push( m.map(f) );
+          while (0 <= i && m[i] == sn - 1) { i--; sn--; }
+          if (0 <= i) { 
+            m[i] += 1;
+            for (var j = i + 1; j < n; j++) m[j] = m[j-1] + 1;
+            i = n - 1;
+          }
+        }
+        return r;
       }
     }
     
