@@ -7,9 +7,11 @@ var jaws = (function(jaws) {
  * 
  */
 jaws.Assets = function() {
-  this.list = []
-  this.src_list = []
-  this.data = []
+  this.loaded = []    // Hash of all URLs that's been loaded
+  this.loading = []   // Hash of all URLs currently loading
+  this.src_list = []  // Hash of all unloaded URLs that loadAll() will try to load
+  this.data = []      // Hash of loaded raw asset data, URLs are keys
+
   this.image_to_canvas = true
   this.fuchia_to_transparent = true
   this.root = ""
@@ -47,6 +49,14 @@ jaws.Assets = function() {
     }
   }
   
+  this.isLoading = function(src) {
+    return this.loading[src]
+  }
+  
+  this.isLoaded = function(src) {
+    return this.loaded[src]
+  }
+  
   this.getPostfix = function(src) {
     postfix_regexp = /\.([a-zA-Z]+)/;
     return postfix_regexp.exec(src)[1]
@@ -79,13 +89,19 @@ jaws.Assets = function() {
     }
   }
 
+  /* Calls onload right away if asset is available since before, otherwise try to load it */
+  this.getOrLoad = function(src, onload, onerror) {
+    if(this.data[src]) { onload() }
+    else { this.load(src, onload, onerror) }
+  }
+
   /* Load one asset-object, i.e: {src: "foo.png"} */
   this.load = function(src, onload, onerror) {
     asset = {}
     asset.src = src
     asset.onload = onload
     asset.onerror = onerror
-    this.list.push(asset)
+    this.loading[src] = true
 
     switch(this.getType(asset.src)) {
       case "image":
@@ -126,7 +142,12 @@ jaws.Assets = function() {
     var asset = this.asset
     var src = asset.src
     var filetype = that.getType(asset.src)
+    
+    // Keep loading and loaded hash up to date
+    that.loaded[src] = true
+    that.loading[src] = false
 
+    // Process data depending differently on postfix
     if(filetype == "json") {
       if (this.readyState != 4) { return }
       that.data[asset.src] = JSON.parse(this.responseText)
