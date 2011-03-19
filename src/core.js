@@ -103,6 +103,7 @@ jaws.init = function(options) {
 }
 
 /* 
+*
 * Find the <canvas> so following draw-operations can use it.
 * If the developer didn't provide a <canvas> in his HTML, let's create one.
 *
@@ -158,7 +159,6 @@ jaws.start = function(game_state, options) {
     jaws.gameloop.start()
   }
 
-
   jaws.log("assets.loadAll()", true)
   if(jaws.assets.length() > 0)  { jaws.assets.loadAll({onload:assetLoaded, onerror:assetError, onfinish:assetsLoaded}) }
   else                          { assetsLoaded() } 
@@ -181,59 +181,46 @@ jaws.switchGameState = function(game_state) {
   jaws.gameloop.start()
 }
 
-/*
- * Clears canvas through context.clearRect()
- */
+/* Clears canvas through context.clearRect() */
 jaws.clear = function() {
   jaws.context.clearRect(0,0,jaws.width,jaws.height)
 }
 
 /* returns true if obj is an Image */
-jaws.isImage = function(obj) {
-  return Object.prototype.toString.call(obj) === "[object HTMLImageElement]";
-}
-/* returns true of obj is a Canvas-element */
-jaws.isCanvas = function(obj) {
-  return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]";
-}
-/* returns true of obj is either an Image or a Canvas-element */
-jaws.isDrawable = function(obj) {
-  return jaws.isImage(obj) || jaws.isCanvas(obj)
-}
-/* returns true if obj is a String */
-jaws.isString = function(obj) {
-  return (typeof obj == 'string')
-}
-/* returns true if obj is an Array */
-jaws.isArray = function(obj) {
-  return !(obj.constructor.toString().indexOf("Array") == -1)
-}
-/* returns true of obj is a Function */
-jaws.isFunction = function(obj) {
-  return (Object.prototype.toString.call(obj) === "[object Function]")
+jaws.isImage = function(obj)  { 
+  return Object.prototype.toString.call(obj) === "[object HTMLImageElement]" 
 }
 
-jaws.combinations = function(s, n) {
-  var f = function(i){return s[i];};
-  var r = [];
-  var m = new Array(n);
-  for (var i = 0; i < n; i++) m[i] = i; 
-  for (var i = n - 1, sn = s.length; 0 <= i; sn = s.length) {
-    r.push( m.map(f) );
-    while (0 <= i && m[i] == sn - 1) { i--; sn--; }
-    if (0 <= i) { 
-      m[i] += 1;
-      for (var j = i + 1; j < n; j++) m[j] = m[j-1] + 1;
-      i = n - 1;
-    }
-  }
-  return r;
+/* returns true of obj is a Canvas-element */
+jaws.isCanvas = function(obj) { 
+  return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]" 
+}
+
+/* returns true of obj is either an Image or a Canvas-element */
+jaws.isDrawable = function(obj) { 
+  return jaws.isImage(obj) || jaws.isCanvas(obj) 
+}
+
+/* returns true if obj is a String */
+jaws.isString = function(obj) { 
+  return (typeof obj == 'string') 
+}
+
+/* returns true if obj is an Array */
+jaws.isArray = function(obj)  { 
+  return !(obj.constructor.toString().indexOf("Array") == -1) 
+}
+
+/* returns true of obj is a Function */
+jaws.isFunction = function(obj) { 
+  return (Object.prototype.toString.call(obj) === "[object Function]") 
 }
 
 /* 
- * private methods that returns a hash of url-parameters and their values 
+ * Return a hash of url-parameters and their values
  *
- * */
+ * http://test.com/?debug=1&foo=bar  ->  [debug: 1, foo: bar]
+ */
 function getUrlParameters() {
   var vars = [], hash;
   var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
