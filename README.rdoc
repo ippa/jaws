@@ -1,42 +1,64 @@
---- This is alpha-alpha-pre-release software ---
+== Jaws is still very Alpha'ish
+... So don't base your commercial projects on it ;). APIs will most likely settle down during the coming months.
+When it's stable enough I'll probably release it as 0.1.
 
 = Jaws - HTML5 Javascript web game development library
 
-Depends on Javascript 1.6+ (ECMA-262 Edition 5) and the canvas-element
-Tested on Chrome 6+, Firefox 3.6.x/4.x, Safari 5+. FF 4.0 with openGL accelerated canvas is recommended.
+Depends on Javascript 1.6+ (ECMA-262 Edition 5).
+Tested with with:
+* Chrome 9 + 10
+* Firefox 3.6.x + 4.x
+* Safari 5+
+* IE9
+
+Licensed under LGPL so you're free to use it for commercial projects.
 
 == Highlights
-  * Animation(), Sprite(), SpriteSheet() and other useful constructors
-  * Easy and robust game states to switch between menus, play, high score lists and settings
-  * Documented code and explained examples
+* Animation(), Sprite(), SpriteSheet() and other useful constructors
+* Easy and robust game states to switch between menus, play, high score lists and settings
+* Documented code and explained examples
 
 Jaws also...
-  * Does <canvas> for all gfx, it's the HW-accelerated future
-  * Does Not depend on any other javascript library
-  * Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
-  * Tries to make asset-handling in webgames as easy as possible
-  * Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
-  * Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
+* Does <canvas>-sprites (exprimental HTML-based sprites)
+* Does not depend on any other javascript library
+* Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
+* Tries to make assets (images, music, json data) in webgames as easy as possible
+* Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
+* Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Learn more
 * {http://jawsjs.com/}[http://jawsjs.com/]              - Official Jaws homepage. Jaws docs and design choices.
-* {http://jawsjs.com/source/test/}[http://jawsjs.com/source/test/]    - Jaws QUnit testsuite
+* {http://jawsjs.com/jawsjs/test/}[http://jawsjs.com/jawsjs/test/]    - Jaws QUnit testsuite
 
 == Simple examples demonstrating certain features
 Check out the sourcecode for comments and explanations:
 
-* http://jawsjs.com/source/examples/example1.html  - focus: manual setup of canvas. later examples shows better ways.
-* http://jawsjs.com/source/examples/example2.html  - focus: jaws game states
-* http://jawsjs.com/source/examples/example3.html  - focus: jaws.Animation()
-* http://jawsjs.com/source/examples/example4.html  - focus: jaws.Rect based collision detection
-* http://jawsjs.com/source/examples/example5.html  - focus: the jaws.Sprite({anchor: "..."}) parameter
-* http://jawsjs.com/source/examples/example6.html  - focus: jaws.Parallax
-* http://jawsjs.com/source/examples/example7.html  - focus: DOM-based sprites
+* http://jawsjs.com/jawsjs/examples/example1.html  - focus: manual setup of canvas. later examples shows better ways.
+* http://jawsjs.com/jawsjs/examples/example2.html  - focus: jaws game states
+* http://jawsjs.com/jawsjs/examples/example3.html  - focus: jaws.Animation
+* http://jawsjs.com/jawsjs/examples/example4.html  - focus: jaws.Rect based collision detection
+* http://jawsjs.com/jawsjs/examples/example5.html  - focus: the jaws.Sprite({anchor: "..."}) parameter
+* http://jawsjs.com/jawsjs/examples/example6.html  - focus: jaws.Parallax
+* http://jawsjs.com/jawsjs/examples/example7.html  - focus: simple DOM-based sprite
+* http://jawsjs.com/jawsjs/examples/example8.html  - focus: jaws.TileMap
+* http://jawsjs.com/jawsjs/examples/example9.html  - focus: jaws.Viewport (The basics for a sidescrolling platformer right here)
 
 == Games using Jaws
 * {http://ippa.se/webgames/unwaivering/}[http://ippa.se/webgames/unwaivering/]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
 
 .. missing your game here? Msg me on github!
+
+== Loading Jaws
+* jaws.js - includes the whole framework in one easy-to-include file.
+* jaws-min.js - same as jaws.js but minified with Googles closure compiler.
+* jaws-dynamic.js - dynamically loads all separate jaws files. Useful for debugging errors in Jaws.
+
+You can also link to invidual files in your HTML:
+  <script src="/jawsjs/src/core.js"></script>
+  <script src="/jawsjs/src/sprite.js"></script>
+
+NOTE: core.js always needed. But then you can pick and choose depending on what you need.
+A rule of thumb is that a file foo.js will include a contructor named Foo().
 
 == Code demo
   //
@@ -77,7 +99,7 @@ Check out the sourcecode for comments and explanations:
     
       // update() is called each gametick with given FPS. Put your game logic here.
       this.update = function() {
-        if(jaws.pressed("left")) { player.x--; }
+        if(jaws.pressed("left"))  { player.x--; }
         if(jaws.pressed("right")) { player.x++; }
         robot.image = robot.animation.next();
       }
@@ -88,16 +110,7 @@ Check out the sourcecode for comments and explanations:
         robot.draw();
       }
     }
-    
-    //
-    // Add to jaws internal list of assets.
-    // You can then either:
-    // - have jaws.start() load them automatically for you
-    // - or load them manually with jaws.assets.loadAll({loaded: myAssetsAreReadyCall})
-    //
-    jaws.assets.add("images/droid_11x15.png");
-    jaws.assets.add("images/player.png");
-    
+       
     //
     // jaws.start() is the easiest way to get something up and running. It will:
     //
@@ -110,7 +123,20 @@ Check out the sourcecode for comments and explanations:
     // 3) When all assets are loaded, call setup()
     // 4) Then call update() / draw() with given FPS (default 60) until game ends or another game state is activated
     //
-    jaws.start(MyGameState);
+    window.onload = function() {
+      // Add to jaws internal list of assets.
+      // You can then either:
+      // - have jaws.start() load them automatically for you
+      // - or load them manually with jaws.assets.loadAll({loaded: myAssetsAreReadyCall})
+      jaws.assets.add("images/droid_11x15.png");
+      jaws.assets.add("images/player.png");
+
+      // ... or nicer when you have a lot of assets:
+      // jaws.assets.path = "images/"
+      // jaws.assets.add(["droid_11x15.png", "player.png"])
+ 
+      jaws.start(MyGameState);
+    }
   </script>
   </body>
   </html>

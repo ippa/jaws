@@ -1,7 +1,7 @@
 <!DOCTYPE html> 
 <html>
   <head>
-    <script src="../jaws.js"></script>
+    <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #6 - Parallax()</title>
   </head>
@@ -45,11 +45,10 @@
       }
     }
 
-    jaws.assets.add("parallax_1.png")
-    jaws.assets.add("parallax_2.png")
-    jaws.assets.add("parallax_3.png")
-    jaws.assets.add("parallax_4.png")
-    jaws.start(ParallaxDemo)
+    jaws.onload = function() {
+      jaws.assets.add(["parallax_1.png","parallax_2.png","parallax_3.png","parallax_4.png"])
+      jaws.start(ParallaxDemo)
+    }
   </script>
 </center>
 </body>

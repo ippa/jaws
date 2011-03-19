@@ -1,10 +1,10 @@
 <!DOCTYPE html> 
 <html>
   <head>
-    <script src="../jaws.js"></script>
+    <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #5 - Sprite.anchor()</title>
-  <head>
+  </head>
 
   <body>
   <center>
@@ -17,13 +17,13 @@
     Showing off the effects of setting different anchors for different sprites.
   </div>
   
-  <h3>jaws debug</h3>
-  <div id="jaws-debug"></div>
+  <h3>jaws log</h3>
+  <div id="jaws-log"></div>
  
   <script>
     function Example5() {
       var anchors = ["top_left", "top_center", "top_right", "center_left", "center", "center_bottom", "bottom_left", "bottom_center", "bottom_right"]
-      var sprites = []
+      var sprites = new jaws.SpriteList()
       var fps = document.getElementById("fps")
 
       /* Called once when a game state is activated. Use it for one-time setup code. */
@@ -62,8 +62,8 @@
         sprites.draw()
       }
     }
-    
-    window.onload = function() {
+
+    jaws.onload = function() {
       jaws.assets.add("rect.png")
       jaws.start(Example5)
     }
