@@ -20,10 +20,11 @@
   * PlayState is the actual game play. We switch to it once user choses "Start game"
   *
   */
-  var fps = document.getElementById("fps")
   function PlayState() {
     var player
     var bullets = new jaws.SpriteList()
+    var fps = document.getElementById("fps")
+
     this.setup = function() {
       player = new jaws.Sprite({image: "plane.png", x:1, y:1, anchor: "center"})
       player.can_fire = true
@@ -53,7 +54,7 @@
       });
 
       bullets.update()
-      jaws.log("bullets: " + bullets.length + " fps: " + jaws.gameloop.fps)
+      // jaws.log("bullets: " + bullets.length + " fps: " + jaws.gameloop.fps)
     }
 
     this.draw = function() {
@@ -76,8 +77,7 @@
 
     function Bullet(options) {
       this.vx = options.vx
-
-      options.setImage( "bullet.png" )
+      options.image = "bullet.png"
       jaws.Sprite.call(this, options)
       this.update = function() { this.x += this.vx }
     }
@@ -85,9 +85,7 @@
   }
 
   jaws.onload = function() {
-    // jaws.unpack()  // Make (among others) Sprite global
-    jaws.assets.add("plane.png")
-    jaws.assets.add("bullet.png")
+    jaws.assets.add(["plane.png", "bullet.png"])
     jaws.start(PlayState)
   }
   </script>
