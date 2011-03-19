@@ -171,11 +171,10 @@ jaws.Sprite.prototype.draw = function() {
   if(!this.image) { return }
 
   this.context.save()
-  this.context.translate(this.x, this.y)
-  this.angle && jaws.context.rotate(this.angle * Math.PI / 180)
+  this.context.translate(this.x-this.left_offset, this.y-this.top_offset)
+  if(this.angle!=0) { jaws.context.rotate(this.angle * Math.PI / 180) }
   this.flipped && this.context.scale(-1, 1)
   this.context.globalAlpha = this.alpha
-  this.context.translate(-this.left_offset, -this.top_offset)
   this.context.drawImage(this.image, 0, 0, this.width, this.height)
   this.context.restore()
   return this
