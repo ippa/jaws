@@ -45,7 +45,8 @@ jaws.Assets = function() {
       return src.map( function(i) { return that.data[i] } )
     }
     else {
-      return this.data[src]
+      if(this.loaded[src])  { return this.data[src] }
+      else                  { jaws.log("No such asset: " + src) }
     }
   }
   
