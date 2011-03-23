@@ -1,0 +1,76 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Benchmark</title> 
+  <head>
+<body>
+
+  <canvas width=500 height=300></canvas><br />
+  FPS: <span id="fps">0</span>
+  
+  <div id="info">
+    Sprites
+  </div>
+  
+  <h3>jaws log</h3>
+  <div id="jaws-log"></div>
+ 
+  <script>
+    var loop = 10000;
+    var fps = document.getElementById("fps")
+    var sprite, image, canvas, context
+
+    function global_setup() {
+      image = jaws.assets.get("plane.png")
+      canvas = document.createElement("canvas")
+      canvas.width = image.width
+      canvas.height = image.height
+      context = canvas.getContext("2d")
+      context.drawImage(image, 0, 0)
+      sprite = new jaws.Sprite({image: canvas, x:100, y:100, center: "center"})
+    }
+
+
+    sprite.draw()function BenchSprite() {
+      this.setup = function() {
+        global_setup()
+      }
+
+      this.draw = function() {
+        for(var i=0; i < loop; i++) {
+          jaws.clear()
+          sprite.draw()
+        }
+        fps.innerHTML = jaws.gameloop.fps
+      }
+    }
+
+    /* --------------------------------------------------------- */
+
+    function BenchSprite2s() {
+      var rotation = 0
+      this.setup = function() {
+        global_setup()
+      }
+
+      this.draw = function() {
+        for(var i=0; i < loop; i++) {
+          jaws.clear()
+          sprite.draw()
+        }
+        fps.innerHTML = jaws.gameloop.fps
+      }
+    }
+
+    jaws.onload = function() {
+      jaws.assets.add("plane.png")
+      jaws.on_keydown("space", function() { jaws.switchGameState(BenchCanvas) })
+      jaws.on_keydown("esc", function()   { jaws.gameloop.stop() })
+      jaws.start(BenchSprite, 200) // Try impossible framerate
+    }
+    </script>
+</body>
+</html>
+
