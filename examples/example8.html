@@ -56,16 +56,16 @@
 
         player = new jaws.Sprite({x:110, y:120, scale: 2, anchor: "center_bottom"})
         player.move = function(x, y) {
-          jaws.log("Player: " + player.toRect().toString())
+          jaws.log("Player: " + player.rect().toString())
           
           // Have our tile map return the items that occupy the cells which are touched by player.rect
           // If there's any items inside player.rect, reverse the movement (-> stand still)
           this.x += x
-          if(tile_map.atRect(player.toRect()).length > 0) { this.x -= x }
+          if(tile_map.atRect(player.rect()).length > 0) { this.x -= x }
 
           // Same as above but for vertical movement
           this.y += y
-          if(tile_map.atRect(player.toRect()).length > 0) { this.y -= y }
+          if(tile_map.atRect(player.rect()).length > 0) { this.y -= y }
         }
 
         var anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})

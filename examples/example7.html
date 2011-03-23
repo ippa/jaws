@@ -39,7 +39,7 @@
       if(jaws.pressed("space")) { 
         if(player.can_fire) {
           var vx = player.flipped ? -10 : 10
-          bullets.push( new Bullet({x: player.toRect().right, y: player.toRect().bottom-5, vx: vx}) )
+          bullets.push( new Bullet({x: player.rect().right, y: player.rect().bottom-5, vx: vx}) )
           player.can_fire = false
           setTimeout(function() { player.can_fire = true }, 100)
         }
@@ -70,9 +70,9 @@
     }
     function forceInsideCanvas(item) {
       if(item.x < 0)                          { item.x = 0  }
-      if(item.toRect().right > jaws.width)    { item.x = jaws.width - item.width }
+      if(item.rect().right > jaws.width)    { item.x = jaws.width - item.width }
       if(item.y < 0)                          { item.y = 0 }
-      if(item.toRect().bottom  > jaws.height) { item.y = jaws.height - item.height }
+      if(item.rect().bottom  > jaws.height) { item.y = jaws.height - item.height }
     }
 
     function Bullet(options) {

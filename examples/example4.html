@@ -13,7 +13,7 @@
   
   <div id="info">
     <h1>Sprite collision detection</h1>
-    Every Sprite (that has an image) will have a function toRect() which will return a Rect-object just embracing the sprite.
+    Every Sprite (that has an image) will have a function rect() which will return a Rect-object just embracing the sprite.
     Then you can <code>sprite.rect.collideRect(rect2)</code> or <code>sprite.rect.collidePoint(x, y)</code>
   
   </div>
@@ -49,14 +49,14 @@
           sprite.collision = false
           sprite.move(sprite.vx, sprite.vy)
  
-          if(sprite.x < 0 || sprite.toRect().right > jaws.width)  { sprite.vx = -sprite.vx }
-          if(sprite.y < 0 || sprite.toRect().bottom > jaws.height) { sprite.vy = -sprite.vy }
+          if(sprite.x < 0 || sprite.rect().right > jaws.width)  { sprite.vx = -sprite.vx }
+          if(sprite.y < 0 || sprite.rect().bottom > jaws.height) { sprite.vy = -sprite.vy }
         })
 
         sprite_pairs.forEach( function(pair, index) {
           sprite = pair[0]
           sprite2 = pair[1]
-          if(sprite.toRect().collideRect(sprite2.toRect())) {
+          if(sprite.rect().collideRect(sprite2.rect())) {
             sprite.collision = true
             sprite2.collision = true
           }
@@ -69,7 +69,7 @@
       this.draw = function() {
         jaws.clear()
         sprites.forEach( function(sprite, index) {
-          sprite.collision ? sprite.toRect().draw() : sprite.draw()
+          sprite.collision ? sprite.rect().draw() : sprite.draw()
         });
       }
 
