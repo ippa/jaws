@@ -182,6 +182,11 @@ jaws.switchGameState = function(game_state) {
   jaws.gameloop.start()
 }
 
+/* Always return obj as an array. forceArray(1) -> [1], forceArray([1,2]) -> [1,2] */
+jaws.forceArray = function(obj) {
+  return Array.isArray(obj) ? obj : [obj]
+}
+
 /* Clears canvas through context.clearRect() */
 jaws.clear = function() {
   jaws.context.clearRect(0,0,jaws.width,jaws.height)
