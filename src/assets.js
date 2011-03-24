@@ -45,7 +45,8 @@ jaws.Assets = function() {
       return src.map( function(i) { return that.data[i] } )
     }
     else {
-      return this.data[src]
+      if(this.loaded[src])  { return this.data[src] }
+      else                  { jaws.log("No such asset: " + src) }
     }
   }
   
@@ -175,8 +176,15 @@ jaws.Assets = function() {
 
   this.processCallbacks = function(asset) {
     var percent = parseInt( (that.load_count+that.error_count) / that.src_list.length * 100)
-    if(that.onload)   { that.onload(asset.src, percent) }         // loadAll() - single asset has loaded callback
-    if(that.onfinish && percent==100) { that.onfinish() }         // loadAll() - everything is loaded callback
+    if(that.onload)  { that.onload(asset.src, percent) } // loadAll() - single asset has loaded callback
+    
+    // When loadAll() is 100%, call onfinish() and kill callbacks (reset with next loadAll()-call)
+    if(percent==100) { 
+      if(that.onfinish) { that.onfinish() }
+      that.onload = null
+      that.onerror = null
+      that.onfinish = null
+    }         
   }
 }
 

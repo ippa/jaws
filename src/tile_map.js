@@ -36,8 +36,8 @@ jaws.TileMap.prototype.push = function(obj) {
     }
     return obj
   }
-  if(obj.toRect) {
-    return this.pushAsRect(obj, obj.toRect())
+  if(obj.rect) {
+    return this.pushAsRect(obj, obj.rect())
   }
   else {
     var col = parseInt(obj.x / this.cell_size[0])
@@ -64,10 +64,16 @@ jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
   return obj
 }
 
-/* Push obj to a specific cell specified by col and row */
+/* 
+ * Push obj to a specific cell specified by col and row 
+ * If cell is already occupied we create an array and push to that
+ */
 jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
   // console.log("pushToCell col/row: " + col + "/" + row)
-  if(current_obj = this.cells[col][row]) { this.cells[col][row] = [current_obj, obj] }
+  if(current = this.cells[col][row]) {
+    if(jaws.isArray(current)) { this.cells[col][row].push(obj) }
+    else                      { this.cells[col][row] = [current, obj] }
+  }
   else                                   { this.cells[col][row] = obj }
   return this.cells[col][row]
 }

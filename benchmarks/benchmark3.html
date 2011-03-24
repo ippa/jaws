@@ -11,14 +11,14 @@
   FPS: <span id="fps">0</span>
   
   <div id="info">
-    Benchmark context.rotate; draw(image); -vs- sprite.rotate();sprite.draw();
+    Sprites
   </div>
   
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
  
   <script>
-    var loop = 4;
+    var loop = 10000;
     var fps = document.getElementById("fps")
     var sprite, image, canvas, context
 
@@ -29,45 +29,38 @@
       canvas.height = image.height
       context = canvas.getContext("2d")
       context.drawImage(image, 0, 0)
+      sprite = new jaws.Sprite({image: canvas, x:100, y:100, center: "center"})
     }
 
-    function BenchSprite() {
+
+    sprite.draw()function BenchSprite() {
       this.setup = function() {
-        global_setup();
-        jaws.title = "sprite.rotation()"
-        sprite = new jaws.Sprite({image: canvas, x:100, y:100, center: "center"})
-        sprite.rotation = 10
-        sprite.rotate(1)
+        global_setup()
       }
 
       this.draw = function() {
         for(var i=0; i < loop; i++) {
-          jaws.context.clearRect(0,0,jaws.width,jaws.height)
-          sprite.draw();
+          jaws.clear()
+          sprite.draw()
         }
-        sprite.rotate(1)
         fps.innerHTML = jaws.gameloop.fps
       }
     }
-    
-    function BenchCanvas() {
+
+    /* --------------------------------------------------------- */
+
+    function BenchSprite2s() {
       var rotation = 0
       this.setup = function() {
-        global_setup();
-        jaws.title = "canvas.rotate()"
+        global_setup()
       }
 
       this.draw = function() {
         for(var i=0; i < loop; i++) {
-          jaws.context.clearRect(0,0,jaws.width,jaws.height)
-          jaws.context.save()
-          jaws.context.rotate(rotation * Math.PI / 180)
-          jaws.context.drawImage(canvas, 100, 100) 
-          jaws.context.restore()
+          jaws.clear()
+          sprite.draw()
         }
-
         fps.innerHTML = jaws.gameloop.fps
-        rotation += 1
       }
     }
 
