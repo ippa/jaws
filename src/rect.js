@@ -73,8 +73,11 @@ jaws.Rect.prototype.collideTopSide = function(rect)    { return(this.y >= rect.y
 jaws.Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y && this.y < rect.y) }
 */
 
-jaws.Rect.prototype.toString = function() { return "[Rect " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
+jaws.Rect.prototype.toString = function() { return "[Rect " + this.x + ", " + this.y + ", " + this.width + ", " + this.height + "]" }
 
 return jaws;
 })(jaws || {});
+
+// Support CommonJS require()
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }
 
