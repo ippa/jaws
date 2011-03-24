@@ -8,10 +8,10 @@ var jaws = (function(jaws) {
  * var sprite2 = new jaws.Sprite({x: 41, y: 41})
  * tile_map.push(sprite)
  *
- * tile_map.at(10,10)  // nil
- * tile_map.at(40,40)  // sprite
- * tile_map.cell(0,0)  // nil
- * tile_map.cell(1,1)  // sprite
+ * tile_map.at(10,10)  // []
+ * tile_map.at(40,40)  // [sprite]
+ * tile_map.cell(0,0)  // []
+ * tile_map.cell(1,1)  // [sprite]
  *
  */
 jaws.TileMap = function(options) {
@@ -19,8 +19,11 @@ jaws.TileMap = function(options) {
   this.size = options.size
   this.cells = new Array(this.size[0])
 
-  for(var i=0; i < this.size[0]; i++) {
-    this.cells[i] = new Array(this.size[1])
+  for(var col=0; col < this.size[0]; col++) {
+    this.cells[col] = new Array(this.size[1])
+    for(var row=0; row < this.size[1]; row++) {
+      this.cells[col][row] = [] // populate each cell with an empty array
+    }
   }
 }
 
@@ -30,10 +33,8 @@ jaws.TileMap = function(options) {
  * Tries to read obj.x and obj.y to calculate what cell to occopy
  */
 jaws.TileMap.prototype.push = function(obj) {
-  if(jaws.isArray(obj)) { 
-    for(var i=0; i < obj.length; i++) { 
-      this.push(obj[i]) 
-    }
+  if(Array.isArray(obj)) { 
+    for(var i=0; i < obj.length; i++) { this.push(obj[i]) }
     return obj
   }
   if(obj.rect) {
@@ -46,18 +47,31 @@ jaws.TileMap.prototype.push = function(obj) {
   }
 
 }
+jaws.TileMap.prototype.pushAsPoint = function(obj) {
+  if(Array.isArray(obj)) { 
+    for(var i=0; i < obj.length; i++) { this.pushAsPoint(obj[i]) }
+    return obj
+  }
+  else {
+    var col = parseInt(obj.x / this.cell_size[0])
+    var row = parseInt(obj.y / this.cell_size[1])
+    return this.pushToCell(col, row, obj)
+  }
+}
 
 /* save 'obj' in cells touched by 'rect' */
 jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
   var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt((rect.right-1) / this.cell_size[0])
+  //jaws.log("rect.right: " + rect.right + " from/to col: " + from_col + " " + to_col, true)
 
   for(var col = from_col; col <= to_col; col++) {
     var from_row = parseInt(rect.y / this.cell_size[1])
     var to_row = parseInt((rect.bottom-1) / this.cell_size[1])
     
+    //jaws.log("rect.bottom " + rect.bottom + " from/to row: " + from_row + " " + to_row, true)
     for(var row = from_row; row <= to_row; row++) {
-      //console.log("atRect() col/row: " + col + "/" + row + " - " + this.cells[col][row])
+      // console.log("pushAtRect() col/row: " + col + "/" + row + " - " + this.cells[col][row])
       this.pushToCell(col, row, obj)
     }
   }
@@ -69,13 +83,21 @@ jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
  * If cell is already occupied we create an array and push to that
  */
 jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
+  return this.cells[col][row].push(obj)
+
+/*
   // console.log("pushToCell col/row: " + col + "/" + row)
   if(current = this.cells[col][row]) {
-    if(jaws.isArray(current)) { this.cells[col][row].push(obj) }
+    if(Array.isArray(current)) { this.cells[col][row].push(obj) }
     else                      { this.cells[col][row] = [current, obj] }
   }
   else                                   { this.cells[col][row] = obj }
-  return this.cells[col][row]
+*/
+
+/*
+  if(current = this.cells[col][row])  { this.cells[col][row].push(obj) }
+  else                                { this.cells[col][row] = [obj] }
+*/
 }
 
 
@@ -104,7 +126,7 @@ jaws.TileMap.prototype.atRect = function(rect) {
     for(var row = from_row; row <= to_row; row++) {
       var items = this.cells[col][row]
       if(items) {
-        if(jaws.isArray(items)) {
+        if(Array.isArray(items)) {
           items.forEach( function(item, total) { 
             if(objects.indexOf(item) == -1) { objects.push(item) }
           })
@@ -129,3 +151,6 @@ jaws.TileMap.prototype.toString = function() { return "[TileMap " + this.size[0]
 
 return jaws;
 })(jaws || {});
+
+// Support CommonJS require()
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }
