@@ -98,7 +98,7 @@ jaws.Assets = function() {
 
   /* Load one asset-object, i.e: {src: "foo.png"} */
   this.load = function(src, onload, onerror) {
-    asset = {}
+    var asset = {}
     asset.src = src
     asset.onload = onload
     asset.onerror = onerror
@@ -164,14 +164,15 @@ jaws.Assets = function() {
     }
     
     that.load_count++
-    if(asset.onload)  { asset.onload() }                    // single asset load()-callback
+    if(asset.onload)  { asset.onload() }  // single asset load()-callback
     that.processCallbacks(asset)
   }
 
   this.assetError = function(e) {
+    var asset = this.asset
     that.error_count++
-    if(asset.onerror)  { asset.onerror(this.asset) }
-    that.processCallbacks()
+    if(asset.onerror)  { asset.onerror(asset) }
+    that.processCallbacks(asset)
   }
 
   this.processCallbacks = function(asset) {

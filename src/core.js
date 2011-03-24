@@ -156,6 +156,7 @@ jaws.start = function(game_state, options) {
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
     jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
+    jaws.game_state = game_state
     jaws.gameloop.start()
   }
 
@@ -175,7 +176,7 @@ jaws.switchGameState = function(game_state) {
  
   if(jaws.isFunction(game_state)) { game_state = new game_state }
   
-  jaws.previous_game_state = game_state
+  jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
   jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.gameloop.fps)
   jaws.gameloop.start()
