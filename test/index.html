@@ -6,6 +6,11 @@
   <link href="qunit.css" rel="stylesheet" type="text/css" />
 
   <script type="text/javascript">
+    test("Various", function() {
+      same(jaws.forceArray(1), [1], "forceArray should always return an array")
+      same(jaws.forceArray([1,2,3]), [1,2,3], "forceArray should always return an array")
+    })
+
     test("Properties should exist", function() {
       ok(jaws, "window.jaws")
       ok(jaws.Animation, "jaws.Animation")
