@@ -50,7 +50,24 @@ jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_factor_y = va
 */
 
 /* Sprite modifiers. Modifies 1 or more properties and returns this for chainability. */
-jaws.Sprite.prototype.setImage =      function(value) { this.image = (jaws.isDrawable(value) ? value : jaws.assets.data[value]); return this.cacheOffsets() }
+jaws.Sprite.prototype.setImage =      function(value) { 
+  var that = this
+
+  // An image, great, set this.image and return
+  if(jaws.isDrawable(value)) {
+    this.image = value
+    return this.cacheOffsets() 
+  }
+  // Not an image, therefore an asset string, i.e. "ship.bmp"
+  else {
+    // Assets already loaded? Set this.image
+    if(jaws.assets.isLoaded(value)) { this.image = jaws.assets.get(value); this.cacheOffsets(); }
+
+    // Not loaded? Load it with callback to set image.
+    else { jaws.assets.load(value, function() { that.image = jaws.assets.get(value); that.cacheOffsets(); }) }
+  }
+  return this
+}
 jaws.Sprite.prototype.flip =          function()      { this.flipped = this.flipped ? false : true; return this }
 jaws.Sprite.prototype.flipTo =        function(value) { this.flipped = value; return this }
 jaws.Sprite.prototype.rotate =        function(value) { this.angle += value; return this }
@@ -165,8 +182,8 @@ jaws.Sprite.prototype.updateDiv = function() {
 
 // Draw the sprite on screen via its previously given context
 jaws.Sprite.prototype.draw = function() {
-  if(jaws.dom)    { return this.updateDiv() }
   if(!this.image) { return this }
+  if(jaws.dom)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
