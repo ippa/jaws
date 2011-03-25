@@ -27,6 +27,15 @@ jaws.TileMap = function(options) {
   }
 }
 
+/* Clear all cells in tile map */
+jaws.TileMap.prototype.clear = function() {
+  for(var col=0; col < this.size[0]; col++) {
+    for(var row=0; row < this.size[1]; row++) {
+      this.cells[col][row] = []
+    }
+  }
+}
+
 /*
  * Push obj (or array of objs) into our cell-grid.
  *
