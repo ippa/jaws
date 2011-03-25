@@ -132,10 +132,6 @@ function findOrCreateCanvas() {
  *
  */
 jaws.start = function(game_state, options) {
-  // Instance given game state contructor, or try to use setup, update, draw from global window
-  // This makes both jaws.start() and jaws.start(MenuState) possible
-  if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
-  if(!game_state)                                 { game_state = window }
   var wanted_fps = (options && options.fps) || 60
 
   jaws.init()
@@ -155,6 +151,12 @@ jaws.start = function(game_state, options) {
   /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
+    
+    // This makes both jaws.start() and jaws.start(MenuState) possible
+    // Run game state constructor (new) after all assets are loaded
+    if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
+    if(!game_state)                                 { game_state = window }
+
     jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
     jaws.game_state = game_state
     jaws.gameloop.start()
