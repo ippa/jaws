@@ -6,8 +6,9 @@ h2 { color: #45D4FF; font-size: 25px; }
 h3 { color: #45D4FF; font-size: 25px; }
 canvas { border: 1px solid; background: white; margin-top: 150px; }
 #canvas { margin: auto; width: 800px; height: 500px; border: black 1px solid; overflow: hidden; background: white; }
-#info { width: 500px; line-height: 130%; padding-top: 10px; }
+#info { width: 600px; line-height: 130%; padding-top: 10px; }
 #jaws-log { margin: auto; font: 11px verdana; color: #aaaaaa; background: black; width: 500px; padding: 5px; text-align: left; }
+#jaws-edit { font: 11px verdana; color: #aaaaaa; background: black; width: 500px; padding: 5px; text-align: left; display: none;}
 code { font-weight: bold; font-size: 15px; color: white;}
 
 /* We want non-blurry, block retro gfx when scalign! Webkit (chrome/safari) has yet to catch up with this */
