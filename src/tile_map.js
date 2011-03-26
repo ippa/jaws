@@ -18,6 +18,7 @@ jaws.TileMap = function(options) {
   this.cell_size = options.cell_size || [32,32]
   this.size = options.size
   this.cells = new Array(this.size[0])
+  this.sortFunction = undefined
 
   for(var col=0; col < this.size[0]; col++) {
     this.cells[col] = new Array(this.size[1])
@@ -32,6 +33,14 @@ jaws.TileMap.prototype.clear = function() {
   for(var col=0; col < this.size[0]; col++) {
     for(var row=0; row < this.size[1]; row++) {
       this.cells[col][row] = []
+    }
+  }
+}
+/* Sort arrays in each cell in tile map according to sorter-function (see Array.sort) */
+jaws.TileMap.prototype.sortCells = function(sortFunction) {
+  for(var col=0; col < this.size[0]; col++) {
+    for(var row=0; row < this.size[1]; row++) {
+      this.cells[col][row].sort( sortFunction )
     }
   }
 }
@@ -92,24 +101,10 @@ jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
  * If cell is already occupied we create an array and push to that
  */
 jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
-  return this.cells[col][row].push(obj)
-
-/*
-  // console.log("pushToCell col/row: " + col + "/" + row)
-  if(current = this.cells[col][row]) {
-    if(Array.isArray(current)) { this.cells[col][row].push(obj) }
-    else                      { this.cells[col][row] = [current, obj] }
-  }
-  else                                   { this.cells[col][row] = obj }
-*/
-
-/*
-  if(current = this.cells[col][row])  { this.cells[col][row].push(obj) }
-  else                                { this.cells[col][row] = [obj] }
-*/
+  this.cells[col][row].push(obj)
+  if(this.sortFunction) this.cells[col][row].sort(this.sortFunction);
+  return this
 }
-
-
 
 //
 // READERS
@@ -126,7 +121,6 @@ jaws.TileMap.prototype.at = function(x, y) {
 /* Returns occupants of all cells touched by 'rect' */
 jaws.TileMap.prototype.atRect = function(rect) {
   var objects = []
-  var added = {}
   var items
   var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt(rect.right / this.cell_size[0])
