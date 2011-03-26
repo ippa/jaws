@@ -132,10 +132,6 @@ function findOrCreateCanvas() {
  *
  */
 jaws.start = function(game_state, options) {
-  // Instance given game state contructor, or try to use setup, update, draw from global window
-  // This makes both jaws.start() and jaws.start(MenuState) possible
-  if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
-  if(!game_state)                                 { game_state = window }
   var wanted_fps = (options && options.fps) || 60
 
   jaws.init()
@@ -155,7 +151,14 @@ jaws.start = function(game_state, options) {
   /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
+    
+    // This makes both jaws.start() and jaws.start(MenuState) possible
+    // Run game state constructor (new) after all assets are loaded
+    if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
+    if(!game_state)                                 { game_state = window }
+
     jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
+    jaws.game_state = game_state
     jaws.gameloop.start()
   }
 
@@ -175,10 +178,15 @@ jaws.switchGameState = function(game_state) {
  
   if(jaws.isFunction(game_state)) { game_state = new game_state }
   
-  jaws.previous_game_state = game_state
+  jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
   jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.gameloop.fps)
   jaws.gameloop.start()
+}
+
+/* Always return obj as an array. forceArray(1) -> [1], forceArray([1,2]) -> [1,2] */
+jaws.forceArray = function(obj) {
+  return Array.isArray(obj) ? obj : [obj]
 }
 
 /* Clears canvas through context.clearRect() */
@@ -481,7 +489,7 @@ jaws.Assets = function() {
 
   /* Load one asset-object, i.e: {src: "foo.png"} */
   this.load = function(src, onload, onerror) {
-    asset = {}
+    var asset = {}
     asset.src = src
     asset.onload = onload
     asset.onerror = onerror
@@ -547,14 +555,15 @@ jaws.Assets = function() {
     }
     
     that.load_count++
-    if(asset.onload)  { asset.onload() }                    // single asset load()-callback
+    if(asset.onload)  { asset.onload() }  // single asset load()-callback
     that.processCallbacks(asset)
   }
 
   this.assetError = function(e) {
+    var asset = this.asset
     that.error_count++
-    if(asset.onerror)  { asset.onerror(this.asset) }
-    that.processCallbacks()
+    if(asset.onerror)  { asset.onerror(asset) }
+    that.processCallbacks(asset)
   }
 
   this.processCallbacks = function(asset) {
@@ -802,10 +811,13 @@ jaws.Rect.prototype.collideTopSide = function(rect)    { return(this.y >= rect.y
 jaws.Rect.prototype.collideBottomSide = function(rect) { return(this.bottom >= rect.y && this.y < rect.y) }
 */
 
-jaws.Rect.prototype.toString = function() { return "[Rect " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
+jaws.Rect.prototype.toString = function() { return "[Rect " + this.x + ", " + this.y + ", " + this.width + ", " + this.height + "]" }
 
 return jaws;
 })(jaws || {});
+
+// Support CommonJS require()
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }
 
 /*
  * 
@@ -859,7 +871,24 @@ jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_factor_y = va
 */
 
 /* Sprite modifiers. Modifies 1 or more properties and returns this for chainability. */
-jaws.Sprite.prototype.setImage =      function(value) { this.image = (jaws.isDrawable(value) ? value : jaws.assets.data[value]); return this.cacheOffsets() }
+jaws.Sprite.prototype.setImage =      function(value) { 
+  var that = this
+
+  // An image, great, set this.image and return
+  if(jaws.isDrawable(value)) {
+    this.image = value
+    return this.cacheOffsets() 
+  }
+  // Not an image, therefore an asset string, i.e. "ship.bmp"
+  else {
+    // Assets already loaded? Set this.image
+    if(jaws.assets.isLoaded(value)) { this.image = jaws.assets.get(value); this.cacheOffsets(); }
+
+    // Not loaded? Load it with callback to set image.
+    else { jaws.assets.load(value, function() { that.image = jaws.assets.get(value); that.cacheOffsets(); }) }
+  }
+  return this
+}
 jaws.Sprite.prototype.flip =          function()      { this.flipped = this.flipped ? false : true; return this }
 jaws.Sprite.prototype.flipTo =        function(value) { this.flipped = value; return this }
 jaws.Sprite.prototype.rotate =        function(value) { this.angle += value; return this }
@@ -974,8 +1003,8 @@ jaws.Sprite.prototype.updateDiv = function() {
 
 // Draw the sprite on screen via its previously given context
 jaws.Sprite.prototype.draw = function() {
-  if(jaws.dom)    { return this.updateDiv() }
   if(!this.image) { return this }
+  if(jaws.dom)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
@@ -1031,7 +1060,7 @@ var jaws = (function(jaws) {
 jaws.SpriteList = function() {}
 jaws.SpriteList.prototype = new Array
 
-jaws.SpriteList.prototype.delete = function(obj) {
+jaws.SpriteList.prototype.remove = function(obj) {
   var index = this.indexOf(obj)
   if(index > -1) { this.splice(index, 1) }
 }
@@ -1332,10 +1361,10 @@ var jaws = (function(jaws) {
  * var sprite2 = new jaws.Sprite({x: 41, y: 41})
  * tile_map.push(sprite)
  *
- * tile_map.at(10,10)  // nil
- * tile_map.at(40,40)  // sprite
- * tile_map.cell(0,0)  // nil
- * tile_map.cell(1,1)  // sprite
+ * tile_map.at(10,10)  // []
+ * tile_map.at(40,40)  // [sprite]
+ * tile_map.cell(0,0)  // []
+ * tile_map.cell(1,1)  // [sprite]
  *
  */
 jaws.TileMap = function(options) {
@@ -1343,8 +1372,20 @@ jaws.TileMap = function(options) {
   this.size = options.size
   this.cells = new Array(this.size[0])
 
-  for(var i=0; i < this.size[0]; i++) {
-    this.cells[i] = new Array(this.size[1])
+  for(var col=0; col < this.size[0]; col++) {
+    this.cells[col] = new Array(this.size[1])
+    for(var row=0; row < this.size[1]; row++) {
+      this.cells[col][row] = [] // populate each cell with an empty array
+    }
+  }
+}
+
+/* Clear all cells in tile map */
+jaws.TileMap.prototype.clear = function() {
+  for(var col=0; col < this.size[0]; col++) {
+    for(var row=0; row < this.size[1]; row++) {
+      this.cells[col][row] = []
+    }
   }
 }
 
@@ -1354,10 +1395,8 @@ jaws.TileMap = function(options) {
  * Tries to read obj.x and obj.y to calculate what cell to occopy
  */
 jaws.TileMap.prototype.push = function(obj) {
-  if(jaws.isArray(obj)) { 
-    for(var i=0; i < obj.length; i++) { 
-      this.push(obj[i]) 
-    }
+  if(Array.isArray(obj)) { 
+    for(var i=0; i < obj.length; i++) { this.push(obj[i]) }
     return obj
   }
   if(obj.rect) {
@@ -1370,18 +1409,31 @@ jaws.TileMap.prototype.push = function(obj) {
   }
 
 }
+jaws.TileMap.prototype.pushAsPoint = function(obj) {
+  if(Array.isArray(obj)) { 
+    for(var i=0; i < obj.length; i++) { this.pushAsPoint(obj[i]) }
+    return obj
+  }
+  else {
+    var col = parseInt(obj.x / this.cell_size[0])
+    var row = parseInt(obj.y / this.cell_size[1])
+    return this.pushToCell(col, row, obj)
+  }
+}
 
 /* save 'obj' in cells touched by 'rect' */
 jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
   var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt((rect.right-1) / this.cell_size[0])
+  //jaws.log("rect.right: " + rect.right + " from/to col: " + from_col + " " + to_col, true)
 
   for(var col = from_col; col <= to_col; col++) {
     var from_row = parseInt(rect.y / this.cell_size[1])
     var to_row = parseInt((rect.bottom-1) / this.cell_size[1])
     
+    //jaws.log("rect.bottom " + rect.bottom + " from/to row: " + from_row + " " + to_row, true)
     for(var row = from_row; row <= to_row; row++) {
-      //console.log("atRect() col/row: " + col + "/" + row + " - " + this.cells[col][row])
+      // console.log("pushAtRect() col/row: " + col + "/" + row + " - " + this.cells[col][row])
       this.pushToCell(col, row, obj)
     }
   }
@@ -1393,13 +1445,21 @@ jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
  * If cell is already occupied we create an array and push to that
  */
 jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
+  return this.cells[col][row].push(obj)
+
+/*
   // console.log("pushToCell col/row: " + col + "/" + row)
   if(current = this.cells[col][row]) {
-    if(jaws.isArray(current)) { this.cells[col][row].push(obj) }
+    if(Array.isArray(current)) { this.cells[col][row].push(obj) }
     else                      { this.cells[col][row] = [current, obj] }
   }
   else                                   { this.cells[col][row] = obj }
-  return this.cells[col][row]
+*/
+
+/*
+  if(current = this.cells[col][row])  { this.cells[col][row].push(obj) }
+  else                                { this.cells[col][row] = [obj] }
+*/
 }
 
 
@@ -1428,7 +1488,7 @@ jaws.TileMap.prototype.atRect = function(rect) {
     for(var row = from_row; row <= to_row; row++) {
       var items = this.cells[col][row]
       if(items) {
-        if(jaws.isArray(items)) {
+        if(Array.isArray(items)) {
           items.forEach( function(item, total) { 
             if(objects.indexOf(item) == -1) { objects.push(item) }
           })
@@ -1453,3 +1513,6 @@ jaws.TileMap.prototype.toString = function() { return "[TileMap " + this.size[0]
 
 return jaws;
 })(jaws || {});
+
+// Support CommonJS require()
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }

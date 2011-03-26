@@ -22,6 +22,7 @@ def compress(js_code, compilation_level)
     'compilation_level' => "#{compilation_level}",
     'output_format' => 'text',
     'output_info' => 'compiled_code'
+    # 'output_info' => 'errors'
   })
   response.body
 end
