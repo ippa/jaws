@@ -79,5 +79,5 @@ return jaws;
 })(jaws || {});
 
 // Support CommonJS require()
-if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.Rect }
 
