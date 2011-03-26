@@ -126,6 +126,8 @@ jaws.TileMap.prototype.at = function(x, y) {
 /* Returns occupants of all cells touched by 'rect' */
 jaws.TileMap.prototype.atRect = function(rect) {
   var objects = []
+  var added = {}
+  var items
   var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt(rect.right / this.cell_size[0])
   for(var col = from_col; col <= to_col; col++) {
@@ -133,17 +135,9 @@ jaws.TileMap.prototype.atRect = function(rect) {
     var to_row = parseInt(rect.bottom / this.cell_size[1])
     
     for(var row = from_row; row <= to_row; row++) {
-      var items = this.cells[col][row]
-      if(items) {
-        if(Array.isArray(items)) {
-          items.forEach( function(item, total) { 
-            if(objects.indexOf(item) == -1) { objects.push(item) }
-          })
-        }
-        else {
-          if(objects.indexOf(items) == -1) { objects.push(items) }
-        }
-      }
+      this.cells[col][row].forEach( function(item, total) { 
+        if(objects.indexOf(item) == -1) { objects.push(item) }
+      })
     }
   }
   return objects
