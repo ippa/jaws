@@ -53,7 +53,7 @@ jaws.game_states.Edit = function(options) {
     if(e.wheelDelta ) delta = e.wheelDelta/120;
     if(e.detail     ) delta = -e.detail/3;
 
-    game_objects.filter(isSelected).forEach( function(element, index) { element.z += delta })
+    game_objects.filter(isSelected).forEach( function(element, index) { element.z += delta*4 })
     //jaws.log("scroll by: " + delta)
   }
 
