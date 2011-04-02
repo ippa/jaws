@@ -36,6 +36,7 @@ jaws.TileMap.prototype.clear = function() {
     }
   }
 }
+
 /* Sort arrays in each cell in tile map according to sorter-function (see Array.sort) */
 jaws.TileMap.prototype.sortCells = function(sortFunction) {
   for(var col=0; col < this.size[0]; col++) {
@@ -135,6 +136,19 @@ jaws.TileMap.prototype.atRect = function(rect) {
     }
   }
   return objects
+}
+
+/* Returns all objects in tile map */
+jaws.TileMap.prototype.all = function() {
+  var all = []
+  for(var col=0; col < this.size[0]; col++) {
+    for(var row=0; row < this.size[1]; row++) {
+      this.cells[col][row].forEach( function(element, total) {
+        all.push(element)
+      });
+    }
+  }
+  return all
 }
 
 /*
