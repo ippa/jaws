@@ -52,7 +52,7 @@
         if(jaws.pressed("down"))  { player.y += 2 }
         if(jaws.pressed("space")) { 
           if(player.can_fire) {
-            bullets.push( new Bullet(player.toRect().right, player.y) )
+            bullets.push( new Bullet(player.rect().right, player.y) )
             player.can_fire = false
             setTimeout(function() { player.can_fire = true }, 100)
           }
