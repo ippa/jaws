@@ -51,7 +51,7 @@
       if(jaws.pressed("up"))    { player.y -= 2 }
       if(jaws.pressed("down"))  { player.y += 2 }
       if(jaws.pressed("space")) {
-        bullets.push( new Bullet(player.toRect().right, player.y+13) )
+        bullets.push( new Bullet(player.rect().right, player.y+13) )
       }
       forceInsideCanvas(player)
       bullets.deleteIf(isOutsideCanvas)
