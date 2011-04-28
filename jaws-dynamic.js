@@ -9,26 +9,28 @@
   */
   var scripts = document.getElementsByTagName('script')
   var path = scripts[scripts.length-1].src.split('?')[0]
-  var p = path.split('/').slice(0, -1).join('/') + '/src/'
+  var root = path.split('/').slice(0, -1).join('/') + '/src/'
 
   jaws = {}
-   load(p+"core.js")
-  .then(p+"sprite.js")
-  .then(p+"input.js", 
-        p+"assets.js", 
-        p+"game_loop.js", 
-        p+"rect.js", 
-        p+"sprite_list.js",
-        p+"sprite_sheet.js",
-        p+"parallax.js",
-        p+"animation.js",
-        p+"tile_map.js",
-        p+"viewport.js")
+   load(root+"core.js")
+  .then(root+"sprite.js")
+  .then(root+"input.js", 
+        root+"assets.js", 
+        root+"game_loop.js", 
+        root+"rect.js", 
+        root+"sprite_list.js",
+        root+"sprite_sheet.js",
+        root+"parallax.js",
+        root+"animation.js",
+        root+"tile_map.js",
+        root+"viewport.js")
   .thenRun(function () {
     /*
-     * We can't rely on window.onload callback when using javascript loaders.
+     * We can't rely on window.onload-callback in our game when using javascript loaders.
      * window.onload callback won't wait for dynamically inserted <script>-tags to finish before executing.
-     * Instead we have a jaws.onload callback which you use in combination with jaws-dynamic.js.
+     *
+     * Instead we have to use the jaws.onload-callback when loading Jaws through jaws-dynamic.js.
+     * Here we call it as the very last thing we do after all the jaws-components are loaded.
      */
     if(jaws.onload) { jaws.onload() }
   });
