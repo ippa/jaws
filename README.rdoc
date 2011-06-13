@@ -114,7 +114,7 @@ A rule of thumb is that a file foo.js will include a contructor named Foo().
     }
        
     //
-    // jaws.start() is the easiest way to get something up and running. It will:
+    // jaws.start(YourGameState) is the easiest way to get something up and running. It will in this order:
     //
     // 1) Call jaws.init() that will detect <canvas> (or create one for you) and set up the 2D context
     // - then available in jaws.canvas and jaws.context
@@ -122,8 +122,10 @@ A rule of thumb is that a file foo.js will include a contructor named Foo().
     // 2) Pre-load all assets
     // - player.png image is then available with jaws.assets.get("player.png")
     //
-    // 3) When all assets are loaded, call setup()
-    // 4) Then call update() / draw() with given FPS (default 60) until game ends or another game state is activated
+    // 3) Create an instance of YourGameState and call setup() on that instance
+    // - in setup() you usually create your gameobjects, sprites and so forth
+    //
+    // 4) Loop calls to update() and draw() with given FPS (default 60) until game ends or another game state is activated
     //
     window.onload = function() {
       // Add to jaws internal list of assets.
