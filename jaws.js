@@ -302,7 +302,7 @@ jaws.setupInput = function() {
 
   var numpadkeys = ["numpad1","numpad2","numpad3","numpad4","numpad5","numpad6","numpad7","numpad8","numpad9"]
   var fkeys = ["f1","f2","f3","f4","f5","f6","f7","f8","f9"]
-  var numbers = ["1","2","3","4","5","6","7","8","9"]
+  var numbers = ["0","1","2","3","4","5","6","7","8","9"]
   var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
   for(var i = 0; numbers[i]; i++)     { k[48+i] = numbers[i] }
   for(var i = 0; letters[i]; i++)     { k[65+i] = letters[i] }
@@ -817,7 +817,7 @@ return jaws;
 })(jaws || {});
 
 // Support CommonJS require()
-if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.Rect }
 
 /*
  * 
@@ -1371,6 +1371,7 @@ jaws.TileMap = function(options) {
   this.cell_size = options.cell_size || [32,32]
   this.size = options.size
   this.cells = new Array(this.size[0])
+  this.sortFunction = undefined
 
   for(var col=0; col < this.size[0]; col++) {
     this.cells[col] = new Array(this.size[1])
@@ -1389,13 +1390,22 @@ jaws.TileMap.prototype.clear = function() {
   }
 }
 
+/* Sort arrays in each cell in tile map according to sorter-function (see Array.sort) */
+jaws.TileMap.prototype.sortCells = function(sortFunction) {
+  for(var col=0; col < this.size[0]; col++) {
+    for(var row=0; row < this.size[1]; row++) {
+      this.cells[col][row].sort( sortFunction )
+    }
+  }
+}
+
 /*
  * Push obj (or array of objs) into our cell-grid.
  *
  * Tries to read obj.x and obj.y to calculate what cell to occopy
  */
 jaws.TileMap.prototype.push = function(obj) {
-  if(Array.isArray(obj)) { 
+  if(obj.length) { 
     for(var i=0; i < obj.length; i++) { this.push(obj[i]) }
     return obj
   }
@@ -1445,24 +1455,10 @@ jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
  * If cell is already occupied we create an array and push to that
  */
 jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
-  return this.cells[col][row].push(obj)
-
-/*
-  // console.log("pushToCell col/row: " + col + "/" + row)
-  if(current = this.cells[col][row]) {
-    if(Array.isArray(current)) { this.cells[col][row].push(obj) }
-    else                      { this.cells[col][row] = [current, obj] }
-  }
-  else                                   { this.cells[col][row] = obj }
-*/
-
-/*
-  if(current = this.cells[col][row])  { this.cells[col][row].push(obj) }
-  else                                { this.cells[col][row] = [obj] }
-*/
+  this.cells[col][row].push(obj)
+  if(this.sortFunction) this.cells[col][row].sort(this.sortFunction);
+  return this
 }
-
-
 
 //
 // READERS
@@ -1479,6 +1475,7 @@ jaws.TileMap.prototype.at = function(x, y) {
 /* Returns occupants of all cells touched by 'rect' */
 jaws.TileMap.prototype.atRect = function(rect) {
   var objects = []
+  var items
   var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt(rect.right / this.cell_size[0])
   for(var col = from_col; col <= to_col; col++) {
@@ -1486,20 +1483,25 @@ jaws.TileMap.prototype.atRect = function(rect) {
     var to_row = parseInt(rect.bottom / this.cell_size[1])
     
     for(var row = from_row; row <= to_row; row++) {
-      var items = this.cells[col][row]
-      if(items) {
-        if(Array.isArray(items)) {
-          items.forEach( function(item, total) { 
-            if(objects.indexOf(item) == -1) { objects.push(item) }
-          })
-        }
-        else {
-          if(objects.indexOf(items) == -1) { objects.push(items) }
-        }
-      }
+      this.cells[col][row].forEach( function(item, total) { 
+        if(objects.indexOf(item) == -1) { objects.push(item) }
+      })
     }
   }
   return objects
+}
+
+/* Returns all objects in tile map */
+jaws.TileMap.prototype.all = function() {
+  var all = []
+  for(var col=0; col < this.size[0]; col++) {
+    for(var row=0; row < this.size[1]; row++) {
+      this.cells[col][row].forEach( function(element, total) {
+        all.push(element)
+      });
+    }
+  }
+  return all
 }
 
 /*
