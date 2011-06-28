@@ -57,7 +57,7 @@ jaws.setupInput = function() {
 
   var numpadkeys = ["numpad1","numpad2","numpad3","numpad4","numpad5","numpad6","numpad7","numpad8","numpad9"]
   var fkeys = ["f1","f2","f3","f4","f5","f6","f7","f8","f9"]
-  var numbers = ["1","2","3","4","5","6","7","8","9"]
+  var numbers = ["0","1","2","3","4","5","6","7","8","9"]
   var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
   for(var i = 0; numbers[i]; i++)     { k[48+i] = numbers[i] }
   for(var i = 0; letters[i]; i++)     { k[65+i] = letters[i] }
