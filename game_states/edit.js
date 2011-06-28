@@ -5,8 +5,12 @@ if(!jaws.game_states) jaws.game_states = {}
 jaws.game_states.Edit = function(options) {
   if(! options ) options = {};
   var game_objects = options.game_objects || []
+  // alert(this.game_objects.length)
   var grid_size = options.grid_size
   var snap_to_grid = options.snap_to_grid
+  var track_modified = options.track_modified || true
+
+  var that = this
   var click_at
   var edit_tag
   
@@ -39,6 +43,8 @@ jaws.game_states.Edit = function(options) {
 
       game_objects.filter(isSelected).forEach( function(element, index) {
         element.move(dx, dy)
+        if(track_modified) element.modified = true;
+
         if(grid_size && snap_object) {
           x -= x % grid_size[0]
           y -= y % grid_size[1]
@@ -53,7 +59,10 @@ jaws.game_states.Edit = function(options) {
     if(e.wheelDelta ) delta = e.wheelDelta/120;
     if(e.detail     ) delta = -e.detail/3;
 
-    game_objects.filter(isSelected).forEach( function(element, index) { element.z += delta*4 })
+    game_objects.filter(isSelected).forEach( function(element, index) { 
+      element.z += delta*4 
+      if(track_modified) element.modified = true;
+    })
     //jaws.log("scroll by: " + delta)
   }
 
@@ -65,25 +74,26 @@ jaws.game_states.Edit = function(options) {
     forceArray(obj).forEach( function(element, index) { element.selected = true } )
   }
   function deselect(obj) {
-    forceArray(obj).forEach( function(element, index) { element.selected = false; } )
+    forceArray(obj).forEach( function(element, index) { element.selected = false } )
   }
 
   function gameObjectsAt(x, y) {
     return game_objects.filter( function(obj) { return obj.rect().collidePoint(x, y) } )
   }
   function removeSelected() {
-    game_objects = []
-    //game_objects = game_objects.filter(isNotSelected)
+    game_objects.filter(isSelected).forEach( function(element, index) {
+      game_objects.remove( element )
+    });
   }
 
   /* Remove all event-listeners, hide edit_tag and switch back to previous game state */
   function exit() {
     edit_tag.style.display = "none"
-    jaws.canvas.removeEventListener("mousedown", mousedown, false);
-    jaws.canvas.removeEventListener("mouseup", mouseup, false);
-    jaws.canvas.removeEventListener("mousemove", mousemove, false);
-    jaws.canvas.removeEventListener("mousewheel", mousewheel, false);
-    jaws.canvas.removeEventListener("DOMMouseSCroll", mousewheel, false);
+    jaws.canvas.removeEventListener("mousedown", mousedown, false)
+    jaws.canvas.removeEventListener("mouseup", mouseup, false)
+    jaws.canvas.removeEventListener("mousemove", mousemove, false)
+    jaws.canvas.removeEventListener("mousewheel", mousewheel, false)
+    jaws.canvas.removeEventListener("DOMMouseSCroll", mousewheel, false)
     jaws.switchGameState(jaws.previous_game_state)
   }
 
@@ -95,11 +105,11 @@ jaws.game_states.Edit = function(options) {
     jaws.preventDefaultKeys(["left", "right", "up", "down", "ctrl", "f1", "f2"])
     jaws.on_keydown(["f2","esc"], exit )
     jaws.on_keydown("delete",     removeSelected )
-    jaws.canvas.addEventListener("mousedown", mousedown, false);
-    jaws.canvas.addEventListener("mouseup", mouseup, false);
-    jaws.canvas.addEventListener("mousemove", mousemove, false);
-    jaws.canvas.addEventListener("mousewheel", mousewheel, false);
-    jaws.canvas.addEventListener("DOMMouseSCroll", mousewheel, false);
+    jaws.canvas.addEventListener("mousedown", mousedown, false)
+    jaws.canvas.addEventListener("mouseup", mouseup, false)
+    jaws.canvas.addEventListener("mousemove", mousemove, false)
+    jaws.canvas.addEventListener("mousewheel", mousewheel, false)
+    jaws.canvas.addEventListener("DOMMouseSCroll", mousewheel, false)
   }
 
   this.update = function() {
