@@ -1,6 +1,9 @@
 var jaws = (function(jaws) {
 
-/* Cut out a rectangular piece of a an image, returns as canvas-element */
+/** 
+ * Cut out a rectangular piece of a an image, returns as canvas-element 
+ * @private
+ */
 function cutImage(image, x, y, width, height) {
   var cut = document.createElement("canvas")
   cut.width = width
@@ -12,7 +15,17 @@ function cutImage(image, x, y, width, height) {
   return cut
 };
 
-/* Cut up into frame_size pieces and put them in frames[] */
+/** 
+  @class Helperclass to use invidual images in a spritesheet 
+
+  <pre>
+  json arguments:
+
+  image {String|Image} - the spritesheet image
+  orientation {String} - How to cut out invidual images from spritesheet, either "left" or "right"
+  frame_size {Array} - width and height of invidual frames in spritesheet
+  </pre>
+*/
 jaws.SpriteSheet = function(options) {
   this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
   this.orientation = options.orientation || "right"

@@ -106,13 +106,14 @@ jaws.preventDefaultKeys = function(array_of_strings) {
   });
 }
 
-/*
- * helper to check if a given key currently is pressed. returns true or false.
+/**
+ * Returns true if *key* is currently pressed down
  */
-jaws.pressed = function(string) {
-  return pressed_keys[string]
+jaws.pressed = function(key) {
+  return pressed_keys[key]
 }
 
+/** ... */
 jaws.on_keydown = function(key, callback) {
   if(jaws.isArray(key)) {
     for(var i=0; key[i]; i++) {
@@ -124,6 +125,7 @@ jaws.on_keydown = function(key, callback) {
   }
 }
 
+/** ... */
 jaws.on_keyup = function(key, callback) {
   if(jaws.isArray(key)) {
     for(var i=0; key[i]; i++) {
@@ -135,7 +137,7 @@ jaws.on_keyup = function(key, callback) {
   }
 }
 
-/* Clean up all callbacks set by on_keydown / on_keyup */
+/** Clean up all callbacks set by on_keydown / on_keyup */
 jaws.clearKeyCallbacks = function() {
   on_keyup_callbacks = []
   on_keydown_callbacks = []

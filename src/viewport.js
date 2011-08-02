@@ -1,14 +1,14 @@
 var jaws = (function(jaws) {
 
-/*
+/**
  *
- * Viewport() is a window (a Rect) into a bigger canvas/image
+ * @class - A window (Rect) into a bigger canvas/image
  *
  * It won't every go "outside" that image.
  * It comes with convenience methods as:
  *
- *   viewport.centerAround(player) which will do just what you think. (player needs to have properties x and y)
- *
+ * @example
+ *   viewport.centerAround(player) // which will do just what you think. (player needs to have properties x and y)
  *
  */
 jaws.Viewport = function(options) {
@@ -18,17 +18,7 @@ jaws.Viewport = function(options) {
   this.height = options.height || jaws.height
   this.max_x = options.max_x || jaws.width 
   this.max_y = options.max_y || jaws.height
-  
-  this.verifyPosition = function() {
-    var max = this.max_x - this.width
-    if(this.x < 0)      { this.x = 0 }
-    if(this.x > max)    { this.x = max }
 
-    var max = this.max_y - this.height
-    if(this.y < 0)      { this.y = 0 }
-    if(this.y > max)    { this.y = max }
-  };
- 
   this.move = function(x, y) {
     x && (this.x += x)
     y && (this.y += y)
@@ -41,6 +31,7 @@ jaws.Viewport = function(options) {
     this.verifyPosition()
   };
 
+  /** Returns true if item is outside viewport */
   this.isOutside = function(item) {
     return(!this.isInside(item))
   };
@@ -61,7 +52,18 @@ jaws.Viewport = function(options) {
     func()
     this.context.restore()
   };
-  
+
+  /** @private */
+  this.verifyPosition = function() {
+    var max = this.max_x - this.width
+    if(this.x < 0)      { this.x = 0 }
+    if(this.x > max)    { this.x = max }
+
+    var max = this.max_y - this.height
+    if(this.y < 0)      { this.y = 0 }
+    if(this.y > max)    { this.y = max }
+  };
+ 
   this.moveTo(options.x||0, options.y||0)
 }
 

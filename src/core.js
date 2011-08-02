@@ -1,8 +1,15 @@
-/*
+/**
  *
- * Jaws - a HTML5 canvas/javascript 2D game development framework
+ * <pre>
  *
- * Homepage:    http://jawsjs.com/
+ * ** THIS DOCUMENTATION IS WORK IN PROGRESS **
+ *
+ * Jaws a HTML5 canvas/javascript 2D game development framework
+ *
+ * Homepage:      http://jawsjs.com/
+ * Source:        http://github.com/ippa/jaws/
+ * Documentation: http://jawsjs.com/docs/
+ *
  * Works with:  Chrome 6.0+, Firefox 3.6+, 4+, IE 9+
  * License: LGPL - http://www.gnu.org/licenses/lgpl.html
  *
@@ -18,9 +25,11 @@
  * Have fun! 
  *
  * ippa. 
+ * </pre>
+ *
+ * @namespace - JawsJS core functions
  *
  */
-
 var jaws = (function(jaws) {
 
 var title
@@ -31,13 +40,12 @@ jaws.title = function(value) {
   return title.innerHTML
 }
 
-/*
+/**
  * Unpacks Jaws core-constructors into the global namespace
  * After calling unpack you can use:
  * "Sprite()" instead of "jaws.Sprite()"
  * "Animation()" instead of "jaws.Animation()"
  * .. and so on.
- *
  */
 jaws.unpack = function() {
   var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "TileMap", "Rect", "pressed"]
@@ -60,7 +68,7 @@ jaws.log = function(msg, add) {
   }
 }
 
-/*
+/**
  * init()
  *
  * Initializes / creates:
@@ -102,7 +110,7 @@ jaws.init = function(options) {
   jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeigh
 }
 
-/* 
+/** 
 *
 * Find the <canvas> so following draw-operations can use it.
 * If the developer didn't provide a <canvas> in his HTML, let's create one.
@@ -123,7 +131,7 @@ function findOrCreateCanvas() {
   jaws.context = jaws.canvas.getContext('2d');
 }
 
-/* 
+/** 
  * Quick and easy startup of a jaws gameloop. Can be called in different ways:
  *
  *  jaws.start(Game)            // Start game state Game() with default options
@@ -167,10 +175,10 @@ jaws.start = function(game_state, options) {
   else                          { assetsLoaded() } 
 }
 
-/*
- * Switch to a new active game state
- * Save previous game state in jaws.previous_game_state
- */
+/**
+* Switch to a new active game state
+* Save previous game state in jaws.previous_game_state
+*/
 jaws.switchGameState = function(game_state) {
   jaws.gameloop.stop()
   
@@ -184,47 +192,47 @@ jaws.switchGameState = function(game_state) {
   jaws.gameloop.start()
 }
 
-/* Always return obj as an array. forceArray(1) -> [1], forceArray([1,2]) -> [1,2] */
+/** Always return obj as an array. forceArray(1) -> [1], forceArray([1,2]) -> [1,2] */
 jaws.forceArray = function(obj) {
   return Array.isArray(obj) ? obj : [obj]
 }
 
-/* Clears canvas through context.clearRect() */
+/** Clears canvas through context.clearRect() */
 jaws.clear = function() {
   jaws.context.clearRect(0,0,jaws.width,jaws.height)
 }
 
-/* returns true if obj is an Image */
+/** returns true if obj is an Image */
 jaws.isImage = function(obj)  { 
   return Object.prototype.toString.call(obj) === "[object HTMLImageElement]" 
 }
 
-/* returns true of obj is a Canvas-element */
+/** returns true of obj is a Canvas-element */
 jaws.isCanvas = function(obj) { 
   return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]" 
 }
 
-/* returns true of obj is either an Image or a Canvas-element */
+/** returns true of obj is either an Image or a Canvas-element */
 jaws.isDrawable = function(obj) { 
   return jaws.isImage(obj) || jaws.isCanvas(obj) 
 }
 
-/* returns true if obj is a String */
+/** returns true if obj is a String */
 jaws.isString = function(obj) { 
   return (typeof obj == 'string') 
 }
 
-/* returns true if obj is an Array */
+/** returns true if obj is an Array */
 jaws.isArray = function(obj)  { 
   return !(obj.constructor.toString().indexOf("Array") == -1) 
 }
 
-/* returns true of obj is a Function */
+/** returns true of obj is a Function */
 jaws.isFunction = function(obj) { 
   return (Object.prototype.toString.call(obj) === "[object Function]") 
 }
 
-/* 
+/**
  * Return a hash of url-parameters and their values
  *
  * http://test.com/?debug=1&foo=bar  ->  [debug: 1, foo: bar]

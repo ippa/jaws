@@ -1,8 +1,8 @@
 var jaws = (function(jaws) {
 
-/*
- * A bread and butter Rect() - useful for basic collision detection
- */
+/**
+  @class a Rect()-class - useful for basic collision detection
+*/
 jaws.Rect = function(x,y,width,height) {
   this.x = x
   this.y = y
@@ -12,10 +12,16 @@ jaws.Rect = function(x,y,width,height) {
   this.bottom = y + height
 }
 
+/**
+ @return {Array} position as x,y
+*/
 jaws.Rect.prototype.getPosition = function() {
   return [this.x, this.y]
 }
 
+/**
+ * Move rect x pixels horizontally and y pixels vertically
+ */
 jaws.Rect.prototype.move = function(x,y) {
   this.x += x
   this.y += y
@@ -47,7 +53,7 @@ jaws.Rect.prototype.resizeTo = function(width,height) {
   return this
 }
 
-// Draw a red rectangle, useful for debug
+// Draw rect in color red, useful for debugging
 jaws.Rect.prototype.draw = function() {
   jaws.context.strokeStyle = "red"
   jaws.context.strokeRect(this.x, this.y, this.width, this.height)

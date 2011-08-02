@@ -1,11 +1,8 @@
-/*
- * 
- * When we wan't to move something visible around on the screen :).
- *
- *
- */
 var jaws = (function(jaws) {
 
+/**
+*  @class Sprite - When we wan't to move something visible around on the screen :)
+*/
 jaws.Sprite = function(options) {
   this.options = options
   this.set(options)  
@@ -13,7 +10,7 @@ jaws.Sprite = function(options) {
   if(!this.context) { this.createDiv() }  // No canvas context? Switch to DOM-based spritemode
 }
 
-/* Call setters from JSON object. Used to parse options. */
+/** Call setters from JSON object. Used to parse options. */
 jaws.Sprite.prototype.set = function(options) {
   this.scale_factor_x = this.scale_factor_y = (options.scale || 1)
   if(!options.anchor_x == undefined) {this.anchor_x = options.anchor_x}
@@ -49,7 +46,12 @@ jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_factor_x = va
 jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_factor_y = value; return this.cachOfffsets() }
 */
 
-/* Sprite modifiers. Modifies 1 or more properties and returns this for chainability. */
+/*  Sprite modifiers. Modifies 1 or more properties and returns this for chainability.  */
+
+/** 
+ * 
+ * @return this
+ */
 jaws.Sprite.prototype.setImage =      function(value) { 
   var that = this
 
@@ -68,9 +70,13 @@ jaws.Sprite.prototype.setImage =      function(value) {
   }
   return this
 }
+
+/** Flips image vertically, usefull for sidescrollers when player is walking left/right */
 jaws.Sprite.prototype.flip =          function()      { this.flipped = this.flipped ? false : true; return this }
 jaws.Sprite.prototype.flipTo =        function(value) { this.flipped = value; return this }
+/** Rotate sprite by value degrees */
 jaws.Sprite.prototype.rotate =        function(value) { this.angle += value; return this }
+/** Force an rotation-angle on sprite */
 jaws.Sprite.prototype.rotateTo =      function(value) { this.angle = value; return this }
 jaws.Sprite.prototype.moveTo =        function(x,y)   { this.x = x; this.y = y; return this }
 jaws.Sprite.prototype.move =          function(x,y)   { if(x) this.x += x;  if(y) this.y += y; return this }
@@ -82,11 +88,18 @@ jaws.Sprite.prototype.setX =          function(value) { this.x = value; return t
 jaws.Sprite.prototype.setY =          function(value) { this.y = value; return this }
 jaws.Sprite.prototype.setWidth  =     function(value) { this.scale_factor_x = value/this.image.width; return this.cacheOffsets() }
 jaws.Sprite.prototype.setHeight =     function(value) { this.scale_factor_y = value/this.image.height; return this.cacheOffsets() }
+/** Resize sprite by adding width */
 jaws.Sprite.prototype.resize =        function(width, height) { 
   this.scale_factor_x = (this.width + width) / this.image.width
   this.scale_factor_y = (this.height + height) / this.image.height
   return this.cacheOffsets()
 }
+/** 
+ * Resize sprite to exact width/height 
+ * @param {Number} width
+ * @param {Number} height
+ * @returns this
+ */
 jaws.Sprite.prototype.resizeTo =      function(width, height) {
   this.scale_factor_x = width / this.image.width
   this.scale_factor_y = height / this.image.height
@@ -130,6 +143,7 @@ jaws.Sprite.prototype.anchor = function(value) {
   return this
 }
 
+/** @private */
 jaws.Sprite.prototype.cacheOffsets = function() {
   if(!this.image) { return }
   
@@ -151,7 +165,10 @@ jaws.Sprite.prototype.rect = function() {
   return this.cached_rect
 } 
 
-/* Make this sprite a DOM-based <div> sprite */
+/**
+ * Make this sprite a DOM-based <div> sprite 
+ * @private
+ */
 jaws.Sprite.prototype.createDiv = function() {
   this.div = document.createElement("div")
   this.div.style.position = "absolute"
@@ -164,7 +181,10 @@ jaws.Sprite.prototype.createDiv = function() {
   this.updateDiv()
 }
 
-/* Update properties for DOM-based sprite */
+/** 
+ * Update properties for DOM-based sprite 
+ * @private
+ */
 jaws.Sprite.prototype.updateDiv = function() {
   this.div.style.left = this.x + "px"
   this.div.style.top = this.y + "px"

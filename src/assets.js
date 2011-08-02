@@ -1,10 +1,8 @@
 var jaws = (function(jaws) {
 
-/* 
- * jaws.Assets()
- *
- * Mass load / processing of assets (images, sound, video, json)
- * 
+/** 
+ * @class loads and processes assets as images, sound, video, json
+ * Used internally by JawsJS to create *jaws.assets*
  */
 jaws.Assets = function() {
   this.loaded = []    // Hash of all URLs that's been loaded
@@ -68,14 +66,14 @@ jaws.Assets = function() {
     return (this.file_type[postfix] ? this.file_type[postfix] : postfix)
   }
   
-  /* Add array of paths or single path to asset-list. Later load with loadAll() */
+  /** Add array of paths or single path to asset-list. Later load with loadAll() */
   this.add = function(src) {
     if(jaws.isArray(src)) { for(var i=0; src[i]; i++) { this.add(src[i]) } }
     else                  { src = this.root + src; this.src_list.push(src) }
     return this
   }
  
-  /* Load all assets */
+  /** Load all pre-specified assets */
   this.loadAll = function(options) {
     this.load_count = 0
     this.error_count = 0
@@ -90,13 +88,13 @@ jaws.Assets = function() {
     }
   }
 
-  /* Calls onload right away if asset is available since before, otherwise try to load it */
+  /** Calls onload right away if asset is available since before, otherwise try to load it */
   this.getOrLoad = function(src, onload, onerror) {
     if(this.data[src]) { onload() }
     else { this.load(src, onload, onerror) }
   }
 
-  /* Load one asset-object, i.e: {src: "foo.png"} */
+  /** Load one asset-object, i.e: {src: "foo.png"} */
   this.load = function(src, onload, onerror) {
     var asset = {}
     asset.src = src
@@ -133,11 +131,12 @@ jaws.Assets = function() {
     }
   }
 
-  /*
+  /**
    * Callback for all asset-loading.
    * 1) Parse data depending on filetype. Images are (optionally) converted to canvas-objects. json are parsed into native objects and so on.
    * 2) Save processed data in internal list for easy fetching with assets.get(src) later on
    * 3) Call callbacks if defined
+   * @private
    */
   this.assetLoaded = function(e) {
     var asset = this.asset
@@ -189,7 +188,7 @@ jaws.Assets = function() {
   }
 }
 
-/*
+/**
  * Takes an image, returns a canvas.
  * Benchmarks has proven canvas to be faster to work with then images.
  * Returns: a canvas
@@ -205,7 +204,7 @@ function imageToCanvas(image) {
   return canvas
 }
 
-/* 
+/** 
  * Make Fuchia (0xFF00FF) transparent
  * This is the de-facto standard way to do transparency in BMPs
  * Returns: a canvas
@@ -224,7 +223,7 @@ function fuchiaToTransparent(image) {
   return canvas
 }
 
-/* Scale image by factor and keep jaggy retro-borders */
+/** Scale image by factor and keep jaggy retro-borders */
 function retroScale(image, factor) {
   canvas = jaws.isImage(image) ? imageToCanvas(image) : image
   var context = canvas.getContext("2d")

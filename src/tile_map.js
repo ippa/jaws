@@ -1,8 +1,9 @@
 var jaws = (function(jaws) {
 
 /*
- * TileMap - fast access to tiles
+ * @class Create and access tilebased 2D maps with very fast access of invidual tiles
  *
+ * @example
  * var tile_map = new TileMap({size: [10, 10], cell_size: [16,16]})
  * var sprite = new jaws.Sprite({x: 40, y: 40})
  * var sprite2 = new jaws.Sprite({x: 41, y: 41})
@@ -28,7 +29,7 @@ jaws.TileMap = function(options) {
   }
 }
 
-/* Clear all cells in tile map */
+/** Clear all cells in tile map */
 jaws.TileMap.prototype.clear = function() {
   for(var col=0; col < this.size[0]; col++) {
     for(var row=0; row < this.size[1]; row++) {
@@ -37,7 +38,7 @@ jaws.TileMap.prototype.clear = function() {
   }
 }
 
-/* Sort arrays in each cell in tile map according to sorter-function (see Array.sort) */
+/** Sort arrays in each cell in tile map according to sorter-function (see Array.sort) */
 jaws.TileMap.prototype.sortCells = function(sortFunction) {
   for(var col=0; col < this.size[0]; col++) {
     for(var row=0; row < this.size[1]; row++) {
@@ -46,7 +47,7 @@ jaws.TileMap.prototype.sortCells = function(sortFunction) {
   }
 }
 
-/*
+/**
  * Push obj (or array of objs) into our cell-grid.
  *
  * Tries to read obj.x and obj.y to calculate what cell to occopy
@@ -78,7 +79,7 @@ jaws.TileMap.prototype.pushAsPoint = function(obj) {
   }
 }
 
-/* save 'obj' in cells touched by 'rect' */
+/** save 'obj' in cells touched by 'rect' */
 jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
   var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt((rect.right-1) / this.cell_size[0])
@@ -97,7 +98,7 @@ jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
   return obj
 }
 
-/* 
+/** 
  * Push obj to a specific cell specified by col and row 
  * If cell is already occupied we create an array and push to that
  */
@@ -111,7 +112,7 @@ jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
 // READERS
 // 
 
-/* Get objects in cell that exists at coordinates x / y  */
+/** Get objects in cell that exists at coordinates x / y  */
 jaws.TileMap.prototype.at = function(x, y) {
   var col = parseInt(x / this.cell_size[0])
   var row = parseInt(y / this.cell_size[1])
@@ -119,7 +120,7 @@ jaws.TileMap.prototype.at = function(x, y) {
   return this.cells[col][row]
 }
 
-/* Returns occupants of all cells touched by 'rect' */
+/** Returns occupants of all cells touched by 'rect' */
 jaws.TileMap.prototype.atRect = function(rect) {
   var objects = []
   var items
@@ -138,7 +139,7 @@ jaws.TileMap.prototype.atRect = function(rect) {
   return objects
 }
 
-/* Returns all objects in tile map */
+/** Returns all objects in tile map */
 jaws.TileMap.prototype.all = function() {
   var all = []
   for(var col=0; col < this.size[0]; col++) {
@@ -151,9 +152,7 @@ jaws.TileMap.prototype.all = function() {
   return all
 }
 
-/*
- * Get objects in cell at col / row
- */
+/** Get objects in cell at col / row */
 jaws.TileMap.prototype.cell = function(col, row) {
   return this.cells[col][row]
 }

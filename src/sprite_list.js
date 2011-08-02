@@ -1,14 +1,14 @@
 var jaws = (function(jaws) {
-
-/*
+/**
  *
- * Constructor to manage your Sprites. 
+ * class Manages your Sprites.
  *
  * Sprites (your bullets, aliens, enemies, players etc) will need to be
  * updated, draw, deleted. Often in various orders and based on different conditions.
  *
  * This is where SpriteList() comes in.
  *
+ * @example
  *   var enemies = new SpriteList()
  *
  *   for(i=0; i < 100; i++) { // create 100 enemies 
@@ -19,39 +19,44 @@ var jaws = (function(jaws) {
  *   enemies.drawIf(isInsideViewport)   // only call draw() on items that returns true when isInsideViewport is called with item as argument 
  *
  */
-
 jaws.SpriteList = function() {}
 jaws.SpriteList.prototype = new Array
 
+/** Remove a certain sprite from list */
 jaws.SpriteList.prototype.remove = function(obj) {
   var index = this.indexOf(obj)
   if(index > -1) { this.splice(index, 1) }
 }
 
+/** Draw all sprites in spritelist */
 jaws.SpriteList.prototype.draw = function() {
   for(i=0; this[i]; i++) { 
     this[i].draw() 
   }
 }
 
+/** Draw sprites in spritelist where condition(sprite) returns true */
 jaws.SpriteList.prototype.drawIf = function(condition) {
   for(i=0; this[i]; i++) {
     if( condition(this[i]) ) { this[i].draw() }
   }
 }
 
+/** Call update() on all sprites in spritelist */
 jaws.SpriteList.prototype.update = function() {
   for(i=0; this[i]; i++) {
     this[i].update()
   }
 }
 
+/** Call update() on sprites in spritelist where condition(sprite) returns true */
 jaws.SpriteList.prototype.updateIf = function(condition) {
   for(i=0; this[i]; i++) {
     if( condition(this[i]) ) { this[i].update() }
   }
 }
 
+/** Delete sprites in spritelist where condition(sprite) returns true */
 jaws.SpriteList.prototype.deleteIf = function(condition) {
   for(var i=0; this[i]; i++) {
     if( condition(this[i]) ) { this.splice(i,1) }

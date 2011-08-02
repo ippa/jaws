@@ -1,18 +1,19 @@
 var jaws = (function(jaws) {
 
-/*
+/**
  *
- * Animation() 
+ * @class Manages animation with a given list of frames and durations
  *
- * Manages animation with a given list of frames and durations
- * Takes a object as argument:
+ * @description
+ * <pre>
+ * Takes a object with the following properties as argument:
  *
  * loop:    true|false  - restart animation when end is reached
  * bounce:  true|false  - rewind the animation frame by frame when end is reached
  * index:   int         - start on this frame
  * frames   array       - array of image/canvas items
  * frame_duration  int   - how long should each frame be displayed
- *
+ * </pre>
  */
 jaws.Animation = function(options) {
   this.options = options
@@ -35,8 +36,10 @@ jaws.Animation = function(options) {
   this.sum_tick = 0
 }
 
-// Propells the animation forward by counting milliseconds and changing this.index accordingly
-// Supports looping and bouncing animations.
+/** 
+ Propells the animation forward by counting milliseconds and changing this.index accordingly
+ Supports looping and bouncing animations
+*/
 jaws.Animation.prototype.update = function() {
   this.current_tick = (new Date()).getTime();
   this.sum_tick += (this.current_tick - this.last_tick);
@@ -58,7 +61,9 @@ jaws.Animation.prototype.update = function() {
   return this
 }
 
-// Like array.slice but returns a new Animation-object with a subset of the frames
+/** 
+  works like Array.slice but returns a new Animation-object with a subset of the frames
+*/
 jaws.Animation.prototype.slice = function(start, stop) {
   var o = {} 
   o.frame_duration = this.frame_duration
@@ -69,13 +74,17 @@ jaws.Animation.prototype.slice = function(start, stop) {
   return new jaws.Animation(o)
 };
 
-// Moves animation forward by calling update() and then return the current frame
+/**
+  Moves animation forward by calling update() and then return the current frame
+*/
 jaws.Animation.prototype.next = function() {
   this.update()
   return this.frames[this.index]
 };
 
-// returns the current frame
+/** 
+  returns the current frame
+*/
 jaws.Animation.prototype.currentFrame = function() {
   return this.frames[this.index]
 };
