@@ -33,6 +33,5 @@ out = File.new("jaws-min.js", "w")
 out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # ADVANCED_OPTIMIZATIONS
 out.close
 
-
 # Generate documentation into http://jawsjs.com/docs/
-jsdoc -a -d=../docs src
+system("jsdoc -a -d=/www/ippa/jawsjs.com/public/docs src")
