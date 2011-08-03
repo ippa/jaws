@@ -1,3 +1,4 @@
+
 var jaws = (function(jaws) {
 
   var pressed_keys = {}
@@ -5,7 +6,7 @@ var jaws = (function(jaws) {
   var on_keydown_callbacks = []
   var on_keyup_callbacks = []
  
-/*
+/** @private
  * Map all javascript keycodes to easy-to-remember letters/words
  */
 jaws.setupInput = function() {
@@ -71,7 +72,9 @@ jaws.setupInput = function() {
   window.onkeypress = function(e) {};
 }
 
-// handle event "onkeydown" by remembering what key was pressed
+/** @private
+ * handle event "onkeydown" by remembering what key was pressed
+ */
 function handleKeyUp(e) {
   event = (e) ? e : window.event
   var human_name = keycode_to_string[event.keyCode]
@@ -83,7 +86,9 @@ function handleKeyUp(e) {
   if(prevent_default_keys[human_name]) { e.preventDefault() }
 }
 
-// handle event "onkeydown" by remembering what key was un-pressed
+/** @private
+ * handle event "onkeydown" by remembering what key was un-pressed
+ */
 function handleKeyDown(e) {
   event = (e) ? e : window.event  
   var human_name = keycode_to_string[event.keyCode]
@@ -100,6 +105,11 @@ function handleKeyDown(e) {
 
 
 var prevent_default_keys = []
+/** 
+ * Prevents default browseraction for given keys.
+ * @example
+ * jaws.preventDefaultKeys( ["down"] )  // Stop down-arrow-key from scrolling page down
+ */
 jaws.preventDefaultKeys = function(array_of_strings) {
   array_of_strings.forEach( function(item, index) {
     prevent_default_keys[item] = true
@@ -137,7 +147,9 @@ jaws.on_keyup = function(key, callback) {
   }
 }
 
-/** Clean up all callbacks set by on_keydown / on_keyup */
+/** @private
+ * Clean up all callbacks set by on_keydown / on_keyup 
+ */
 jaws.clearKeyCallbacks = function() {
   on_keyup_callbacks = []
   on_keydown_callbacks = []

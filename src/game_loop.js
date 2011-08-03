@@ -1,20 +1,20 @@
 var jaws = (function(jaws) {
-
-/*
+/**
+ * @class A classic gameloop forever looping calls to update() / draw() with given framerate
+ *
+ * @example
  *
  * function draw() {
  *    ... your stuff executed every 30 FPS ...
  * }
  *
- * gameloop = jaws.GameLoop(setup, update, draw, 30)
+ * gameloop = new jaws.GameLoop(setup, update, draw, 30)
  * gameloop.start()
  *
- * gameloop.start() starts a 2-step process, where first all assets are loaded. 
- * Then the real gameloop is started with the userspecified FPS.
- *
- * If using the shorter jaws.init() a GameLoop will automatically be created and started for you.
- *
- * @class GameLoop
+ * // You can also use the shortcut jaws.start(), it will:
+ * // 1) Load all assets with jaws.assets.loadAll()
+ * // 2) Create a GameLoop() and start it
+ * jaws.start(MyGameState, {fps: 30})
  *
  */
 jaws.GameLoop = function(setup, update, draw, wanted_fps) {
@@ -64,12 +64,11 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   }
 }
 
-/** @private */
 function MeanValue(size) {
   this.size = size
   this.values = new Array(this.size)
   this.value
-
+  
   this.add = function(value) {
     if(this.values.length > this.size) {  // is values filled?
       this.values.splice(0,1)

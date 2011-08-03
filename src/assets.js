@@ -1,8 +1,8 @@
 var jaws = (function(jaws) {
 
 /** 
- * @class loads and processes assets as images, sound, video, json
- * Used internally by JawsJS to create *jaws.assets*
+ * @class Loads and processes assets as images, sound, video, json
+ * Used internally by JawsJS to create <b>jaws.assets</b>
  */
 jaws.Assets = function() {
   this.loaded = []    // Hash of all URLs that's been loaded
@@ -131,12 +131,11 @@ jaws.Assets = function() {
     }
   }
 
-  /**
+  /** @private
    * Callback for all asset-loading.
    * 1) Parse data depending on filetype. Images are (optionally) converted to canvas-objects. json are parsed into native objects and so on.
    * 2) Save processed data in internal list for easy fetching with assets.get(src) later on
    * 3) Call callbacks if defined
-   * @private
    */
   this.assetLoaded = function(e) {
     var asset = this.asset
@@ -188,7 +187,7 @@ jaws.Assets = function() {
   }
 }
 
-/**
+/** @private
  * Takes an image, returns a canvas.
  * Benchmarks has proven canvas to be faster to work with then images.
  * Returns: a canvas
@@ -204,7 +203,7 @@ function imageToCanvas(image) {
   return canvas
 }
 
-/** 
+/** @private 
  * Make Fuchia (0xFF00FF) transparent
  * This is the de-facto standard way to do transparency in BMPs
  * Returns: a canvas
@@ -223,7 +222,9 @@ function fuchiaToTransparent(image) {
   return canvas
 }
 
-/** Scale image by factor and keep jaggy retro-borders */
+/** @private
+ * Scale image by factor and keep jaggy retro-borders 
+ */
 function retroScale(image, factor) {
   canvas = jaws.isImage(image) ? imageToCanvas(image) : image
   var context = canvas.getContext("2d")

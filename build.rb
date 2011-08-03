@@ -34,4 +34,6 @@ out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # ADVANCED_OPTIMIZATIONS
 out.close
 
 # Generate documentation into http://jawsjs.com/docs/
-system("jsdoc -a -d=/www/ippa/jawsjs.com/public/docs src")
+# -a documents All functions
+s = "jsdoc -D='noGlobal:true' -D='title:JawsJS HTML5 game engine documentation' -t=/www/ippa/jawsjs.com/public/codeview -d=/www/ippa/jawsjs.com/public/docs src"
+system(s)

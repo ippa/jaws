@@ -1,9 +1,7 @@
 /**
  *
- * <pre>
- *
- * ** THIS DOCUMENTATION IS WORK IN PROGRESS **
- *
+ * @namespace JawsJS core functions
+ * @example
  * Jaws a HTML5 canvas/javascript 2D game development framework
  *
  * Homepage:      http://jawsjs.com/
@@ -13,21 +11,18 @@
  * Works with:  Chrome 6.0+, Firefox 3.6+, 4+, IE 9+
  * License: LGPL - http://www.gnu.org/licenses/lgpl.html
  *
+ * Jaws uses the "module pattern". 
+ * Adds 1 global -- <b>jaws</b>
+ * It should play nice with all other JS libs.
+ *  
  * Formating guide:
- *
  *   jaws.oneFunction()
  *   jaws.one_variable = 1
  *   new jaws.OneConstructor
  *
- * Jaws uses the "module pattern" and exposes itself through the global "jaws". 
- * It should play nice with all other JS libs.
- *
  * Have fun! 
  *
  * ippa. 
- * </pre>
- *
- * @namespace - JawsJS core functions
  *
  */
 var jaws = (function(jaws) {
@@ -57,27 +52,28 @@ jaws.unpack = function() {
 }
 
 
-/*
- * Logger, adds text to previously found or created <div id="jaws-log">
+/**
+ * Logs <b>msg</b> to previously found or created <div id="jaws-log">
+ * if <b>append</b> is true, append rather then overwrite to last msg.
  */
-jaws.log = function(msg, add) {
+jaws.log = function(msg, append) {
   if(log_tag) {
     msg += "<br />"
-    if(add) { log_tag.innerHTML = log_tag.innerHTML.toString() + msg } 
+    if(append) { log_tag.innerHTML = log_tag.innerHTML.toString() + msg } 
     else { log_tag.innerHTML = msg }
   }
 }
 
 /**
- * init()
- *
+ * @example
  * Initializes / creates:
- * - jaws.canvas / jaws.context / jaws.dom (our drawable gamearea)
- * - jaws.width / jaws.height (width/height of drawable gamearea)
- * - jaws.url_parameters (hash of key/values of all parameters in current url)
- * - title / log_tag (used internally by jaws)
+ * jaws.canvas, jaws.context & jaws.dom   // our drawable gamearea
+ * jaws.width & jaws.height               // width/height of drawable gamearea
+ * jaws.url_parameters                    // hash of key/values of all parameters in current url
+ * title & log_tag                        // used internally by jaws
  *
- * */
+ * @private
+ */
 jaws.init = function(options) {
   /* Find <title> tag */
   title = document.getElementsByTagName('title')[0]
@@ -111,10 +107,9 @@ jaws.init = function(options) {
 }
 
 /** 
-*
-* Find the <canvas> so following draw-operations can use it.
-* If the developer didn't provide a <canvas> in his HTML, let's create one.
-*
+* @private
+* Find <canvas>-tag so jaws can an use it to draw sprites.
+* If the developer didn't provide a <canvas> in his HTML, jaws will automatically create one.
 */
 function findOrCreateCanvas() {
  jaws.canvas = document.getElementsByTagName('canvas')[0]
@@ -132,11 +127,12 @@ function findOrCreateCanvas() {
 }
 
 /** 
- * Quick and easy startup of a jaws gameloop. Can be called in different ways:
+ * Quick and easy startup of a jaws gameloop
  *
- *  jaws.start(Game)            // Start game state Game() with default options
- *  jaws.start(Game, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
- *  jaws.start(window)          //
+ * @example
+ * jaws.start(MyGame)            // Start game state Game() with default options
+ * jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
+ * jaws.start(window)            // Use global setup(), update() and draw() where available
  *
  */
 jaws.start = function(game_state, options) {
@@ -235,7 +231,8 @@ jaws.isFunction = function(obj) {
 /**
  * Return a hash of url-parameters and their values
  *
- * http://test.com/?debug=1&foo=bar  ->  [debug: 1, foo: bar]
+ * @example
+ * http://test.com/?debug=1&foo=bar  // --> {debug: 1, foo: bar}
  */
 function getUrlParameters() {
   var vars = [], hash;

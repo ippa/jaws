@@ -1,5 +1,15 @@
 var jaws = (function(jaws) {
 
+/** 
+* @class Manage a parallax scroller with different layers
+* @example
+* parallax = new jaws.Parallax({repeat_x: true})
+* parallax.addLayer({image: "parallax_1.png", damping: 100})
+* parallax.addLayer({image: "parallax_2.png", damping: 6})
+* parallax.camera_x += 1    // scroll layers horizontally
+* parallax.draw()
+*
+*/
 jaws.Parallax = function(options) {
   this.scale = options.scale || 1
   this.repeat_x = options.repeat_x
@@ -9,6 +19,7 @@ jaws.Parallax = function(options) {
   this.layers = []
 }
 
+/** Draw all layers in parallax scroller */
 jaws.Parallax.prototype.draw = function(options) {
   var layer, save_x, save_y;
 
@@ -40,19 +51,27 @@ jaws.Parallax.prototype.draw = function(options) {
     layer.x = save_x
   }
 }
+/** Add a new layer to the parallax scroller */
 jaws.Parallax.prototype.addLayer = function(options) {
   var layer = new jaws.ParallaxLayer(options)
   layer.scale(this.scale)
   this.layers.push(layer)
 }
+/** Debugstring for Parallax() */
 jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + ", " + this.y + ". " + this.layers.length + " layers]" }
 
+/**
+ * @class A single layer that's contained by Parallax()
+ *
+ *
+ */
 jaws.ParallaxLayer = function(options) {
   this.damping = options.damping || 0
   jaws.Sprite.call(this, options)
 }
 jaws.ParallaxLayer.prototype = jaws.Sprite.prototype
-jaws.Parallax.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
+/** Debugstring for ParallaxLayer() */
+jaws.ParallaxLayer.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
 
 return jaws;
 })(jaws || {});

@@ -2,13 +2,8 @@ var jaws = (function(jaws) {
 
 /**
  *
- * @class - A window (Rect) into a bigger canvas/image
- *
- * It won't every go "outside" that image.
- * It comes with convenience methods as:
- *
- * @example
- *   viewport.centerAround(player) // which will do just what you think. (player needs to have properties x and y)
+ * @class A window (Rect) into a bigger canvas/image. Viewport is always contained within that given image (called the game world).
+ * Comes with convenience methods as viewport.centerAround(player) which is usefull for a sidescrolling type of game.
  *
  */
 jaws.Viewport = function(options) {
@@ -19,12 +14,14 @@ jaws.Viewport = function(options) {
   this.max_x = options.max_x || jaws.width 
   this.max_y = options.max_y || jaws.height
 
+  /** Move viewport x pixels horizontally and y pixels vertically */
   this.move = function(x, y) {
     x && (this.x += x)
     y && (this.y += y)
     this.verifyPosition()
   };
   
+  /** Move viewport to given x/y */
   this.moveTo = function(x, y) {
     if(!(x==undefined)) { this.x = x }
     if(!(y==undefined)) { this.y = y }
@@ -36,16 +33,29 @@ jaws.Viewport = function(options) {
     return(!this.isInside(item))
   };
 
+  /** Returns true if *item* is inside viewport */
   this.isInside = function(item) {
     return( item.x >= this.x && item.x <= (this.x + this.width) && item.y >= this.y && item.y <= (this.y + this.height) )
   };
 
+  /** center the viewport around item. item must respond to x and y for this to work. */
   this.centerAround = function(item) {
     this.x = (item.x - this.width / 2)
     this.y = (item.y - this.height / 2)
     this.verifyPosition()
   };
 
+  /** 
+  * executes given draw-callback with a translated canvas which will draw items relative to the viewport
+  * 
+  * @example
+  *
+  * viewport.apply( function() {
+  *   player.draw();
+  *   foo.draw();
+  * });
+  * 
+  */
   this.apply = function(func) {
     this.context.save()
     this.context.translate(-this.x, -this.y)

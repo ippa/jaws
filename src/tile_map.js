@@ -1,6 +1,6 @@
 var jaws = (function(jaws) {
 
-/*
+/**
  * @class Create and access tilebased 2D maps with very fast access of invidual tiles
  *
  * @example
@@ -65,8 +65,11 @@ jaws.TileMap.prototype.push = function(obj) {
     var row = parseInt(obj.y / this.cell_size[1])
     return this.pushToCell(col, row, obj)
   }
-
 }
+/** 
+ * Push objects into tilemap.
+ * Disregard height and width and only use x/y when calculating cell-position
+ */
 jaws.TileMap.prototype.pushAsPoint = function(obj) {
   if(Array.isArray(obj)) { 
     for(var i=0; i < obj.length; i++) { this.pushAsPoint(obj[i]) }
@@ -79,7 +82,7 @@ jaws.TileMap.prototype.pushAsPoint = function(obj) {
   }
 }
 
-/** save 'obj' in cells touched by 'rect' */
+/** push obj into cells touched by rect */
 jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
   var from_col = parseInt(rect.x / this.cell_size[0])
   var to_col = parseInt((rect.right-1) / this.cell_size[0])
@@ -157,6 +160,7 @@ jaws.TileMap.prototype.cell = function(col, row) {
   return this.cells[col][row]
 }
 
+/** Debugstring for TileMap() */
 jaws.TileMap.prototype.toString = function() { return "[TileMap " + this.size[0] + " cols, " + this.size[1] + " rows]" }
 
 return jaws;
