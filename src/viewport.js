@@ -3,7 +3,26 @@ var jaws = (function(jaws) {
 /**
  *
  * @class A window (Rect) into a bigger canvas/image. Viewport is always contained within that given image (called the game world).
- * Comes with convenience methods as viewport.centerAround(player) which is usefull for a sidescrolling type of game.
+ *
+ * @property width  width of viewport, defaults to canvas width
+ * @property height height of viewport, defaults to canvas height
+ * @property max_x  maximum x-position for viewport, defaults to canvas width
+ * @property max_y  maximum y-position for viewport, defaults to canvas height 
+ *
+ * @example
+ * // Center viewport around players position (player needs to have x/y attributes)
+ * // Usefull for sidescrollers
+ * viewport.centerAround(player)
+ *
+ * // Common viewport usage. max_x/max_y could be said to set the "game world size"
+ * viewport = viewport = new jaws.Viewport({max_x: 400, max_y: 3000})
+ * player = new jaws.Sprite({x:100, y:400})
+ * viewport.centerAround(player)
+ *
+ * // Draw player relative to the viewport. If viewport is way off, player won't even show up.
+ * viewport.apply( function() {
+ *  player.draw()
+ * });
  *
  */
 jaws.Viewport = function(options) {
@@ -28,17 +47,32 @@ jaws.Viewport = function(options) {
     this.verifyPosition()
   };
 
-  /** Returns true if item is outside viewport */
+  /** 
+   * Returns true if item is outside viewport 
+   * @example
+   *
+   * if( viewport.isOutside(player)) player.die();
+   *
+   * // ... or the more advanced:
+   * bullets = new SpriteList()
+   * bullets.push( bullet )
+   * bullets.deleteIf( viewport.isOutside )
+   */
   this.isOutside = function(item) {
     return(!this.isInside(item))
   };
 
-  /** Returns true if *item* is inside viewport */
+  /** 
+   * Returns true if item is inside viewport 
+   */
   this.isInside = function(item) {
     return( item.x >= this.x && item.x <= (this.x + this.width) && item.y >= this.y && item.y <= (this.y + this.height) )
   };
 
-  /** center the viewport around item. item must respond to x and y for this to work. */
+  /** 
+   * center the viewport around item. item must respond to x and y for this to work. 
+   * Usefull for sidescrollers when you wan't to keep the player in the center of the screen no matter how he moves.
+   */
   this.centerAround = function(item) {
     this.x = (item.x - this.width / 2)
     this.y = (item.y - this.height / 2)

@@ -2,6 +2,14 @@ var jaws = (function(jaws) {
 
 /** 
 * @class Manage a parallax scroller with different layers
+* @constructor
+*
+* @property scale     number, scale factor for all layers (2 will double everything and so on)
+* @property repeat_x  true|false, repeat all parallax layers horizontally
+* @property repeat_y  true|false, repeat all parallax layers vertically
+* @property camera_x  number, x-position of "camera". add to camera_x and layers will scroll left. defaults to 0
+* @property camera_y  number, y-position of "camera". defaults to 0
+*
 * @example
 * parallax = new jaws.Parallax({repeat_x: true})
 * parallax.addLayer({image: "parallax_1.png", damping: 100})
@@ -63,7 +71,9 @@ jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + "
 /**
  * @class A single layer that's contained by Parallax()
  *
- *
+ * @property damping  number, higher the number, the slower it will scroll with regards to other layers, defaults to 0
+ * @constructor
+ * @extends jaws.Sprite
  */
 jaws.ParallaxLayer = function(options) {
   this.damping = options.damping || 0

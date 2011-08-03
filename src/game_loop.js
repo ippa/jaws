@@ -64,6 +64,7 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   }
 }
 
+/** @ignore */
 function MeanValue(size) {
   this.size = size
   this.values = new Array(this.size)

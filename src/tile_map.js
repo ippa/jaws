@@ -3,6 +3,10 @@ var jaws = (function(jaws) {
 /**
  * @class Create and access tilebased 2D maps with very fast access of invidual tiles
  *
+ * @property {array} cell_size size of each cell in tilemap. @default [32,32]
+ * @property {array} size of tilemap. @default [100,00]
+ * @property {function} sortFunction  function used by sortCells() to sort cells. @default undefined, no sorting
+ *
  * @example
  * var tile_map = new TileMap({size: [10, 10], cell_size: [16,16]})
  * var sprite = new jaws.Sprite({x: 40, y: 40})
@@ -17,7 +21,7 @@ var jaws = (function(jaws) {
  */
 jaws.TileMap = function(options) {
   this.cell_size = options.cell_size || [32,32]
-  this.size = options.size
+  this.size = options.size || [100,100]
   this.cells = new Array(this.size[0])
   this.sortFunction = undefined
 

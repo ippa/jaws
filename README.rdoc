@@ -18,8 +18,8 @@ Licensed under LGPL so you're free to use it for commercial projects.
 - Easy and robust game states to switch between menus, play, high score lists and settings
 - Documented code and explained examples
 
-Jaws also...
-- Does <canvas>-sprites (and exprimental HTML-based sprites)
+Jaws also:
+- Does <canvas>-sprites and exprimental HTML-based sprites
 - Does not depend on any other javascript library
 - Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
 - Tries to make assets (images, music, json data) in webgames as easy as possible
@@ -27,8 +27,8 @@ Jaws also...
 - Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Learn more
-- {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Jaws docs and design choices.
-- {http://jawsjs.com/docs/}[http://jawsjs.com/docs/]                  - Documentation
+- {http://jawsjs.com/docs/}[http://jawsjs.com/docs/]                  - Full JSDoc Documentation
+- {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Jaws overview and design choices.
 - {http://jawsjs.com/jawsjs/test/}[http://jawsjs.com/jawsjs/test/]    - Jaws QUnit testsuite
 
 == Simple examples demonstrating certain features
@@ -143,39 +143,3 @@ A rule of thumb is that a file foo.js will include a contructor named Foo().
   </script>
   </body>
   </html>
-
-== Sprite() 
-=== Chainable functions (they all return this)
-  sprite.setImage(resource)         // sets new image from an image, canvas or string representing an asset ("foo.png")
-  sprite.flip()                     // flips sprite horizontally
-  sprite.rotate(angle)              // modify angle
-  sprite.rotateTo(angle)            // set angle
-  sprite.move(x,y)                  // modify x/y
-  sprite.moveTo(x,y)                // set x/y
-  sprite.setWidth(width)            // sets width through scaling
-  sprite.setHeight(height)          // sets height through scaling
-  sprite.setX(x)                    // sets x
-  sprite.setY(y)                    // sets y
-  sprite.resize(width,height)       // modify width/height. Modifies scale_factor_x/scale_factor_y.
-  sprite.resizeTo(width,height)     // set fixed width/height. Modifies scale_factor_x/scale_factor_y.
-  sprite.scale(scale_factor)        // scale sprite by scale_factor. Modifies width/height.
-  sprite.scaleWidth(scale_factor)   // scale sprite horizontally by scale_factor. Modifies width.
-  sprite.scaleHeight(scale_factor)  // scale sprite vertically by scale_factor. Modifies height.
-  sprite.anchor(anchor_string)      // anchor x/y to a point on the sprite. For example "top_left", "center", "center_bottom"
-
-=== Simple variables for faster write/reads of properties
-  sprite.x              // horizontal position  (0 = furthest left)
-  sprite.y              // vertical position    (0 = top)
-  sprite.flipped        // true or false
-  sprite.angle          // 0-360
-  sprite.alpha          // transparency 0=fully transparent, 1=no transperency
-  sprite.image          // image or canvas object
-
-== Simple variables to read (not safe to modify directly!)
-  sprite.width          // width of sprite
-  sprite.height         // height of sprite
-  sprite.scale_factor_x // width scaling
-  sprite.scale_factor_y // height scaling
-
-== Other
-   rect()               // returns a new Rect() perfectly surronding the sprite no matter the anchor

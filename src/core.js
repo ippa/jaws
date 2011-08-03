@@ -1,8 +1,7 @@
 /**
- *
  * @namespace JawsJS core functions
  * @example
- * Jaws a HTML5 canvas/javascript 2D game development framework
+ * Jaws, a HTML5 canvas/javascript 2D game development framework
  *
  * Homepage:      http://jawsjs.com/
  * Source:        http://github.com/ippa/jaws/
@@ -12,8 +11,7 @@
  * License: LGPL - http://www.gnu.org/licenses/lgpl.html
  *
  * Jaws uses the "module pattern". 
- * Adds 1 global -- <b>jaws</b>
- * It should play nice with all other JS libs.
+ * Adds 1 global, <b>jaws</b>, so plays nice with all other JS libs.
  *  
  * Formating guide:
  *   jaws.oneFunction()
@@ -77,7 +75,7 @@ jaws.log = function(msg, append) {
 jaws.init = function(options) {
   /* Find <title> tag */
   title = document.getElementsByTagName('title')[0]
-  jaws.url_parameters = getUrlParameters()
+  jaws.url_parameters = jaws.getUrlParameters()
 
   /*
    * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
@@ -234,7 +232,7 @@ jaws.isFunction = function(obj) {
  * @example
  * http://test.com/?debug=1&foo=bar  // --> {debug: 1, foo: bar}
  */
-function getUrlParameters() {
+jaws.getUrlParameters = function() {
   var vars = [], hash;
   var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
   for(var i = 0; i < hashes.length; i++) {

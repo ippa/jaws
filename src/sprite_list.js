@@ -3,20 +3,19 @@ var jaws = (function(jaws) {
  
 @class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others.
 
-<pre>
-Sprites (your bullets, aliens, enemies, players etc) will need to be
-updated, draw, deleted. Often in various orders and based on different conditions.
+@example
+// Sprites (your bullets, aliens, enemies, players etc) will need to be
+// updated, draw, deleted. Often in various orders and based on different conditions.
+// This is where SpriteList() comes in:
 
-This is where SpriteList() comes in.
-
+// create 100 enemies 
 var enemies = new SpriteList()
-for(i=0; i < 100; i++) { // create 100 enemies 
+for(i=0; i < 100; i++) { 
   enemies.push(new Sprite({image: "enemy.png", x: i, y: 200}))
 }
-enemies.draw() // calls draw() on all enemies 
-enemies.deleteIf(isOutsideCanvas)  // deletes each item in enemies that returns true when isOutsideCanvas(item) is called
-enemies.drawIf(isInsideViewport)   // only call draw() on items that returns true when isInsideViewport is called with item as argument 
-</pre>
+enemies.draw()                    // calls draw() on all enemies 
+enemies.deleteIf(isOutsideCanvas) // deletes each item in enemies that returns true when isOutsideCanvas(item) is called
+enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
 
 */
 jaws.SpriteList = function() {}

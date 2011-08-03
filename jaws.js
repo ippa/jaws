@@ -1,8 +1,7 @@
 /**
- *
  * @namespace JawsJS core functions
  * @example
- * Jaws a HTML5 canvas/javascript 2D game development framework
+ * Jaws, a HTML5 canvas/javascript 2D game development framework
  *
  * Homepage:      http://jawsjs.com/
  * Source:        http://github.com/ippa/jaws/
@@ -12,8 +11,7 @@
  * License: LGPL - http://www.gnu.org/licenses/lgpl.html
  *
  * Jaws uses the "module pattern". 
- * Adds 1 global -- <b>jaws</b>
- * It should play nice with all other JS libs.
+ * Adds 1 global, <b>jaws</b>, so plays nice with all other JS libs.
  *  
  * Formating guide:
  *   jaws.oneFunction()
@@ -77,7 +75,7 @@ jaws.log = function(msg, append) {
 jaws.init = function(options) {
   /* Find <title> tag */
   title = document.getElementsByTagName('title')[0]
-  jaws.url_parameters = getUrlParameters()
+  jaws.url_parameters = jaws.getUrlParameters()
 
   /*
    * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
@@ -234,7 +232,7 @@ jaws.isFunction = function(obj) {
  * @example
  * http://test.com/?debug=1&foo=bar  // --> {debug: 1, foo: bar}
  */
-function getUrlParameters() {
+jaws.getUrlParameters = function() {
   var vars = [], hash;
   var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
   for(var i = 0; i < hashes.length; i++) {
@@ -732,6 +730,7 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   }
 }
 
+/** @ignore */
 function MeanValue(size) {
   this.size = size
   this.values = new Array(this.size)
@@ -763,7 +762,16 @@ return jaws;
 var jaws = (function(jaws) {
 
 /**
-  @class a Rect()-class - useful for basic collision detection
+  @class A Basic rectangle
+  @example
+  rect = new jaws.Rect(5,5,20,20)
+  rect.right  // -> 25
+  rect.bottom // -> 25
+  rect.move(10,20)
+  rect.right  // -> 35
+  rect.bottom // -> 45
+  rect.width  // -> 20
+  rect.height // -> 20
 */
 jaws.Rect = function(x,y,width,height) {
   this.x = x
@@ -774,23 +782,21 @@ jaws.Rect = function(x,y,width,height) {
   this.bottom = y + height
 }
 
-/**
- @return {Array} position as x,y
-*/
+/** Return position as [x,y] */
 jaws.Rect.prototype.getPosition = function() {
   return [this.x, this.y]
 }
 
-/**
- * Move rect x pixels horizontally and y pixels vertically
- */
+/** Move rect x pixels horizontally and y pixels vertically */
 jaws.Rect.prototype.move = function(x,y) {
   this.x += x
   this.y += y
   this.right += x
   this.bottom += y
+  return this
 }
 
+/** Set rects x/y */
 jaws.Rect.prototype.moveTo = function(x,y) {
   this.x = x
   this.y = y
@@ -798,7 +804,7 @@ jaws.Rect.prototype.moveTo = function(x,y) {
   this.bottom = this.y + this.height
   return this
 }
-
+/** Modify width and height */
 jaws.Rect.prototype.resize = function(width,height) {
   this.width += width
   this.height += height
@@ -806,7 +812,7 @@ jaws.Rect.prototype.resize = function(width,height) {
   this.bottom = this.y + this.height
   return this
 }
-
+/** Set width and height */
 jaws.Rect.prototype.resizeTo = function(width,height) {
   this.width = width
   this.height = height
@@ -815,19 +821,19 @@ jaws.Rect.prototype.resizeTo = function(width,height) {
   return this
 }
 
-// Draw rect in color red, useful for debugging
+/** Draw rect in color red, useful for debugging */
 jaws.Rect.prototype.draw = function() {
   jaws.context.strokeStyle = "red"
   jaws.context.strokeRect(this.x, this.y, this.width, this.height)
   return this
 }
 
-// Returns true if point at x, y lies within calling rect
+/** Returns true if point at x, y lies within calling rect */
 jaws.Rect.prototype.collidePoint = function(x, y) {
   return (x >= this.x && x <= this.right && y >= this.y && y <= this.bottom)
 }
 
-// Returns true if calling rect overlaps with given rect in any way
+/** Returns true if calling rect overlaps with given rect in any way */
 jaws.Rect.prototype.collideRect = function(rect) {
   return ((this.x >= rect.x && this.x <= rect.right) || (rect.x >= this.x && rect.x <= this.right)) &&
          ((this.y >= rect.y && this.y <= rect.bottom) || (rect.y >= this.y && rect.y <= this.bottom))
@@ -852,7 +858,24 @@ if(typeof module !== "undefined" && ('exports' in module)) { module.exports = ja
 var jaws = (function(jaws) {
 
 /**
-*  @class Sprite - When we wan't to move something visible around on the screen :)
+* @class A basic but powerfull sprite for all your onscreen-game objects
+* @constructor
+*  
+* @property x horizontal position  (0 = furthest left)
+* @property y vertical position    (0 = top)
+* @property image image/canvas or string pointing to an asset ("player.png")
+* @property alpha transparency 0=fully transparent, 1=no transperency
+* @property angle Angle in degrees (0-360)
+* @property flipped true|false Flip sprite horizontally, usefull for sidescrollers
+* @property anchor string stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
+*
+* @example
+* // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
+* new Sprite({image: "foo.png", x: 0, y: 0}) 
+* 
+* // sets anchor to "center" on creation
+* new Sprite({image: "topdownspaceship.png", anchor: "center"})
+*
 */
 jaws.Sprite = function(options) {
   this.options = options
@@ -861,7 +884,9 @@ jaws.Sprite = function(options) {
   if(!this.context) { this.createDiv() }  // No canvas context? Switch to DOM-based spritemode
 }
 
-/** Call setters from JSON object. Used to parse options. */
+/** @private
+ * Call setters from JSON object. Used to parse options.
+ */
 jaws.Sprite.prototype.set = function(options) {
   this.scale_factor_x = this.scale_factor_y = (options.scale || 1)
   if(!options.anchor_x == undefined) {this.anchor_x = options.anchor_x}
@@ -878,9 +903,7 @@ jaws.Sprite.prototype.set = function(options) {
 }
 
 /*
-//
 // Chainable setters under consideration:
-//
 jaws.Sprite.prototype.setFlipped =        function(value) { this.flipped = value; return this }
 jaws.Sprite.prototype.setAlpha =          function(value) { this.alpha = value; return this }
 jaws.Sprite.prototype.setAnchorX =        function(value) { this.anchor_x = value; this.cacheOffsets(); return this }
@@ -897,11 +920,11 @@ jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_factor_x = va
 jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_factor_y = value; return this.cachOfffsets() }
 */
 
-/*  Sprite modifiers. Modifies 1 or more properties and returns this for chainability.  */
+/* Sprite modifiers. Modifies 1 or more properties and returns this for chainability.  */
 
-/** 
- * 
- * @return this
+/**
+ * Sets image from image/canvas or asset-string ("foo.png")
+ * If asset isn't previously loaded setImage() will try to load it.
  */
 jaws.Sprite.prototype.setImage =      function(value) { 
   var that = this
@@ -929,15 +952,25 @@ jaws.Sprite.prototype.flipTo =        function(value) { this.flipped = value; re
 jaws.Sprite.prototype.rotate =        function(value) { this.angle += value; return this }
 /** Force an rotation-angle on sprite */
 jaws.Sprite.prototype.rotateTo =      function(value) { this.angle = value; return this }
+/** Set x/y */
 jaws.Sprite.prototype.moveTo =        function(x,y)   { this.x = x; this.y = y; return this }
+/** Modify x/y */
 jaws.Sprite.prototype.move =          function(x,y)   { if(x) this.x += x;  if(y) this.y += y; return this }
+/** scale sprite by scale_factor. Modifies width/height. */
 jaws.Sprite.prototype.scale =         function(value) { this.scale_factor_x *= value; this.scale_factor_y *= value; return this.cacheOffsets() }
+/** set scale factor. ie. 2 means a doubling if sprite in both directions. */
 jaws.Sprite.prototype.scaleTo =       function(value) { this.scale_factor_x = this.scale_factor_y = value; return this.cacheOffsets() }
+/** scale sprite horizontally by scale_factor. Modifies width. */
 jaws.Sprite.prototype.scaleWidth =    function(value) { this.scale_factor_x *= value; return this.cacheOffsets() }
+/** scale sprite vertically by scale_factor. Modifies height. */
 jaws.Sprite.prototype.scaleHeight =   function(value) { this.scale_factor_y *= value; return this.cacheOffsets() }
+/** Sets x */
 jaws.Sprite.prototype.setX =          function(value) { this.x = value; return this }
+/** Sets y */
 jaws.Sprite.prototype.setY =          function(value) { this.y = value; return this }
+/** Set new width. Scales sprite. */
 jaws.Sprite.prototype.setWidth  =     function(value) { this.scale_factor_x = value/this.image.width; return this.cacheOffsets() }
+/** Set new height. Scales sprite. */
 jaws.Sprite.prototype.setHeight =     function(value) { this.scale_factor_y = value/this.image.height; return this.cacheOffsets() }
 /** Resize sprite by adding width */
 jaws.Sprite.prototype.resize =        function(width, height) { 
@@ -947,9 +980,6 @@ jaws.Sprite.prototype.resize =        function(width, height) {
 }
 /** 
  * Resize sprite to exact width/height 
- * @param {Number} width
- * @param {Number} height
- * @returns this
  */
 jaws.Sprite.prototype.resizeTo =      function(width, height) {
   this.scale_factor_x = width / this.image.width
@@ -957,10 +987,11 @@ jaws.Sprite.prototype.resizeTo =      function(width, height) {
   return this.cacheOffsets()
 }
 
-/*
+/**
 * The sprites anchor could be describe as "the part of the sprite will be placed at x/y"
 * or "when rotating, what point of the of the sprite will it rotate round"
 *
+* @example
 * For example, a topdown shooter could use anchor("center") --> Place middle of the ship on x/y
 * .. and a sidescroller would probably use anchor("center_bottom") --> Place "feet" at x/y
 */
@@ -1009,7 +1040,7 @@ jaws.Sprite.prototype.cacheOffsets = function() {
   return this
 }
 
-/* Saves a Rect() perfectly surrouning our sprite in this.cached_rect and returns it */
+/** Returns a jaws.Rect() perfectly surrouning sprite. Also cache rect in this.cached_rect. */
 jaws.Sprite.prototype.rect = function() {
   if(!this.cached_rect) this.cached_rect = new jaws.Rect(this.x, this.top, this.width, this.height)
   this.cached_rect.moveTo(this.x - this.left_offset, this.y - this.top_offset)
@@ -1032,9 +1063,8 @@ jaws.Sprite.prototype.createDiv = function() {
   this.updateDiv()
 }
 
-/** 
+/** @private
  * Update properties for DOM-based sprite 
- * @private
  */
 jaws.Sprite.prototype.updateDiv = function() {
   this.div.style.left = this.x + "px"
@@ -1051,7 +1081,7 @@ jaws.Sprite.prototype.updateDiv = function() {
   return this
 }
 
-// Draw the sprite on screen via its previously given context
+/** Draw sprite on active canvas or update it's DOM-properties */
 jaws.Sprite.prototype.draw = function() {
   if(!this.image) { return this }
   if(jaws.dom)    { return this.updateDiv() }
@@ -1067,7 +1097,10 @@ jaws.Sprite.prototype.draw = function() {
   return this
 }
 
-// Create a new canvas context, draw sprite on it and return. Use to get a raw canvas copy of the current sprite state.
+/** 
+ * Returns sprite as a canvas context.
+ * For certain browsers, a canvas context is faster to work with then a pure image.
+ */
 jaws.Sprite.prototype.asCanvasContext = function() {
   var canvas = document.createElement("canvas")
   canvas.width = this.width
@@ -1090,20 +1123,19 @@ var jaws = (function(jaws) {
  
 @class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others.
 
-<pre>
-Sprites (your bullets, aliens, enemies, players etc) will need to be
-updated, draw, deleted. Often in various orders and based on different conditions.
+@example
+// Sprites (your bullets, aliens, enemies, players etc) will need to be
+// updated, draw, deleted. Often in various orders and based on different conditions.
+// This is where SpriteList() comes in:
 
-This is where SpriteList() comes in.
-
+// create 100 enemies 
 var enemies = new SpriteList()
-for(i=0; i < 100; i++) { // create 100 enemies 
+for(i=0; i < 100; i++) { 
   enemies.push(new Sprite({image: "enemy.png", x: i, y: 200}))
 }
-enemies.draw() // calls draw() on all enemies 
-enemies.deleteIf(isOutsideCanvas)  // deletes each item in enemies that returns true when isOutsideCanvas(item) is called
-enemies.drawIf(isInsideViewport)   // only call draw() on items that returns true when isInsideViewport is called with item as argument 
-</pre>
+enemies.draw()                    // calls draw() on all enemies 
+enemies.deleteIf(isOutsideCanvas) // deletes each item in enemies that returns true when isOutsideCanvas(item) is called
+enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
 
 */
 jaws.SpriteList = function() {}
@@ -1156,9 +1188,8 @@ return jaws;
 
 var jaws = (function(jaws) {
 
-/** 
+/** @private
  * Cut out a rectangular piece of a an image, returns as canvas-element 
- * @private
  */
 function cutImage(image, x, y, width, height) {
   var cut = document.createElement("canvas")
@@ -1172,15 +1203,12 @@ function cutImage(image, x, y, width, height) {
 };
 
 /** 
-  @class Helperclass to use invidual images in a spritesheet 
-
-  <pre>
-  json arguments:
-
-  image {String|Image} - the spritesheet image
-  orientation {String} - How to cut out invidual images from spritesheet, either "left" or "right"
-  frame_size {Array} - width and height of invidual frames in spritesheet
-  </pre>
+ * @class Cut out invidual frames (images) from a larger spritesheet-image
+ *
+ * @property {image|image} Image/canvas or asset-string to cut up smaller images from
+ * @property {string} orientation How to cut out invidual images from spritesheet, either "left" or "right"
+ * @property {array} frame_size  width and height of invidual frames in spritesheet
+ * @property {array} frames all single frames cut out from image
 */
 jaws.SpriteSheet = function(options) {
   this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
@@ -1205,6 +1233,14 @@ var jaws = (function(jaws) {
 
 /** 
 * @class Manage a parallax scroller with different layers
+* @constructor
+*
+* @property scale     number, scale factor for all layers (2 will double everything and so on)
+* @property repeat_x  true|false, repeat all parallax layers horizontally
+* @property repeat_y  true|false, repeat all parallax layers vertically
+* @property camera_x  number, x-position of "camera". add to camera_x and layers will scroll left. defaults to 0
+* @property camera_y  number, y-position of "camera". defaults to 0
+*
 * @example
 * parallax = new jaws.Parallax({repeat_x: true})
 * parallax.addLayer({image: "parallax_1.png", damping: 100})
@@ -1266,7 +1302,9 @@ jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + "
 /**
  * @class A single layer that's contained by Parallax()
  *
- *
+ * @property damping  number, higher the number, the slower it will scroll with regards to other layers, defaults to 0
+ * @constructor
+ * @extends jaws.Sprite
  */
 jaws.ParallaxLayer = function(options) {
   this.damping = options.damping || 0
@@ -1285,14 +1323,11 @@ var jaws = (function(jaws) {
  *
  * @class Manages animation with a given list of frames and durations
  *
- * @example
- * json-options:
- *
- * loop:            true|false  // restart animation when end is reached
- * bounce:          true|false  // rewind the animation frame by frame when end is reached
- * index:           int   // start on this frame
- * frames:          array // array of image/canvas items
- * frame_duration:  int   // how long should each frame be displayed
+ * @property loop   true|false, restart animation when end is reached
+ * @property bounce true|false, rewind the animation frame by frame when end is reached
+ * @property index  int, start on this frame
+ * @property frames array of images/canvaselements
+ * @property frame_duration milliseconds  how long should each frame be displayed
  */
 jaws.Animation = function(options) {
   this.options = options
@@ -1384,7 +1419,26 @@ var jaws = (function(jaws) {
 /**
  *
  * @class A window (Rect) into a bigger canvas/image. Viewport is always contained within that given image (called the game world).
- * Comes with convenience methods as viewport.centerAround(player) which is usefull for a sidescrolling type of game.
+ *
+ * @property width  width of viewport, defaults to canvas width
+ * @property height height of viewport, defaults to canvas height
+ * @property max_x  maximum x-position for viewport, defaults to canvas width
+ * @property max_y  maximum y-position for viewport, defaults to canvas height 
+ *
+ * @example
+ * // Center viewport around players position (player needs to have x/y attributes)
+ * // Usefull for sidescrollers
+ * viewport.centerAround(player)
+ *
+ * // Common viewport usage. max_x/max_y could be said to set the "game world size"
+ * viewport = viewport = new jaws.Viewport({max_x: 400, max_y: 3000})
+ * player = new jaws.Sprite({x:100, y:400})
+ * viewport.centerAround(player)
+ *
+ * // Draw player relative to the viewport. If viewport is way off, player won't even show up.
+ * viewport.apply( function() {
+ *  player.draw()
+ * });
  *
  */
 jaws.Viewport = function(options) {
@@ -1409,17 +1463,32 @@ jaws.Viewport = function(options) {
     this.verifyPosition()
   };
 
-  /** Returns true if item is outside viewport */
+  /** 
+   * Returns true if item is outside viewport 
+   * @example
+   *
+   * if( viewport.isOutside(player)) player.die();
+   *
+   * // ... or the more advanced:
+   * bullets = new SpriteList()
+   * bullets.push( bullet )
+   * bullets.deleteIf( viewport.isOutside )
+   */
   this.isOutside = function(item) {
     return(!this.isInside(item))
   };
 
-  /** Returns true if *item* is inside viewport */
+  /** 
+   * Returns true if item is inside viewport 
+   */
   this.isInside = function(item) {
     return( item.x >= this.x && item.x <= (this.x + this.width) && item.y >= this.y && item.y <= (this.y + this.height) )
   };
 
-  /** center the viewport around item. item must respond to x and y for this to work. */
+  /** 
+   * center the viewport around item. item must respond to x and y for this to work. 
+   * Usefull for sidescrollers when you wan't to keep the player in the center of the screen no matter how he moves.
+   */
   this.centerAround = function(item) {
     this.x = (item.x - this.width / 2)
     this.y = (item.y - this.height / 2)
@@ -1468,6 +1537,10 @@ var jaws = (function(jaws) {
 /**
  * @class Create and access tilebased 2D maps with very fast access of invidual tiles
  *
+ * @property {array} cell_size size of each cell in tilemap. @default [32,32]
+ * @property {array} size of tilemap. @default [100,00]
+ * @property {function} sortFunction  function used by sortCells() to sort cells. @default undefined, no sorting
+ *
  * @example
  * var tile_map = new TileMap({size: [10, 10], cell_size: [16,16]})
  * var sprite = new jaws.Sprite({x: 40, y: 40})
@@ -1482,7 +1555,7 @@ var jaws = (function(jaws) {
  */
 jaws.TileMap = function(options) {
   this.cell_size = options.cell_size || [32,32]
-  this.size = options.size
+  this.size = options.size || [100,100]
   this.cells = new Array(this.size[0])
   this.sortFunction = undefined
 

@@ -4,14 +4,11 @@ var jaws = (function(jaws) {
  *
  * @class Manages animation with a given list of frames and durations
  *
- * @example
- * json-options:
- *
- * loop:            true|false  // restart animation when end is reached
- * bounce:          true|false  // rewind the animation frame by frame when end is reached
- * index:           int   // start on this frame
- * frames:          array // array of image/canvas items
- * frame_duration:  int   // how long should each frame be displayed
+ * @property loop   true|false, restart animation when end is reached
+ * @property bounce true|false, rewind the animation frame by frame when end is reached
+ * @property index  int, start on this frame
+ * @property frames array of images/canvaselements
+ * @property frame_duration milliseconds  how long should each frame be displayed
  */
 jaws.Animation = function(options) {
   this.options = options
