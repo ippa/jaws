@@ -246,7 +246,6 @@ jaws.getUrlParameters = function() {
 return jaws;
 })(jaws || {});
 
-
 var jaws = (function(jaws) {
 
   var pressed_keys = {}
@@ -366,12 +365,24 @@ jaws.preventDefaultKeys = function(array_of_strings) {
 
 /**
  * Returns true if *key* is currently pressed down
+ * @example
+ * jaws.pressed("left");  // returns true if arrow key is pressed
+ * jaws.pressed("a");     // returns true if key "a" is pressed
  */
 jaws.pressed = function(key) {
   return pressed_keys[key]
 }
 
-/** ... */
+/** 
+ * sets up a callback for a key (or array of keys) to call when it's pressed down
+ * 
+ * @example
+ * // call goLeft() when left arrow key is  pressed
+ * jaws.on_keypress("left", goLeft) 
+ *
+ * // call fireWeapon() when SPACE or CTRL is pressed
+ * jaws.on_keypress(["space","ctrl"], fireWeapon)
+ */
 jaws.on_keydown = function(key, callback) {
   if(jaws.isArray(key)) {
     for(var i=0; key[i]; i++) {
@@ -383,7 +394,9 @@ jaws.on_keydown = function(key, callback) {
   }
 }
 
-/** ... */
+/** 
+ * sets up a callback when a key (or array of keys) to call when it's released 
+ */
 jaws.on_keyup = function(key, callback) {
   if(jaws.isArray(key)) {
     for(var i=0; key[i]; i++) {
@@ -1320,14 +1333,25 @@ return jaws;
 var jaws = (function(jaws) {
 
 /**
- *
- * @class Manages animation with a given list of frames and durations
+ * @class Manages an animation with a given list of frames
  *
  * @property loop   true|false, restart animation when end is reached
  * @property bounce true|false, rewind the animation frame by frame when end is reached
  * @property index  int, start on this frame
  * @property frames array of images/canvaselements
  * @property frame_duration milliseconds  how long should each frame be displayed
+ *
+ * @exampe
+ * // in setup()
+ * anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
+ * player = new jaws.Sprite({y:300, anchor: "center_bottom"})
+ *
+ * // in update()
+ * player.setImage( anim.next() )
+ * 
+ * // in draw()
+ * player.draw()
+ *
  */
 jaws.Animation = function(options) {
   this.options = options

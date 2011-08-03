@@ -1,4 +1,3 @@
-
 var jaws = (function(jaws) {
 
   var pressed_keys = {}
@@ -118,12 +117,24 @@ jaws.preventDefaultKeys = function(array_of_strings) {
 
 /**
  * Returns true if *key* is currently pressed down
+ * @example
+ * jaws.pressed("left");  // returns true if arrow key is pressed
+ * jaws.pressed("a");     // returns true if key "a" is pressed
  */
 jaws.pressed = function(key) {
   return pressed_keys[key]
 }
 
-/** ... */
+/** 
+ * sets up a callback for a key (or array of keys) to call when it's pressed down
+ * 
+ * @example
+ * // call goLeft() when left arrow key is  pressed
+ * jaws.on_keypress("left", goLeft) 
+ *
+ * // call fireWeapon() when SPACE or CTRL is pressed
+ * jaws.on_keypress(["space","ctrl"], fireWeapon)
+ */
 jaws.on_keydown = function(key, callback) {
   if(jaws.isArray(key)) {
     for(var i=0; key[i]; i++) {
@@ -135,7 +146,9 @@ jaws.on_keydown = function(key, callback) {
   }
 }
 
-/** ... */
+/** 
+ * sets up a callback when a key (or array of keys) to call when it's released 
+ */
 jaws.on_keyup = function(key, callback) {
   if(jaws.isArray(key)) {
     for(var i=0; key[i]; i++) {

@@ -5,11 +5,7 @@ When it's stable enough I'll probably release it as 0.1.
 = Jaws - HTML5 Javascript web game development library
 
 Depends on Javascript 1.6+ (ECMA-262 Edition 5).
-Tested with with:
-- Chrome 9 + 10
-- Firefox 3.6.x + 4.x
-- Safari 5+
-- IE9
+Works with Chrome 9+, Firefox 3.6+, Safari 5+ & IE9.
 
 Licensed under LGPL so you're free to use it for commercial projects.
 
@@ -19,30 +15,30 @@ Licensed under LGPL so you're free to use it for commercial projects.
 - Documented code and explained examples
 
 Jaws also:
-- Does <canvas>-sprites and exprimental HTML-based sprites
-- Does not depend on any other javascript library
-- Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
-- Tries to make assets (images, music, json data) in webgames as easy as possible
-- Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
-- Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
+... Does <canvas>-sprites and exprimental HTML-based sprites
+... Does not depend on any other javascript library
+... Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
+... Tries to make assets (images, music, json data) in webgames as easy as possible
+.. Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
+.. Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Learn more
-- {http://jawsjs.com/docs/}[http://jawsjs.com/docs/]                  - Full JSDoc Documentation
-- {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Jaws overview and design choices.
-- {http://jawsjs.com/jawsjs/test/}[http://jawsjs.com/jawsjs/test/]    - Jaws QUnit testsuite
+- {http://jawsjs.com/docs/}[http://jawsjs.com/docs/]                  - Jaws documentation
+- {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Overview and design choices.
+- {http://jawsjs.com/jawsjs/test/}[http://jawsjs.com/jawsjs/test/]    - Jaws testsuite (QUnit)
 
 == Simple examples demonstrating certain features
 Check out the sourcecode for comments and explanations:
 
-- http://jawsjs.com/jawsjs/examples/example1.html  - focus: manual setup of canvas. later examples shows better ways.
-- http://jawsjs.com/jawsjs/examples/example2.html  - focus: jaws game states
-- http://jawsjs.com/jawsjs/examples/example3.html  - focus: jaws.Animation
-- http://jawsjs.com/jawsjs/examples/example4.html  - focus: jaws.Rect based collision detection
-- http://jawsjs.com/jawsjs/examples/example5.html  - focus: the jaws.Sprite({anchor: "..."}) parameter
-- http://jawsjs.com/jawsjs/examples/example6.html  - focus: jaws.Parallax
-- http://jawsjs.com/jawsjs/examples/example7.html  - focus: simple DOM-based sprite
-- http://jawsjs.com/jawsjs/examples/example8.html  - focus: jaws.TileMap
-- http://jawsjs.com/jawsjs/examples/example9.html  - focus: jaws.Viewport (The basics for a sidescrolling platformer right here)
+http://jawsjs.com/jawsjs/examples/example1.html - manual setup of canvas. later examples shows better ways.
+http://jawsjs.com/jawsjs/examples/example2.html - jaws game states
+http://jawsjs.com/jawsjs/examples/example3.html - jaws.Animation
+http://jawsjs.com/jawsjs/examples/example4.html - jaws.Rect based collision detection
+http://jawsjs.com/jawsjs/examples/example5.html - the jaws.Sprite({anchor: "..."}) parameter
+http://jawsjs.com/jawsjs/examples/example6.html - jaws.Parallax
+http://jawsjs.com/jawsjs/examples/example7.html - simple DOM-based sprite
+http://jawsjs.com/jawsjs/examples/example8.html - jaws.TileMap
+http://jawsjs.com/jawsjs/examples/example9.html - jaws.Viewport (The basics for a sidescrolling platformer right here)
 
 == Games using Jaws
 * {http://ippa.se/webgames/unwaivering/}[http://ippa.se/webgames/unwaivering/]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/

@@ -1,14 +1,25 @@
 var jaws = (function(jaws) {
 
 /**
- *
- * @class Manages animation with a given list of frames and durations
+ * @class Manages an animation with a given list of frames
  *
  * @property loop   true|false, restart animation when end is reached
  * @property bounce true|false, rewind the animation frame by frame when end is reached
  * @property index  int, start on this frame
  * @property frames array of images/canvaselements
  * @property frame_duration milliseconds  how long should each frame be displayed
+ *
+ * @exampe
+ * // in setup()
+ * anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
+ * player = new jaws.Sprite({y:300, anchor: "center_bottom"})
+ *
+ * // in update()
+ * player.setImage( anim.next() )
+ * 
+ * // in draw()
+ * player.draw()
+ *
  */
 jaws.Animation = function(options) {
   this.options = options
