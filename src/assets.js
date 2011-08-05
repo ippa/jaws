@@ -47,11 +47,13 @@ jaws.Assets = function() {
       else                  { jaws.log("No such asset: " + src, true) }
     }
   }
-  
+
+  /** Return true if src is in the process of loading (but not yet finishing) */
   this.isLoading = function(src) {
     return this.loading[src]
   }
   
+  /** Return true if src is loaded in full */
   this.isLoaded = function(src) {
     return this.loaded[src]
   }
@@ -68,6 +70,13 @@ jaws.Assets = function() {
   
   /** 
    * Add array of paths or single path to asset-list. Later load with loadAll() 
+   *
+   * @example
+   *
+   * jaws.assets.add("player.png")
+   * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
+   * jaws.loadAll({onfinish: start_game})
+   *
    */
   this.add = function(src) {
     if(jaws.isArray(src)) { for(var i=0; src[i]; i++) { this.add(src[i]) } }
@@ -170,6 +179,7 @@ jaws.Assets = function() {
     that.processCallbacks(asset, true)
   }
 
+  /** @private */
   this.assetError = function(e) {
     console.log(e)
     console.log(e.target)
@@ -179,7 +189,8 @@ jaws.Assets = function() {
     that.error_count++
     that.processCallbacks(asset, false)
   }
-
+  
+  /** @private */
   this.processCallbacks = function(asset, ok) {
     var percent = parseInt( (that.load_count+that.error_count) / that.src_list.length * 100)
     

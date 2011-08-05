@@ -147,7 +147,7 @@ jaws.start = function(game_state, options) {
 
   /* Callback for when an asset can't be loaded*/
   function assetError(src) {
-    jaws.log( "Error loading: " + src)
+    jaws.log( "Error loading: " + src, true)
   }
 
   /* Callback for when all assets are loaded */
@@ -465,7 +465,7 @@ jaws.Assets = function() {
     }
     else {
       if(this.loaded[src])  { return this.data[src] }
-      else                  { jaws.log("No such asset: " + src) }
+      else                  { jaws.log("No such asset: " + src, true) }
     }
   }
   
@@ -528,14 +528,16 @@ jaws.Assets = function() {
         var src = asset.src + "?" + parseInt(Math.random()*10000000)
         asset.image = new Image()
         asset.image.asset = asset // enables us to access asset in the callback
-        asset.image.onload = this.assetLoaded
-        asset.image.onerror = this.assetError
+        //asset.image.onload = this.assetLoaded
+        //asset.image.onerror = this.assetError
+        asset.image.addEventListener("load", this.assetLoaded, false);
+        asset.image.addEventListener("error", this.assetError, false);
         asset.image.src = src
         break;
       case "audio":
         var src = asset.src + "?" + parseInt(Math.random()*10000000)
         asset.audio = new Audio(src)
-        asset.audio.asset = asset         // enables us access asset in the callback
+        asset.audio.asset = asset         // enables us to access asset in the callback
         this.data[asset.src] = asset.audio
         asset.audio.addEventListener("canplay", this.assetLoaded, false);
         asset.audio.addEventListener("error", this.assetError, false);
@@ -544,7 +546,7 @@ jaws.Assets = function() {
       default:
         var src = asset.src + "?" + parseInt(Math.random()*10000000)
         var req = new XMLHttpRequest()
-        req.asset = asset         // enables us access asset in the callback
+        req.asset = asset         // enables us to access asset in the callback
         req.onreadystatechange = this.assetLoaded
         req.open('GET', src, true)
         req.send(null)
@@ -583,20 +585,30 @@ jaws.Assets = function() {
     }
     
     that.load_count++
-    if(asset.onload)  { asset.onload() }  // single asset load()-callback
-    that.processCallbacks(asset)
+    that.processCallbacks(asset, true)
   }
 
   this.assetError = function(e) {
+    console.log(e)
+    console.log(e.target)
+    console.log(e.target.status)
+
     var asset = this.asset
     that.error_count++
-    if(asset.onerror)  { asset.onerror(asset) }
-    that.processCallbacks(asset)
+    that.processCallbacks(asset, false)
   }
 
-  this.processCallbacks = function(asset) {
+  this.processCallbacks = function(asset, ok) {
     var percent = parseInt( (that.load_count+that.error_count) / that.src_list.length * 100)
-    if(that.onload)  { that.onload(asset.src, percent) } // loadAll() - single asset has loaded callback
+    
+    if(ok) {
+      if(that.onload)   that.onload(asset.src, percent);
+      if(asset.onload)  asset.onload();
+    }
+    else {
+      if(that.onerror)  that.onerror(asset.src, percent);
+      if(asset.onerror) asset.onerror(asset);
+    }
     
     // When loadAll() is 100%, call onfinish() and kill callbacks (reset with next loadAll()-call)
     if(percent==100) { 
@@ -1341,7 +1353,7 @@ var jaws = (function(jaws) {
  * @property frames array of images/canvaselements
  * @property frame_duration milliseconds  how long should each frame be displayed
  *
- * @exampe
+ * @example
  * // in setup()
  * anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
  * player = new jaws.Sprite({y:300, anchor: "center_bottom"})

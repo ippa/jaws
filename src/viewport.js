@@ -57,6 +57,7 @@ jaws.Viewport = function(options) {
    * bullets = new SpriteList()
    * bullets.push( bullet )
    * bullets.deleteIf( viewport.isOutside )
+   *
    */
   this.isOutside = function(item) {
     return(!this.isInside(item))

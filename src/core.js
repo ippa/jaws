@@ -172,6 +172,25 @@ jaws.start = function(game_state, options) {
 /**
 * Switch to a new active game state
 * Save previous game state in jaws.previous_game_state
+*
+* @example
+* 
+* function MenuState() {
+*   this.setup = function() { ... }
+*   this.draw = function() { ... }
+*   this.update = function() {
+*     if(pressed("enter")) jaws.switchGameState(GameState); // Start game when Enter is pressed
+*   }
+* }
+*
+* function GameState() {
+*   this.setup = function() { ... }
+*   this.update = function() { ... }
+*   this.draw = function() { ... }
+* }
+*
+* jaws.start(MenuState)
+*
 */
 jaws.switchGameState = function(game_state) {
   jaws.gameloop.stop()
