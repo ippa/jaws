@@ -6,6 +6,7 @@
   <link href="qunit.css" rel="stylesheet" type="text/css" />
 
   <script type="text/javascript">
+
     test("Various", function() {
       same(jaws.forceArray(1), [1], "forceArray should always return an array")
       same(jaws.forceArray([1,2,3]), [1,2,3], "forceArray should always return an array")
@@ -76,7 +77,7 @@
         start();
       }
     });
-   
+  
     test("assets advanced", function() {
       stop()
       jaws.assets.load(
@@ -111,10 +112,14 @@
       jaws.assets.add("rect.png")
       jaws.assets.add("laser.wav")
       jaws.assets.add("gamedata.json")
+      jaws.assets.add("media/player.png")
       jaws.assets.loadAll({onfinish:assetsLoaded})
       stop()
       function assetsLoaded() {
         ok(1, "onfinish()-callback was called")
+        ok(jaws.assets.isLoaded("media/player.png"), "isLoaded('media/player.png') returns true")
+        ok(! jaws.assets.isLoaded("test_404.png"), "isLoaded('test_404.png') returns false")
+        ok(jaws.assets.get("media/player.png"), "image media/player.png loaded")
         ok(jaws.assets.get("droid_11x15.png"), "image loaded")
         ok(jaws.assets.get("rect.png"), "image loaded")
         ok(jaws.assets.get("laser.wav"), "audio loaded")
@@ -125,6 +130,14 @@
         asset_depending_tests()
       }
     });
+
+/*
+    test("jaws.onload, jaws.start", function() {
+      jaws.onload = function() {
+        ok(1, "jaws.onload-callback was called")
+      }
+    });
+*/
  
   // Various test that need to wait some before assets are loaded
   function asset_depending_tests() {
