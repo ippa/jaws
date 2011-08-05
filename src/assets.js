@@ -44,7 +44,7 @@ jaws.Assets = function() {
     }
     else {
       if(this.loaded[src])  { return this.data[src] }
-      else                  { jaws.log("No such asset: " + src) }
+      else                  { jaws.log("No such asset: " + src, true) }
     }
   }
   
