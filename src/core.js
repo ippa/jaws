@@ -147,7 +147,7 @@ jaws.start = function(game_state, options) {
 
   /* Callback for when an asset can't be loaded*/
   function assetError(src) {
-    jaws.log( "Error loading: " + src)
+    jaws.log( "Error loading: " + src, true)
   }
 
   /* Callback for when all assets are loaded */
