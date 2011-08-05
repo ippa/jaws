@@ -66,7 +66,9 @@ jaws.Assets = function() {
     return (this.file_type[postfix] ? this.file_type[postfix] : postfix)
   }
   
-  /** Add array of paths or single path to asset-list. Later load with loadAll() */
+  /** 
+   * Add array of paths or single path to asset-list. Later load with loadAll() 
+   */
   this.add = function(src) {
     if(jaws.isArray(src)) { for(var i=0; src[i]; i++) { this.add(src[i]) } }
     else                  { src = this.root + src; this.src_list.push(src) }
@@ -107,6 +109,9 @@ jaws.Assets = function() {
         var src = asset.src + "?" + parseInt(Math.random()*10000000)
         asset.image = new Image()
         asset.image.asset = asset // enables us to access asset in the callback
+        //
+        // TODO: Make http://dev.ippa.se/webgames/unexpected_outcome/test2.html work
+        //
         asset.image.onload = this.assetLoaded
         asset.image.onerror = this.assetError
         asset.image.src = src
@@ -114,7 +119,7 @@ jaws.Assets = function() {
       case "audio":
         var src = asset.src + "?" + parseInt(Math.random()*10000000)
         asset.audio = new Audio(src)
-        asset.audio.asset = asset         // enables us access asset in the callback
+        asset.audio.asset = asset         // enables us to access asset in the callback
         this.data[asset.src] = asset.audio
         asset.audio.addEventListener("canplay", this.assetLoaded, false);
         asset.audio.addEventListener("error", this.assetError, false);
@@ -123,7 +128,7 @@ jaws.Assets = function() {
       default:
         var src = asset.src + "?" + parseInt(Math.random()*10000000)
         var req = new XMLHttpRequest()
-        req.asset = asset         // enables us access asset in the callback
+        req.asset = asset         // enables us to access asset in the callback
         req.onreadystatechange = this.assetLoaded
         req.open('GET', src, true)
         req.send(null)
@@ -162,20 +167,30 @@ jaws.Assets = function() {
     }
     
     that.load_count++
-    if(asset.onload)  { asset.onload() }  // single asset load()-callback
-    that.processCallbacks(asset)
+    that.processCallbacks(asset, true)
   }
 
   this.assetError = function(e) {
+    console.log(e)
+    console.log(e.target)
+    console.log(e.target.status)
+
     var asset = this.asset
     that.error_count++
-    if(asset.onerror)  { asset.onerror(asset) }
-    that.processCallbacks(asset)
+    that.processCallbacks(asset, false)
   }
 
-  this.processCallbacks = function(asset) {
+  this.processCallbacks = function(asset, ok) {
     var percent = parseInt( (that.load_count+that.error_count) / that.src_list.length * 100)
-    if(that.onload)  { that.onload(asset.src, percent) } // loadAll() - single asset has loaded callback
+    
+    if(ok) {
+      if(that.onload)   that.onload(asset.src, percent);
+      if(asset.onload)  asset.onload();
+    }
+    else {
+      if(that.onerror)  that.onerror(asset.src, percent);
+      if(asset.onerror) asset.onerror(asset);
+    }
     
     // When loadAll() is 100%, call onfinish() and kill callbacks (reset with next loadAll()-call)
     if(percent==100) { 
