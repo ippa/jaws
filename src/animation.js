@@ -9,7 +9,7 @@ var jaws = (function(jaws) {
  * @property frames array of images/canvaselements
  * @property frame_duration milliseconds  how long should each frame be displayed
  *
- * @exampe
+ * @example
  * // in setup()
  * anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
  * player = new jaws.Sprite({y:300, anchor: "center_bottom"})
