@@ -59,7 +59,7 @@ jaws.Assets = function() {
   }
   
   this.getPostfix = function(src) {
-    postfix_regexp = /\.([a-zA-Z]+)/;
+    postfix_regexp = /\.([a-zA-Z0-9]+)/;
     return postfix_regexp.exec(src)[1]
   }
 
@@ -80,7 +80,7 @@ jaws.Assets = function() {
    */
   this.add = function(src) {
     if(jaws.isArray(src)) { for(var i=0; src[i]; i++) { this.add(src[i]) } }
-    else                  { src = this.root + src; this.src_list.push(src) }
+    else                  { var path = this.root + src; this.src_list.push(path) }
     return this
   }
  
@@ -119,7 +119,7 @@ jaws.Assets = function() {
         asset.image = new Image()
         asset.image.asset = asset // enables us to access asset in the callback
         //
-        // TODO: Make http://dev.ippa.se/webgames/unexpected_outcome/test2.html work
+        // TODO: Make http://dev.ippa.se/webgames/test2.html work
         //
         asset.image.onload = this.assetLoaded
         asset.image.onerror = this.assetError
