@@ -171,7 +171,7 @@ jaws.start = function(game_state, options) {
   else                          { assetsLoaded() } 
 }
 
-  Switch/**
+/**
 * Switch to a new active game state
 * Save previous game state in jaws.previous_game_state
 *
