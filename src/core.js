@@ -137,14 +137,26 @@ function findOrCreateCanvas() {
  */
 jaws.start = function(game_state, options) {
   var wanted_fps = (options && options.fps) || 60
-
+  
   jaws.init()
+  displayProgress(0)
   jaws.log("setupInput()", true)
   jaws.setupInput()
 
+  function displayProgress(percent_done) {
+    jaws.context.fillStyle  = "black"
+    jaws.context.fillRect(0, 0, jaws.width, jaws.height);
+    jaws.context.textAlign  = "center"
+    jaws.context.fillStyle  = "white"
+    jaws.context.font       = "15px terminal";
+    jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
+    jaws.context.font       = "bold 30px terminal";
+    jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
+  }
   /* Callback for when one single assets has been loaded */
   function assetLoaded(src, percent_done) {
-    jaws.log( percent_done + "%: " + src, true)
+    jaws.log( percent_done + "%: " + src, true)    
+    displayProgress(percent_done)
   }
 
   /* Callback for when an asset can't be loaded*/
