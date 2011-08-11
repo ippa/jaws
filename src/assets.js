@@ -181,10 +181,6 @@ jaws.Assets = function() {
 
   /** @private */
   this.assetError = function(e) {
-    console.log(e)
-    console.log(e.target)
-    console.log(e.target.status)
-
     var asset = this.asset
     that.error_count++
     that.processCallbacks(asset, false)
