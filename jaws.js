@@ -132,17 +132,33 @@ function findOrCreateCanvas() {
  * jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
  * jaws.start(window)            // Use global setup(), update() and draw() where available
  *
+ * It's recomended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
+ *
  */
 jaws.start = function(game_state, options) {
   var wanted_fps = (options && options.fps) || 60
-
+  
   jaws.init()
+  displayProgress(0)
   jaws.log("setupInput()", true)
   jaws.setupInput()
 
+  function displayProgress(percent_done) {
+    jaws.context.save()
+    jaws.context.fillStyle  = "black"
+    jaws.context.fillRect(0, 0, jaws.width, jaws.height);
+    jaws.context.textAlign  = "center"
+    jaws.context.fillStyle  = "white"
+    jaws.context.font       = "15px terminal";
+    jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
+    jaws.context.font       = "bold 30px terminal";
+    jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
+    jaws.context.restore()
+  }
   /* Callback for when one single assets has been loaded */
   function assetLoaded(src, percent_done) {
-    jaws.log( percent_done + "%: " + src, true)
+    jaws.log( percent_done + "%: " + src, true)    
+    displayProgress(percent_done)
   }
 
   /* Callback for when an asset can't be loaded*/
@@ -172,6 +188,25 @@ jaws.start = function(game_state, options) {
 /**
 * Switch to a new active game state
 * Save previous game state in jaws.previous_game_state
+*
+* @example
+* 
+* function MenuState() {
+*   this.setup = function() { ... }
+*   this.draw = function() { ... }
+*   this.update = function() {
+*     if(pressed("enter")) jaws.switchGameState(GameState); // Start game when Enter is pressed
+*   }
+* }
+*
+* function GameState() {
+*   this.setup = function() { ... }
+*   this.update = function() { ... }
+*   this.draw = function() { ... }
+* }
+*
+* jaws.start(MenuState)
+*
 */
 jaws.switchGameState = function(game_state) {
   jaws.gameloop.stop()
@@ -468,17 +503,19 @@ jaws.Assets = function() {
       else                  { jaws.log("No such asset: " + src, true) }
     }
   }
-  
+
+  /** Return true if src is in the process of loading (but not yet finishing) */
   this.isLoading = function(src) {
     return this.loading[src]
   }
   
+  /** Return true if src is loaded in full */
   this.isLoaded = function(src) {
     return this.loaded[src]
   }
   
   this.getPostfix = function(src) {
-    postfix_regexp = /\.([a-zA-Z]+)/;
+    postfix_regexp = /\.([a-zA-Z0-9]+)/;
     return postfix_regexp.exec(src)[1]
   }
 
@@ -487,10 +524,19 @@ jaws.Assets = function() {
     return (this.file_type[postfix] ? this.file_type[postfix] : postfix)
   }
   
-  /** Add array of paths or single path to asset-list. Later load with loadAll() */
+  /** 
+   * Add array of paths or single path to asset-list. Later load with loadAll() 
+   *
+   * @example
+   *
+   * jaws.assets.add("player.png")
+   * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
+   * jaws.loadAll({onfinish: start_game})
+   *
+   */
   this.add = function(src) {
     if(jaws.isArray(src)) { for(var i=0; src[i]; i++) { this.add(src[i]) } }
-    else                  { src = this.root + src; this.src_list.push(src) }
+    else                  { var path = this.root + src; this.src_list.push(path) }
     return this
   }
  
@@ -528,10 +574,11 @@ jaws.Assets = function() {
         var src = asset.src + "?" + parseInt(Math.random()*10000000)
         asset.image = new Image()
         asset.image.asset = asset // enables us to access asset in the callback
-        //asset.image.onload = this.assetLoaded
-        //asset.image.onerror = this.assetError
-        asset.image.addEventListener("load", this.assetLoaded, false);
-        asset.image.addEventListener("error", this.assetError, false);
+        //
+        // TODO: Make http://dev.ippa.se/webgames/test2.html work
+        //
+        asset.image.onload = this.assetLoaded
+        asset.image.onerror = this.assetError
         asset.image.src = src
         break;
       case "audio":
@@ -588,16 +635,14 @@ jaws.Assets = function() {
     that.processCallbacks(asset, true)
   }
 
+  /** @private */
   this.assetError = function(e) {
-    console.log(e)
-    console.log(e.target)
-    console.log(e.target.status)
-
     var asset = this.asset
     that.error_count++
     that.processCallbacks(asset, false)
   }
-
+  
+  /** @private */
   this.processCallbacks = function(asset, ok) {
     var percent = parseInt( (that.load_count+that.error_count) / that.src_list.length * 100)
     
@@ -690,6 +735,19 @@ return jaws;
 })(jaws || {});
 
 var jaws = (function(jaws) {
+
+// requestAnim shim layer by Paul Irish
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          window.oRequestAnimationFrame      ||
+          window.msRequestAnimationFrame     ||
+          function(/* function */ callback, /* DOMElement */ element){
+            window.setTimeout(callback, 16.666);
+          };
+})();
+
 /**
  * @class A classic gameloop forever looping calls to update() / draw() with given framerate
  *
@@ -724,7 +782,11 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
     if(setup) { setup() }
-    update_id = setInterval(this.loop, 1000 / wanted_fps);
+    step_delay = 1000 / wanted_fps;
+    
+    // update_id = setInterval(this.loop, step_delay);
+    requestAnimFrame(this.loop)
+
     jaws.log("gameloop loop", true)
   }
   
@@ -732,27 +794,25 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   this.loop = function() {
     that.current_tick = (new Date()).getTime();
     that.tick_duration = that.current_tick - that.last_tick
-    //that.fps = parseInt(1000 / that.tick_duration)
     that.fps = mean_value.add(1000/that.tick_duration).get()
 
     if(!paused) {
       if(update) { update() }
       if(draw)   { draw() }
       that.ticks++
+      requestAnimFrame(that.loop)
     }
-
     that.last_tick = that.current_tick;
   }
   
   /** Pause the gameloop. loop() will still get called but not update() / draw() */
   this.pause = function()   { paused = true }
+  
   /** unpause the gameloop */
   this.unpause = function() { paused = false }
 
   /** Stop the gameloop */
-  this.stop = function() {
-    if(update_id) { clearInterval(update_id); }
-  }
+  this.stop = function() { if(update_id) clearInterval(update_id); }
 }
 
 /** @ignore */
@@ -981,7 +1041,10 @@ jaws.Sprite.prototype.rotateTo =      function(value) { this.angle = value; retu
 jaws.Sprite.prototype.moveTo =        function(x,y)   { this.x = x; this.y = y; return this }
 /** Modify x/y */
 jaws.Sprite.prototype.move =          function(x,y)   { if(x) this.x += x;  if(y) this.y += y; return this }
-/** scale sprite by scale_factor. Modifies width/height. */
+/** 
+* scale sprite by given factor. 1=don't scale. <1 = scale down.  1>: scale up.
+* Modifies width/height. 
+**/
 jaws.Sprite.prototype.scale =         function(value) { this.scale_factor_x *= value; this.scale_factor_y *= value; return this.cacheOffsets() }
 /** set scale factor. ie. 2 means a doubling if sprite in both directions. */
 jaws.Sprite.prototype.scaleTo =       function(value) { this.scale_factor_x = this.scale_factor_y = value; return this.cacheOffsets() }
@@ -1509,6 +1572,7 @@ jaws.Viewport = function(options) {
    * bullets = new SpriteList()
    * bullets.push( bullet )
    * bullets.deleteIf( viewport.isOutside )
+   *
    */
   this.isOutside = function(item) {
     return(!this.isInside(item))
