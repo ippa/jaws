@@ -99,7 +99,10 @@ jaws.Sprite.prototype.rotateTo =      function(value) { this.angle = value; retu
 jaws.Sprite.prototype.moveTo =        function(x,y)   { this.x = x; this.y = y; return this }
 /** Modify x/y */
 jaws.Sprite.prototype.move =          function(x,y)   { if(x) this.x += x;  if(y) this.y += y; return this }
-/** scale sprite by scale_factor. Modifies width/height. */
+/** 
+* scale sprite by given factor. 1=don't scale. <1 = scale down.  1>: scale up.
+* Modifies width/height. 
+**/
 jaws.Sprite.prototype.scale =         function(value) { this.scale_factor_x *= value; this.scale_factor_y *= value; return this.cacheOffsets() }
 /** set scale factor. ie. 2 means a doubling if sprite in both directions. */
 jaws.Sprite.prototype.scaleTo =       function(value) { this.scale_factor_x = this.scale_factor_y = value; return this.cacheOffsets() }
