@@ -132,6 +132,8 @@ function findOrCreateCanvas() {
  * jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
  * jaws.start(window)            // Use global setup(), update() and draw() where available
  *
+ * It's recomended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
+ *
  */
 jaws.start = function(game_state, options) {
   var wanted_fps = (options && options.fps) || 60
@@ -169,7 +171,7 @@ jaws.start = function(game_state, options) {
   else                          { assetsLoaded() } 
 }
 
-/**
+  Switch/**
 * Switch to a new active game state
 * Save previous game state in jaws.previous_game_state
 *

@@ -1,4 +1,17 @@
 var jaws = (function(jaws) {
+
+// requestAnim shim layer by Paul Irish
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          window.oRequestAnimationFrame      ||
+          window.msRequestAnimationFrame     ||
+          function(/* function */ callback, /* DOMElement */ element){
+            window.setTimeout(callback, 16.666);
+          };
+})();
+
 /**
  * @class A classic gameloop forever looping calls to update() / draw() with given framerate
  *
@@ -33,7 +46,11 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
     if(setup) { setup() }
-    update_id = setInterval(this.loop, 1000 / wanted_fps);
+    step_delay = 1000 / wanted_fps;
+    
+    // update_id = setInterval(this.loop, step_delay);
+    requestAnimFrame(this.loop)
+
     jaws.log("gameloop loop", true)
   }
   
@@ -41,27 +58,25 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   this.loop = function() {
     that.current_tick = (new Date()).getTime();
     that.tick_duration = that.current_tick - that.last_tick
-    //that.fps = parseInt(1000 / that.tick_duration)
     that.fps = mean_value.add(1000/that.tick_duration).get()
 
     if(!paused) {
       if(update) { update() }
       if(draw)   { draw() }
       that.ticks++
+      requestAnimFrame(that.loop)
     }
-
     that.last_tick = that.current_tick;
   }
   
   /** Pause the gameloop. loop() will still get called but not update() / draw() */
   this.pause = function()   { paused = true }
+  
   /** unpause the gameloop */
   this.unpause = function() { paused = false }
 
   /** Stop the gameloop */
-  this.stop = function() {
-    if(update_id) { clearInterval(update_id); }
-  }
+  this.stop = function() { if(update_id) clearInterval(update_id); }
 }
 
 /** @ignore */
