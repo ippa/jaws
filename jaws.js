@@ -773,6 +773,7 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   
   var update_id
   var paused = false
+  var stopped = false
   var that = this
   var mean_value = new MeanValue(20) // let's have a smooth, non-jittery FPS-value
 
@@ -800,7 +801,7 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
       if(update) { update() }
       if(draw)   { draw() }
       that.ticks++
-      requestAnimFrame(that.loop)
+      if(!stopped) requestAnimFrame(that.loop);
     }
     that.last_tick = that.current_tick;
   }
@@ -812,7 +813,10 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   this.unpause = function() { paused = false }
 
   /** Stop the gameloop */
-  this.stop = function() { if(update_id) clearInterval(update_id); }
+  this.stop = function() { 
+    if(update_id) clearInterval(update_id); 
+    stopped = true;
+  }
 }
 
 /** @ignore */
