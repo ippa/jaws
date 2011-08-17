@@ -144,16 +144,18 @@ jaws.start = function(game_state, options) {
   jaws.setupInput()
 
   function displayProgress(percent_done) {
-    jaws.context.save()
-    jaws.context.fillStyle  = "black"
-    jaws.context.fillRect(0, 0, jaws.width, jaws.height);
-    jaws.context.textAlign  = "center"
-    jaws.context.fillStyle  = "white"
-    jaws.context.font       = "15px terminal";
-    jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
-    jaws.context.font       = "bold 30px terminal";
-    jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
-    jaws.context.restore()
+    if(jaws.context) {
+      jaws.context.save()
+      jaws.context.fillStyle  = "black"
+      jaws.context.fillRect(0, 0, jaws.width, jaws.height);
+      jaws.context.textAlign  = "center"
+      jaws.context.fillStyle  = "white"
+      jaws.context.font       = "15px terminal";
+      jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
+      jaws.context.font       = "bold 30px terminal";
+      jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
+      jaws.context.restore()
+    }
   }
   /* Callback for when one single assets has been loaded */
   function assetLoaded(src, percent_done) {
