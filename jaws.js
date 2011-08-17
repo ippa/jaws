@@ -144,16 +144,18 @@ jaws.start = function(game_state, options) {
   jaws.setupInput()
 
   function displayProgress(percent_done) {
-    jaws.context.save()
-    jaws.context.fillStyle  = "black"
-    jaws.context.fillRect(0, 0, jaws.width, jaws.height);
-    jaws.context.textAlign  = "center"
-    jaws.context.fillStyle  = "white"
-    jaws.context.font       = "15px terminal";
-    jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
-    jaws.context.font       = "bold 30px terminal";
-    jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
-    jaws.context.restore()
+    if(jaws.context) {
+      jaws.context.save()
+      jaws.context.fillStyle  = "black"
+      jaws.context.fillRect(0, 0, jaws.width, jaws.height);
+      jaws.context.textAlign  = "center"
+      jaws.context.fillStyle  = "white"
+      jaws.context.font       = "15px terminal";
+      jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
+      jaws.context.font       = "bold 30px terminal";
+      jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
+      jaws.context.restore()
+    }
   }
   /* Callback for when one single assets has been loaded */
   function assetLoaded(src, percent_done) {
@@ -1141,7 +1143,10 @@ jaws.Sprite.prototype.updateDiv = function() {
 
   this.div.style.MozTransform = transform
   this.div.style.WebkitTransform = transform
+  this.div.style.OTransform = transform
+  this.div.style.msTransform = transform
   this.div.style.transform = transform
+
   return this
 }
 
@@ -1825,11 +1830,23 @@ var jaws = (function(jaws) {
     var context2 = canvas2.getContext("2d")
     var to_data = context2.createImageData(canvas2.width, canvas2.height)
 
-    for (var x=0; x < to_data.width; x++) {
-      for (var y=0; y < to_data.height; y++) {
-        px = Math.floor(x / factor)
-        py = Math.floor(y / factor)
-        for(var o=0; o<4; o++)  to_data.data[((y*to_data.width+x)*4)+o] = data[((py*image.width+px)*4)+o];
+    var w2 = to_data.width
+    var h2 = to_data.height
+
+    for (var y=0; y < h2; y++) {
+      var y2 = Math.floor(y / factor)
+      var y_as_x = y * to_data.width
+      var y2_as_x = y2 * image.width
+
+      for (var x=0; x < w2; x++) {
+        var x2 = Math.floor(x / factor)
+        var y_dst = (y_as_x + x) * 4
+        var y_src = (y2_as_x + x2) * 4
+        
+        to_data.data[y_dst] = data[y_src];
+        to_data.data[y_dst+1] = data[y_src+1];
+        to_data.data[y_dst+2] = data[y_src+2];
+        to_data.data[y_dst+3] = data[y_src+3];
       }
     }
     context2.putImageData(to_data, 0, 0)
