@@ -166,7 +166,7 @@ jaws.Assets = function() {
       that.data[asset.src] = JSON.parse(this.responseText)
     }
     else if(filetype == "image") {
-      var new_image = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
+      var new_image = that.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image
       if(that.fuchia_to_transparent && that.getPostfix(asset.src) == "bmp") { new_image = fuchiaToTransparent(new_image) }
       that.data[asset.src] = new_image
     }
@@ -209,29 +209,13 @@ jaws.Assets = function() {
   }
 }
 
-/** @private
- * Takes an image, returns a canvas.
- * Benchmarks has proven canvas to be faster to work with then images.
- * Returns: a canvas
- */
-function imageToCanvas(image) {
-  var canvas = document.createElement("canvas")
-  canvas.src = image.src        // Make canvas look more like an image
-  canvas.width = image.width
-  canvas.height = image.height
-
-  var context = canvas.getContext("2d")
-  context.drawImage(image, 0, 0, image.width, image.height)
-  return canvas
-}
-
 /** @private 
  * Make Fuchia (0xFF00FF) transparent
  * This is the de-facto standard way to do transparency in BMPs
  * Returns: a canvas
  */
 function fuchiaToTransparent(image) {
-  canvas = jaws.isImage(image) ? imageToCanvas(image) : image
+  canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image
   var context = canvas.getContext("2d")
   var img_data = context.getImageData(0,0,canvas.width,canvas.height)
   var pixels = img_data.data
@@ -244,37 +228,7 @@ function fuchiaToTransparent(image) {
   return canvas
 }
 
-/** @private
- * Scale image by factor and keep jaggy retro-borders 
- */
-function retroScale(image, factor) {
-  canvas = jaws.isImage(image) ? imageToCanvas(image) : image
-  var context = canvas.getContext("2d")
-  var img_data = context.getImageData(0,0,canvas.width,canvas.height)
-  var pixels = img_data.data
-
-  var canvas2 = document.createElement("canvas")
-  canvas2.width = image.width * factor
-  canvas2.height = image.height * factor
-  var context2 = canvas.getContext("2d")
-  var img_data2 = context2.getImageData(0,0,canvas2.width,canvas2.height)
-  var pixels2 = img_data2.data
-
-  for (var x = 0; x < canvas.width * factor; x++) { 
-    for (var y = 0; y < canvas.height * factor; y++) { 
-      pixels2[x*y] = pixels[x*y / factor]
-      pixels2[x*y+1] = pixels[x*y+1 / factor]
-      pixels2[x*y+2] = pixels[x*y+2 / factor]
-      pixels2[x*y+3] = pixels[x*y+3 / factor]
-    } 
-  }
-
-  context2.putImageData(img_data2,0,0);
-  return canvas2
-}
-
 jaws.assets = new jaws.Assets()
-
 return jaws;
 })(jaws || {});
 
