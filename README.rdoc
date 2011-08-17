@@ -39,6 +39,7 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/jawsjs/examples/example7.html - simple DOM-based sprite
 * http://jawsjs.com/jawsjs/examples/example8.html - jaws.TileMap
 * http://jawsjs.com/jawsjs/examples/example9.html - jaws.Viewport (The basics for a sidescrolling platformer right here)
+* http://jawsjs.com/jawsjs/examples/example11.html - jaws.gfx.retroScaleImage and Literal Notion game state
 
 == Games using Jaws
 * {http://ippa.se/webgames/unexpected_outcome/}[http://ippa.se/webgames/unexpected_outcome/] - A 10-minute adventure game with pixel-perfect collisions
