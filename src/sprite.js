@@ -32,16 +32,18 @@ jaws.Sprite = function(options) {
  */
 jaws.Sprite.prototype.set = function(options) {
   this.scale_factor_x = this.scale_factor_y = (options.scale || 1)
-  if(!options.anchor_x == undefined) {this.anchor_x = options.anchor_x}
-  if(!options.anchor_y == undefined) {this.anchor_y = options.anchor_y}
   this.x = options.x || 0
   this.y = options.y || 0
   this.alpha = options.alpha || 1
   this.angle = options.angle || 0
   this.flipped = options.flipped || false
-  this.anchor(options.anchor || "top_left")
+  this.anchor(options.anchor || "top_left");
+  if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
+  if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
   options.image && this.setImage(options.image)
+  if(options.retro_scale) this.retroScale(options.retro_scale);
   this.cacheOffsets()
+
   return this
 }
 
@@ -240,6 +242,16 @@ jaws.Sprite.prototype.draw = function() {
   this.context.translate(-this.left_offset, -this.top_offset) // Needs to be separate from above translate call cause of flipped
   this.context.drawImage(this.image, 0, 0, this.width, this.height)
   this.context.restore()
+  return this
+}
+
+/**
+ * Scales image using hard block borders. Useful for that cute, blocky retro-feeling.
+ * Depends on gfx.js beeing loaded.
+ */
+jaws.Sprite.prototype.retroScale = function(factor) {
+  if(!this.image) return;
+  this.setImage( jaws.gfx.retroScaleImage(this.image, factor) )
   return this
 }
 
