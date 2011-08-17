@@ -22,11 +22,17 @@ var jaws = (function(jaws) {
     var context2 = canvas2.getContext("2d")
     var to_data = context2.createImageData(canvas2.width, canvas2.height)
 
-    for (var x=0; x < to_data.width; x++) {
-      for (var y=0; y < to_data.height; y++) {
-        px = Math.floor(x / factor)
-        py = Math.floor(y / factor)
-        for(var o=0; o<4; o++)  to_data.data[((y*to_data.width+x)*4)+o] = data[((py*image.width+px)*4)+o];
+    var w2 = to_data.width
+    var h2 = to_data.height
+
+    for (var y=0; y < h2; y++) {
+      var y2 = Math.floor(y / factor)
+      var y_as_x = y * to_data.width
+      var y2_as_x = y2 * image.width
+
+      for (var x=0; x < w2; x++) {
+        var x2 = Math.floor(x / factor)
+        for(var o=0; o<4; o++)  to_data.data[((y_as_x + x) * 4) + o] = data[((y2_as_x + x2) * 4) + o];
       }
     }
     context2.putImageData(to_data, 0, 0)
