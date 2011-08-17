@@ -225,7 +225,10 @@ jaws.Sprite.prototype.updateDiv = function() {
 
   this.div.style.MozTransform = transform
   this.div.style.WebkitTransform = transform
+  this.div.style.OTransform = transform
+  this.div.style.msTransform = transform
   this.div.style.transform = transform
+
   return this
 }
 
