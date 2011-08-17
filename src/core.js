@@ -221,6 +221,22 @@ jaws.switchGameState = function(game_state) {
   jaws.gameloop.start()
 }
 
+/** 
+ * Takes an image, returns a canvas.
+ * Benchmarks has proven canvas to be faster to work with then images.
+ * Returns: a canvas
+ */
+jaws.imageToCanvas = function(image) {
+  var canvas = document.createElement("canvas")
+  canvas.src = image.src        // Make canvas look more like an image
+  canvas.width = image.width
+  canvas.height = image.height
+
+  var context = canvas.getContext("2d")
+  context.drawImage(image, 0, 0, image.width, image.height)
+  return canvas
+}
+
 /** Always return obj as an array. forceArray(1) -> [1], forceArray([1,2]) -> [1,2] */
 jaws.forceArray = function(obj) {
   return Array.isArray(obj) ? obj : [obj]
