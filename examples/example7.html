@@ -7,11 +7,19 @@
   </head>
 
   <body>
+    <center>
     <br /><br /><br />
     <br /><br /><br />
     <div id="canvas"></div>
     
+    <div id="info">
+      <h1>DOM based sprites</h1>
+      To do normal oldschool DOM-based sprites just make a ordinary div (no canvas) -tag with id="canvas".
+      Example also demonstrates a slightly more advanced controller scheme.
+    </div>
+
     <br /><div id="jaws-log"></div>
+  </center>
   </body>
 
   <script>
@@ -28,18 +36,20 @@
     this.setup = function() {
       player = new jaws.Sprite({image: "plane.png", x:1, y:1, anchor: "center"})
       player.can_fire = true
+      player.vx = 10
+      player.vy = 5
       jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
     }
 
     this.update = function() {
-      if(jaws.pressed("left"))  { player.x -= 2; player.flipped = true }
-      if(jaws.pressed("right")) { player.x += 2; player.flipped = false }
-      if(jaws.pressed("up"))    { player.y -= 2 }
-      if(jaws.pressed("down"))  { player.y += 2 }
+      if(jaws.pressed("left"))  { player.vx = -4; player.flipped = true; player.angle = -20 }
+      if(jaws.pressed("right")) { player.vx = 4; player.flipped = false; player.angle = 20 }
+      if(jaws.pressed("up"))    { player.vy = -4 }
+      if(jaws.pressed("down"))  { player.vy = 4 }
       if(jaws.pressed("space")) { 
         if(player.can_fire) {
           var vx = player.flipped ? -10 : 10
-          bullets.push( new Bullet({x: player.rect().right, y: player.rect().bottom-5, vx: vx}) )
+          bullets.push( new Bullet({x: player.rect().right, y: player.rect().bottom-5, vx: vx, vy: 0}) )
           player.can_fire = false
           setTimeout(function() { player.can_fire = true }, 100)
         }
@@ -52,6 +62,15 @@
           array.splice(index,1)
         }
       });
+
+      // Move player forwards with the velocity
+      player.x += player.vx
+      player.y += player.vy
+
+      // Put some damping on velocity and rotation
+      player.angle /= 1.10
+      player.vx /= 1.10
+      player.vy /= 1.10
 
       bullets.update()
       // jaws.log("bullets: " + bullets.length + " fps: " + jaws.gameloop.fps)
@@ -77,9 +96,14 @@
 
     function Bullet(options) {
       this.vx = options.vx
+      this.vy = options.vy
       options.image = "bullet.png"
       jaws.Sprite.call(this, options)
-      this.update = function() { this.x += this.vx }
+      
+      this.update = function() { 
+        this.x += this.vx 
+        this.y += this.vy
+      }
     }
     Bullet.prototype = jaws.Sprite.prototype
   }
