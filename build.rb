@@ -5,7 +5,7 @@
 #
 out = File.new("jaws.js", "w")
 prefix = "src/"
-files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_list.js","sprite_sheet.js","parallax.js","animation.js","viewport.js","tile_map.js"]
+files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_list.js","sprite_sheet.js","parallax.js","animation.js","viewport.js","tile_map.js", "gfx.js"]
 files.each do |file|
   out.write(File.read(prefix + file))
 end

@@ -221,6 +221,22 @@ jaws.switchGameState = function(game_state) {
   jaws.gameloop.start()
 }
 
+/** 
+ * Takes an image, returns a canvas.
+ * Benchmarks has proven canvas to be faster to work with then images.
+ * Returns: a canvas
+ */
+jaws.imageToCanvas = function(image) {
+  var canvas = document.createElement("canvas")
+  canvas.src = image.src        // Make canvas look more like an image
+  canvas.width = image.width
+  canvas.height = image.height
+
+  var context = canvas.getContext("2d")
+  context.drawImage(image, 0, 0, image.width, image.height)
+  return canvas
+}
+
 /** Always return obj as an array. forceArray(1) -> [1], forceArray([1,2]) -> [1,2] */
 jaws.forceArray = function(obj) {
   return Array.isArray(obj) ? obj : [obj]
@@ -622,7 +638,7 @@ jaws.Assets = function() {
       that.data[asset.src] = JSON.parse(this.responseText)
     }
     else if(filetype == "image") {
-      var new_image = that.image_to_canvas ? imageToCanvas(asset.image) : asset.image
+      var new_image = that.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image
       if(that.fuchia_to_transparent && that.getPostfix(asset.src) == "bmp") { new_image = fuchiaToTransparent(new_image) }
       that.data[asset.src] = new_image
     }
@@ -665,29 +681,13 @@ jaws.Assets = function() {
   }
 }
 
-/** @private
- * Takes an image, returns a canvas.
- * Benchmarks has proven canvas to be faster to work with then images.
- * Returns: a canvas
- */
-function imageToCanvas(image) {
-  var canvas = document.createElement("canvas")
-  canvas.src = image.src        // Make canvas look more like an image
-  canvas.width = image.width
-  canvas.height = image.height
-
-  var context = canvas.getContext("2d")
-  context.drawImage(image, 0, 0, image.width, image.height)
-  return canvas
-}
-
 /** @private 
  * Make Fuchia (0xFF00FF) transparent
  * This is the de-facto standard way to do transparency in BMPs
  * Returns: a canvas
  */
 function fuchiaToTransparent(image) {
-  canvas = jaws.isImage(image) ? imageToCanvas(image) : image
+  canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image
   var context = canvas.getContext("2d")
   var img_data = context.getImageData(0,0,canvas.width,canvas.height)
   var pixels = img_data.data
@@ -700,37 +700,7 @@ function fuchiaToTransparent(image) {
   return canvas
 }
 
-/** @private
- * Scale image by factor and keep jaggy retro-borders 
- */
-function retroScale(image, factor) {
-  canvas = jaws.isImage(image) ? imageToCanvas(image) : image
-  var context = canvas.getContext("2d")
-  var img_data = context.getImageData(0,0,canvas.width,canvas.height)
-  var pixels = img_data.data
-
-  var canvas2 = document.createElement("canvas")
-  canvas2.width = image.width * factor
-  canvas2.height = image.height * factor
-  var context2 = canvas.getContext("2d")
-  var img_data2 = context2.getImageData(0,0,canvas2.width,canvas2.height)
-  var pixels2 = img_data2.data
-
-  for (var x = 0; x < canvas.width * factor; x++) { 
-    for (var y = 0; y < canvas.height * factor; y++) { 
-      pixels2[x*y] = pixels[x*y / factor]
-      pixels2[x*y+1] = pixels[x*y+1 / factor]
-      pixels2[x*y+2] = pixels[x*y+2 / factor]
-      pixels2[x*y+3] = pixels[x*y+3 / factor]
-    } 
-  }
-
-  context2.putImageData(img_data2,0,0);
-  return canvas2
-}
-
 jaws.assets = new jaws.Assets()
-
 return jaws;
 })(jaws || {});
 
@@ -978,16 +948,18 @@ jaws.Sprite = function(options) {
  */
 jaws.Sprite.prototype.set = function(options) {
   this.scale_factor_x = this.scale_factor_y = (options.scale || 1)
-  if(!options.anchor_x == undefined) {this.anchor_x = options.anchor_x}
-  if(!options.anchor_y == undefined) {this.anchor_y = options.anchor_y}
   this.x = options.x || 0
   this.y = options.y || 0
   this.alpha = options.alpha || 1
   this.angle = options.angle || 0
   this.flipped = options.flipped || false
-  this.anchor(options.anchor || "top_left")
+  this.anchor(options.anchor || "top_left");
+  if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
+  if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
   options.image && this.setImage(options.image)
+  if(options.retro_scale) this.retroScale(options.retro_scale);
   this.cacheOffsets()
+
   return this
 }
 
@@ -1186,6 +1158,16 @@ jaws.Sprite.prototype.draw = function() {
   this.context.translate(-this.left_offset, -this.top_offset) // Needs to be separate from above translate call cause of flipped
   this.context.drawImage(this.image, 0, 0, this.width, this.height)
   this.context.restore()
+  return this
+}
+
+/**
+ * Scales image using hard block borders. Useful for that cute, blocky retro-feeling.
+ * Depends on gfx.js beeing loaded.
+ */
+jaws.Sprite.prototype.retroScale = function(factor) {
+  if(!this.image) return;
+  this.setImage( jaws.gfx.retroScaleImage(this.image, factor) )
   return this
 }
 
@@ -1419,6 +1401,7 @@ var jaws = (function(jaws) {
  * @property index  int, start on this frame
  * @property frames array of images/canvaselements
  * @property frame_duration milliseconds  how long should each frame be displayed
+ * @property frame_size array containing width/height
  *
  * @example
  * // in setup()
@@ -1440,10 +1423,18 @@ jaws.Animation = function(options) {
   this.loop = options.loop || 1
   this.bounce = options.bounce || 0
   this.frame_direction = 1
+  this.frame_size = options.frame_size
+  
+  if(options.retro_scale) {
+    var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
+    this.frame_size[0] *= options.retro_scale
+    this.frame_size[1] *= options.retro_scale
+    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.retro_scale)
+  }
 
   if(options.sprite_sheet) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
-    var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: options.frame_size})
+    var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: this.frame_size})
     this.frames = sprite_sheet.frames
   }
 
@@ -1810,3 +1801,41 @@ return jaws;
 
 // Support CommonJS require()
 if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }
+var jaws = (function(jaws) {
+  /**
+  * @namespace GFX related helpers
+  *
+  */
+  jaws.gfx = {}
+
+  /**
+   * scale 'image' by factor 'factor'.
+   * Scaling is done using nearest-neighbor ( retro-blocky-style ).
+   * Returns a canvas.
+   */
+  jaws.gfx.retroScaleImage = function(image, factor) {
+    var canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image
+    var context = canvas.getContext("2d")
+    var data = context.getImageData(0,0,canvas.width,canvas.height).data
+
+    // Create new canvas to return
+    var canvas2 = document.createElement("canvas")
+    canvas2.width = image.width * factor
+    canvas2.height = image.height * factor
+    var context2 = canvas2.getContext("2d")
+    var to_data = context2.createImageData(canvas2.width, canvas2.height)
+
+    for (var x=0; x < to_data.width; x++) {
+      for (var y=0; y < to_data.height; y++) {
+        px = Math.floor(x / factor)
+        py = Math.floor(y / factor)
+        for(var o=0; o<4; o++)  to_data.data[((y*to_data.width+x)*4)+o] = data[((py*image.width+px)*4)+o];
+      }
+    }
+    context2.putImageData(to_data, 0, 0)
+
+    return canvas2
+  }
+
+  return jaws;
+})(jaws || {});

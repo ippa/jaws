@@ -23,7 +23,8 @@
         root+"parallax.js",
         root+"animation.js",
         root+"tile_map.js",
-        root+"viewport.js")
+        root+"viewport.js",
+        root+"gfx.js")
   .thenRun(function () {
     /*
      * We can't rely on window.onload-callback in our game when using javascript loaders.
