@@ -32,7 +32,13 @@ var jaws = (function(jaws) {
 
       for (var x=0; x < w2; x++) {
         var x2 = Math.floor(x / factor)
-        for(var o=0; o<4; o++)  to_data.data[((y_as_x + x) * 4) + o] = data[((y2_as_x + x2) * 4) + o];
+        var y_dst = (y_as_x + x) * 4
+        var y_src = (y2_as_x + x2) * 4
+        
+        to_data.data[y_dst] = data[y_src];
+        to_data.data[y_dst+1] = data[y_src+1];
+        to_data.data[y_dst+2] = data[y_src+2];
+        to_data.data[y_dst+3] = data[y_src+3];
       }
     }
     context2.putImageData(to_data, 0, 0)
