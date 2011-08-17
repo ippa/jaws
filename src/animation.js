@@ -8,6 +8,7 @@ var jaws = (function(jaws) {
  * @property index  int, start on this frame
  * @property frames array of images/canvaselements
  * @property frame_duration milliseconds  how long should each frame be displayed
+ * @property frame_size array containing width/height
  *
  * @example
  * // in setup()
@@ -29,10 +30,18 @@ jaws.Animation = function(options) {
   this.loop = options.loop || 1
   this.bounce = options.bounce || 0
   this.frame_direction = 1
+  this.frame_size = options.frame_size
+  
+  if(options.retro_scale) {
+    var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
+    this.frame_size[0] *= options.retro_scale
+    this.frame_size[1] *= options.retro_scale
+    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.retro_scale)
+  }
 
   if(options.sprite_sheet) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
-    var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: options.frame_size})
+    var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: this.frame_size})
     this.frames = sprite_sheet.frames
   }
 
