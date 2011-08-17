@@ -28,6 +28,7 @@
 
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
+        jaws.clear()
         jaws.context.lineWidth = 1
         jaws.context.font = "12px verdana";
         jaws.context.strokeStyle =  "black"
