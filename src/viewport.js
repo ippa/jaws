@@ -32,6 +32,7 @@ jaws.Viewport = function(options) {
   this.height = options.height || jaws.height
   this.max_x = options.max_x || jaws.width 
   this.max_y = options.max_y || jaws.height
+  var that = this
 
   /** Move viewport x pixels horizontally and y pixels vertically */
   this.move = function(x, y) {
@@ -60,14 +61,14 @@ jaws.Viewport = function(options) {
    *
    */
   this.isOutside = function(item) {
-    return(!this.isInside(item))
+    return(!that.isInside(item))
   };
 
   /** 
    * Returns true if item is inside viewport 
    */
   this.isInside = function(item) {
-    return( item.x >= this.x && item.x <= (this.x + this.width) && item.y >= this.y && item.y <= (this.y + this.height) )
+    return( item.x >= that.x && item.x <= (that.x + that.width) && item.y >= that.y && item.y <= (that.y + that.height) )
   };
 
   /** 
@@ -79,6 +80,22 @@ jaws.Viewport = function(options) {
     this.y = (item.y - this.height / 2)
     this.verifyPosition()
   };
+
+  /**
+   * force 'item' inside current viewports visible area
+   * using 'buffer' as indicator how close to the 'item' is allowed to go
+   *
+   * @example
+   *
+   * viewport.move(10,0)                          // scroll forward
+   * viewport.forceInsideVisibleArea(player, 20)  // make sure player doesn't get left behind
+   */
+  this.forceInsideVisibleArea = function(item, buffer) {
+    if(item.x < this.x+buffer)               { item.x = this.x+buffer }
+    if(item.x > this.x+jaws.width-buffer)    { item.x = this.x+jaws.width-buffer }
+    if(item.y < this.y+buffer)               { item.y = this.y+buffer }
+    if(item.y > this.y+jaws.height-buffer)   { item.y = this.y+jaws.height-buffer }
+  }
 
   /** 
   * executes given draw-callback with a translated canvas which will draw items relative to the viewport
