@@ -292,10 +292,10 @@ jaws.isOutsideCanvas = function(item) {
  * 'item' needs to have properties: x,y,width,height
  */
 jaws.forceInsideCanvas = function(item) {
-  if(item.x < 0)                          { item.x = 0  }
-  if(item.x + item.width > jaws.width)    { item.x = jaws.width - item.width }
-  if(item.y < 0)                          { item.y = 0 }
-  if(item.y + item.height > jaws.height)  { item.y = jaws.height - item.height }
+  if(item.x < 0)              { item.x = 0  }
+  if(item.x > jaws.width)     { item.x = jaws.width }
+  if(item.y < 0)              { item.y = 0 }
+  if(item.y > jaws.height)    { item.y = jaws.height }
 }
 
 /**
