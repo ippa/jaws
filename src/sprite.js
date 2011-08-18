@@ -205,7 +205,8 @@ jaws.Sprite.prototype.createDiv = function() {
   if(this.image) {
     this.div.style.width = this.image.width + "px"
     this.div.style.height = this.image.height + "px"
-    this.div.style.backgroundImage = "url(" + this.image.src + ")"
+    //this.div.style.backgroundImage = "url(" + this.image.src + ")"
+    this.div.style.backgroundImage = "url(" + this.image.toDataURL() + ")"
   }
   if(jaws.dom) { jaws.dom.appendChild(this.div) }
   this.updateDiv()
