@@ -101,7 +101,7 @@ jaws.init = function(options) {
   }
   
   jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
-  jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeigh
+  jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
 }
 
 /** 
@@ -277,6 +277,25 @@ jaws.isArray = function(obj)  {
 /** returns true of obj is a Function */
 jaws.isFunction = function(obj) { 
   return (Object.prototype.toString.call(obj) === "[object Function]") 
+}
+
+/**
+ * returns true if 'item' is outside canvas
+ * 'item' needs to have properties: x,y,width,height
+ */
+jaws.isOutsideCanvas = function(item) { 
+  return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height)
+}
+
+/**
+ * force 'item' inside canvas by setting its x/y parameters
+ * 'item' needs to have properties: x,y,width,height
+ */
+jaws.forceInsideCanvas = function(item) {
+  if(item.x < 0)                          { item.x = 0  }
+  if(item.x + item.width > jaws.width)    { item.x = jaws.width - item.width }
+  if(item.y < 0)                          { item.y = 0 }
+  if(item.y + item.height > jaws.height)  { item.y = jaws.height - item.height }
 }
 
 /**
@@ -959,7 +978,7 @@ jaws.Sprite.prototype.set = function(options) {
   if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
   if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
   options.image && this.setImage(options.image)
-  if(options.retro_scale) this.retroScale(options.retro_scale);
+  if(options.image_scale) this.scaleImage(options.image_scale);
   this.cacheOffsets()
 
   return this
@@ -1123,7 +1142,8 @@ jaws.Sprite.prototype.createDiv = function() {
   if(this.image) {
     this.div.style.width = this.image.width + "px"
     this.div.style.height = this.image.height + "px"
-    this.div.style.backgroundImage = "url(" + this.image.src + ")"
+    //this.div.style.backgroundImage = "url(" + this.image.src + ")"
+    this.div.style.backgroundImage = "url(" + this.image.toDataURL() + ")"
   }
   if(jaws.dom) { jaws.dom.appendChild(this.div) }
   this.updateDiv()
@@ -1170,7 +1190,7 @@ jaws.Sprite.prototype.draw = function() {
  * Scales image using hard block borders. Useful for that cute, blocky retro-feeling.
  * Depends on gfx.js beeing loaded.
  */
-jaws.Sprite.prototype.retroScale = function(factor) {
+jaws.Sprite.prototype.scaleImage = function(factor) {
   if(!this.image) return;
   this.setImage( jaws.gfx.retroScaleImage(this.image, factor) )
   return this
@@ -1430,11 +1450,11 @@ jaws.Animation = function(options) {
   this.frame_direction = 1
   this.frame_size = options.frame_size
   
-  if(options.retro_scale) {
+  if(options.image_scale) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
-    this.frame_size[0] *= options.retro_scale
-    this.frame_size[1] *= options.retro_scale
-    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.retro_scale)
+    this.frame_size[0] *= options.image_scale
+    this.frame_size[1] *= options.image_scale
+    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.image_scale)
   }
 
   if(options.sprite_sheet) {

@@ -32,11 +32,11 @@ jaws.Animation = function(options) {
   this.frame_direction = 1
   this.frame_size = options.frame_size
   
-  if(options.pre_scale) {
+  if(options.image_scale) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
-    this.frame_size[0] *= options.pre_scale
-    this.frame_size[1] *= options.pre_scale
-    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.pre_scale)
+    this.frame_size[0] *= options.image_scale
+    this.frame_size[1] *= options.image_scale
+    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.image_scale)
   }
 
   if(options.sprite_sheet) {

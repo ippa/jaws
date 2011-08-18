@@ -41,7 +41,7 @@ jaws.Sprite.prototype.set = function(options) {
   if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
   if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
   options.image && this.setImage(options.image)
-  if(options.pre_scale) this.preScale(options.pre_scale);
+  if(options.image_scale) this.scaleImage(options.image_scale);
   this.cacheOffsets()
 
   return this
@@ -253,7 +253,7 @@ jaws.Sprite.prototype.draw = function() {
  * Scales image using hard block borders. Useful for that cute, blocky retro-feeling.
  * Depends on gfx.js beeing loaded.
  */
-jaws.Sprite.prototype.preScale = function(factor) {
+jaws.Sprite.prototype.scaleImage = function(factor) {
   if(!this.image) return;
   this.setImage( jaws.gfx.retroScaleImage(this.image, factor) )
   return this
