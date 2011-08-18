@@ -55,12 +55,23 @@ jaws.SpriteList.prototype.updateIf = function(condition) {
   }
 }
 
-/** Delete sprites in spritelist where condition(sprite) returns true */
+/** 
+ * Delete sprites in spritelist where condition(sprite) returns true 
+ * @deprecated
+ */
 jaws.SpriteList.prototype.deleteIf = function(condition) {
   for(var i=0; this[i]; i++) {
     if( condition(this[i]) ) { this.splice(i,1) }
   }
 }
+
+/** Remove sprites in spritelist where condition(sprite) returns true  */
+jaws.SpriteList.prototype.removeIf = function(condition) {
+  for(var i=0; this[i]; i++) {
+    if( condition(this[i]) ) { this.splice(i,1) }
+  }
+}
+
 jaws.SpriteList.prototype.toString = function() { return "[SpriteList " + this.length + " sprites]" }
 
 return jaws;
