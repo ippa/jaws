@@ -101,7 +101,7 @@ jaws.init = function(options) {
   }
   
   jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
-  jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeigh
+  jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
 }
 
 /** 
