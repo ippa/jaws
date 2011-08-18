@@ -27,7 +27,7 @@ jaws.Animation = function(options) {
   this.frames = options.frames || []
   this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
   this.index = options.index || 0                       // default: start with the very first frame
-  this.loop = options.loop || 1
+  this.loop = (options.loop==undefined) ? 1 : options.loop
   this.bounce = options.bounce || 0
   this.frame_direction = 1
   this.frame_size = options.frame_size
