@@ -283,7 +283,7 @@ jaws.isFunction = function(obj) {
  * returns true if 'item' is outside canvas
  * 'item' needs to have properties: x,y,width,height
  */
-function isOutsideCanvas(item) { 
+jaws.isOutsideCanvas = function(item) { 
   return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height)
 }
 
@@ -291,7 +291,7 @@ function isOutsideCanvas(item) {
  * force 'item' inside canvas by setting its x/y parameters
  * 'item' needs to have properties: x,y,width,height
  */
-function forceInsideCanvas(item) {
+jaws.forceInsideCanvas = function(item) {
   if(item.x < 0)                          { item.x = 0  }
   if(item.x + item.width > jaws.width)    { item.x = jaws.width - item.width }
   if(item.y < 0)                          { item.y = 0 }
