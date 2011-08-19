@@ -45,7 +45,7 @@ Check out the sourcecode for comments and explanations:
 * {http://ippa.se/webgames/unexpected_outcome/}[http://ippa.se/webgames/unexpected_outcome/] - A 10-minute adventure game with pixel-perfect collisions
 * {http://ippa.se/webgames/unwaivering/}[http://ippa.se/webgames/unwaivering/]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
 
-.. missing your game here? Msg me on github!
+... missing your game here? Msg me on github!
 
 == Loading Jaws
 * jaws.js - includes the whole framework in one easy-to-include file.
