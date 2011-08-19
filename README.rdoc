@@ -7,8 +7,8 @@ Licensed under LGPL so you're free to use it for commercial projects.
 
 == Highlights
 * Animation(), Sprite(), SpriteSheet(), TileMap(), Assets() and other useful constructors
-* Easy and robust game states to switch between menus, play, high score lists and settings
-* Jsdoc documentation, documented code & examples with comments
+* Easy and robust game state system to switch between menus, play, high score lists and settings
+* JSDOC Documentation & commented examples
 
 Jaws also:
 - Does <canvas>-sprites and exprimental HTML-based sprites
@@ -59,7 +59,7 @@ You can also link to invidual files in your HTML:
 NOTE: core.js always needed. But then you can pick and choose depending on what you need.
 A rule of thumb is that a file foo.js will include a contructor named Foo().
 
-== Code demo
+== Example
   //
   // Jaws will provide powerful functions like jaws.start() to quickly get a robust gameloop running.
   // It's also possible to do it more manually, fetch your own canvas context and sent it to new Sprite() for example.
