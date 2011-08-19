@@ -34,7 +34,7 @@ jaws.Sprite.prototype.set = function(options) {
   this.scale_factor_x = this.scale_factor_y = (options.scale || 1)
   this.x = options.x || 0
   this.y = options.y || 0
-  this.alpha = options.alpha || 1
+  this.alpha = (options.alpha === undefined) ? 1 : options.alpha
   this.angle = options.angle || 0
   this.flipped = options.flipped || false
   this.anchor(options.anchor || "top_left");
