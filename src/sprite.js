@@ -41,7 +41,7 @@ jaws.Sprite.prototype.set = function(options) {
   if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
   if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
   options.image && this.setImage(options.image)
-  if(options.image_scale) this.scaleImage(options.image_scale);
+  if(options.scale_image) this.scaleImage(options.scale_image);
   this.cacheOffsets()
 
   return this
