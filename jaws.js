@@ -292,10 +292,10 @@ jaws.isOutsideCanvas = function(item) {
  * 'item' needs to have properties: x,y,width,height
  */
 jaws.forceInsideCanvas = function(item) {
-  if(item.x < 0)                          { item.x = 0  }
-  if(item.x + item.width > jaws.width)    { item.x = jaws.width - item.width }
-  if(item.y < 0)                          { item.y = 0 }
-  if(item.y + item.height > jaws.height)  { item.y = jaws.height - item.height }
+  if(item.x < 0)              { item.x = 0  }
+  if(item.x > jaws.width)     { item.x = jaws.width }
+  if(item.y < 0)              { item.y = 0 }
+  if(item.y > jaws.height)    { item.y = jaws.height }
 }
 
 /**
@@ -971,14 +971,14 @@ jaws.Sprite.prototype.set = function(options) {
   this.scale_factor_x = this.scale_factor_y = (options.scale || 1)
   this.x = options.x || 0
   this.y = options.y || 0
-  this.alpha = options.alpha || 1
+  this.alpha = (options.alpha === undefined) ? 1 : options.alpha
   this.angle = options.angle || 0
   this.flipped = options.flipped || false
   this.anchor(options.anchor || "top_left");
   if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
   if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
   options.image && this.setImage(options.image)
-  if(options.image_scale) this.scaleImage(options.image_scale);
+  if(options.scale_image) this.scaleImage(options.scale_image);
   this.cacheOffsets()
 
   return this
@@ -1142,8 +1142,8 @@ jaws.Sprite.prototype.createDiv = function() {
   if(this.image) {
     this.div.style.width = this.image.width + "px"
     this.div.style.height = this.image.height + "px"
-    //this.div.style.backgroundImage = "url(" + this.image.src + ")"
-    this.div.style.backgroundImage = "url(" + this.image.toDataURL() + ")"
+    if(this.image.toDataURL)  { this.div.style.backgroundImage = "url(" + this.image.toDataURL() + ")" }
+    else                      { this.div.style.backgroundImage = "url(" + this.image.src + ")" }
   }
   if(jaws.dom) { jaws.dom.appendChild(this.div) }
   this.updateDiv()
@@ -1274,12 +1274,23 @@ jaws.SpriteList.prototype.updateIf = function(condition) {
   }
 }
 
-/** Delete sprites in spritelist where condition(sprite) returns true */
+/** 
+ * Delete sprites in spritelist where condition(sprite) returns true 
+ * @deprecated
+ */
 jaws.SpriteList.prototype.deleteIf = function(condition) {
   for(var i=0; this[i]; i++) {
     if( condition(this[i]) ) { this.splice(i,1) }
   }
 }
+
+/** Remove sprites in spritelist where condition(sprite) returns true  */
+jaws.SpriteList.prototype.removeIf = function(condition) {
+  for(var i=0; this[i]; i++) {
+    if( condition(this[i]) ) { this.splice(i,1) }
+  }
+}
+
 jaws.SpriteList.prototype.toString = function() { return "[SpriteList " + this.length + " sprites]" }
 
 return jaws;
@@ -1445,16 +1456,16 @@ jaws.Animation = function(options) {
   this.frames = options.frames || []
   this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
   this.index = options.index || 0                       // default: start with the very first frame
-  this.loop = options.loop || 1
+  this.loop = (options.loop==undefined) ? 1 : options.loop
   this.bounce = options.bounce || 0
   this.frame_direction = 1
   this.frame_size = options.frame_size
   
-  if(options.image_scale) {
+  if(options.scale_image) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
-    this.frame_size[0] *= options.image_scale
-    this.frame_size[1] *= options.image_scale
-    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.image_scale)
+    this.frame_size[0] *= options.scale_image
+    this.frame_size[1] *= options.scale_image
+    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.scale_image)
   }
 
   if(options.sprite_sheet) {
@@ -1567,6 +1578,7 @@ jaws.Viewport = function(options) {
   this.height = options.height || jaws.height
   this.max_x = options.max_x || jaws.width 
   this.max_y = options.max_y || jaws.height
+  var that = this
 
   /** Move viewport x pixels horizontally and y pixels vertically */
   this.move = function(x, y) {
@@ -1595,14 +1607,14 @@ jaws.Viewport = function(options) {
    *
    */
   this.isOutside = function(item) {
-    return(!this.isInside(item))
+    return(!that.isInside(item))
   };
 
   /** 
    * Returns true if item is inside viewport 
    */
   this.isInside = function(item) {
-    return( item.x >= this.x && item.x <= (this.x + this.width) && item.y >= this.y && item.y <= (this.y + this.height) )
+    return( item.x >= that.x && item.x <= (that.x + that.width) && item.y >= that.y && item.y <= (that.y + that.height) )
   };
 
   /** 
@@ -1614,6 +1626,22 @@ jaws.Viewport = function(options) {
     this.y = (item.y - this.height / 2)
     this.verifyPosition()
   };
+
+  /**
+   * force 'item' inside current viewports visible area
+   * using 'buffer' as indicator how close to the 'item' is allowed to go
+   *
+   * @example
+   *
+   * viewport.move(10,0)                          // scroll forward
+   * viewport.forceInsideVisibleArea(player, 20)  // make sure player doesn't get left behind
+   */
+  this.forceInsideVisibleArea = function(item, buffer) {
+    if(item.x < this.x+buffer)               { item.x = this.x+buffer }
+    if(item.x > this.x+jaws.width-buffer)    { item.x = this.x+jaws.width-buffer }
+    if(item.y < this.y+buffer)               { item.y = this.y+buffer }
+    if(item.y > this.y+jaws.height-buffer)   { item.y = this.y+jaws.height-buffer }
+  }
 
   /** 
   * executes given draw-callback with a translated canvas which will draw items relative to the viewport

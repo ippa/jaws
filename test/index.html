@@ -6,11 +6,33 @@
   <link href="qunit.css" rel="stylesheet" type="text/css" />
 
   <script type="text/javascript">
-
     test("Various", function() {
       same(jaws.forceArray(1), [1], "forceArray should always return an array")
-      same(jaws.forceArray([1,2,3]), [1,2,3], "forceArray should always return an array")
+      same(jaws.forceArray([1,2,3]), [1,2,3], "forceArray should always return an array")      
     })
+
+    test("jaws.init()", function() {
+      jaws.init()
+      ok(jaws.context, "jaws.context created by jaws.init()")
+      same(jaws.height, 100, "jaws.height set")
+      same(jaws.width, 100, "jaws.width set")
+    });
+
+    test("Core helpers", function() {
+      jaws.init()
+      var sprite = new jaws.Sprite({x: 200, y:200})
+      
+      jaws.forceInsideCanvas(sprite)
+      same(sprite.x, jaws.width, "sprite x forced to jaws.width")
+      same(sprite.y, jaws.height, "sprite x forced to jaws.height")
+
+      sprite.moveTo(-100, -100)
+      ok(jaws.isOutsideCanvas(sprite), "isOutsideCanvas()")
+
+      jaws.forceInsideCanvas(sprite)
+      same(sprite.x, 0, "sprite x forced to 0")
+      same(sprite.y, 0, "sprite y forced to 0")
+    });
 
     test("Properties should exist", function() {
       ok(jaws, "window.jaws")
@@ -203,11 +225,10 @@
     });
 
     test("Sprite", function() {
-      
       sprite = new jaws.Sprite({image: "rect.png", x:0, y:0})
       equal(sprite.width, 20, "sprite.width")  
       equal(sprite.height, 20, "sprite.height")
-     
+    
       sprite.scale(2)
       equal(sprite.rect().width, 40, "sprite.rect().width after scaling x2")
       equal(sprite.rect().height, 40, "sprite.rect().height after scaling x2") 
@@ -260,6 +281,10 @@
       equal(sprite.flipped, !flipped, "sprite.flip inverts flipped")
       sprite.flip()
       equal(sprite.flipped, flipped, "sprite.flip inverts flipped")
+
+      sprite2 = new jaws.Sprite({image: "rect.png", scale_image: 2})
+      equal(sprite2.width, 40, "Sprite({scale_image: 2}) and sprite.width")  
+      equal(sprite2.height, 40, "Sprite({scale_image: 2}) and sprite.height")
     })
     
     test("SpriteList", function() {
@@ -341,5 +366,6 @@
   <h2 id="qunit-userAgent"></h2>
   <ol id="qunit-tests"></ol>
   <div id="qunit-fixture"></div>
+  <canvas width=100 height=100></canvas>
 </body>
 </html>
