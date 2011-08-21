@@ -65,7 +65,7 @@
         if(jaws.pressed("up"))    { player.y -= speed; player.image = player.anim_up.next() }
         if(jaws.pressed("down"))  { player.y += speed; player.image = player.anim_down.next() }
         //forceInsideCanvas(player)
-        fps.innerHTML = jaws.gameloop.fps + ". player: " + player.x + "/" + player.y
+        fps.innerHTML = jaws.game_loop.fps + ". player: " + player.x + "/" + player.y
       }
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */

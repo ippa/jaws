@@ -64,8 +64,8 @@
       player.draw()
       bullets.draw()  // will call draw() on all items in the list
 
-      info_tag.innerHTML = "FPS: " + jaws.gameloop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas.width + "/" + canvas.height
-      fps.innerHTML = jaws.gameloop.fps
+      info_tag.innerHTML = "FPS: " + jaws.game_loop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas.width + "/" + canvas.height
+      fps.innerHTML = jaws.game_loop.fps
     }
     
     /* 2 functions that will help us remove bullets outside the canvas + keep the plane within the canvas. */

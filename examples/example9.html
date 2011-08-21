@@ -124,7 +124,7 @@
         // It won't go outside of 0 or outside of our previously specified max_x, max_y values.
         viewport.centerAround(player)
 
-        live_info.innerHTML = jaws.gameloop.fps + " fps. Player: " + parseInt(player.x) + "/" + parseInt(player.y) + ". "
+        live_info.innerHTML = jaws.game_loop.fps + " fps. Player: " + parseInt(player.x) + "/" + parseInt(player.y) + ". "
         live_info.innerHTML += "Viewport: " + parseInt(viewport.x) + "/" + parseInt(viewport.y) + "."
 
       }

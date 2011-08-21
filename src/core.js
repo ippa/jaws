@@ -125,7 +125,7 @@ function findOrCreateCanvas() {
 }
 
 /** 
- * Quick and easy startup of a jaws gameloop
+ * Quick and easy startup of a jaws game loop
  *
  * @example
  * jaws.start(MyGame)            // Start game state Game() with default options
@@ -177,9 +177,9 @@ jaws.start = function(game_state, options) {
     if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
     if(!game_state)                                 { game_state = window }
 
-    jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
+    jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
     jaws.game_state = game_state
-    jaws.gameloop.start()
+    jaws.game_loop.start()
   }
 
   jaws.log("assets.loadAll()", true)
@@ -211,7 +211,7 @@ jaws.start = function(game_state, options) {
 *
 */
 jaws.switchGameState = function(game_state) {
-  jaws.gameloop.stop()
+  jaws.game_loop.stop()
   
   jaws.clearKeyCallbacks() // clear out all keyboard callbacks
  
@@ -219,8 +219,8 @@ jaws.switchGameState = function(game_state) {
   
   jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
-  jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.gameloop.fps)
-  jaws.gameloop.start()
+  jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.game_loop.fps)
+  jaws.game_loop.start()
 }
 
 /** 

@@ -37,7 +37,7 @@
         if(jaws.pressed("left"))  { parallax.camera_x -= 10 }
         if(jaws.pressed("right")) { parallax.camera_x += 10 }
         else { parallax.camera_x += 2 }
-        fps.innerHTML = jaws.gameloop.fps
+        fps.innerHTML = jaws.game_loop.fps
       }
       
       this.draw = function() {

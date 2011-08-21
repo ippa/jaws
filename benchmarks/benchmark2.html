@@ -46,7 +46,7 @@
           sprite.draw();
         }
         sprite.rotate(1)
-        fps.innerHTML = jaws.gameloop.fps
+        fps.innerHTML = jaws.game_loop.fps
       }
     }
     
@@ -66,7 +66,7 @@
           jaws.context.restore()
         }
 
-        fps.innerHTML = jaws.gameloop.fps
+        fps.innerHTML = jaws.game_loop.fps
         rotation += 1
       }
     }
@@ -74,7 +74,7 @@
     jaws.onload = function() {
       jaws.assets.add("plane.png")
       jaws.on_keydown("space", function() { jaws.switchGameState(BenchCanvas) })
-      jaws.on_keydown("esc", function()   { jaws.gameloop.stop() })
+      jaws.on_keydown("esc", function()   { jaws.game_loop.stop() })
       jaws.start(BenchSprite, 200) // Try impossible framerate
     }
     </script>

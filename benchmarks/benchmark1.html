@@ -29,7 +29,7 @@
 
       this.draw = function() {
         for(var i=0; i < loop; i++) { jaws.context.drawImage(image, 0, 0) }
-        fps.innerHTML = jaws.gameloop.fps + ". " + "context.drawImage(image)"
+        fps.innerHTML = jaws.game_loop.fps + ". " + "context.drawImage(image)"
       }
     }
     
@@ -46,7 +46,7 @@
 
       this.draw = function() {
         for(var i=0; i < loop; i++) { jaws.context.drawImage(canvas, 0, 0) }
-        fps.innerHTML = jaws.gameloop.fps + ". " + "context.drawImage(context)"
+        fps.innerHTML = jaws.game_loop.fps + ". " + "context.drawImage(context)"
       }
     }
 

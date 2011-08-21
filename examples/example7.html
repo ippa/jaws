@@ -73,11 +73,11 @@
       player.vy /= 1.10
 
       bullets.update()
-      // jaws.log("bullets: " + bullets.length + " fps: " + jaws.gameloop.fps)
+      // jaws.log("bullets: " + bullets.length + " fps: " + jaws.game_loop.fps)
     }
 
     this.draw = function() {
-      //fps.innerHTML = jaws.gameloop.fps
+      //fps.innerHTML = jaws.game_loop.fps
       player.draw()
       bullets.draw()
     }

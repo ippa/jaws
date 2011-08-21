@@ -125,7 +125,7 @@ function findOrCreateCanvas() {
 }
 
 /** 
- * Quick and easy startup of a jaws gameloop
+ * Quick and easy startup of a jaws game loop
  *
  * @example
  * jaws.start(MyGame)            // Start game state Game() with default options
@@ -177,9 +177,9 @@ jaws.start = function(game_state, options) {
     if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
     if(!game_state)                                 { game_state = window }
 
-    jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
+    jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
     jaws.game_state = game_state
-    jaws.gameloop.start()
+    jaws.game_loop.start()
   }
 
   jaws.log("assets.loadAll()", true)
@@ -211,7 +211,7 @@ jaws.start = function(game_state, options) {
 *
 */
 jaws.switchGameState = function(game_state) {
-  jaws.gameloop.stop()
+  jaws.game_loop.stop()
   
   jaws.clearKeyCallbacks() // clear out all keyboard callbacks
  
@@ -219,8 +219,8 @@ jaws.switchGameState = function(game_state) {
   
   jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
-  jaws.gameloop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.gameloop.fps)
-  jaws.gameloop.start()
+  jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.game_loop.fps)
+  jaws.game_loop.start()
 }
 
 /** 
@@ -271,6 +271,7 @@ jaws.isString = function(obj) {
 
 /** returns true if obj is an Array */
 jaws.isArray = function(obj)  { 
+  if(obj === undefined) return false;
   return !(obj.constructor.toString().indexOf("Array") == -1) 
 }
 
@@ -740,7 +741,7 @@ window.requestAnimFrame = (function(){
 })();
 
 /**
- * @class A classic gameloop forever looping calls to update() / draw() with given framerate
+ * @class A classic game loop forever looping calls to update() / draw() with given framerate
  *
  * @example
  *
@@ -748,8 +749,8 @@ window.requestAnimFrame = (function(){
  *    ... your stuff executed every 30 FPS ...
  * }
  *
- * gameloop = new jaws.GameLoop(setup, update, draw, 30)
- * gameloop.start()
+ * game_loop = new jaws.GameLoop(setup, update, draw, 30)
+ * game_loop.start()
  *
  * // You can also use the shortcut jaws.start(), it will:
  * // 1) Load all assets with jaws.assets.loadAll()
@@ -768,9 +769,9 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   var that = this
   var mean_value = new MeanValue(20) // let's have a smooth, non-jittery FPS-value
 
-  /** Start the gameloop by calling setup() once and then loop update()/draw() forever with given FPS */
+  /** Start the game loop by calling setup() once and then loop update()/draw() forever with given FPS */
   this.start = function() {
-    jaws.log("gameloop start", true)
+    jaws.log("game loop start", true)
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
     if(setup) { setup() }
@@ -779,10 +780,10 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     // update_id = setInterval(this.loop, step_delay);
     requestAnimFrame(this.loop)
 
-    jaws.log("gameloop loop", true)
+    jaws.log("game loop loop", true)
   }
   
-  /** The core of the gameloop. Calculate a mean FPS and call update()/draw() if gameloop is not paused */
+  /** The core of the game loop. Calculate a mean FPS and call update()/draw() if game loop is not paused */
   this.loop = function() {
     that.current_tick = (new Date()).getTime();
     that.tick_duration = that.current_tick - that.last_tick
@@ -797,13 +798,13 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     that.last_tick = that.current_tick;
   }
   
-  /** Pause the gameloop. loop() will still get called but not update() / draw() */
+  /** Pause the game loop. loop() will still get called but not update() / draw() */
   this.pause = function()   { paused = true }
   
-  /** unpause the gameloop */
+  /** unpause the game loop */
   this.unpause = function() { paused = false }
 
-  /** Stop the gameloop */
+  /** Stop the game loop */
   this.stop = function() { 
     if(update_id) clearInterval(update_id); 
     stopped = true;
@@ -1212,6 +1213,21 @@ jaws.Sprite.prototype.asCanvasContext = function() {
   return context
 }
 
+/** 
+ * Returns sprite as a canvas
+ */
+jaws.Sprite.prototype.asCanvas = function() {
+  var canvas = document.createElement("canvas")
+  canvas.width = this.width
+  canvas.height = this.height
+
+  var context = canvas.getContext("2d")
+  context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
+
+  context.drawImage(this.image, 0, 0, this.width, this.height)
+  return canvas
+}
+
 jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
 
 return jaws;
@@ -1421,8 +1437,10 @@ jaws.ParallaxLayer = function(options) {
   jaws.Sprite.call(this, options)
 }
 jaws.ParallaxLayer.prototype = jaws.Sprite.prototype
+
 /** Debugstring for ParallaxLayer() */
-jaws.ParallaxLayer.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
+// This overwrites Sprites toString, find another sollution.
+// jaws.ParallaxLayer.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
 
 return jaws;
 })(jaws || {});
@@ -1642,6 +1660,21 @@ jaws.Viewport = function(options) {
     if(item.y < this.y+buffer)               { item.y = this.y+buffer }
     if(item.y > this.y+jaws.height-buffer)   { item.y = this.y+jaws.height-buffer }
   }
+  
+  /**
+   * force 'item' inside the limits of the viewport
+   * using 'buffer' as indicator how close to the 'item' is allowed to go
+   *
+   * @example
+   * viewport.forceInside(player, 10) 
+   */
+  this.forceInside = function(item, buffer) {
+    if(item.x < buffer)               { item.x = buffer }
+    if(item.x > this.max_x-buffer)    { item.x = this.max_x-buffer }
+    if(item.y < buffer)               { item.y = buffer }
+    if(item.y > this.max_y-buffer)    { item.y = this.max_y-buffer }
+  }
+
 
   /** 
   * executes given draw-callback with a translated canvas which will draw items relative to the viewport

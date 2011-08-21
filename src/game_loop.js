@@ -13,7 +13,7 @@ window.requestAnimFrame = (function(){
 })();
 
 /**
- * @class A classic gameloop forever looping calls to update() / draw() with given framerate
+ * @class A classic game loop forever looping calls to update() / draw() with given framerate
  *
  * @example
  *
@@ -21,8 +21,8 @@ window.requestAnimFrame = (function(){
  *    ... your stuff executed every 30 FPS ...
  * }
  *
- * gameloop = new jaws.GameLoop(setup, update, draw, 30)
- * gameloop.start()
+ * game_loop = new jaws.GameLoop(setup, update, draw, 30)
+ * game_loop.start()
  *
  * // You can also use the shortcut jaws.start(), it will:
  * // 1) Load all assets with jaws.assets.loadAll()
@@ -41,9 +41,9 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
   var that = this
   var mean_value = new MeanValue(20) // let's have a smooth, non-jittery FPS-value
 
-  /** Start the gameloop by calling setup() once and then loop update()/draw() forever with given FPS */
+  /** Start the game loop by calling setup() once and then loop update()/draw() forever with given FPS */
   this.start = function() {
-    jaws.log("gameloop start", true)
+    jaws.log("game loop start", true)
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
     if(setup) { setup() }
@@ -52,10 +52,10 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     // update_id = setInterval(this.loop, step_delay);
     requestAnimFrame(this.loop)
 
-    jaws.log("gameloop loop", true)
+    jaws.log("game loop loop", true)
   }
   
-  /** The core of the gameloop. Calculate a mean FPS and call update()/draw() if gameloop is not paused */
+  /** The core of the game loop. Calculate a mean FPS and call update()/draw() if game loop is not paused */
   this.loop = function() {
     that.current_tick = (new Date()).getTime();
     that.tick_duration = that.current_tick - that.last_tick
@@ -70,13 +70,13 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     that.last_tick = that.current_tick;
   }
   
-  /** Pause the gameloop. loop() will still get called but not update() / draw() */
+  /** Pause the game loop. loop() will still get called but not update() / draw() */
   this.pause = function()   { paused = true }
   
-  /** unpause the gameloop */
+  /** unpause the game loop */
   this.unpause = function() { paused = false }
 
-  /** Stop the gameloop */
+  /** Stop the game loop */
   this.stop = function() { 
     if(update_id) clearInterval(update_id); 
     stopped = true;

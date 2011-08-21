@@ -87,7 +87,7 @@
         if(jaws.pressed("right")) { player.move(2,0);   player.setImage(player.anim_right.next()) }
         if(jaws.pressed("up"))    { player.move(0, -2); player.setImage(player.anim_up.next()) }
         if(jaws.pressed("down"))  { player.move(0, 2);  player.setImage(player.anim_down.next()) }
-        fps.innerHTML = jaws.gameloop.fps + ". player: " + player.x + "/" + player.y
+        fps.innerHTML = jaws.game_loop.fps + ". player: " + player.x + "/" + player.y
       }
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */
