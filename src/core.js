@@ -271,6 +271,7 @@ jaws.isString = function(obj) {
 
 /** returns true if obj is an Array */
 jaws.isArray = function(obj)  { 
+  if(obj === undefined) return false;
   return !(obj.constructor.toString().indexOf("Array") == -1) 
 }
 
