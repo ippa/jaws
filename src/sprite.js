@@ -275,6 +275,21 @@ jaws.Sprite.prototype.asCanvasContext = function() {
   return context
 }
 
+/** 
+ * Returns sprite as a canvas
+ */
+jaws.Sprite.prototype.asCanvas = function() {
+  var canvas = document.createElement("canvas")
+  canvas.width = this.width
+  canvas.height = this.height
+
+  var context = canvas.getContext("2d")
+  context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
+
+  context.drawImage(this.image, 0, 0, this.width, this.height)
+  return canvas
+}
+
 jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
 
 return jaws;
