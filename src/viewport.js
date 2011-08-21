@@ -96,6 +96,21 @@ jaws.Viewport = function(options) {
     if(item.y < this.y+buffer)               { item.y = this.y+buffer }
     if(item.y > this.y+jaws.height-buffer)   { item.y = this.y+jaws.height-buffer }
   }
+  
+  /**
+   * force 'item' inside the limits of the viewport
+   * using 'buffer' as indicator how close to the 'item' is allowed to go
+   *
+   * @example
+   * viewport.forceInside(player, 10) 
+   */
+  this.forceInside = function(item, buffer) {
+    if(item.x < buffer)               { item.x = buffer }
+    if(item.x > this.max_x-buffer)    { item.x = this.max_x-buffer }
+    if(item.y < buffer)               { item.y = buffer }
+    if(item.y > this.max_y-buffer)    { item.y = this.max_y-buffer }
+  }
+
 
   /** 
   * executes given draw-callback with a translated canvas which will draw items relative to the viewport
