@@ -65,8 +65,8 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
       if(update) { update() }
       if(draw)   { draw() }
       that.ticks++
-      if(!stopped) requestAnimFrame(that.loop);
     }
+    if(!stopped) requestAnimFrame(that.loop);
     that.last_tick = that.current_tick;
   }
   
