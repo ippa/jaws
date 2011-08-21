@@ -80,8 +80,10 @@ jaws.ParallaxLayer = function(options) {
   jaws.Sprite.call(this, options)
 }
 jaws.ParallaxLayer.prototype = jaws.Sprite.prototype
+
 /** Debugstring for ParallaxLayer() */
-jaws.ParallaxLayer.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
+// This overwrites Sprites toString, find another sollution.
+// jaws.ParallaxLayer.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
 
 return jaws;
 })(jaws || {});
