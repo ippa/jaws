@@ -27,6 +27,13 @@ jaws.SpriteSheet = function(options) {
   this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
+  
+  if(options.scale_image) {
+    var image = (jaws.isDrawable(options.image) ? options.image : jaws.assets.get(options.image))
+    this.frame_size[0] *= options.scale_image
+    this.frame_size[1] *= options.scale_image
+    options.image = jaws.gfx.retroScaleImage(image, options.scale_image)
+  }
 
   var index = 0
   for(var x=0; x < this.image.width; x += this.frame_size[0]) {
