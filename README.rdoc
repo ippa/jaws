@@ -42,8 +42,9 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/jawsjs/examples/example11.html - jaws.gfx.retroScaleImage and Literal Notion game state
 
 == Games using Jaws
-* {http://ippa.se/webgames/unexpected_outcome/}[http://ippa.se/webgames/unexpected_outcome/] - A 10-minute adventure game with pixel-perfect collisions
-* {http://ippa.se/webgames/unwaivering/}[http://ippa.se/webgames/unwaivering/]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
+* {http://ippa.se/webgames/the_escape/index.html}[http://ippa.se/webgames/the_escape/index.html] - "The Escape" - My Ludum Dare #21 entry. Adventure/Puzzle.
+* {http://ippa.se/webgames/unexpected_outcome/index.html}[http://ippa.se/webgames/unexpected_outcome/index.html] - A 10-minute adventure game with pixel-perfect collisions
+* {http://ippa.se/webgames/unwaivering/index.html}[http://ippa.se/webgames/unwaivering/index.html]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
 
 ... missing your game here? Msg me on github!
 

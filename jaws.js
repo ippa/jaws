@@ -793,8 +793,8 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
       if(update) { update() }
       if(draw)   { draw() }
       that.ticks++
-      if(!stopped) requestAnimFrame(that.loop);
     }
+    if(!stopped) requestAnimFrame(that.loop);
     that.last_tick = that.current_tick;
   }
   
@@ -1341,6 +1341,13 @@ jaws.SpriteSheet = function(options) {
   this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
+  
+  if(options.scale_image) {
+    var image = (jaws.isDrawable(options.image) ? options.image : jaws.assets.get(options.image))
+    this.frame_size[0] *= options.scale_image
+    this.frame_size[1] *= options.scale_image
+    options.image = jaws.gfx.retroScaleImage(image, options.scale_image)
+  }
 
   var index = 0
   for(var x=0; x < this.image.width; x += this.frame_size[0]) {
@@ -1913,13 +1920,12 @@ var jaws = (function(jaws) {
 
     var w2 = to_data.width
     var h2 = to_data.height
-
-    for (var y=0; y < h2; y++) {
+    for (var y=0; y < h2; y += 1) {
       var y2 = Math.floor(y / factor)
       var y_as_x = y * to_data.width
       var y2_as_x = y2 * image.width
 
-      for (var x=0; x < w2; x++) {
+      for (var x=0; x < w2; x += 1) {
         var x2 = Math.floor(x / factor)
         var y_dst = (y_as_x + x) * 4
         var y_src = (y2_as_x + x2) * 4
@@ -1930,6 +1936,7 @@ var jaws = (function(jaws) {
         to_data.data[y_dst+3] = data[y_src+3];
       }
     }
+
     context2.putImageData(to_data, 0, 0)
 
     return canvas2
