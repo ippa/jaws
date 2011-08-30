@@ -19,9 +19,9 @@ Jaws also:
 - Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Learn more
-- {http://jawsjs.com/docs/}[http://jawsjs.com/docs/]                  - Jaws documentation
+- {http://jawsjs.com/docs/index.html}[http://jawsjs.com/docs/]                  - Jaws documentation
 - {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Overview and design choices.
-- {http://jawsjs.com/jawsjs/test/}[http://jawsjs.com/jawsjs/test/]    - Jaws testsuite (QUnit)
+- {http://jawsjs.com/jawsjs/test/index.html}[http://jawsjs.com/jawsjs/test/]    - Jaws testsuite (QUnit)
 
 == Jaws is still beta
 ... So don't base your commercial projects on it.
