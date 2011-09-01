@@ -9,7 +9,7 @@ canvas { border: 1px solid; background: white; margin-top: 100px; display: block
 
 #info { width: 500px; line-height: 130%; padding-top: 20px; }
 #jaws-log { font: 11px verdana; color: #aaaaaa; background: black; width: 500px; padding: 5px; }
-#jaws-edit { font: 11px verdana; color: #aaaaaa; background: black; width: 480px; padding: 10px; margin-top: 10px; min-height: 50px; display: none; }
+#jaws-edit { font: 11px verdana; color: #aaaaaa; background: black; width: 480px; padding: 10px; margin-top: 10px; min-height: 50px; display: none; overflow: auto; }
 code { font-weight: bold; font-size: 15px; color: #33FF33;}
 
 body {
