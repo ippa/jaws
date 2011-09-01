@@ -2,6 +2,13 @@ var jaws = (function(jaws) {
 
 if(!jaws.game_states) jaws.game_states = {}
 
+/**
+ *
+ * jaws game state to edit/move Sprite's around
+ * This is NOT included in jaws.js, jaws-min.js or jaws-dynamic.js and must be loaded separately if needed.
+ * See example10.html for a demo
+ *
+ */
 jaws.game_states.Edit = function(options) {
   if(! options ) options = {};
   var game_objects = options.game_objects || []
@@ -25,7 +32,8 @@ jaws.game_states.Edit = function(options) {
 
     edit_tag.innerHTML = "Selected game objects:<br/>"
     game_objects.filter(isSelected).forEach( function(element, index) {
-      edit_tag.innerHTML += element.toString() + "<br />"
+      edit_tag.innerHTML += element.toString()
+      edit_tag.innerHTML += "<br />"
     });
   }
   function mouseup(e) {
