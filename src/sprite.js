@@ -290,7 +290,31 @@ jaws.Sprite.prototype.asCanvas = function() {
   return canvas
 }
 
-jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
+jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x.toFixed(2) + ", " + this.y.toFixed(2) + ", " + this.width + ", " + this.height + "]" }
+/**
+ * returns a JSON-string representing the state of the Sprite.
+ *
+ * Use this to serialize your sprites / game objects, maybe to save in local storage or on a server
+ *
+ * jaws.game_states.Edit uses this to export all edited objects.
+ *
+ */
+jaws.Sprite.prototype.toJSON = function() { 
+  var object = this.options                   // Start with all creation time properties
+
+  object["constructor"] = "Sprite"
+  object["x"] = this.x.toFixed(2)
+  object["y"] = this.y.toFixed(2)
+  object["alpha"] = this.alpha
+  object["angle"] = this.angle.toFixed(2)
+  object["flipped"] = this.flipped
+  object["scale_factor_x"] = this.scale_factor_x
+  object["scale_factor_y"] = this.scale_factor_y
+  object["anchor_x"] = this.anchor_x
+  object["anchor_y"] = this.anchor_y
+ 
+  return JSON.stringify(object)
+}
 
 return jaws;
 })(jaws || {});
