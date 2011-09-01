@@ -1,23 +1,37 @@
 html { height: 100%; }
-body { font: 13px verdana; color: #eeeeee; height: 100%; padding: 0px; margin: 0px; background: #050c0f; }
-h1,h2,h3 { padding: 0px; margin: 10px 0px 0px 0px; font: 30px terminal; letter-spacing: 2px; }
+h1,h2,h3 { padding: 0px; margin: 20px 0px 0px 0px; font: 30px terminal; letter-spacing: 2px; text-align: left; }
 h1 { color: #FF2FE7; font-size: 30px; }
 h2 { color: #45D4FF; font-size: 25px; }
 h3 { color: #45D4FF; font-size: 25px; }
-canvas { border: 1px solid; background: white; margin-top: 150px; }
-#canvas { margin: auto; width: 800px; height: 500px; border: black 1px solid; overflow: hidden; background: white; }
-#info { width: 600px; line-height: 130%; padding-top: 10px; }
-#jaws-log { margin: auto; font: 11px verdana; color: #aaaaaa; background: black; width: 500px; padding: 5px; text-align: left; }
-#jaws-edit { font: 11px verdana; color: #aaaaaa; background: black; width: 500px; padding: 5px; text-align: left; display: none;}
-code { font-weight: bold; font-size: 15px; color: white;}
 
-/* We want non-blurry, block retro gfx when scalign! Webkit (chrome/safari) has yet to catch up with this */
-html, canvas {
-  image-rendering: -moz-crisp-edges;         /* Firefox */
-  -ms-interpolation-mode: nearest-neighbor;  /* IE */
-}
+canvas { border: 1px solid; background: white; margin-top: 100px; display: block; }
+#canvas { margin: auto; width: 500px; height: 400px; margin-top: 100px; border: black 1px solid; overflow: hidden; background: white; }
+
+#info { width: 500px; line-height: 130%; padding-top: 20px; }
+#jaws-log { font: 11px verdana; color: #aaaaaa; background: black; width: 500px; padding: 5px; }
+#jaws-edit { font: 11px verdana; color: #aaaaaa; background: black; width: 480px; padding: 10px; margin-top: 10px; min-height: 50px; display: none; }
+code { font-weight: bold; font-size: 15px; color: #33FF33;}
 
 body {
+  font: 13px verdana;
+  text-align: left;
+  color: #eeeeee; 
+  padding: 0px; margin: 0px; 
+  width: 500px;
+  margin: 0px auto;
+  background: #050c0f;
   background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0.25,rgb(5,12,15)),color-stop(0.84, rgb(10,90,133)) );
   background-image: -moz-linear-gradient(center bottom,rgb(5,12,15) 25%,rgb(10,90,133) 84%);
+}
+
+/*
+ * We want non-blurry, block retro gfx when scaling! Webkit (chrome/safari) has yet to catch up with this 
+ * Also this actually doesn't seem to affect the <canvas>-tag just yet.
+ */
+html, canvas, img {
+  image-rendering: optimizeSpeed;
+  image-rendering: optimize-contrast;
+  image-rendering: -moz-crisp-edges; /* FF */
+  image-rendering: -webkit-optimize-contrast; /* Webkit */
+  -ms-interpolation-mode: nearest-neighbor;   /* IE */
 }

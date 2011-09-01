@@ -5,16 +5,18 @@
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #1 - Sprite(), pressed(), basic game loop</title>
   </head>
+<body>
 
-  <body>
-  <center>
-
-  <canvas width=500 height=300></canvas><br />
-  FPS: <span id="fps"></span>
+  <canvas width=500 height=300></canvas>
+  FPS: <span id="fps"></span>. Move with arrow keys.
   <span id="info"></span>
 
   <div id="info">
     <h1>jaws.gfx.retroScaleImage() and Literal Notion game state</h1>
+    You can also pre-scale an sprite like this:
+    <code>new Sprite({image: "player.png", scale_image: 3})</code>.
+    This will pre-scale player.png using a nearest neighbor algo (blocky retro style).
+    NOTE: Scaling Big images can make browser "hang" for 2-3-4 seconds.
   </div>
  
   <script>
@@ -22,17 +24,18 @@
     var info_tag
     var fps
 
-    Play = {
+    play_state = {
       setup: function() {  
         fps = document.getElementById("fps")
         info_tag = document.getElementsByTagName('info')
 
         var prescaled_image = jaws.gfx.retroScaleImage( jaws.assets.get("plane.png"), 3)
-        player = new jaws.Sprite({image: prescaled_image, x: 50, y:50})
+        player = new jaws.Sprite({image: prescaled_image, x: 50, y:50, anchor: "center"})
         jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       },
       
       update: function() {
+        jaws.forceInsideCanvas(player)
         if(jaws.pressed("left"))  { player.x -= 2 }
         if(jaws.pressed("right")) { player.x += 2 }
         if(jaws.pressed("up"))    { player.y -= 2 }
@@ -49,10 +52,10 @@
 
     jaws.onload = function() {
       jaws.assets.add("plane.png")
-      jaws.start(Play)
+      jaws.start(play_state)
     }
   </script>
-</center>
+
 </body>
 </html>
 

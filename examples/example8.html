@@ -4,21 +4,10 @@
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #8 - TileMap()</title>
-
-    <!-- We want non-blurry, block retro gfx when scaling! Webkit (chrome/safari) has yet to catch up with this. -->
-    <style type="text/css">
-      html, canvas {
-        image-rendering: -moz-crisp-edges;         /* Firefox */
-        -ms-interpolation-mode: nearest-neighbor;  /* IE */
-      }
-    </style>
-
   </head>
-
 <body>
-<center>
 
-  <canvas width=320 height=320></canvas><br />
+  <canvas width=500 height=320></canvas><br />
   FPS: <span id="fps"></span>. Move with arrow keys.
   
   <div id="info">
@@ -54,7 +43,7 @@
         // Later on we can look them up really fast (see player.move)
         tile_map.push(blocks)
 
-        player = new jaws.Sprite({x:110, y:120, scale: 2, anchor: "center_bottom"})
+        player = new jaws.Sprite({x:110, y:120, scale: 2, anchor: "center"})
         player.move = function(x, y) {
           jaws.log("Player: " + player.rect().toString())
           
@@ -87,6 +76,8 @@
         if(jaws.pressed("right")) { player.move(2,0);   player.setImage(player.anim_right.next()) }
         if(jaws.pressed("up"))    { player.move(0, -2); player.setImage(player.anim_up.next()) }
         if(jaws.pressed("down"))  { player.move(0, 2);  player.setImage(player.anim_down.next()) }
+
+        jaws.forceInsideCanvas(player)
         fps.innerHTML = jaws.game_loop.fps + ". player: " + player.x + "/" + player.y
       }
 
@@ -109,7 +100,6 @@
     }
   </script>
 
-</center>
 </body>
 </html>
 

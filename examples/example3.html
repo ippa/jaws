@@ -4,29 +4,18 @@
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #3 - Animation</title>
-
-    <!-- We want non-blurry, block retro gfx when scalign! Webkit (chrome/safari) has yet to catch up with this. -->
-    <style type="text/css">
-      html, canvas {
-        image-rendering: -moz-crisp-edges;         /* Firefox */
-        -ms-interpolation-mode: nearest-neighbor;  /* IE */
-      }
-    </style>
-
   </head>
-
 <body>
-<center>
-
-  <canvas width=500 height=300></canvas><br />
+    
+  <canvas width=500 height=300></canvas>
   FPS: <span id="fps"></span>. Move with arrow keys.
-  
+    
   <div id="info">
     <h1>Animations</h1>
     Showing of a "complex" animation, all cut up from a spritesheet.
     We also use {anchor: "center_bottom"} which means when we paint the sprite at 100/200, the feet will be placed there.
   </div>
-  
+
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
  
@@ -96,7 +85,6 @@
     }
   </script>
 
-</center>
 </body>
 </html>
 

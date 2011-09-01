@@ -5,28 +5,22 @@
     <script src="../game_states/edit.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #9 - game state Edit</title>
-
-    <!-- We want non-blurry, block retro gfx when scaling! Webkit (chrome/safari) has yet to catch up with this. -->
-    <style type="text/css">
-      html, canvas {
-        image-rendering: -moz-crisp-edges;         /* Firefox */
-        -ms-interpolation-mode: nearest-neighbor;  /* IE */
-      }
-    </style>
   </head>
-
 <body>
-<center>
-  <canvas width=640 height=320></canvas><br />
-  <div id="jaws-edit" /></div>
+
+  <canvas width=500 height=400></canvas>
+
+  <div id="jaws-edit" />Editor output will show here.</div>
   <div id="live_info"></div>
   
   <div id="info">
     <h1>Edit</h1>
-    SPACE or ESC to activate editor:<br/><br/>
-    x = new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32]})
-    jaws.switchGameState(x)
-    <br/><br />
+    SPACE to activate editor, ESC to exit editor.<br/><br/>
+    <code>
+    game_state = new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32]});<br />
+    jaws.switchGameState(game_state);
+    </code>
+    <br /><br />
     Click and drag to move sprites. Hold CTRL to select more then one.
   </div>
   
@@ -37,6 +31,7 @@
     function Example() {
       var blocks = new jaws.SpriteList()
       var live_info = document.getElementById("live_info")
+
       for(var nr=10; nr--; ) {
         blocks.push( new jaws.Sprite({image: "block.bmp", x: Math.random()*jaws.width, y: Math.random()*jaws.height}) )
       }
@@ -44,7 +39,7 @@
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
         jaws.on_keydown(["esc","space"], function() { 
-          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32] }) )
+          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32]}) )
         })
         jaws.preventDefaultKeys(["space"])
       }
@@ -57,12 +52,12 @@
 
     /* Entry point after jaws is done loading */
     jaws.onload = function() {
-      // jaws.assets.add("block.bmp")
+      // jaws.assets.add("block.bmp") // Uncomment to preload block.bmp
+      // Without preload, a sprite using "block.bmp" will try to load it creation time
       jaws.start(Example)
     }
   </script>
 
-</center>
 </body>
 </html>
 
