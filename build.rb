@@ -9,6 +9,8 @@ files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","
 files.each do |file|
   out.write(File.read(prefix + file))
 end
+out.write(";window.addEventListener(\"load\", function() { if(jaws.onload) jaws.onload(); }, false);")
+
 out.close
 
 #
