@@ -131,17 +131,23 @@ jaws.TileMap.prototype.at = function(x, y) {
 jaws.TileMap.prototype.atRect = function(rect) {
   var objects = []
   var items
-  var from_col = parseInt(rect.x / this.cell_size[0])
-  var to_col = parseInt(rect.right / this.cell_size[0])
-  for(var col = from_col; col <= to_col; col++) {
-    var from_row = parseInt(rect.y / this.cell_size[1])
-    var to_row = parseInt(rect.bottom / this.cell_size[1])
-    
-    for(var row = from_row; row <= to_row; row++) {
-      this.cells[col][row].forEach( function(item, total) { 
-        if(objects.indexOf(item) == -1) { objects.push(item) }
-      })
+
+  try {
+    var from_col = parseInt(rect.x / this.cell_size[0])
+    var to_col = parseInt(rect.right / this.cell_size[0])
+    for(var col = from_col; col <= to_col; col++) {
+      var from_row = parseInt(rect.y / this.cell_size[1])
+      var to_row = parseInt(rect.bottom / this.cell_size[1])
+      
+      for(var row = from_row; row <= to_row; row++) {
+        this.cells[col][row].forEach( function(item, total) { 
+          if(objects.indexOf(item) == -1) { objects.push(item) }
+        })
+      }
     }
+  }
+  catch(e) {
+    // ... problems
   }
   return objects
 }
