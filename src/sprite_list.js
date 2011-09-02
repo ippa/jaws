@@ -18,8 +18,36 @@ enemies.deleteIf(isOutsideCanvas) // deletes each item in enemies that returns t
 enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
 
 */
-jaws.SpriteList = function() {}
+jaws.SpriteList = function() {
+}
 jaws.SpriteList.prototype = new Array
+
+/**
+ *
+ * load sprites into sprite list.
+ *
+ * Argument could either be
+ * - an array of JSON objects
+ * - a JSON.stringified string representing an array of JSON objects
+ *
+ * TODO: simplification possible?
+ *
+ */
+jaws.SpriteList.prototype.load = function(objects) {
+  var that = this;  // Since forEach changes this into DOMWindow.. hm, lame.
+  if(jaws.isArray(objects)) {
+  }
+  else if(jaws.isString(objects)) {
+    JSON.parse(objects).forEach( function(data) {
+      var constructor = eval(data.constructor)
+      if(constructor) {
+        jaws.log("Creating " + data.constructor + "(" + data.toString() + ")", true)
+        var object = new constructor(data)
+        that.push(object);
+      }
+    });
+  }
+}
 
 /** Remove a certain sprite from list */
 jaws.SpriteList.prototype.remove = function(obj) {
