@@ -119,8 +119,10 @@ jaws.game_states.Edit = function(options) {
   
   function add() {
     var constructor = prompt("Enter constructor to create new object from")
-    var data = prompt("Enter JSON initialize data")
     constructor = eval(constructor)
+    
+    var data = prompt("Enter JSON initialize data, example: { \"image\" : \"block.bmp\" } ")
+    data = JSON.parse(data)
     var object = new constructor(data)
     game_objects.push(object)
   }
@@ -151,23 +153,27 @@ jaws.game_states.Edit = function(options) {
     jaws.clear()
     jaws.previous_game_state.draw()
     game_objects.filter(isSelected).forEach(drawRect)
-
-    if(grid_size) {
-      jaws.context.strokeStyle = "rgba(0,0,255,0.3)";
-      jaws.context.beginPath()
-
-      for(var x=-0.5; x < jaws.width; x+=grid_size[0]) {
-        jaws.context.moveTo(x, 0)
-        jaws.context.lineTo(x, jaws.height)
-      }
-      for(var y=-0.5; y < jaws.height; y+=grid_size[1]) {
-        jaws.context.moveTo(0, y)
-        jaws.context.lineTo(jaws.width, y)
-      }
-      jaws.context.closePath()
-      jaws.context.stroke()
-    }
+    if(grid_size) { draw_grid() }
   }
+
+  function draw_grid() {
+    jaws.context.save();
+    jaws.context.strokeStyle = "rgba(0,0,255,0.3)";
+    jaws.context.beginPath()
+
+    for(var x=-0.5; x < jaws.width; x+=grid_size[0]) {
+      jaws.context.moveTo(x, 0)
+      jaws.context.lineTo(x, jaws.height)
+    }
+    for(var y=-0.5; y < jaws.height; y+=grid_size[1]) {
+      jaws.context.moveTo(0, y)
+      jaws.context.lineTo(jaws.width, y)
+    }
+    jaws.context.closePath()
+    jaws.context.stroke()
+    jaws.context.restore()
+  }
+
 }
 
 return jaws;
