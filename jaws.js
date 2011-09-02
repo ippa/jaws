@@ -1240,11 +1240,11 @@ jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x.toFixed
 jaws.Sprite.prototype.toJSON = function() { 
   var object = this.options                   // Start with all creation time properties
 
-  object["constructor"] = "Sprite"
-  object["x"] = this.x.toFixed(2)
-  object["y"] = this.y.toFixed(2)
+  object["constructor"] = "jaws.Sprite"
+  object["x"] = parseFloat(this.x.toFixed(2))
+  object["y"] = parseFloat(this.y.toFixed(2))
   object["alpha"] = this.alpha
-  object["angle"] = this.angle.toFixed(2)
+  object["angle"] = parseFloat(this.angle.toFixed(2))
   object["flipped"] = this.flipped
   object["scale_factor_x"] = this.scale_factor_x
   object["scale_factor_y"] = this.scale_factor_y
@@ -1277,8 +1277,36 @@ enemies.deleteIf(isOutsideCanvas) // deletes each item in enemies that returns t
 enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
 
 */
-jaws.SpriteList = function() {}
+jaws.SpriteList = function() {
+}
 jaws.SpriteList.prototype = new Array
+
+/**
+ *
+ * load sprites into sprite list.
+ *
+ * Argument could either be
+ * - an array of JSON objects
+ * - a JSON.stringified string representing an array of JSON objects
+ *
+ * TODO: simplification possible?
+ *
+ */
+jaws.SpriteList.prototype.load = function(objects) {
+  var that = this;  // Since forEach changes this into DOMWindow.. hm, lame.
+  if(jaws.isArray(objects)) {
+  }
+  else if(jaws.isString(objects)) {
+    JSON.parse(objects).forEach( function(data) {
+      var constructor = eval(data.constructor)
+      if(constructor) {
+        jaws.log("Creating " + data.constructor + "(" + data.toString() + ")", true)
+        var object = new constructor(data)
+        that.push(object);
+      }
+    });
+  }
+}
 
 /** Remove a certain sprite from list */
 jaws.SpriteList.prototype.remove = function(obj) {
