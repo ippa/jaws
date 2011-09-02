@@ -45,6 +45,8 @@ jaws.game_states.Edit = function(options) {
     click_at = undefined
   }
   function mousemove(e) {
+    jaws.canvas.style.cursor = "default" // doesn't work?
+
     if(click_at) {
       var x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
       var y = (e.pageY || e.clientX) - jaws.canvas.offsetTop
@@ -111,8 +113,16 @@ jaws.game_states.Edit = function(options) {
   }
 
   function save() {
-    localStorage[title] = JSON.stringify(game_objects.map( function(game_object) { return game_object.toJSON() }));
+    localStorage[title] = "[" + game_objects.map( function(game_object) { return game_object.toJSON() }) + "]";
     edit_tag.innerHTML = "Saved game objects to localStorage<br/>"
+  }
+  
+  function add() {
+    var constructor = prompt("Enter constructor to create new object from")
+    var data = prompt("Enter JSON initialize data")
+    constructor = eval(constructor)
+    var object = new constructor(data)
+    game_objects.push(object)
   }
 
   this.setup = function() {
@@ -124,6 +134,7 @@ jaws.game_states.Edit = function(options) {
     jaws.on_keydown(["f2","esc"], exit )
     jaws.on_keydown("s", save )
     jaws.on_keydown("delete",     removeSelected )
+    jaws.on_keydown("add", add )
 
     jaws.canvas.addEventListener("mousedown", mousedown, false)
     jaws.canvas.addEventListener("mouseup", mouseup, false)
