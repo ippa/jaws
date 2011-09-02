@@ -15,13 +15,13 @@
   
   <div id="info">
     <h1>Edit</h1>
-    SPACE to activate editor, ESC to exit editor.<br/><br/>
+    SPACE: start editor. ESC: exit editor. S: Save sprite-properties to localStorage. +: Adds new object<br/><br />
     <code>
     game_state = new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32]});<br />
     jaws.switchGameState(game_state);
     </code>
     <br /><br />
-    Click and drag to move sprites. Hold CTRL to select more then one.
+    Click and drag to move sprites. Hold CTRL to select more then one. If you save with 'S' you can refresh browser and sprites will be loaded from localStorage.
   </div>
   
   <h3>jaws log</h3>
@@ -31,15 +31,19 @@
     function Example() {
       var blocks = new jaws.SpriteList()
       var live_info = document.getElementById("live_info")
-
-      for(var nr=10; nr--; ) {
-        blocks.push( new jaws.Sprite({image: "block.bmp", x: Math.random()*jaws.width, y: Math.random()*jaws.height}) )
-      }
- 
-      /* Called once when a game state is activated. Use it for one-time setup code. */
+      var title = window.location.href  // Use URL as unique identifier when saving/fetching game objects from localStorage
+     
       this.setup = function() {
+        blocks.load(localStorage[title])  // Try to load  saved sprites from localStorage
+        if(blocks.length == 0) {          // No sprites in localStorage? Generate 5 randomly placed blocks!
+          for(var nr=5; nr--; ) {
+            blocks.push( new jaws.Sprite({image: "block.bmp", x: Math.random()*jaws.width, y: Math.random()*jaws.height}) )
+          }
+        }
+ 
         jaws.on_keydown(["esc","space"], function() { 
-          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32]}) )
+          // Start editor by switching game state to a new isntance of jaws.game_states.Edit
+          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32], title: title}) )
         })
         jaws.preventDefaultKeys(["space"])
       }
