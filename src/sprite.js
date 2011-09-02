@@ -303,10 +303,10 @@ jaws.Sprite.prototype.toJSON = function() {
   var object = this.options                   // Start with all creation time properties
 
   object["constructor"] = "Sprite"
-  object["x"] = this.x.toFixed(2)
-  object["y"] = this.y.toFixed(2)
+  object["x"] = parseFloat(this.x.toFixed(2))
+  object["y"] = parseFloat(this.y.toFixed(2))
   object["alpha"] = this.alpha
-  object["angle"] = this.angle.toFixed(2)
+  object["angle"] = parseFloat(this.angle.toFixed(2))
   object["flipped"] = this.flipped
   object["scale_factor_x"] = this.scale_factor_x
   object["scale_factor_y"] = this.scale_factor_y
