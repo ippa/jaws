@@ -8,14 +8,19 @@ if(!jaws.game_states) jaws.game_states = {}
  * This is NOT included in jaws.js, jaws-min.js or jaws-dynamic.js and must be loaded separately if needed.
  * See example10.html for a demo
  *
+ * @property {string} title use this as key when saving game_object properties to localStorage, defaults to current url
+ * @property snap_to_grid snap all game objects to predifned grid
+ * @property {array} grid_size size of grid, mostly make sense with snap_to_grid set to true and TileMap() later on
+ * @property {array} game_objects game_objects to paint and modify on screen
+ *
  */
 jaws.game_states.Edit = function(options) {
   if(! options ) options = {};
   var game_objects = options.game_objects || []
-  // alert(this.game_objects.length)
-  var grid_size = options.grid_size
+  var grid_size = options.grid_size || [32,32]
   var snap_to_grid = options.snap_to_grid
   var track_modified = options.track_modified || true
+  var title = options.title || window.location.href
 
   var that = this
   var click_at
@@ -105,6 +110,11 @@ jaws.game_states.Edit = function(options) {
     jaws.switchGameState(jaws.previous_game_state)
   }
 
+  function save() {
+    localStorage[title] = JSON.stringify(game_objects.map( function(game_object) { return game_object.toJSON() }));
+    edit_tag.innerHTML = "Saved game objects to localStorage<br/>"
+  }
+
   this.setup = function() {
     edit_tag = document.getElementById("jaws-edit")
     edit_tag.style.display = "block"
@@ -112,7 +122,9 @@ jaws.game_states.Edit = function(options) {
     jaws.log("Editor activated!")
     jaws.preventDefaultKeys(["left", "right", "up", "down", "ctrl", "f1", "f2"])
     jaws.on_keydown(["f2","esc"], exit )
+    jaws.on_keydown("s", save )
     jaws.on_keydown("delete",     removeSelected )
+
     jaws.canvas.addEventListener("mousedown", mousedown, false)
     jaws.canvas.addEventListener("mouseup", mouseup, false)
     jaws.canvas.addEventListener("mousemove", mousemove, false)
