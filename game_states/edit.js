@@ -25,6 +25,7 @@ jaws.game_states.Edit = function(options) {
   var that = this
   var click_at
   var edit_tag
+  var cursor_object 
   
   function mousedown(e) {
     var x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
@@ -32,24 +33,56 @@ jaws.game_states.Edit = function(options) {
     jaws.log("click @ " + x + "/" + y)
     
     if(!jaws.pressed("ctrl")) { deselect(game_objects); }
-    select( gameObjectsAt(x, y) )
-    click_at = [x,y]
-
-    edit_tag.innerHTML = "Selected game objects:<br/>"
-    game_objects.filter(isSelected).forEach( function(element, index) {
-      edit_tag.innerHTML += element.toString()
-      edit_tag.innerHTML += "<br />"
-    });
+    
+    var code = ( e.keyCode ? e.keyCode : e.which );
+    // Right mouse button
+    if(code === 3) {
+      var clone_object = gameObjectsAt(x, y)[0]
+      if(clone_object) {
+        console.log("Cloning " + clone_object)
+        cursor_object = new clone_object.constructor(JSON.parse(clone_object.toJSON()))
+      }
+      else {
+        cursor_object = undefined
+      }
+    }
+    else {
+      var list = gameObjectsAt(x, y)
+      
+      if(list.length > 0) {
+        cursor_object = undefined
+        select( list )
+        click_at = [x,y]
+        edit_tag.innerHTML = "Selected game objects:<br/>"
+        game_objects.filter(isSelected).forEach( function(element, index) {
+          edit_tag.innerHTML += element.toString()
+          edit_tag.innerHTML += "<br />"
+        });
+      }
+      else if(cursor_object) {
+        new_object = new cursor_object.constructor(JSON.parse(cursor_object.toJSON()))
+        new_object.x -= new_object.x % grid_size[0]
+        new_object.y -= new_object.y % grid_size[1]
+        game_objects.push(new_object) 
+      }
+    }
+    e.preventDefault();
+    return false;
   }
   function mouseup(e) {
     click_at = undefined
   }
   function mousemove(e) {
     jaws.canvas.style.cursor = "default" // doesn't work?
+    var x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
+    var y = (e.pageY || e.clientX) - jaws.canvas.offsetTop
+
+    if(cursor_object) {
+      cursor_object.x = x
+      cursor_object.y = y
+    }
 
     if(click_at) {
-      var x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
-      var y = (e.pageY || e.clientX) - jaws.canvas.offsetTop
       var snap_object = true
     
       dx = x - click_at[0]
@@ -131,6 +164,13 @@ jaws.game_states.Edit = function(options) {
     edit_tag = document.getElementById("jaws-edit")
     edit_tag.style.display = "block"
 
+    // Disable right click
+    window.oncontextmenu = function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    };
+
     jaws.log("Editor activated!")
     jaws.preventDefaultKeys(["left", "right", "up", "down", "ctrl", "f1", "f2"])
     jaws.on_keydown(["f2","esc"], exit )
@@ -152,6 +192,7 @@ jaws.game_states.Edit = function(options) {
   this.draw = function() {
     jaws.clear()
     jaws.previous_game_state.draw()
+    if(cursor_object) cursor_object.draw();
     game_objects.filter(isSelected).forEach(drawRect)
     if(grid_size) { draw_grid() }
   }
