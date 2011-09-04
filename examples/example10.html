@@ -11,7 +11,6 @@
   <canvas width=500 height=400></canvas>
 
   <div id="jaws-edit" />Editor output will show here.</div>
-  <div id="live_info"></div>
   
   <div id="info">
     <h1>Edit</h1>
@@ -30,7 +29,6 @@
   <script>
     function Example() {
       var blocks = new jaws.SpriteList()
-      var live_info = document.getElementById("live_info")
       var title = window.location.href  // Use URL as unique identifier when saving/fetching game objects from localStorage
      
       this.setup = function() {
