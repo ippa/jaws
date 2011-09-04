@@ -88,9 +88,11 @@
         context.stroke();
       }
     }
-    
-    jaws.assets.add("plane.png")
-    jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
+
+    jaws.onload = function() {
+      jaws.assets.add("plane.png")
+      jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
+    }
   </script>
 
 </body>
