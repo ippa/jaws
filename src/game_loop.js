@@ -30,7 +30,8 @@ window.requestAnimFrame = (function(){
  * jaws.start(MyGameState, {fps: 30})
  *
  */
-jaws.GameLoop = function(setup, update, draw, wanted_fps) {
+//jaws.GameLoop = function(setup, update, draw, fps) {
+jaws.GameLoop = function(game_object, options) {
   this.ticks = 0
   this.tick_duration = 0
   this.fps = 0
@@ -46,8 +47,9 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     jaws.log("game loop start", true)
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
-    if(setup) { setup() }
-    step_delay = 1000 / wanted_fps;
+
+    if(game_object.setup) { game_object.setup() }
+    step_delay = 1000 / options.fps;
     
     // update_id = setInterval(this.loop, step_delay);
     requestAnimFrame(this.loop)
@@ -62,8 +64,8 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     that.fps = mean_value.add(1000/that.tick_duration).get()
 
     if(!paused) {
-      if(update) { update() }
-      if(draw)   { draw() }
+      if(game_object.update) { game_object.update() }
+      if(game_object.draw)   { game_object.draw() }
       that.ticks++
     }
     if(!stopped) requestAnimFrame(that.loop);

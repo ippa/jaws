@@ -148,7 +148,7 @@ function findOrCreateCanvas() {
  *
  */
 jaws.start = function(game_state, options) {
-  var wanted_fps = (options && options.fps) || 60
+  var fps = (options && options.fps) || 60
   
   jaws.init()
   displayProgress(0)
@@ -189,7 +189,8 @@ jaws.start = function(game_state, options) {
     if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
     if(!game_state)                                 { game_state = window }
 
-    jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
+    //jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
+    jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps})
     jaws.game_state = game_state
     jaws.game_loop.start()
   }
@@ -231,7 +232,8 @@ jaws.switchGameState = function(game_state) {
   
   jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
-  jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.game_loop.fps)
+  //jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.game_loop.fps)
+  jaws.game_loop = new jaws.GameLoop(game_state, {fps: jaws.game_loop.fps})
   jaws.game_loop.start()
 }
 
