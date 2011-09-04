@@ -1,0 +1,40 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #12 - As minimalistic as JawsJS can get</title>
+  </head>
+<body>
+  <div id="info">
+    As minimalistic a Jaws-game can get, have jaws.start() autocreate a canvas.
+    Also skip wrapping setup, update &amp; draw in a function or object.
+    This makes Jaws look for them in the global window-object.
+  </div>
+
+  <script>
+    function setup() {
+      player = new jaws.Sprite({image: "plane.png", x: jaws.width/2, y:jaws.height/2, anchor: "center"})
+      jaws.preventDefaultKeys(["up", "down", "left", "right"])
+    }
+    
+    function update() {
+      if(jaws.pressed("left"))  { player.x -= 2 }
+      if(jaws.pressed("right")) { player.x += 2 }
+      if(jaws.pressed("up"))    { player.y -= 2 }
+      if(jaws.pressed("down"))  { player.y += 2 }
+    }
+    
+    function draw() {
+      jaws.clear()
+      player.draw()
+    }
+
+    // Looks for <canvas> or <div id="canvas"> to draw on. Creates <canvas> if niether is found.
+    // Then load predined-assets, call setup(), then loop update() and draw() in 60 FPS.
+    jaws.start()  
+  </script>
+
+</body>
+</html>
+
