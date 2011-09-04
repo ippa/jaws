@@ -62,7 +62,7 @@ jaws.GameLoop = function(game_object, options) {
     that.tick_duration = that.current_tick - that.last_tick
     that.fps = mean_value.add(1000/that.tick_duration).get()
 
-    if(!paused) {
+    if(!stopped && !paused) {
       if(game_object.update) { game_object.update() }
       if(game_object.draw)   { game_object.draw() }
       that.ticks++
