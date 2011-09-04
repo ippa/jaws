@@ -43,8 +43,11 @@ jaws.game_states.Edit = function(options) {
     else {
       var clicked_object = gameObjectsAt(x, y)[0]      
       if(clicked_object) {
-        jaws.pressed("ctrl") ? toggle(clicked_object) : select(clicked_object)
-        select(clicked_object)
+        
+        if(!jaws.pressed("ctrl") && !jaws.pressed("shift")) {
+          deselect(game_objects);
+          select(clicked_object);
+        }
         cursor_object = undefined
         click_at = [x,y]
         edit_tag.innerHTML = "Selected game objects:<br/>"
@@ -59,6 +62,27 @@ jaws.game_states.Edit = function(options) {
     e.preventDefault();
     return false;
   }
+  
+  function mouseup(e) {
+    var x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
+    var y = (e.pageY || e.clientX) - jaws.canvas.offsetTop
+    click_at = undefined
+    
+    if(grid_size && snap_to_grid) game_objects.filter(isSelected).forEach(snapToGrid);
+    var clicked_object = gameObjectsAt(x, y)[0]
+
+    if(!objects_dragged) {
+      jaws.pressed("ctrl") ? toggle(clicked_object) : select(clicked_object)
+    }
+
+    if(jaws.pressed("shift")) { 
+      game_objects.forEach( function(item) { 
+        if(clicked_object.attributes().image === item.attributes().image) toggle(item);
+      });
+    }
+    objects_dragged = false
+  }
+
   function mousemove(e) {
     jaws.canvas.style.cursor = "default" // doesn't work?
     var x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
@@ -80,23 +104,6 @@ jaws.game_states.Edit = function(options) {
         if(track_modified) element.modified = true;
       });
     }
-  }
-  function mouseup(e) {
-    var x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
-    var y = (e.pageY || e.clientX) - jaws.canvas.offsetTop
-    click_at = undefined
-    
-    if(grid_size && snap_to_grid) game_objects.filter(isSelected).forEach(snapToGrid);
-    var clicked_object = gameObjectsAt(x, y)[0]
-
-    if(!objects_dragged && !jaws.pressed("ctrl")) deselect(game_objects);
-    if(!objects_dragged) toggle(clicked_object);
-    if(jaws.pressed("shift")) { 
-      game_objects.forEach( function(item) { 
-        if(clicked_object.attributes().image === item.attributes().image) select(item);
-      });
-    }
-    objects_dragged = false
   }
 
   function mousewheel(e) {
@@ -124,7 +131,7 @@ jaws.game_states.Edit = function(options) {
     game_objects.push(new_object) 
   }
 
-  function forceArray(obj)                { return obj.forEach ? obj : [obj] }
+  function forceArray(obj)                { if(!obj) return []; return obj.forEach ? obj : [obj] }
   function isSelected(element, index)     { return element.selected == true }
   function isNotSelected(element, index)  { return !isSelected(element) }
   function drawRect(element, index)       { element.rect().draw() }
@@ -168,7 +175,7 @@ jaws.game_states.Edit = function(options) {
     constructor = eval(constructor)
     
     var data = prompt("Enter JSON initialize data, example: { \"image\" : \"block.bmp\" } ")
-    data = JSON.parse(data)
+    data = JSON.parse(data||"{}")
     var object = new constructor(data)
     game_objects.push(object)
   }
