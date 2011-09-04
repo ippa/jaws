@@ -1,7 +1,7 @@
 <!DOCTYPE html> 
 <html>
   <head>
-    <script src="../jaws-dynamic.js"></script>
+    <script src="../jaws.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #1 - Sprite(), pressed(), basic game loop</title>
   </head>
@@ -89,10 +89,8 @@
       }
     }
 
-    jaws.onload = function() {
-      jaws.assets.add("plane.png")
-      jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
-    }
+    jaws.assets.add("plane.png")
+    jaws.start()  // Per default this will load assets, call setup(), then loop update() and draw() in 60 FPS.
   </script>
 
 </body>
