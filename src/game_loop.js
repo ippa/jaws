@@ -17,11 +17,11 @@ window.requestAnimFrame = (function(){
  *
  * @example
  *
- * function draw() {
- *    ... your stuff executed every 30 FPS ...
+ * game = {}
+ *  draw: function() { ... your stuff executed every 30 FPS ... }
  * }
  *
- * game_loop = new jaws.GameLoop(setup, update, draw, 30)
+ * game_loop = new jaws.GameLoop(game, 30)
  * game_loop.start()
  *
  * // You can also use the shortcut jaws.start(), it will:
@@ -30,7 +30,6 @@ window.requestAnimFrame = (function(){
  * jaws.start(MyGameState, {fps: 30})
  *
  */
-//jaws.GameLoop = function(setup, update, draw, fps) {
 jaws.GameLoop = function(game_object, options) {
   this.ticks = 0
   this.tick_duration = 0
