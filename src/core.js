@@ -183,15 +183,7 @@ jaws.start = function(game_state, options) {
   /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
-    
-    // This makes both jaws.start() and jaws.start(MenuState) possible
-    // Run game state constructor (new) after all assets are loaded
-    if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
-    if(!game_state)                                 { game_state = window }
-
-    jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps})
-    jaws.game_state = game_state
-    jaws.game_loop.start()
+    jaws.switchGameState(game_state||window, {fps: fps})
   }
 
   jaws.log("assets.loadAll()", true)
@@ -222,16 +214,16 @@ jaws.start = function(game_state, options) {
 * jaws.start(MenuState)
 *
 */
-jaws.switchGameState = function(game_state) {
-  jaws.game_loop.stop()
+jaws.switchGameState = function(game_state, options) {
+  var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60
   
+  jaws.game_loop && jaws.game_loop.stop()
   jaws.clearKeyCallbacks() // clear out all keyboard callbacks
- 
   if(jaws.isFunction(game_state)) { game_state = new game_state }
   
   jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
-  jaws.game_loop = new jaws.GameLoop(game_state, {fps: jaws.game_loop.fps})
+  jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps})
   jaws.game_loop.start()
 }
 
