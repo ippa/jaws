@@ -50,8 +50,6 @@ jaws.game_states.Edit = function(options) {
         }
         cursor_object = undefined
         click_at = [x,y]
-        edit_tag.innerHTML = "Selected game objects:<br/>"
-        game_objects.filter(isSelected).forEach( function(element, index) { edit_tag.innerHTML += element.toString() + "<br />"; });
         objects_dragged = false
       }
       else { 
@@ -84,7 +82,6 @@ jaws.game_states.Edit = function(options) {
   }
 
   function mousemove(e) {
-    jaws.canvas.style.cursor = "default" // doesn't work?
     var x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
     var y = (e.pageY || e.clientX) - jaws.canvas.offsetTop
 
@@ -167,7 +164,7 @@ jaws.game_states.Edit = function(options) {
 
   function save() {
     localStorage[title] = "[" + game_objects.map( function(game_object) { return game_object.toJSON() }) + "]";
-    edit_tag.innerHTML = "Saved game objects to localStorage<br/>"
+    log("Saved game objects to localStorage")
   }
   
   function add() {
@@ -178,10 +175,6 @@ jaws.game_states.Edit = function(options) {
     data = JSON.parse(data||"{}")
     var object = new constructor(data)
     game_objects.push(object)
-  }
-
-  function log(string, append) {
-    edit_tag.innerHTML += string;
   }
 
   this.setup = function() {
@@ -210,9 +203,20 @@ jaws.game_states.Edit = function(options) {
   }
 
   this.update = function() {
-    
+    var selected_objects = game_objects.filter(isSelected)
+    if(selected_objects.length == 1) {
+      log(selected_objects[0].toString())
+    }
+    else {
+      log(selected_objects.length + " selected objects")
+    }
   }
   
+  function log(string, append) {
+    if(append)  edit_tag.innerHTML += string;
+    else        edit_tag.innerHTML = string;
+  }
+ 
   this.draw = function() {
     jaws.clear()
     jaws.previous_game_state.draw()
