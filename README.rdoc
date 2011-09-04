@@ -30,7 +30,8 @@ APIs has started to settle down, but there will still be changes ahead.
 == Simple examples demonstrating certain features
 Check out the sourcecode for comments and explanations:
 
-* http://jawsjs.com/jawsjs/examples/example1.html - manual setup of canvas. later examples shows better ways.
+* http://jawsjs.com/jawsjs/examples/example0.html - get a Jaws-app working with as little code as possible
+* http://jawsjs.com/jawsjs/examples/example1.html - basic example with manual setup of canvas
 * http://jawsjs.com/jawsjs/examples/example2.html - jaws game states
 * http://jawsjs.com/jawsjs/examples/example3.html - jaws.Animation
 * http://jawsjs.com/jawsjs/examples/example4.html - jaws.Rect based collision detection
