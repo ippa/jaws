@@ -32,6 +32,8 @@ jaws.Viewport = function(options) {
   this.height = options.height || jaws.height
   this.max_x = options.max_x || jaws.width 
   this.max_y = options.max_y || jaws.height
+  this.x = options.x || 0
+  this.y = options.y || 0
   var that = this
 
   /** Move viewport x pixels horizontally and y pixels vertically */
