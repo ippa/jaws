@@ -21,7 +21,7 @@ window.requestAnimFrame = (function(){
  *  draw: function() { ... your stuff executed every 30 FPS ... }
  * }
  *
- * game_loop = new jaws.GameLoop(game, 30)
+ * game_loop = new jaws.GameLoop(game, {fps: 30})
  * game_loop.start()
  *
  * // You can also use the shortcut jaws.start(), it will:
