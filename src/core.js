@@ -92,13 +92,23 @@ jaws.init = function(options) {
   }
 
   jaws.canvas = document.getElementsByTagName('canvas')[0]
-  if(jaws.canvas) {
-    jaws.context = jaws.canvas.getContext('2d');
-  }
+  if(!jaws.canvas) { jaws.dom = document.getElementById("canvas") }
+
+  // Ordinary <canvas>, get context
+  if(jaws.canvas) { jaws.context = jaws.canvas.getContext('2d'); }
+
+  // div-canvas / hml5 sprites, set position relative to have sprites with position = "absolute" stay within the canvas
+  else if(jaws.dom) { jaws.dom && jaws.dom.style.position = "relative"; }  
+
+  // Niether <canvas> or <div>, create a <canvas> with specified or default width/height
   else {
-    jaws.dom = document.getElementById("canvas")
-    jaws.dom.style.position = "relative"  // This is needed to have sprites with position = "absolute" stay within the canvas
+    jaws.canvas = document.createElement("canvas")
+    jaws.canvas.width = options.width
+    jaws.canvas.height = options.height
+    jaws.context = jaws.canvas.getContext('2d')
+    document.body.appendChild(jaws.canvas)
   }
+
   
   jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
   jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
@@ -117,26 +127,6 @@ function saveMousePosition(e) {
 }
 
 /** 
-* @private
-* Find <canvas>-tag so jaws can an use it to draw sprites.
-* If the developer didn't provide a <canvas> in his HTML, jaws will automatically create one.
-*/
-function findOrCreateCanvas() {
- jaws.canvas = document.getElementsByTagName('canvas')[0]
-  if(!jaws.canvas) {
-    jaws.canvas = document.createElement("canvas")
-    jaws.canvas.width = 500
-    jaws.canvas.height = 300
-    document.body.appendChild(jaws.canvas)
-    jaws.log("creating canvas", true)
-  }
-  else {
-    jaws.log("found canvas", true)
-  } 
-  jaws.context = jaws.canvas.getContext('2d');
-}
-
-/** 
  * Quick and easy startup of a jaws game loop
  *
  * @example
@@ -150,7 +140,11 @@ function findOrCreateCanvas() {
 jaws.start = function(game_state, options) {
   var fps = (options && options.fps) || 60
   
-  jaws.init()
+  if(!options) options = {};
+  if(!options.width) options.width = 500; 
+  if(!options.height) options.height = 300;
+  jaws.init(options)
+
   displayProgress(0)
   jaws.log("setupInput()", true)
   jaws.setupInput()
