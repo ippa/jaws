@@ -92,36 +92,38 @@ jaws.init = function(options) {
   }
 
   jaws.canvas = document.getElementsByTagName('canvas')[0]
-  if(jaws.canvas) {
-    jaws.context = jaws.canvas.getContext('2d');
-  }
+  if(!jaws.canvas) { jaws.dom = document.getElementById("canvas") }
+
+  // Ordinary <canvas>, get context
+  if(jaws.canvas) { jaws.context = jaws.canvas.getContext('2d'); }
+
+  // div-canvas / hml5 sprites, set position relative to have sprites with position = "absolute" stay within the canvas
+  else if(jaws.dom) { jaws.dom && jaws.dom.style.position = "relative"; }  
+
+  // Niether <canvas> or <div>, create a <canvas> with specified or default width/height
   else {
-    jaws.dom = document.getElementById("canvas")
-    jaws.dom.style.position = "relative"  // This is needed to have sprites with position = "absolute" stay within the canvas
+    jaws.canvas = document.createElement("canvas")
+    jaws.canvas.width = options.width
+    jaws.canvas.height = options.height
+    jaws.context = jaws.canvas.getContext('2d')
+    document.body.appendChild(jaws.canvas)
   }
+
   
   jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
   jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
-}
 
-/** 
-* @private
-* Find <canvas>-tag so jaws can an use it to draw sprites.
-* If the developer didn't provide a <canvas> in his HTML, jaws will automatically create one.
-*/
-function findOrCreateCanvas() {
- jaws.canvas = document.getElementsByTagName('canvas')[0]
-  if(!jaws.canvas) {
-    jaws.canvas = document.createElement("canvas")
-    jaws.canvas.width = 500
-    jaws.canvas.height = 300
-    document.body.appendChild(jaws.canvas)
-    jaws.log("creating canvas", true)
-  }
-  else {
-    jaws.log("found canvas", true)
-  } 
-  jaws.context = jaws.canvas.getContext('2d');
+  jaws.mouse_x = 0
+  jaws.mouse_y = 0
+  window.addEventListener("mousemove", saveMousePosition)
+}
+/**
+ * @private
+ * Keeps updates mouse coordinates in jaws.mouse_x / jaws.mouse_y
+ */
+function saveMousePosition(e) {
+  jaws.mouse_x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
+  jaws.mouse_y = (e.pageY || e.clientX) - jaws.canvas.offsetTop
 }
 
 /** 
@@ -136,9 +138,13 @@ function findOrCreateCanvas() {
  *
  */
 jaws.start = function(game_state, options) {
-  var wanted_fps = (options && options.fps) || 60
+  var fps = (options && options.fps) || 60
   
-  jaws.init()
+  if(!options) options = {};
+  if(!options.width) options.width = 500; 
+  if(!options.height) options.height = 300;
+  jaws.init(options)
+
   displayProgress(0)
   jaws.log("setupInput()", true)
   jaws.setupInput()
@@ -171,15 +177,7 @@ jaws.start = function(game_state, options) {
   /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
-    
-    // This makes both jaws.start() and jaws.start(MenuState) possible
-    // Run game state constructor (new) after all assets are loaded
-    if( game_state && jaws.isFunction(game_state) ) { game_state = new game_state }
-    if(!game_state)                                 { game_state = window }
-
-    jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, wanted_fps)
-    jaws.game_state = game_state
-    jaws.game_loop.start()
+    jaws.switchGameState(game_state||window, {fps: fps})
   }
 
   jaws.log("assets.loadAll()", true)
@@ -210,16 +208,16 @@ jaws.start = function(game_state, options) {
 * jaws.start(MenuState)
 *
 */
-jaws.switchGameState = function(game_state) {
-  jaws.game_loop.stop()
+jaws.switchGameState = function(game_state, options) {
+  var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60
   
+  jaws.game_loop && jaws.game_loop.stop()
   jaws.clearKeyCallbacks() // clear out all keyboard callbacks
- 
   if(jaws.isFunction(game_state)) { game_state = new game_state }
   
   jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
-  jaws.game_loop = new jaws.GameLoop(game_state.setup, game_state.update, game_state.draw, jaws.game_loop.fps)
+  jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps})
   jaws.game_loop.start()
 }
 
@@ -745,11 +743,11 @@ window.requestAnimFrame = (function(){
  *
  * @example
  *
- * function draw() {
- *    ... your stuff executed every 30 FPS ...
+ * game = {}
+ *  draw: function() { ... your stuff executed every 30 FPS ... }
  * }
  *
- * game_loop = new jaws.GameLoop(setup, update, draw, 30)
+ * game_loop = new jaws.GameLoop(game, 30)
  * game_loop.start()
  *
  * // You can also use the shortcut jaws.start(), it will:
@@ -758,7 +756,7 @@ window.requestAnimFrame = (function(){
  * jaws.start(MyGameState, {fps: 30})
  *
  */
-jaws.GameLoop = function(setup, update, draw, wanted_fps) {
+jaws.GameLoop = function(game_object, options) {
   this.ticks = 0
   this.tick_duration = 0
   this.fps = 0
@@ -774,8 +772,9 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     jaws.log("game loop start", true)
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
-    if(setup) { setup() }
-    step_delay = 1000 / wanted_fps;
+
+    if(game_object.setup) { game_object.setup() }
+    step_delay = 1000 / options.fps;
     
     // update_id = setInterval(this.loop, step_delay);
     requestAnimFrame(this.loop)
@@ -790,8 +789,8 @@ jaws.GameLoop = function(setup, update, draw, wanted_fps) {
     that.fps = mean_value.add(1000/that.tick_duration).get()
 
     if(!paused) {
-      if(update) { update() }
-      if(draw)   { draw() }
+      if(game_object.update) { game_object.update() }
+      if(game_object.draw)   { game_object.draw() }
       that.ticks++
     }
     if(!stopped) requestAnimFrame(that.loop);
@@ -1229,17 +1228,10 @@ jaws.Sprite.prototype.asCanvas = function() {
 }
 
 jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x.toFixed(2) + ", " + this.y.toFixed(2) + ", " + this.width + ", " + this.height + "]" }
-/**
- * returns a JSON-string representing the state of the Sprite.
- *
- * Use this to serialize your sprites / game objects, maybe to save in local storage or on a server
- *
- * jaws.game_states.Edit uses this to export all edited objects.
- *
- */
-jaws.Sprite.prototype.toJSON = function() { 
-  var object = this.options                   // Start with all creation time properties
 
+/** returns Sprites state/properties as a pure object */
+jaws.Sprite.prototype.attributes = function() { 
+  var object = this.options                   // Start with all creation time properties
   object["constructor"] = "jaws.Sprite"
   object["x"] = parseFloat(this.x.toFixed(2))
   object["y"] = parseFloat(this.y.toFixed(2))
@@ -1250,8 +1242,19 @@ jaws.Sprite.prototype.toJSON = function() {
   object["scale_factor_y"] = this.scale_factor_y
   object["anchor_x"] = this.anchor_x
   object["anchor_y"] = this.anchor_y
- 
-  return JSON.stringify(object)
+  return object
+}
+
+/**
+ * returns a JSON-string representing the state of the Sprite.
+ *
+ * Use this to serialize your sprites / game objects, maybe to save in local storage or on a server
+ *
+ * jaws.game_states.Edit uses this to export all edited objects.
+ *
+ */
+jaws.Sprite.prototype.toJSON = function() {
+  return JSON.stringify(this.attributes())
 }
 
 return jaws;
