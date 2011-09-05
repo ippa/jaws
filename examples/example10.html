@@ -33,6 +33,8 @@
       var title = window.location.href  // Use URL as unique identifier when saving/fetching game objects from localStorage
      
       this.setup = function() {
+        // console.log(jaws.assets.get("blocks.json"))
+        // blocks.load( jaws.assets.get("blocks.json") )
         blocks.load(localStorage[title])  // Try to load  saved sprites from localStorage
         if(blocks.length == 0) {          // No sprites in localStorage? Generate 5 randomly placed blocks!
           for(var nr=5; nr--; ) {
@@ -55,8 +57,9 @@
 
     /* Entry point after jaws is done loading */
     jaws.onload = function() {
-      // jaws.assets.add("block.bmp") // Uncomment to preload block.bmp
       // Without preload, a sprite using "block.bmp" will try to load it creation time
+      jaws.assets.add("block.bmp") // Uncomment to preload block.bmp
+      jaws.assets.add("blocks.json")
       jaws.start(Example)
     }
   </script>
