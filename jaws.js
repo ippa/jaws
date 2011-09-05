@@ -98,7 +98,7 @@ jaws.init = function(options) {
   if(jaws.canvas) { jaws.context = jaws.canvas.getContext('2d'); }
 
   // div-canvas / hml5 sprites, set position relative to have sprites with position = "absolute" stay within the canvas
-  else if(jaws.dom) { jaws.dom && jaws.dom.style.position = "relative"; }  
+  else if(jaws.dom) { jaws.dom.style.position = "relative"; }  
 
   // Niether <canvas> or <div>, create a <canvas> with specified or default width/height
   else {
@@ -122,8 +122,12 @@ jaws.init = function(options) {
  * Keeps updates mouse coordinates in jaws.mouse_x / jaws.mouse_y
  */
 function saveMousePosition(e) {
-  jaws.mouse_x = (e.pageX || e.clientX) - jaws.canvas.offsetLeft
-  jaws.mouse_y = (e.pageY || e.clientX) - jaws.canvas.offsetTop
+  jaws.mouse_x = (e.pageX || e.clientX)
+  jaws.mouse_y = (e.pageY || e.clientX)
+  
+  var game_area = jaws.canvas ? jaws.canvas : jaws.dom
+  jaws.mouse_x -= game_area.offsetLeft
+  jaws.mouse_y -= game_area.offsetTop
 }
 
 /** 
