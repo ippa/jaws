@@ -72,6 +72,19 @@ jaws.Viewport = function ViewPort(options) {
   this.isInside = function(item) {
     return( item.x >= that.x && item.x <= (that.x + that.width) && item.y >= that.y && item.y <= (that.y + that.height) )
   };
+  
+  /** Returns true of item is left of viewport */
+  this.isLeftOf = function(item) { return(item.x < that.x)  }
+ 
+  /** Returns true of item is right of viewport */
+  this.isRightOf = function(item) { return(item.x > (that.x + that.width) )  }
+
+  /** Returns true of item is above viewport */
+  this.isAbove = function(item) { return(item.y < that.y)  }
+
+  /** Returns true of item is above viewport */
+  this.isBelow = function(item) { return(item.y > (that.y + that.height) )  }
+
 
   /** 
    * center the viewport around item. item must respond to x and y for this to work. 
