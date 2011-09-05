@@ -964,11 +964,22 @@ var jaws = (function(jaws) {
 jaws.Sprite = function Sprite(options) {
   this.options = options
   this.set(options)  
-  this.context = options.context || jaws.context
-  if(!this.context) { this.createDiv() }  // No canvas context? Switch to DOM-based spritemode
+  
+  if(options.context) { 
+    this.context = options.context
+  }
+  else if(options.dom) {  // No canvas context? Switch to DOM-based spritemode
+    this.dom = options.dom
+    this.createDiv() 
+  }
+  else {                  // Defaults to jaws.context or jaws.dom
+    if(jaws.context)  this.context = jaws.context;
+    else              this.dom = jaws.dom;
+  }
 }
 
-/** @private
+/** 
+ * @private
  * Call setters from JSON object. Used to parse options.
  */
 jaws.Sprite.prototype.set = function(options) {
@@ -988,25 +999,20 @@ jaws.Sprite.prototype.set = function(options) {
   return this
 }
 
-/*
-// Chainable setters under consideration:
-jaws.Sprite.prototype.setFlipped =        function(value) { this.flipped = value; return this }
-jaws.Sprite.prototype.setAlpha =          function(value) { this.alpha = value; return this }
-jaws.Sprite.prototype.setAnchorX =        function(value) { this.anchor_x = value; this.cacheOffsets(); return this }
-jaws.Sprite.prototype.setAnchorY =        function(value) { this.anchor_y = value; this.cacheOffsets(); return this }
-jaws.Sprite.prototype.setAngle =          function(value) { this.angle = value; return this }
-jaws.Sprite.prototype.setScale =    function(value) { this.scale_x = this.scale_y = value; this.cacheOffsets(); return this }
-jaws.Sprite.prototype.setScaleX =   function(value) { this.scale_x = value; this.cacheOffsets(); return this }
-jaws.Sprite.prototype.setScaleY =   function(value) { this.scale_y = value; this.cacheOffsets(); return this }
-jaws.Sprite.prototype.moveX =         function(x)     { this.x += x; return this }
-jaws.Sprite.prototype.moveXTo =       function(x)     { this.x = x; return this }
-jaws.Sprite.prototype.moveY =         function(y)     { this.y += y; return this }
-jaws.Sprite.prototype.moveYTo =       function(y)     { this.y = y; return this }
-jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_x = value; return this.cacheOffsets() }
-jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_y = value; return this.cachOfffsets() }
-*/
+/** 
+ * @private
+ *
+ * Creates a new sprite from current sprites attributes()
+ * Checks JawsJS magic property '_type' when deciding with which constructor to create it
+ *
+ */
+jaws.Sprite.prototype.clone = function(object) {
+  var constructor = this._type ? eval(this._type) : this.constructor
+  var new_sprite = new constructor( this.attributes() );
+  new_sprite._type = this._type || this.constructor.name
+  return new_sprite
+}
 
-/* Sprite modifiers. Modifies 1 or more properties and returns this for chainability.  */
 
 /**
  * Sets image from image/canvas or asset-string ("foo.png")
@@ -1053,10 +1059,21 @@ jaws.Sprite.prototype.scaleTo =       function(value) { this.scale_x = this.scal
 jaws.Sprite.prototype.scaleWidth =    function(value) { this.scale_x *= value; return this.cacheOffsets() }
 /** scale sprite vertically by scale_factor. Modifies height. */
 jaws.Sprite.prototype.scaleHeight =   function(value) { this.scale_y *= value; return this.cacheOffsets() }
+
 /** Sets x */
 jaws.Sprite.prototype.setX =          function(value) { this.x = value; return this }
 /** Sets y */
 jaws.Sprite.prototype.setY =          function(value) { this.y = value; return this }
+
+/** Position sprites top on the y-axis */
+jaws.Sprite.prototype.setTop =        function(value) { this.y = value + this.top_offset; return this }
+/** Position sprites bottom on the y-axis */
+jaws.Sprite.prototype.setBottom =     function(value) { this.y = value - this.bottom_offset; return this }
+/** Position sprites left side on the x-axis */
+jaws.Sprite.prototype.setLeft =       function(value) { this.x = value + this.left_offset; return this }
+/** Position sprites right side on the x-axis */
+jaws.Sprite.prototype.setRight =      function(value) { this.x = value - this.right_offset; return this }
+
 /** Set new width. Scales sprite. */
 jaws.Sprite.prototype.setWidth  =     function(value) { this.scale_x = value/this.image.width; return this.cacheOffsets() }
 /** Set new height. Scales sprite. */
@@ -1153,7 +1170,8 @@ jaws.Sprite.prototype.createDiv = function() {
   this.updateDiv()
 }
 
-/** @private
+/** 
+ * @private
  * Update properties for DOM-based sprite 
  */
 jaws.Sprite.prototype.updateDiv = function() {
@@ -1177,7 +1195,7 @@ jaws.Sprite.prototype.updateDiv = function() {
 /** Draw sprite on active canvas or update it's DOM-properties */
 jaws.Sprite.prototype.draw = function() {
   if(!this.image) { return this }
-  if(jaws.dom)    { return this.updateDiv() }
+  if(jaws.div)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
@@ -1236,7 +1254,7 @@ jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x.toFixed
 /** returns Sprites state/properties as a pure object */
 jaws.Sprite.prototype.attributes = function() { 
   var object = this.options                   // Start with all creation time properties
-  object["constructor"] = "jaws.Sprite"
+  object["_type"] = this._type || "jaws.Sprite"
   object["x"] = parseFloat(this.x.toFixed(2))
   object["y"] = parseFloat(this.y.toFixed(2))
   object["alpha"] = this.alpha
@@ -1263,6 +1281,25 @@ jaws.Sprite.prototype.toJSON = function() {
 
 return jaws;
 })(jaws || {});
+
+
+/*
+// Chainable setters under consideration:
+jaws.Sprite.prototype.setFlipped =        function(value) { this.flipped = value; return this }
+jaws.Sprite.prototype.setAlpha =          function(value) { this.alpha = value; return this }
+jaws.Sprite.prototype.setAnchorX =        function(value) { this.anchor_x = value; this.cacheOffsets(); return this }
+jaws.Sprite.prototype.setAnchorY =        function(value) { this.anchor_y = value; this.cacheOffsets(); return this }
+jaws.Sprite.prototype.setAngle =          function(value) { this.angle = value; return this }
+jaws.Sprite.prototype.setScale =    function(value) { this.scale_x = this.scale_y = value; this.cacheOffsets(); return this }
+jaws.Sprite.prototype.setScaleX =   function(value) { this.scale_x = value; this.cacheOffsets(); return this }
+jaws.Sprite.prototype.setScaleY =   function(value) { this.scale_y = value; this.cacheOffsets(); return this }
+jaws.Sprite.prototype.moveX =         function(x)     { this.x += x; return this }
+jaws.Sprite.prototype.moveXTo =       function(x)     { this.x = x; return this }
+jaws.Sprite.prototype.moveY =         function(y)     { this.y += y; return this }
+jaws.Sprite.prototype.moveYTo =       function(y)     { this.y = y; return this }
+jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_x = value; return this.cacheOffsets() }
+jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_y = value; return this.cachOfffsets() }
+*/
 
 var jaws = (function(jaws) {
 /**
@@ -1296,19 +1333,19 @@ jaws.SpriteList.prototype = new Array
  * - an array of JSON objects
  * - a JSON.stringified string representing an array of JSON objects
  *
- * TODO: simplification possible?
- *
  */
 jaws.SpriteList.prototype.load = function(objects) {
   var that = this;  // Since forEach changes this into DOMWindow.. hm, lame.
-  if(jaws.isArray(objects)) {
-  }
-  else if(jaws.isString(objects)) {
-    JSON.parse(objects).forEach( function(data) {
-      var constructor = eval(data.constructor)
+  if(jaws.isArray(objects))       { parseArray(objects) }
+  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ) }
+  
+  function parseArray(array) {
+    array.forEach( function(data) {
+      var constructor = data._type ? eval(data._type) : data.constructor
       if(constructor) {
-        jaws.log("Creating " + data.constructor + "(" + data.toString() + ")", true)
+        jaws.log("Creating " + data._type + "(" + data.toString() + ")", true)
         var object = new constructor(data)
+        object._type = data._type || data.constructor.name
         that.push(object);
       }
     });
@@ -1696,12 +1733,29 @@ jaws.Viewport = function ViewPort(options) {
     return(!that.isInside(item))
   };
 
-  /** 
-   * Returns true if item is inside viewport 
-   */
+  /** Returns true if item is inside viewport  */
   this.isInside = function(item) {
     return( item.x >= that.x && item.x <= (that.x + that.width) && item.y >= that.y && item.y <= (that.y + that.height) )
   };
+
+  /* Returns true if item is partly (down to 1 pixel) inside viewport */
+  this.isPartlyInside = function(item) {
+    var rect = item.rect()
+    return( rect.right >= that.x && rect.x <= (that.x + that.width) && rect.bottom >= that.y && item.y <= (that.y + that.height) )
+  };
+  
+  /** Returns true of item is left of viewport */
+  this.isLeftOf = function(item) { return(item.x < that.x)  }
+ 
+  /** Returns true of item is right of viewport */
+  this.isRightOf = function(item) { return(item.x > (that.x + that.width) )  }
+
+  /** Returns true of item is above viewport */
+  this.isAbove = function(item) { return(item.y < that.y)  }
+
+  /** Returns true of item is above viewport */
+  this.isBelow = function(item) { return(item.y > (that.y + that.height) )  }
+
 
   /** 
    * center the viewport around item. item must respond to x and y for this to work. 
