@@ -98,7 +98,7 @@ jaws.init = function(options) {
   if(jaws.canvas) { jaws.context = jaws.canvas.getContext('2d'); }
 
   // div-canvas / hml5 sprites, set position relative to have sprites with position = "absolute" stay within the canvas
-  else if(jaws.dom) { jaws.dom && jaws.dom.style.position = "relative"; }  
+  else if(jaws.dom) { jaws.dom.style.position = "relative"; }  
 
   // Niether <canvas> or <div>, create a <canvas> with specified or default width/height
   else {
