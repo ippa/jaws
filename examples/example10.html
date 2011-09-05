@@ -4,20 +4,22 @@
     <script src="../jaws-dynamic.js"></script>
     <script src="../game_states/edit.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
-    <title>Jaws Example #9 - game state Edit</title>
+    <title>Jaws Example #10 - game state Edit</title>
   </head>
 <body>
 
   <canvas width=500 height=400></canvas>
 
-  <div id="jaws-edit" />Editor output will show here.</div>
+  <div id="jaws-edit">Editor output will show here.</div>
   
   <div id="info">
-    <h1>Edit</h1>
+    <h1>press SPACE to start editor</h1>
     SPACE: start editor<br />
     ESC: exit editor<br />
-    S: JSON-dump to localStorage<br />
+    LEFT CLICK: select item<br />
     SHIFT or CTRL: mass-selection of items<br />
+    RIGHT CLICK: sample object and paint with it<br />
+    S: JSON-dump to localStorage<br />
     DEL: removes selected items <br />
     +: Adds new object (exprimental)<br/>
   </div>
@@ -34,7 +36,7 @@
         blocks.load(localStorage[title])  // Try to load  saved sprites from localStorage
         if(blocks.length == 0) {          // No sprites in localStorage? Generate 5 randomly placed blocks!
           for(var nr=5; nr--; ) {
-            blocks.push( new jaws.Sprite({image: "block.bmp", x: Math.random()*jaws.width, y: Math.random()*jaws.height}) )
+            blocks.push( new jaws.Sprite({anchor: "top_left", image: "block.bmp", x: Math.random()*jaws.width-20, y: Math.random()*jaws.height-20}) )
           }
         }
  
