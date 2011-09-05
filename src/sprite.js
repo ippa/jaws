@@ -104,10 +104,21 @@ jaws.Sprite.prototype.scaleTo =       function(value) { this.scale_x = this.scal
 jaws.Sprite.prototype.scaleWidth =    function(value) { this.scale_x *= value; return this.cacheOffsets() }
 /** scale sprite vertically by scale_factor. Modifies height. */
 jaws.Sprite.prototype.scaleHeight =   function(value) { this.scale_y *= value; return this.cacheOffsets() }
+
 /** Sets x */
 jaws.Sprite.prototype.setX =          function(value) { this.x = value; return this }
 /** Sets y */
 jaws.Sprite.prototype.setY =          function(value) { this.y = value; return this }
+
+/** Position sprites top on the y-axis */
+jaws.Sprite.prototype.setTop =        function(value) { this.y = value + this.top_offset; return this }
+/** Position sprites bottom on the y-axis */
+jaws.Sprite.prototype.setBottom =     function(value) { this.y = value - this.bottom_offset; return this }
+/** Position sprites left side on the x-axis */
+jaws.Sprite.prototype.setLeft =       function(value) { this.x = value + this.left_offset; return this }
+/** Position sprites right side on the x-axis */
+jaws.Sprite.prototype.setRight =      function(value) { this.x = value - this.right_offset; return this }
+
 /** Set new width. Scales sprite. */
 jaws.Sprite.prototype.setWidth  =     function(value) { this.scale_x = value/this.image.width; return this.cacheOffsets() }
 /** Set new height. Scales sprite. */
