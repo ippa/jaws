@@ -66,11 +66,15 @@ jaws.Viewport = function ViewPort(options) {
     return(!that.isInside(item))
   };
 
-  /** 
-   * Returns true if item is inside viewport 
-   */
+  /** Returns true if item is inside viewport  */
   this.isInside = function(item) {
     return( item.x >= that.x && item.x <= (that.x + that.width) && item.y >= that.y && item.y <= (that.y + that.height) )
+  };
+
+  /* Returns true if item is partly (down to 1 pixel) inside viewport */
+  this.isPartlyInside = function(item) {
+    var rect = item.rect()
+    return( rect.right >= that.x && rect.x <= (that.x + that.width) && rect.bottom >= that.y && item.y <= (that.y + that.height) )
   };
   
   /** Returns true of item is left of viewport */
