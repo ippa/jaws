@@ -496,7 +496,7 @@ var jaws = (function(jaws) {
  * @class Loads and processes assets as images, sound, video, json
  * Used internally by JawsJS to create <b>jaws.assets</b>
  */
-jaws.Assets = function() {
+jaws.Assets = function Assets() {
   this.loaded = []    // Hash of all URLs that's been loaded
   this.loading = []   // Hash of all URLs currently loading
   this.src_list = []  // Hash of all unloaded URLs that loadAll() will try to load
@@ -747,7 +747,7 @@ window.requestAnimFrame = (function(){
  *  draw: function() { ... your stuff executed every 30 FPS ... }
  * }
  *
- * game_loop = new jaws.GameLoop(game, 30)
+ * game_loop = new jaws.GameLoop(game, {fps: 30})
  * game_loop.start()
  *
  * // You can also use the shortcut jaws.start(), it will:
@@ -756,7 +756,7 @@ window.requestAnimFrame = (function(){
  * jaws.start(MyGameState, {fps: 30})
  *
  */
-jaws.GameLoop = function(game_object, options) {
+jaws.GameLoop = function GameLoop(game_object, options) {
   this.ticks = 0
   this.tick_duration = 0
   this.fps = 0
@@ -788,7 +788,7 @@ jaws.GameLoop = function(game_object, options) {
     that.tick_duration = that.current_tick - that.last_tick
     that.fps = mean_value.add(1000/that.tick_duration).get()
 
-    if(!paused) {
+    if(!stopped && !paused) {
       if(game_object.update) { game_object.update() }
       if(game_object.draw)   { game_object.draw() }
       that.ticks++
@@ -853,7 +853,7 @@ var jaws = (function(jaws) {
   rect.width  // -> 20
   rect.height // -> 20
 */
-jaws.Rect = function(x,y,width,height) {
+jaws.Rect = function Rect(x,y,width,height) {
   this.x = x
   this.y = y
   this.width = width
@@ -957,7 +957,7 @@ var jaws = (function(jaws) {
 * new Sprite({image: "topdownspaceship.png", anchor: "center"})
 *
 */
-jaws.Sprite = function(options) {
+jaws.Sprite = function Sprite(options) {
   this.options = options
   this.set(options)  
   this.context = options.context || jaws.context
@@ -968,7 +968,7 @@ jaws.Sprite = function(options) {
  * Call setters from JSON object. Used to parse options.
  */
 jaws.Sprite.prototype.set = function(options) {
-  this.scale_factor_x = this.scale_factor_y = (options.scale || 1)
+  this.scale_x = this.scale_y = (options.scale || 1)
   this.x = options.x || 0
   this.y = options.y || 0
   this.alpha = (options.alpha === undefined) ? 1 : options.alpha
@@ -991,15 +991,15 @@ jaws.Sprite.prototype.setAlpha =          function(value) { this.alpha = value; 
 jaws.Sprite.prototype.setAnchorX =        function(value) { this.anchor_x = value; this.cacheOffsets(); return this }
 jaws.Sprite.prototype.setAnchorY =        function(value) { this.anchor_y = value; this.cacheOffsets(); return this }
 jaws.Sprite.prototype.setAngle =          function(value) { this.angle = value; return this }
-jaws.Sprite.prototype.setScaleFactor =    function(value) { this.scale_factor_x = this.scale_factor_y = value; this.cacheOffsets(); return this }
-jaws.Sprite.prototype.setScaleFactorX =   function(value) { this.scale_factor_x = value; this.cacheOffsets(); return this }
-jaws.Sprite.prototype.setScaleFactorY =   function(value) { this.scale_factor_y = value; this.cacheOffsets(); return this }
+jaws.Sprite.prototype.setScale =    function(value) { this.scale_x = this.scale_y = value; this.cacheOffsets(); return this }
+jaws.Sprite.prototype.setScaleX =   function(value) { this.scale_x = value; this.cacheOffsets(); return this }
+jaws.Sprite.prototype.setScaleY =   function(value) { this.scale_y = value; this.cacheOffsets(); return this }
 jaws.Sprite.prototype.moveX =         function(x)     { this.x += x; return this }
 jaws.Sprite.prototype.moveXTo =       function(x)     { this.x = x; return this }
 jaws.Sprite.prototype.moveY =         function(y)     { this.y += y; return this }
 jaws.Sprite.prototype.moveYTo =       function(y)     { this.y = y; return this }
-jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_factor_x = value; return this.cacheOffsets() }
-jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_factor_y = value; return this.cachOfffsets() }
+jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_x = value; return this.cacheOffsets() }
+jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_y = value; return this.cachOfffsets() }
 */
 
 /* Sprite modifiers. Modifies 1 or more properties and returns this for chainability.  */
@@ -1042,33 +1042,33 @@ jaws.Sprite.prototype.move =          function(x,y)   { if(x) this.x += x;  if(y
 * scale sprite by given factor. 1=don't scale. <1 = scale down.  1>: scale up.
 * Modifies width/height. 
 **/
-jaws.Sprite.prototype.scale =         function(value) { this.scale_factor_x *= value; this.scale_factor_y *= value; return this.cacheOffsets() }
+jaws.Sprite.prototype.scale =         function(value) { this.scale_x *= value; this.scale_y *= value; return this.cacheOffsets() }
 /** set scale factor. ie. 2 means a doubling if sprite in both directions. */
-jaws.Sprite.prototype.scaleTo =       function(value) { this.scale_factor_x = this.scale_factor_y = value; return this.cacheOffsets() }
+jaws.Sprite.prototype.scaleTo =       function(value) { this.scale_x = this.scale_y = value; return this.cacheOffsets() }
 /** scale sprite horizontally by scale_factor. Modifies width. */
-jaws.Sprite.prototype.scaleWidth =    function(value) { this.scale_factor_x *= value; return this.cacheOffsets() }
+jaws.Sprite.prototype.scaleWidth =    function(value) { this.scale_x *= value; return this.cacheOffsets() }
 /** scale sprite vertically by scale_factor. Modifies height. */
-jaws.Sprite.prototype.scaleHeight =   function(value) { this.scale_factor_y *= value; return this.cacheOffsets() }
+jaws.Sprite.prototype.scaleHeight =   function(value) { this.scale_y *= value; return this.cacheOffsets() }
 /** Sets x */
 jaws.Sprite.prototype.setX =          function(value) { this.x = value; return this }
 /** Sets y */
 jaws.Sprite.prototype.setY =          function(value) { this.y = value; return this }
 /** Set new width. Scales sprite. */
-jaws.Sprite.prototype.setWidth  =     function(value) { this.scale_factor_x = value/this.image.width; return this.cacheOffsets() }
+jaws.Sprite.prototype.setWidth  =     function(value) { this.scale_x = value/this.image.width; return this.cacheOffsets() }
 /** Set new height. Scales sprite. */
-jaws.Sprite.prototype.setHeight =     function(value) { this.scale_factor_y = value/this.image.height; return this.cacheOffsets() }
+jaws.Sprite.prototype.setHeight =     function(value) { this.scale_y = value/this.image.height; return this.cacheOffsets() }
 /** Resize sprite by adding width */
 jaws.Sprite.prototype.resize =        function(width, height) { 
-  this.scale_factor_x = (this.width + width) / this.image.width
-  this.scale_factor_y = (this.height + height) / this.image.height
+  this.scale_x = (this.width + width) / this.image.width
+  this.scale_y = (this.height + height) / this.image.height
   return this.cacheOffsets()
 }
 /** 
  * Resize sprite to exact width/height 
  */
 jaws.Sprite.prototype.resizeTo =      function(width, height) {
-  this.scale_factor_x = width / this.image.width
-  this.scale_factor_y = height / this.image.height
+  this.scale_x = width / this.image.width
+  this.scale_y = height / this.image.height
   return this.cacheOffsets()
 }
 
@@ -1114,8 +1114,8 @@ jaws.Sprite.prototype.anchor = function(value) {
 jaws.Sprite.prototype.cacheOffsets = function() {
   if(!this.image) { return }
   
-  this.width = this.image.width * this.scale_factor_x
-  this.height = this.image.height * this.scale_factor_y
+  this.width = this.image.width * this.scale_x
+  this.height = this.image.height * this.scale_y
   this.left_offset   = this.width * this.anchor_x
   this.top_offset    = this.height * this.anchor_y
   this.right_offset  = this.width * (1.0 - this.anchor_x)
@@ -1158,8 +1158,8 @@ jaws.Sprite.prototype.updateDiv = function() {
 
   var transform = ""
   transform += "rotate(" + this.angle + "deg) "
-  if(this.flipped)  { transform += "scale(-" + this.scale_factor_x + "," + this.scale_factor_y + ")"; }
-  else              { transform += "scale(" + this.scale_factor_x + "," + this.scale_factor_y + ")"; }
+  if(this.flipped)  { transform += "scale(-" + this.scale_x + "," + this.scale_y + ")"; }
+  else              { transform += "scale(" + this.scale_x + "," + this.scale_y + ")"; }
 
   this.div.style.MozTransform = transform
   this.div.style.WebkitTransform = transform
@@ -1238,8 +1238,8 @@ jaws.Sprite.prototype.attributes = function() {
   object["alpha"] = this.alpha
   object["angle"] = parseFloat(this.angle.toFixed(2))
   object["flipped"] = this.flipped
-  object["scale_factor_x"] = this.scale_factor_x
-  object["scale_factor_y"] = this.scale_factor_y
+  object["scale_x"] = this.scale_x
+  object["scale_y"] = this.scale_y
   object["anchor_x"] = this.anchor_x
   object["anchor_y"] = this.anchor_y
   return object
@@ -1280,7 +1280,7 @@ enemies.deleteIf(isOutsideCanvas) // deletes each item in enemies that returns t
 enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
 
 */
-jaws.SpriteList = function() {
+jaws.SpriteList = function SpriteList() {
 }
 jaws.SpriteList.prototype = new Array
 
@@ -1391,7 +1391,7 @@ function cutImage(image, x, y, width, height) {
  * @property {array} frame_size  width and height of invidual frames in spritesheet
  * @property {array} frames all single frames cut out from image
 */
-jaws.SpriteSheet = function(options) {
+jaws.SpriteSheet = function SpriteSheet(options) {
   this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
   this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]
@@ -1437,7 +1437,7 @@ var jaws = (function(jaws) {
 * parallax.draw()
 *
 */
-jaws.Parallax = function(options) {
+jaws.Parallax = function Parallax(options) {
   this.scale = options.scale || 1
   this.repeat_x = options.repeat_x
   this.repeat_y = options.repeat_y
@@ -1494,7 +1494,7 @@ jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + "
  * @constructor
  * @extends jaws.Sprite
  */
-jaws.ParallaxLayer = function(options) {
+jaws.ParallaxLayer = function ParallaxLayer(options) {
   this.damping = options.damping || 0
   jaws.Sprite.call(this, options)
 }
@@ -1531,7 +1531,7 @@ var jaws = (function(jaws) {
  * player.draw()
  *
  */
-jaws.Animation = function(options) {
+jaws.Animation = function Animation(options) {
   this.options = options
   this.frames = options.frames || []
   this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
@@ -1651,13 +1651,15 @@ var jaws = (function(jaws) {
  * });
  *
  */
-jaws.Viewport = function(options) {
+jaws.Viewport = function ViewPort(options) {
   this.options = options
   this.context = options.context || jaws.context
   this.width = options.width || jaws.width
   this.height = options.height || jaws.height
   this.max_x = options.max_x || jaws.width 
   this.max_y = options.max_y || jaws.height
+  this.x = options.x || 0
+  this.y = options.y || 0
   var that = this
 
   /** Move viewport x pixels horizontally and y pixels vertically */
@@ -1770,7 +1772,7 @@ jaws.Viewport = function(options) {
   this.moveTo(options.x||0, options.y||0)
 }
 
-jaws.Viewport.prototype.toString = function() { return "[Viewport " + this.x + ", " + this.y + "," + this.width + "," + this.height + "]" }
+jaws.Viewport.prototype.toString = function() { return "[Viewport " + this.x.toFixed(2) + ", " + this.y.toFixed(2) + ", " + this.width + ", " + this.height + "]" }
 
 return jaws;
 })(jaws || {});
@@ -1796,7 +1798,7 @@ var jaws = (function(jaws) {
  * tile_map.cell(1,1)  // [sprite]
  *
  */
-jaws.TileMap = function(options) {
+jaws.TileMap = function TileMap(options) {
   this.cell_size = options.cell_size || [32,32]
   this.size = options.size || [100,100]
   this.cells = new Array(this.size[0])
