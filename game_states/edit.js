@@ -31,22 +31,26 @@ jaws.game_states.Edit = function(options) {
   var cursor_object 
   var objects_dragged
   
+  function cloneObject(object) {
+    if(!object) return undefined;
+    var constructor = object._type ? eval(object._type) : object.constructor
+    var new_object = new constructor( object.attributes() );
+    new_object._type = object._type || object.constructor.name
+    if(new_object.update) new_object.update(); 
+    return new_object
+  }
+
   function mousedown(e) {
     var code = ( e.keyCode ? e.keyCode : e.which )
     if(code === 3) {  // Right mouse button
-      var clone_object = gameObjectAt(mouseX(), mouseY())
-      if(clone_object)  cursor_object = new clone_object.constructor( clone_object.attributes() );
-      else              cursor_object = undefined;
+      cursor_object = cloneObject( gameObjectAt( mouseX(), mouseY() ) )
     }
     else {
       click_at = [mouseX(), mouseY()]
      
       var clicked_icon = iconAt(jaws.mouse_x, jaws.mouse_y)
       if(clicked_icon) {
-        var constructor = eval(clicked_icon._type)
-        cursor_object = new constructor( clicked_icon.attributes() );
-        cursor_object._type = clicked_icon._type || clicked_icon.constructor.name
-        if(cursor_object.update) cursor_object.update();
+        cursor_object = cloneObject(clicked_icon)
         return false;
       }
       
@@ -131,10 +135,7 @@ jaws.game_states.Edit = function(options) {
   function paintWithCursor() {
     if(!cursor_object) return;
 
-    constructor = eval(cursor_object._type)
-    //new_object = new cursor_object.constructor( cursor_object.attributes() )
-    new_object = new constructor( cursor_object.attributes() )
-    new_object._type = cursor_object._type || constructor.name
+    new_object = cloneObject(cursor_object)
     new_object.x -= new_object.x % grid_size[0]
     new_object.y -= new_object.y % grid_size[1]
     game_objects.push(new_object) 
@@ -217,7 +218,7 @@ jaws.game_states.Edit = function(options) {
     var x = 32
     var y = 32
     constructors.forEach( function(constructor) {
-      var icon = new constructor({x: x, y: y, context: jaws.context})
+      var icon = new constructor({x: x, y: y})
       icon._type = constructor.name
       if(icon.update) icon.update();
       icons.push( icon )
