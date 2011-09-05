@@ -204,8 +204,8 @@
       same(sprite.x, 0, "x defaults to 0")
       same(sprite.y, 0, "y defaults to 0")
       same(sprite.angle, 0, "angle defaults to 0")
-      same(sprite.scale_factor_x, 1, "scale_factor_x defaults to 1 (no scaling)")
-      same(sprite.scale_factor_y, 1, "scale_factor_y defaults to 1 (no scaling)")
+      same(sprite.scale_x, 1, "scale_x defaults to 1 (no scaling)")
+      same(sprite.scale_y, 1, "scale_y defaults to 1 (no scaling)")
       same(sprite.anchor_x, 0, "anchor_x defaults to 0 (top)")
       same(sprite.anchor_y, 0, "anchor_y defaults to 0 (left)")
       same(sprite.image, undefined, "image defaults to undefined")
@@ -233,7 +233,7 @@
       equal(sprite.rect().width, 40, "sprite.rect().width after scaling x2")
       equal(sprite.rect().height, 40, "sprite.rect().height after scaling x2") 
 
-      // console.log(sprite.x + " - " + sprite.scale_factor_x + " - " + sprite.anchor_x)
+      // console.log(sprite.x + " - " + sprite.scale_x + " - " + sprite.anchor_x)
       same(sprite.rect(), new jaws.Rect(0,0,40,40), "sprite.rect()")
     
       sprite.anchor("bottom_right")
@@ -261,20 +261,20 @@
       equal(sprite.width, 20, "sprite.scaleTo forces a scale_factor")
 
       sprite.setWidth(80)
-      equal(sprite.width, 80, "sprite.setWidth forces a new width via scale_factor_x")
-      equal(sprite.scale_factor_x, 4, "sprite.setWidth forces a new width via scale_factor_x")
+      equal(sprite.width, 80, "sprite.setWidth forces a new width via scale_x")
+      equal(sprite.scale_x, 4, "sprite.setWidth forces a new width via scale_x")
 
       sprite.setHeight(40)
-      equal(sprite.height, 40, "sprite.setHeight forces a new width via scale_factor_y")
-      equal(sprite.scale_factor_y, 2, "sprite.setHeight forces a new width via scale_factor_y")
+      equal(sprite.height, 40, "sprite.setHeight forces a new width via scale_y")
+      equal(sprite.scale_y, 2, "sprite.setHeight forces a new width via scale_y")
 
       sprite.resizeTo(20,20)
-      equal(sprite.width, 20, "resize() sets width via scale_factor_x")
-      equal(sprite.height, 20, "resize() sets width via scale_factor_x")
+      equal(sprite.width, 20, "resize() sets width via scale_x")
+      equal(sprite.height, 20, "resize() sets width via scale_x")
       
       sprite.resize(-10,-10)
-      equal(sprite.width, 10, "resize() mods width via scale_factor_x")
-      equal(sprite.height, 10, "resize() mods width via scale_factor_x")
+      equal(sprite.width, 10, "resize() mods width via scale_x")
+      equal(sprite.height, 10, "resize() mods width via scale_x")
 
       var flipped = sprite.flipped
       sprite.flip()
