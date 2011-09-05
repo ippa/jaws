@@ -17,11 +17,13 @@ if(!jaws.game_states) jaws.game_states = {}
 jaws.game_states.Edit = function(options) {
   if(! options ) options = {};
   var game_objects = options.game_objects || []
+  var constructors = options.constructors || []
   var grid_size = options.grid_size || [32,32]
   var snap_to_grid = options.snap_to_grid || true
   var track_modified = options.track_modified || true
   var title = options.title || window.location.href
   var viewport
+  var icons
 
   var that = this
   var click_at
@@ -32,13 +34,23 @@ jaws.game_states.Edit = function(options) {
   function mousedown(e) {
     var code = ( e.keyCode ? e.keyCode : e.which )
     if(code === 3) {  // Right mouse button
-      var clone_object = gameObjectsAt(mouseX(), mouseY())[0]
+      var clone_object = gameObjectAt(mouseX(), mouseY())
       if(clone_object)  cursor_object = new clone_object.constructor( clone_object.attributes() );
       else              cursor_object = undefined;
     }
     else {
       click_at = [mouseX(), mouseY()]
-      var clicked_object = gameObjectsAt(mouseX(), mouseY())[0]
+     
+      var clicked_icon = iconAt(jaws.mouse_x, jaws.mouse_y)
+      if(clicked_icon) {
+        var constructor = eval(clicked_icon._type)
+        cursor_object = new constructor( clicked_icon.attributes() );
+        cursor_object._type = clicked_icon._type || clicked_icon.constructor.name
+        if(cursor_object.update) cursor_object.update();
+        return false;
+      }
+      
+      var clicked_object = gameObjectAt(mouseX(), mouseY())
       if(clicked_object) {
         if(!jaws.pressed("ctrl") && !jaws.pressed("shift")) {
           deselect(game_objects);
@@ -60,7 +72,7 @@ jaws.game_states.Edit = function(options) {
     click_at = undefined
     
     if(grid_size && snap_to_grid) game_objects.filter(isSelected).forEach(snapToGrid);
-    var clicked_object = gameObjectsAt(mouseX(), mouseY())[0]
+    var clicked_object = gameObjectAt(mouseX(), mouseY())
 
     if(!objects_dragged) {
       if(jaws.pressed("shift")) { 
@@ -119,7 +131,10 @@ jaws.game_states.Edit = function(options) {
   function paintWithCursor() {
     if(!cursor_object) return;
 
-    new_object = new cursor_object.constructor( cursor_object.attributes() )
+    constructor = eval(cursor_object._type)
+    //new_object = new cursor_object.constructor( cursor_object.attributes() )
+    new_object = new constructor( cursor_object.attributes() )
+    new_object._type = cursor_object._type || constructor.name
     new_object.x -= new_object.x % grid_size[0]
     new_object.y -= new_object.y % grid_size[1]
     game_objects.push(new_object) 
@@ -139,9 +154,13 @@ jaws.game_states.Edit = function(options) {
     forceArray(obj).forEach( function(element, index) { element.selected = element.selected ? false : true } )
   }
 
-  function gameObjectsAt(x, y) {
-    return game_objects.filter( function(obj) { return obj.rect().collidePoint(x, y) } )
+  function gameObjectAt(x, y) {
+    return game_objects.filter( function(obj) { return obj.rect().collidePoint(x, y) } )[0]
   }
+  function iconAt(x, y) {
+    return icons.filter( function(obj) { return obj.rect().collidePoint(x, y) } )[0]
+  }
+
   function removeSelected() {
     game_objects.filter(isSelected).forEach( function(element, index) {
       game_objects.remove( element )
@@ -191,11 +210,29 @@ jaws.game_states.Edit = function(options) {
   function scrollDown() {
     if(viewport)  viewport.move(0, 10);
   }
+  
+  function createToolbar() {
+    icons = new jaws.SpriteList()
+
+    var x = 32
+    var y = 32
+    constructors.forEach( function(constructor) {
+      var icon = new constructor({x: x, y: y, context: jaws.context})
+      icon._type = constructor.name
+      if(icon.update) icon.update();
+      icons.push( icon )
+      x += 32
+    });
+  }
 
   this.setup = function() {
+    createToolbar()
+
     edit_tag = document.getElementById("jaws-edit")
     edit_tag.style.display = "block"
     viewport = options.viewport || jaws.previous_game_state.viewport
+
+    // game_objects.push( new Enemy1({x: 300, y: 30}) )
 
     // Disable right click
     window.oncontextmenu = function(event) {
@@ -233,24 +270,27 @@ jaws.game_states.Edit = function(options) {
     else {
       log(selected_objects.length + " selected objects", true)
     }
+
+    if(cursor_object) log(cursor_object.toString());
   }
   
  
   this.draw = function() {
-    jaws.clear()
     jaws.previous_game_state.draw()
-    
-    if(cursor_object) cursor_object.draw();
     if(grid_size) { draw_grid() }
-
+    
     if(viewport) {
-      viewport.apply( function() {
-        game_objects.filter(isSelected).forEach(drawRect)
+      viewport.apply( function() { 
+        if(cursor_object) cursor_object.draw();
+        game_objects.filter(isSelected).forEach(drawRect) 
       });
     }
-    else {
-      game_objects.filter(isSelected).forEach(drawRect)
+    else { 
+      if(cursor_object) cursor_object.draw();
+      game_objects.filter(isSelected).forEach(drawRect) 
     }
+
+    icons.forEach( function(icon) { icon.draw(); icon.rect().draw(); });
   }
 
   function mouseX() {
