@@ -295,7 +295,7 @@ jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x.toFixed
 /** returns Sprites state/properties as a pure object */
 jaws.Sprite.prototype.attributes = function() { 
   var object = this.options                   // Start with all creation time properties
-  object["constructor"] = "jaws.Sprite"
+  object["_type"] = "jaws.Sprite"
   object["x"] = parseFloat(this.x.toFixed(2))
   object["y"] = parseFloat(this.y.toFixed(2))
   object["alpha"] = this.alpha
