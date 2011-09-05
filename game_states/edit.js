@@ -21,13 +21,13 @@ jaws.game_states.Edit = function(options) {
   var snap_to_grid = options.snap_to_grid || true
   var track_modified = options.track_modified || true
   var title = options.title || window.location.href
+  var viewport
 
   var that = this
   var click_at
   var edit_tag
   var cursor_object 
   var objects_dragged
-  var viewport
   
   function mousedown(e) {
     var code = ( e.keyCode ? e.keyCode : e.which )
@@ -195,7 +195,7 @@ jaws.game_states.Edit = function(options) {
   this.setup = function() {
     edit_tag = document.getElementById("jaws-edit")
     edit_tag.style.display = "block"
-    viewport = jaws.previous_game_state.viewport
+    viewport = options.viewport || jaws.previous_game_state.viewport
 
     // Disable right click
     window.oncontextmenu = function(event) {
