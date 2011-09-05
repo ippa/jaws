@@ -4,7 +4,7 @@ var jaws = (function(jaws) {
  * @class Loads and processes assets as images, sound, video, json
  * Used internally by JawsJS to create <b>jaws.assets</b>
  */
-jaws.Assets = function() {
+jaws.Assets = function Assets() {
   this.loaded = []    // Hash of all URLs that's been loaded
   this.loading = []   // Hash of all URLs currently loading
   this.src_list = []  // Hash of all unloaded URLs that loadAll() will try to load

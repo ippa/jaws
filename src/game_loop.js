@@ -30,7 +30,7 @@ window.requestAnimFrame = (function(){
  * jaws.start(MyGameState, {fps: 30})
  *
  */
-jaws.GameLoop = function(game_object, options) {
+jaws.GameLoop = function GameLoop(game_object, options) {
   this.ticks = 0
   this.tick_duration = 0
   this.fps = 0

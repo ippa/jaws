@@ -18,7 +18,7 @@ var jaws = (function(jaws) {
 * parallax.draw()
 *
 */
-jaws.Parallax = function(options) {
+jaws.Parallax = function Parallax(options) {
   this.scale = options.scale || 1
   this.repeat_x = options.repeat_x
   this.repeat_y = options.repeat_y
@@ -75,7 +75,7 @@ jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + "
  * @constructor
  * @extends jaws.Sprite
  */
-jaws.ParallaxLayer = function(options) {
+jaws.ParallaxLayer = function ParallaxLayer(options) {
   this.damping = options.damping || 0
   jaws.Sprite.call(this, options)
 }

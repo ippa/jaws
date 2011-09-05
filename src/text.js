@@ -5,7 +5,7 @@
  */
 var jaws = (function(jaws) {
 
-jaws.Text = function(options) {
+jaws.Text = function Text(options) {
   var text = new jaws.Sprite(options)
 
   text.text = options.text || "N/A";

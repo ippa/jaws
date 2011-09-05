@@ -12,7 +12,7 @@ var jaws = (function(jaws) {
   rect.width  // -> 20
   rect.height // -> 20
 */
-jaws.Rect = function(x,y,width,height) {
+jaws.Rect = function Rect(x,y,width,height) {
   this.x = x
   this.y = y
   this.width = width

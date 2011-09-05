@@ -25,7 +25,7 @@ var jaws = (function(jaws) {
  * });
  *
  */
-jaws.Viewport = function(options) {
+jaws.Viewport = function ViewPort(options) {
   this.options = options
   this.context = options.context || jaws.context
   this.width = options.width || jaws.width

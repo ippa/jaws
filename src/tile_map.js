@@ -19,7 +19,7 @@ var jaws = (function(jaws) {
  * tile_map.cell(1,1)  // [sprite]
  *
  */
-jaws.TileMap = function(options) {
+jaws.TileMap = function TileMap(options) {
   this.cell_size = options.cell_size || [32,32]
   this.size = options.size || [100,100]
   this.cells = new Array(this.size[0])

@@ -20,7 +20,7 @@ var jaws = (function(jaws) {
 * new Sprite({image: "topdownspaceship.png", anchor: "center"})
 *
 */
-jaws.Sprite = function(options) {
+jaws.Sprite = function Sprite(options) {
   this.options = options
   this.set(options)  
   this.context = options.context || jaws.context

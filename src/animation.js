@@ -22,7 +22,7 @@ var jaws = (function(jaws) {
  * player.draw()
  *
  */
-jaws.Animation = function(options) {
+jaws.Animation = function Animation(options) {
   this.options = options
   this.frames = options.frames || []
   this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
