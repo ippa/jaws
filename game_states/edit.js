@@ -63,13 +63,14 @@ jaws.game_states.Edit = function(options) {
     var clicked_object = gameObjectsAt(mouseX(), mouseY())[0]
 
     if(!objects_dragged) {
-      jaws.pressed("ctrl") ? toggle(clicked_object) : select(clicked_object)
-    }
-
-    if(jaws.pressed("shift")) { 
-      game_objects.forEach( function(item) { 
-        if(clicked_object.attributes().image === item.attributes().image) toggle(item);
-      });
+      if(jaws.pressed("shift")) { 
+        game_objects.forEach( function(item) { 
+          if(clicked_object.attributes().image === item.attributes().image) toggle(item);
+        });
+      }
+      else {
+        jaws.pressed("ctrl") ? toggle(clicked_object) : select(clicked_object)
+      }
     }
     objects_dragged = false
   }
