@@ -58,6 +58,20 @@ jaws.Sprite.prototype.set = function(options) {
   return this
 }
 
+/** 
+ * @private
+ *
+ * Creates a new sprite from current sprites attributes()
+ * Checks JawsJS magic property '_type' when deciding with which constructor to create it
+ *
+ */
+jaws.Sprite.prototype.clone = function(object) {
+  var constructor = this._type ? eval(this._type) : this.constructor
+  var new_sprite = new constructor( this.attributes() );
+  new_sprite._type = this._type || this.constructor.name
+  return new_sprite
+}
+
 
 /**
  * Sets image from image/canvas or asset-string ("foo.png")
