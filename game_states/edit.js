@@ -219,6 +219,7 @@ jaws.game_states.Edit = function(options) {
     var y = 32
     constructors.forEach( function(constructor) {
       var icon = new constructor({x: x, y: y})
+      icon.setBottom(y)
       icon._type = constructor.name
       if(icon.update) icon.update();
       icons.push( icon )
