@@ -18,8 +18,10 @@ enemies.deleteIf(isOutsideCanvas) // deletes each item in enemies that returns t
 enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
 
 */
-jaws.SpriteList = function SpriteList() {
+jaws.SpriteList = function SpriteList(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
+  if(options) this.load(options);
 }
 jaws.SpriteList.prototype = new Array
 
