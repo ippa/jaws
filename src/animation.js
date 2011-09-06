@@ -66,13 +66,16 @@ jaws.Animation.prototype.update = function() {
     this.index += this.frame_direction
     this.sum_tick = 0
   }
-  if( (this.index >= this.frames.length) || (this.index <= 0) ) {
+  if( (this.index >= this.frames.length) || (this.index < 0) ) {
     if(this.bounce) {
       this.frame_direction = -this.frame_direction
-      this.index += this.frame_direction*2
+      this.index += this.frame_direction * 2
     }
     else if(this.loop) {
       this.index = 0
+    }
+    else {
+      this.index -= this.frame_direction
     }
   }
   return this
