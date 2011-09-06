@@ -33,9 +33,12 @@ jaws.Sprite = function Sprite(options) {
     this.dom = options.dom
     this.createDiv() 
   }
-  else {                  // Defaults to jaws.context or jaws.dom
+  if(!options.context && !options.dom) {                  // Defaults to jaws.context or jaws.dom
     if(jaws.context)  this.context = jaws.context;
-    else              this.dom = jaws.dom;
+    else {
+      this.dom = jaws.dom;
+      this.createDiv() 
+    }
   }
 }
 
@@ -256,7 +259,7 @@ jaws.Sprite.prototype.updateDiv = function() {
 /** Draw sprite on active canvas or update it's DOM-properties */
 jaws.Sprite.prototype.draw = function() {
   if(!this.image) { return this }
-  if(jaws.div)    { return this.updateDiv() }
+  if(jaws.dom)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
