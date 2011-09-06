@@ -23,6 +23,8 @@ var jaws = (function(jaws) {
  *
  */
 jaws.Animation = function Animation(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.options = options
   this.frames = options.frames || []
   this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch

@@ -20,6 +20,8 @@ var jaws = (function(jaws) {
  *
  */
 jaws.TileMap = function TileMap(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.cell_size = options.cell_size || [32,32]
   this.size = options.size || [100,100]
   this.cells = new Array(this.size[0])

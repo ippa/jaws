@@ -31,6 +31,8 @@ window.requestAnimFrame = (function(){
  *
  */
 jaws.GameLoop = function GameLoop(game_object, options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( game_object, options );
+
   this.ticks = 0
   this.tick_duration = 0
   this.fps = 0

@@ -19,6 +19,7 @@ enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true
 
 */
 jaws.SpriteList = function SpriteList() {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 }
 jaws.SpriteList.prototype = new Array
 

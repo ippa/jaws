@@ -23,6 +23,8 @@ function cutImage(image, x, y, width, height) {
  * @property {array} frames all single frames cut out from image
 */
 jaws.SpriteSheet = function SpriteSheet(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
   this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]

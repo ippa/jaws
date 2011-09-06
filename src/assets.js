@@ -5,6 +5,8 @@ var jaws = (function(jaws) {
  * Used internally by JawsJS to create <b>jaws.assets</b>
  */
 jaws.Assets = function Assets() {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee();
+
   this.loaded = []    // Hash of all URLs that's been loaded
   this.loading = []   // Hash of all URLs currently loading
   this.src_list = []  // Hash of all unloaded URLs that loadAll() will try to load

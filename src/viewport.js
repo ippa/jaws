@@ -26,6 +26,8 @@ var jaws = (function(jaws) {
  *
  */
 jaws.Viewport = function ViewPort(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.options = options
   this.context = options.context || jaws.context
   this.width = options.width || jaws.width

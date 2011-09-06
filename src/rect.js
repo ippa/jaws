@@ -12,7 +12,9 @@ var jaws = (function(jaws) {
   rect.width  // -> 20
   rect.height // -> 20
 */
-jaws.Rect = function Rect(x,y,width,height) {
+jaws.Rect = function Rect(x, y, width, height) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee(x, y, width, height);
+  
   this.x = x
   this.y = y
   this.width = width
