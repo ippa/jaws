@@ -43,9 +43,19 @@ jaws.GameLoop = function GameLoop(game_object, options) {
   var that = this
   var mean_value = new MeanValue(20) // let's have a smooth, non-jittery FPS-value
 
+  /** 
+   * returns how game_loop has been active in milliseconds 
+   * does currently not factor in pause-time
+   */
+  this.runtime = function() {
+    return (this.last_tick - this.first_tick)
+  }
+
   /** Start the game loop by calling setup() once and then loop update()/draw() forever with given FPS */
   this.start = function() {
     jaws.log("game loop start", true)
+  
+    this.first_tick = (new Date()).getTime();
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
 
