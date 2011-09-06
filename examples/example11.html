@@ -30,7 +30,7 @@
         info_tag = document.getElementsByTagName('info')
 
         var prescaled_image = jaws.gfx.retroScaleImage( jaws.assets.get("plane.png"), 3)
-        player = new jaws.Sprite({image: prescaled_image, x: 50, y:50, anchor: "center"})
+        player = jaws.Sprite({image: prescaled_image, x: 50, y:50, anchor: "center"}) // jaws.Sprite also works without 'new'
         jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       },
       
