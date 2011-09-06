@@ -102,6 +102,13 @@ jaws.Animation.prototype.next = function() {
   return this.frames[this.index]
 };
 
+/** returns true if animation is at the very last frame */
+jaws.Animation.prototype.atLastFrame = function() { return (this.index == this.frames.length-1) }
+
+/** returns true if animation is at the very first frame */
+jaws.Animation.prototype.atFirstFrame = function() { return (this.index == 0) }
+
+
 /** 
   returns the current frame
 */
