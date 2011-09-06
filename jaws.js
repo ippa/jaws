@@ -501,6 +501,8 @@ var jaws = (function(jaws) {
  * Used internally by JawsJS to create <b>jaws.assets</b>
  */
 jaws.Assets = function Assets() {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee();
+
   this.loaded = []    // Hash of all URLs that's been loaded
   this.loading = []   // Hash of all URLs currently loading
   this.src_list = []  // Hash of all unloaded URLs that loadAll() will try to load
@@ -761,6 +763,8 @@ window.requestAnimFrame = (function(){
  *
  */
 jaws.GameLoop = function GameLoop(game_object, options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( game_object, options );
+
   this.ticks = 0
   this.tick_duration = 0
   this.fps = 0
@@ -771,9 +775,19 @@ jaws.GameLoop = function GameLoop(game_object, options) {
   var that = this
   var mean_value = new MeanValue(20) // let's have a smooth, non-jittery FPS-value
 
+  /** 
+   * returns how game_loop has been active in milliseconds 
+   * does currently not factor in pause-time
+   */
+  this.runtime = function() {
+    return (this.last_tick - this.first_tick)
+  }
+
   /** Start the game loop by calling setup() once and then loop update()/draw() forever with given FPS */
   this.start = function() {
     jaws.log("game loop start", true)
+  
+    this.first_tick = (new Date()).getTime();
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
 
@@ -857,7 +871,9 @@ var jaws = (function(jaws) {
   rect.width  // -> 20
   rect.height // -> 20
 */
-jaws.Rect = function Rect(x,y,width,height) {
+jaws.Rect = function Rect(x, y, width, height) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee(x, y, width, height);
+  
   this.x = x
   this.y = y
   this.width = width
@@ -962,6 +978,8 @@ var jaws = (function(jaws) {
 *
 */
 jaws.Sprite = function Sprite(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.options = options
   this.set(options)  
   
@@ -972,9 +990,12 @@ jaws.Sprite = function Sprite(options) {
     this.dom = options.dom
     this.createDiv() 
   }
-  else {                  // Defaults to jaws.context or jaws.dom
+  if(!options.context && !options.dom) {                  // Defaults to jaws.context or jaws.dom
     if(jaws.context)  this.context = jaws.context;
-    else              this.dom = jaws.dom;
+    else {
+      this.dom = jaws.dom;
+      this.createDiv() 
+    }
   }
 }
 
@@ -1195,7 +1216,7 @@ jaws.Sprite.prototype.updateDiv = function() {
 /** Draw sprite on active canvas or update it's DOM-properties */
 jaws.Sprite.prototype.draw = function() {
   if(!this.image) { return this }
-  if(jaws.div)    { return this.updateDiv() }
+  if(jaws.dom)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
@@ -1321,7 +1342,10 @@ enemies.deleteIf(isOutsideCanvas) // deletes each item in enemies that returns t
 enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
 
 */
-jaws.SpriteList = function SpriteList() {
+jaws.SpriteList = function SpriteList(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
+  if(options) this.load(options);
 }
 jaws.SpriteList.prototype = new Array
 
@@ -1433,6 +1457,8 @@ function cutImage(image, x, y, width, height) {
  * @property {array} frames all single frames cut out from image
 */
 jaws.SpriteSheet = function SpriteSheet(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
   this.orientation = options.orientation || "right"
   this.frame_size = options.frame_size || [32,32]
@@ -1479,6 +1505,8 @@ var jaws = (function(jaws) {
 *
 */
 jaws.Parallax = function Parallax(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.scale = options.scale || 1
   this.repeat_x = options.repeat_x
   this.repeat_y = options.repeat_y
@@ -1536,6 +1564,8 @@ jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + "
  * @extends jaws.Sprite
  */
 jaws.ParallaxLayer = function ParallaxLayer(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.damping = options.damping || 0
   jaws.Sprite.call(this, options)
 }
@@ -1573,6 +1603,8 @@ var jaws = (function(jaws) {
  *
  */
 jaws.Animation = function Animation(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.options = options
   this.frames = options.frames || []
   this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
@@ -1614,13 +1646,16 @@ jaws.Animation.prototype.update = function() {
     this.index += this.frame_direction
     this.sum_tick = 0
   }
-  if( (this.index >= this.frames.length) || (this.index <= 0) ) {
+  if( (this.index >= this.frames.length) || (this.index < 0) ) {
     if(this.bounce) {
       this.frame_direction = -this.frame_direction
-      this.index += this.frame_direction*2
+      this.index += this.frame_direction * 2
     }
     else if(this.loop) {
       this.index = 0
+    }
+    else {
+      this.index -= this.frame_direction
     }
   }
   return this
@@ -1646,6 +1681,13 @@ jaws.Animation.prototype.next = function() {
   this.update()
   return this.frames[this.index]
 };
+
+/** returns true if animation is at the very last frame */
+jaws.Animation.prototype.atLastFrame = function() { return (this.index == this.frames.length-1) }
+
+/** returns true if animation is at the very first frame */
+jaws.Animation.prototype.atFirstFrame = function() { return (this.index == 0) }
+
 
 /** 
   returns the current frame
@@ -1693,6 +1735,8 @@ var jaws = (function(jaws) {
  *
  */
 jaws.Viewport = function ViewPort(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.options = options
   this.context = options.context || jaws.context
   this.width = options.width || jaws.width
@@ -1857,6 +1901,8 @@ var jaws = (function(jaws) {
  *
  */
 jaws.TileMap = function TileMap(options) {
+  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+
   this.cell_size = options.cell_size || [32,32]
   this.size = options.size || [100,100]
   this.cells = new Array(this.size[0])
