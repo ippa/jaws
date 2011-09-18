@@ -86,6 +86,7 @@ jaws.init = function(options) {
   if(jaws.url_parameters["debug"]) {
     if(!log_tag) {
       log_tag = document.createElement("div")
+      log_tag.id = "jaws-log"
       log_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;"
       document.body.appendChild(log_tag)
     }
