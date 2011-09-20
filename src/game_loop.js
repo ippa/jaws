@@ -61,9 +61,13 @@ jaws.GameLoop = function GameLoop(game_object, options) {
 
     if(game_object.setup) { game_object.setup() }
     step_delay = 1000 / options.fps;
-    
-    // update_id = setInterval(this.loop, step_delay);
-    requestAnimFrame(this.loop)
+   
+    if(options.fps == 60) {
+      requestAnimFrame(this.loop)
+    }
+    else {
+      update_id = setInterval(this.loop, step_delay);
+    }
 
     jaws.log("game loop loop", true)
   }
@@ -79,7 +83,7 @@ jaws.GameLoop = function GameLoop(game_object, options) {
       if(game_object.draw)   { game_object.draw() }
       that.ticks++
     }
-    if(!stopped) requestAnimFrame(that.loop);
+    if(options.fps == 60 && !stopped) requestAnimFrame(that.loop);
     that.last_tick = that.current_tick;
   }
   
