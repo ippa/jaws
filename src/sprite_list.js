@@ -41,11 +41,11 @@ jaws.SpriteList.prototype.load = function(objects) {
   
   function parseArray(array) {
     array.forEach( function(data) {
-      var constructor = data._type ? eval(data._type) : data.constructor
+      var constructor = data._constructor ? eval(data._constructor) : data.constructor
       if(jaws.isFunction(constructor)) {
-        jaws.log("Creating " + data._type + "(" + data.toString() + ")", true)
+        jaws.log("Creating " + data._constructor + "(" + data.toString() + ")", true)
         var object = new constructor(data)
-        object._type = data._type || data.constructor.name
+        object._constructor = data._constructor || data.constructor.name
         that.push(object);
       }
     });
