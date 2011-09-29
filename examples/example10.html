@@ -33,18 +33,35 @@
       var title = window.location.href  // Use URL as unique identifier when saving/fetching game objects from localStorage
      
       this.setup = function() {
-        // console.log(jaws.assets.get("blocks.json"))
-        // blocks.load( jaws.assets.get("blocks.json") )
-        blocks.load(localStorage[title])  // Try to load  saved sprites from localStorage
+        // blocks.load(localStorage[title])  // Load  saved sprites from localStorage
+        
+        blocks.load( jaws.assets.get("/game_objects.json") )  // Load
+
         if(blocks.length == 0) {          // No sprites in localStorage? Generate 5 randomly placed blocks!
           for(var nr=5; nr--; ) {
-            blocks.push( new jaws.Sprite({anchor: "top_left", image: "block.bmp", x: Math.random()*jaws.width-20, y: Math.random()*jaws.height-20}) )
+            blocks.push( new jaws.Sprite({image: "block.bmp", x: Math.random()*jaws.width-20, y: Math.random()*jaws.height-20}) )
           }
         }
  
         jaws.on_keydown(["esc","space"], function() { 
-          // Start editor by switching game state to a new isntance of jaws.game_states.Edit
-          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32], title: title}) )
+          /*
+          * Start editor by switching game state to a new isntance of jaws.game_states.Edit
+          * By specing an url, editor will POST a dump of all sprites to that url when saving.
+          *
+          * Example backend in sinatra (Ruby web framework):
+          *  
+          *  get "/game_objects" do
+          *   File.read("game_objects.json")
+          *  end
+          *
+          *  post "/game_objects" do
+          *   File.open("public/game_objects.json", "w") do |fh|
+          *     fh.puts params[:game_objects]
+          *   end
+          * end
+          *
+          */
+          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32], title: title, url: "http://dev.jawsjs.com/game_objects"}) )
         })
         jaws.preventDefaultKeys(["space"])
       }
@@ -54,12 +71,10 @@
         blocks.draw()
       }
     }
-
-    /* Entry point after jaws is done loading */
+    
     jaws.onload = function() {
-      // Without preload, a sprite using "block.bmp" will try to load it creation time
-      jaws.assets.add("block.bmp") // Uncomment to preload block.bmp
-      jaws.assets.add("blocks.json")
+      jaws.assets.add("block.bmp")
+      jaws.assets.add("/game_objects.json")
       jaws.start(Example)
     }
   </script>
