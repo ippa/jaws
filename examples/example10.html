@@ -50,18 +50,14 @@
           *
           * Example backend in sinatra (Ruby web framework):
           *  
-          *  get "/game_objects" do
-          *   File.read("game_objects.json")
-          *  end
-          *
-          *  post "/game_objects" do
+          * post "/game_objects.json" do
           *   File.open("public/game_objects.json", "w") do |fh|
           *     fh.puts params[:game_objects]
           *   end
           * end
           *
           */
-          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32], title: title, url: "http://dev.jawsjs.com/game_objects"}) )
+          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32], title: title, url: "/game_objects"}) )
         })
         jaws.preventDefaultKeys(["space"])
       }
