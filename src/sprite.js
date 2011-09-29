@@ -67,13 +67,13 @@ jaws.Sprite.prototype.set = function(options) {
  * @private
  *
  * Creates a new sprite from current sprites attributes()
- * Checks JawsJS magic property '_type' when deciding with which constructor to create it
+ * Checks JawsJS magic property '_constructor' when deciding with which constructor to create it
  *
  */
 jaws.Sprite.prototype.clone = function(object) {
-  var constructor = this._type ? eval(this._type) : this.constructor
+  var constructor = this._constructor ? eval(this._constructor) : this.constructor
   var new_sprite = new constructor( this.attributes() );
-  new_sprite._type = this._type || this.constructor.name
+  new_sprite._constructor = this._constructor || this.constructor.name
   return new_sprite
 }
 
@@ -318,7 +318,7 @@ jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x.toFixed
 /** returns Sprites state/properties as a pure object */
 jaws.Sprite.prototype.attributes = function() { 
   var object = this.options                   // Start with all creation time properties
-  object["_type"] = this._type || "jaws.Sprite"
+  object["_constructor"] = this._constructor || "jaws.Sprite"
   object["x"] = parseFloat(this.x.toFixed(2))
   object["y"] = parseFloat(this.y.toFixed(2))
   object["alpha"] = this.alpha
