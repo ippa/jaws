@@ -86,6 +86,7 @@ jaws.init = function(options) {
   if(jaws.url_parameters["debug"]) {
     if(!log_tag) {
       log_tag = document.createElement("div")
+      log_tag.id = "jaws-log"
       log_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;"
       document.body.appendChild(log_tag)
     }
@@ -793,9 +794,13 @@ jaws.GameLoop = function GameLoop(game_object, options) {
 
     if(game_object.setup) { game_object.setup() }
     step_delay = 1000 / options.fps;
-    
-    // update_id = setInterval(this.loop, step_delay);
-    requestAnimFrame(this.loop)
+   
+    if(options.fps == 60) {
+      requestAnimFrame(this.loop)
+    }
+    else {
+      update_id = setInterval(this.loop, step_delay);
+    }
 
     jaws.log("game loop loop", true)
   }
@@ -811,7 +816,7 @@ jaws.GameLoop = function GameLoop(game_object, options) {
       if(game_object.draw)   { game_object.draw() }
       that.ticks++
     }
-    if(!stopped) requestAnimFrame(that.loop);
+    if(options.fps == 60 && !stopped) requestAnimFrame(that.loop);
     that.last_tick = that.current_tick;
   }
   
@@ -1024,13 +1029,13 @@ jaws.Sprite.prototype.set = function(options) {
  * @private
  *
  * Creates a new sprite from current sprites attributes()
- * Checks JawsJS magic property '_type' when deciding with which constructor to create it
+ * Checks JawsJS magic property '_constructor' when deciding with which constructor to create it
  *
  */
 jaws.Sprite.prototype.clone = function(object) {
-  var constructor = this._type ? eval(this._type) : this.constructor
+  var constructor = this._constructor ? eval(this._constructor) : this.constructor
   var new_sprite = new constructor( this.attributes() );
-  new_sprite._type = this._type || this.constructor.name
+  new_sprite._constructor = this._constructor || this.constructor.name
   return new_sprite
 }
 
@@ -1275,7 +1280,7 @@ jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x.toFixed
 /** returns Sprites state/properties as a pure object */
 jaws.Sprite.prototype.attributes = function() { 
   var object = this.options                   // Start with all creation time properties
-  object["_type"] = this._type || "jaws.Sprite"
+  object["_constructor"] = this._constructor || "jaws.Sprite"
   object["x"] = parseFloat(this.x.toFixed(2))
   object["y"] = parseFloat(this.y.toFixed(2))
   object["alpha"] = this.alpha
@@ -1303,6 +1308,8 @@ jaws.Sprite.prototype.toJSON = function() {
 return jaws;
 })(jaws || {});
 
+// Support CommonJS require()
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.Sprite }
 
 /*
 // Chainable setters under consideration:
@@ -1365,18 +1372,18 @@ jaws.SpriteList.prototype.load = function(objects) {
   
   function parseArray(array) {
     array.forEach( function(data) {
-      var constructor = data._type ? eval(data._type) : data.constructor
-      if(constructor) {
-        jaws.log("Creating " + data._type + "(" + data.toString() + ")", true)
+      var constructor = data._constructor ? eval(data._constructor) : data.constructor
+      if(jaws.isFunction(constructor)) {
+        jaws.log("Creating " + data._constructor + "(" + data.toString() + ")", true)
         var object = new constructor(data)
-        object._type = data._type || data.constructor.name
+        object._constructor = data._constructor || data.constructor.name
         that.push(object);
       }
     });
   }
 }
 
-/** Remove a certain sprite from list */
+/** Remove obj from list */
 jaws.SpriteList.prototype.remove = function(obj) {
   var index = this.indexOf(obj)
   if(index > -1) { this.splice(index, 1) }
