@@ -36,9 +36,9 @@ jaws.game_states.Edit = function(options) {
   
   function cloneObject(object) {
     if(!object) return undefined;
-    var constructor = object._type ? eval(object._type) : object.constructor
+    var constructor = object._constructor ? eval(object._constructor) : object.constructor
     var new_object = new constructor( object.attributes() );
-    new_object._type = object._type || object.constructor.name
+    new_object._constructor = object._constructor || object.constructor.name
     if(new_object.update) new_object.update(); 
     return new_object
   }
@@ -235,7 +235,7 @@ jaws.game_states.Edit = function(options) {
     constructors.forEach( function(constructor) {
       var icon = new constructor({x: x, y: y})
       icon.setBottom(y)
-      icon._type = constructor.name
+      icon._constructor = constructor.name
       if(icon.update) icon.update();
       icons.push( icon )
       x += 32
