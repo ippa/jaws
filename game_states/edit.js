@@ -12,6 +12,7 @@ if(!jaws.game_states) jaws.game_states = {}
  * @property snap_to_grid snap all game objects to predifned grid
  * @property {array} grid_size size of grid, mostly make sense with snap_to_grid set to true and TileMap() later on
  * @property {array} game_objects game_objects to paint and modify on screen
+ * @property {string} url use url to POST game objects to when saving and GET to load. Sends and expects array of JSON as payload.
  *
  */
 jaws.game_states.Edit = function(options) {
@@ -22,6 +23,8 @@ jaws.game_states.Edit = function(options) {
   var snap_to_grid = options.snap_to_grid || true
   var track_modified = options.track_modified || true
   var title = options.title || window.location.href
+  var url = options.url
+
   var viewport
   var icons
 
@@ -180,8 +183,20 @@ jaws.game_states.Edit = function(options) {
   }
 
   function save() {
-    localStorage[title] = "[" + game_objects.map( function(game_object) { return game_object.toJSON() }) + "]";
-    log("Saved game objects to localStorage")
+    var data = "[" + game_objects.map( function(game_object) { return game_object.toJSON() }) + "]";
+    console.log(data)
+
+    if(url) {
+      var req = new XMLHttpRequest()
+      //req.onreadystatechange = createCallback(callback)
+      req.open("POST", url, true)
+      data ? req.send(data) : req.send(null)
+      log("Posted game objects to url: " + url)
+    }
+    else {
+      localStorage[title] = data
+      log("Saved game objects to localStorage")
+    }
   }
   
   function add() {
