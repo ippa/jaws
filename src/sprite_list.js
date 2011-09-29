@@ -42,7 +42,7 @@ jaws.SpriteList.prototype.load = function(objects) {
   function parseArray(array) {
     array.forEach( function(data) {
       var constructor = data._type ? eval(data._type) : data.constructor
-      if(constructor) {
+      if(jaws.isFunction(constructor)) {
         jaws.log("Creating " + data._type + "(" + data.toString() + ")", true)
         var object = new constructor(data)
         object._type = data._type || data.constructor.name
@@ -52,7 +52,7 @@ jaws.SpriteList.prototype.load = function(objects) {
   }
 }
 
-/** Remove a certain sprite from list */
+/** Remove obj from list */
 jaws.SpriteList.prototype.remove = function(obj) {
   var index = this.indexOf(obj)
   if(index > -1) { this.splice(index, 1) }
