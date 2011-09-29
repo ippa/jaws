@@ -184,7 +184,6 @@ jaws.game_states.Edit = function(options) {
 
   function save() {
     var data = "[" + game_objects.map( function(game_object) { return game_object.toJSON() }) + "]";
-    console.log(data)
 
     if(url) {
       data = "game_objects=" + data
