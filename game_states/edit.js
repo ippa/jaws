@@ -187,9 +187,10 @@ jaws.game_states.Edit = function(options) {
     console.log(data)
 
     if(url) {
+      data = "game_objects=" + data
       var req = new XMLHttpRequest()
-      //req.onreadystatechange = createCallback(callback)
-      req.open("POST", url, true)
+      req.open("POST", url, true)      
+      req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       data ? req.send(data) : req.send(null)
       log("Posted game objects to url: " + url)
     }
