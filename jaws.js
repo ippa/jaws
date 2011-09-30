@@ -22,7 +22,6 @@
  *
  * ippa. 
  *
- fds
  */
 var jaws = (function(jaws) {
 
