@@ -157,13 +157,13 @@ jaws.start = function(game_state, options) {
   function displayProgress(percent_done) {
     if(jaws.context) {
       jaws.context.save()
-      jaws.context.fillStyle  = "black"
+      jaws.context.fillStyle  = options.loading_bg_color || "black"
       jaws.context.fillRect(0, 0, jaws.width, jaws.height);
       jaws.context.textAlign  = "center"
-      jaws.context.fillStyle  = "white"
-      jaws.context.font       = "15px terminal";
+      jaws.context.fillStyle  = options.loading_text_color || "white"
+      jaws.context.font       = "15px " + options.loading_text || "terminal"
       jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
-      jaws.context.font       = "bold 30px terminal";
+      jaws.context.font       = "bold 30px " + options.loading_text || "terminal"
       jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
       jaws.context.restore()
     }
