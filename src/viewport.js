@@ -167,7 +167,10 @@ jaws.Viewport = function ViewPort(options) {
    * this is simular to viewport.draw( tile_map.all() ) but optmized for Huge game worlds (tile maps)
    */
   this.drawTileMap = function( tile_map ) {
-    this.draw( tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height }) )
+    var sprites = tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height })
+    this.apply( function() {
+      for(var i=0; i < sprites.length; i++) sprites[i].draw();
+    });
   }
 
   /** draws 'item' if it's partly inside the viewport */
