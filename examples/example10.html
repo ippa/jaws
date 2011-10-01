@@ -68,14 +68,14 @@
       }
     }
 
-    var Grass = function(options) { jaws.Sprite.call(this, options) }
-    var Block = function(options) { jaws.Sprite.call(this, options) }
+    var Grass = function(options) { options.image = "grass.png"; jaws.Sprite.call(this, options) }
+    var Block = function(options) { options.image = "block.bmp"; jaws.Sprite.call(this, options) }
     
     jaws.onload = function() {
-      Grass.prototype = new jaws.Sprite({image: "grass.png"})
+      Grass.prototype = new jaws.Sprite({})
       Grass.prototype.constructor = Grass
       
-      Block.prototype = new jaws.Sprite({image: "block.bmp"})
+      Block.prototype = new jaws.Sprite({})
       Block.prototype.constructor = Block
 
       jaws.assets.add(["block.bmp", "grass.png"])
