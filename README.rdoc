@@ -42,6 +42,7 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/jawsjs/examples/example9.html - jaws.Viewport (The basics for a sidescrolling platformer right here)
 * http://jawsjs.com/jawsjs/examples/example10.html - jaws.game_states.Edit, a simple map editor
 * http://jawsjs.com/jawsjs/examples/example11.html - jaws.gfx.retroScaleImage and Literal Notion game state
+* http://jawsjs.com/jawsjs/examples/example12.html - jaws.viewport.drawTileMap() - optimized tile map drawing
 
 == Games using Jaws
 * {http://ippa.se/webgames/the_escape/index.html}[http://ippa.se/webgames/the_escape/index.html] - "The Escape" - My Ludum Dare #21 entry. Adventure/Puzzle.
