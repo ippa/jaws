@@ -34,15 +34,15 @@
      
       this.setup = function() {
         // blocks.load(localStorage[title])  // Load  saved sprites from localStorage
-        
         blocks.load( jaws.assets.get("/game_objects.json") )  // Load
 
         if(blocks.length == 0) {          // No sprites in localStorage? Generate 5 randomly placed blocks!
           for(var nr=5; nr--; ) {
-            blocks.push( new jaws.Sprite({image: "block.bmp", x: Math.random()*jaws.width-20, y: Math.random()*jaws.height-20}) )
+            //blocks.push( new jaws.Sprite({image: "block.bmp", x: Math.random()*jaws.width-20, y: Math.random()*jaws.height-20}) )
+            blocks.push( new Block({x: Math.random()*jaws.width-20, y: Math.random()*jaws.height-20}) )
           }
         }
- 
+
         jaws.on_keydown(["esc","space"], function() { 
           /*
           * Start editor by switching game state to a new isntance of jaws.game_states.Edit
@@ -57,7 +57,7 @@
           * end
           *
           */
-          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [32,32], title: title, url: "/game_objects"}) )
+          jaws.switchGameState( new jaws.game_states.Edit({constructors: [Block,Grass], game_objects: blocks, grid_size: [32,32], title: title, url: "/game_objects"}) )
         })
         jaws.preventDefaultKeys(["space"])
       }
@@ -67,9 +67,18 @@
         blocks.draw()
       }
     }
+
+    var Grass = function(options) { jaws.Sprite.call(this, options) }
+    var Block = function(options) { jaws.Sprite.call(this, options) }
     
     jaws.onload = function() {
-      jaws.assets.add("block.bmp")
+      Grass.prototype = new jaws.Sprite({image: "grass.png"})
+      Grass.prototype.constructor = Grass
+      
+      Block.prototype = new jaws.Sprite({image: "block.bmp"})
+      Block.prototype.constructor = Block
+
+      jaws.assets.add(["block.bmp", "grass.png"])
       jaws.assets.add("/game_objects.json")
       jaws.start(Example)
     }

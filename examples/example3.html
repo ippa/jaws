@@ -49,10 +49,10 @@
       /* update() will get called each game tick with your specified FPS. Put game logic here. */
       this.update = function() {
         player.setImage( player.anim_default.next() )
-        if(jaws.pressed("left"))  { player.x -= speed; player.image = player.anim_left.next() }
-        if(jaws.pressed("right")) { player.x += speed; player.image = player.anim_right.next() }
-        if(jaws.pressed("up"))    { player.y -= speed; player.image = player.anim_up.next() }
-        if(jaws.pressed("down"))  { player.y += speed; player.image = player.anim_down.next() }
+        if(jaws.pressed("left"))  { player.x -= speed; player.setImage( player.anim_left.next() ) }
+        if(jaws.pressed("right")) { player.x += speed; player.setImage( player.anim_right.next() ) }
+        if(jaws.pressed("up"))    { player.y -= speed; player.setImage( player.anim_up.next() ) }
+        if(jaws.pressed("down"))  { player.y += speed; player.setImage( player.anim_down.next() ) }
         //forceInsideCanvas(player)
         fps.innerHTML = jaws.game_loop.fps + ". player: " + player.x + "/" + player.y
       }
