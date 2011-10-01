@@ -155,13 +155,24 @@ jaws.Viewport = function ViewPort(options) {
    * if obj is an array-like object, iterate through it and call draw() on each item if it's partly inside the viewport 
    */
   this.draw = function( obj ) {
-    if(obj.forEach) obj.forEach( this.drawIfPartlyInside );
-    // else if(jaws.isFunction(obj) {};  // add apply()-functionally here?
+    this.apply( function() {
+      if(obj.forEach) obj.forEach( that.drawIfPartlyInside );
+      else if(obj.draw) that.drawIfPartlyInside(obj);
+      // else if(jaws.isFunction(obj) {};  // add apply()-functionally here?
+    });
+  }
+
+  /** 
+   * draws all items of 'tile_map' that's lies inside the viewport 
+   * this is simular to viewport.draw( tile_map.all() ) but optmized for Huge game worlds (tile maps)
+   */
+  this.drawTileMap = function( tile_map ) {
+    this.draw( tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height }) )
   }
 
   /** draws 'obj' if it's partly inside the viewport */
-  this.drawIfPartlyInside = function(obj) { 
-    if(this.isPartlyInside(item)) item.draw(); 
+  this.drawIfPartlyInside = function(item) { 
+    if(that.isPartlyInside(item)) item.draw(); 
   }
 
   /** @private */
