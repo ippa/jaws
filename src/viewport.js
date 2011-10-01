@@ -151,6 +151,19 @@ jaws.Viewport = function ViewPort(options) {
     this.context.restore()
   };
 
+  /** 
+   * if obj is an array-like object, iterate through it and call draw() on each item if it's partly inside the viewport 
+   */
+  this.draw = function( obj ) {
+    if(obj.forEach) obj.forEach( this.drawIfPartlyInside );
+    // else if(jaws.isFunction(obj) {};  // add apply()-functionally here?
+  }
+
+  /** draws 'obj' if it's partly inside the viewport */
+  this.drawIfPartlyInside = function(obj) { 
+    if(this.isPartlyInside(item)) item.draw(); 
+  }
+
   /** @private */
   this.verifyPosition = function() {
     var max = this.max_x - this.width
