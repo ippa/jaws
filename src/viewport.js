@@ -170,7 +170,7 @@ jaws.Viewport = function ViewPort(options) {
     this.draw( tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height }) )
   }
 
-  /** draws 'obj' if it's partly inside the viewport */
+  /** draws 'item' if it's partly inside the viewport */
   this.drawIfPartlyInside = function(item) { 
     if(that.isPartlyInside(item)) item.draw(); 
   }
