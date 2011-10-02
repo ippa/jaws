@@ -1,7 +1,6 @@
 = Jaws - HTML5 Javascript web game development library
 
-Depends on Javascript 1.6+ (ECMA-262 Edition 5).
-Works with Chrome 9+, Firefox 3.6+, Safari 5+ & IE9.
+Depends on JavaScript Edition 5. Works with Chrome 9+, Firefox 3.6+, Safari 5+ & IE9.
 
 Licensed under LGPL so you're free to use it for commercial projects.
 
@@ -12,8 +11,8 @@ Licensed under LGPL so you're free to use it for commercial projects.
 
 Jaws also:
 - Does <canvas>-sprites and exprimental HTML-based sprites
-- Does not depend on any other javascript library
-- Doesn't try to force a certain "JS class pattern" on you, just pure javascript as mother nature intended it
+- Does not depend on any other JavaScript library
+- Doesn't try to force a certain "JS class pattern" on you, just pure JavaScript as mother nature intended it
 - Tries to make assets (images, music, json data) in webgames as easy as possible
 - Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
 - Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
@@ -63,6 +62,16 @@ You can also link to invidual files in your HTML:
 
 NOTE: core.js is always needed but after that you can pick and choose depending on what you need.
 A rule of thumb is that a file named "foo.js" will include a contructor named Foo().
+
+== Contribute
+Jaws accepts contributions, some simple guidelines:
+- Formatting: oneFunction(), OneConstrutor() and one_variable
+- Don't patch jaws.js or jaws-min.js
+- Please bundle tests with non-trivial patches
+- Naming shouldn't consist of abbreviations, let's use "context", not "ctx"
+
+Jaws has gotten contributions from:
+https://github.com/gregmax17 - viewport related stuff
 
 == Example
   /*
