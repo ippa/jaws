@@ -145,8 +145,8 @@ function saveMousePosition(e) {
 jaws.start = function(game_state, options) {
   if(!options) options = {};
   var fps = options.fps || 60
-  if (options.showLoadingScreen === undefined)
-    options.showLoadingScreen = true
+  if (options.loading_screen === undefined)
+    options.loading_screen = true
   
   if(!options.width) options.width = 500; 
   if(!options.height) options.height = 300;
@@ -157,7 +157,7 @@ jaws.start = function(game_state, options) {
   jaws.setupInput()
 
   function displayProgress(percent_done) {
-    if(jaws.context && options.showLoadingScreen) {
+    if(jaws.context && options.loading_screen) {
       jaws.context.save()
       jaws.context.fillStyle  = "black"
       jaws.context.fillRect(0, 0, jaws.width, jaws.height);

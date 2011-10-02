@@ -143,11 +143,9 @@ function saveMousePosition(e) {
  *
  */
 jaws.start = function(game_state, options) {
-  if(!options) options = {};
-  var fps = options.fps || 60
-  if (options.showLoadingScreen === undefined)
-    options.showLoadingScreen = true
+  var fps = (options && options.fps) || 60
   
+  if(!options) options = {};
   if(!options.width) options.width = 500; 
   if(!options.height) options.height = 300;
   jaws.init(options)
@@ -157,7 +155,7 @@ jaws.start = function(game_state, options) {
   jaws.setupInput()
 
   function displayProgress(percent_done) {
-    if(jaws.context && options.showLoadingScreen) {
+    if(jaws.context) {
       jaws.context.save()
       jaws.context.fillStyle  = "black"
       jaws.context.fillRect(0, 0, jaws.width, jaws.height);
@@ -1885,13 +1883,10 @@ jaws.Viewport = function ViewPort(options) {
    * this is simular to viewport.draw( tile_map.all() ) but optmized for Huge game worlds (tile maps)
    */
   this.drawTileMap = function( tile_map ) {
-    var sprites = tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height })
-    this.apply( function() {
-      for(var i=0; i < sprites.length; i++) sprites[i].draw();
-    });
+    this.draw( tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height }) )
   }
 
-  /** draws 'item' if it's partly inside the viewport */
+  /** draws 'obj' if it's partly inside the viewport */
   this.drawIfPartlyInside = function(item) { 
     if(that.isPartlyInside(item)) item.draw(); 
   }
