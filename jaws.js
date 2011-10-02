@@ -143,9 +143,11 @@ function saveMousePosition(e) {
  *
  */
 jaws.start = function(game_state, options) {
-  var fps = (options && options.fps) || 60
-  
   if(!options) options = {};
+  var fps = options.fps || 60
+  if (options.loading_screen === undefined)
+    options.loading_screen = true
+  
   if(!options.width) options.width = 500; 
   if(!options.height) options.height = 300;
   jaws.init(options)
@@ -155,7 +157,7 @@ jaws.start = function(game_state, options) {
   jaws.setupInput()
 
   function displayProgress(percent_done) {
-    if(jaws.context) {
+    if(jaws.context && options.loading_screen) {
       jaws.context.save()
       jaws.context.fillStyle  = "black"
       jaws.context.fillRect(0, 0, jaws.width, jaws.height);
@@ -1018,7 +1020,8 @@ jaws.Sprite.prototype.set = function(options) {
   this.anchor(options.anchor || "top_left");
   if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
   if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
-  options.image && this.setImage(options.image)
+  options.image && this.setImage(options.image);
+  this.image_path = options.image;
   if(options.scale_image) this.scaleImage(options.scale_image);
   this.cacheOffsets()
 
@@ -1283,13 +1286,15 @@ jaws.Sprite.prototype.attributes = function() {
   object["_constructor"] = this._constructor || "jaws.Sprite"
   object["x"] = parseFloat(this.x.toFixed(2))
   object["y"] = parseFloat(this.y.toFixed(2))
+  object["image"] = this.image_path
   object["alpha"] = this.alpha
-  object["angle"] = parseFloat(this.angle.toFixed(2))
   object["flipped"] = this.flipped
-  object["scale_x"] = this.scale_x
-  object["scale_y"] = this.scale_y
+  object["angle"] = parseFloat(this.angle.toFixed(2))
+  object["scale_x"] = this.scale_x;
+  object["scale_y"] = this.scale_y;
   object["anchor_x"] = this.anchor_x
   object["anchor_y"] = this.anchor_y
+
   return object
 }
 
@@ -1883,10 +1888,13 @@ jaws.Viewport = function ViewPort(options) {
    * this is simular to viewport.draw( tile_map.all() ) but optmized for Huge game worlds (tile maps)
    */
   this.drawTileMap = function( tile_map ) {
-    this.draw( tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height }) )
+    var sprites = tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height })
+    this.apply( function() {
+      for(var i=0; i < sprites.length; i++) sprites[i].draw();
+    });
   }
 
-  /** draws 'obj' if it's partly inside the viewport */
+  /** draws 'item' if it's partly inside the viewport */
   this.drawIfPartlyInside = function(item) { 
     if(that.isPartlyInside(item)) item.draw(); 
   }
