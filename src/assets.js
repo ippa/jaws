@@ -82,7 +82,8 @@ jaws.Assets = function Assets() {
    */
   this.add = function(src) {
     if(jaws.isArray(src)) { for(var i=0; src[i]; i++) { this.add(src[i]) } }
-    else                  { var path = this.root + src; this.src_list.push(path) }
+    else                  { this.src_list.push(src) }
+    // else                  { var path = this.root + src; this.src_list.push(path) }
     return this
   }
  
@@ -117,7 +118,7 @@ jaws.Assets = function Assets() {
 
     switch(this.getType(asset.src)) {
       case "image":
-        var src = asset.src + "?" + parseInt(Math.random()*10000000)
+        var src = this.root + asset.src + "?" + parseInt(Math.random()*10000000)
         asset.image = new Image()
         asset.image.asset = asset // enables us to access asset in the callback
         //
@@ -128,7 +129,7 @@ jaws.Assets = function Assets() {
         asset.image.src = src
         break;
       case "audio":
-        var src = asset.src + "?" + parseInt(Math.random()*10000000)
+        var src = this.root + asset.src + "?" + parseInt(Math.random()*10000000)
         asset.audio = new Audio(src)
         asset.audio.asset = asset         // enables us to access asset in the callback
         this.data[asset.src] = asset.audio
@@ -137,7 +138,7 @@ jaws.Assets = function Assets() {
         asset.audio.load()
         break;
       default:
-        var src = asset.src + "?" + parseInt(Math.random()*10000000)
+        var src = this.root + asset.src + "?" + parseInt(Math.random()*10000000)
         var req = new XMLHttpRequest()
         req.asset = asset         // enables us to access asset in the callback
         req.onreadystatechange = this.assetLoaded
