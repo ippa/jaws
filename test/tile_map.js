@@ -13,8 +13,8 @@ test("TileMap", function() {
   tile_map.push(sprite2)
   tile_map.push(sprite3)
   ok(jaws.isArray(tile_map.at(40,40)), "returns array of sprites")
-  same(tile_map.cell(1,1), [sprite, sprite2,sprite3], "array of sprites occupying cell 1,1")
-  console.log(tile_map.cell(1,1))
+  same(tile_map.cell(1,1), [sprite, sprite2, sprite3], "array of sprites occupying cell 1,1")
+  // console.log(tile_map.cell(1,1))
 })
 
 test("TileMap advanced", function() {
