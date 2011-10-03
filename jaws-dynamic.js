@@ -24,6 +24,7 @@
         root+"animation.js",
         root+"tile_map.js",
         root+"viewport.js",
+        root+"collision_detection.js",
         root+"gfx.js")
   .thenRun(function () {
     /*
