@@ -86,6 +86,9 @@ jaws.Sprite.prototype.clone = function(object) {
 jaws.Sprite.prototype.setImage =      function(value) { 
   var that = this
 
+  // add the root prefix
+  value = jaws.assets.root + value
+
   // An image, great, set this.image and return
   if(jaws.isDrawable(value)) {
     this.image = value
