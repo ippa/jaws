@@ -63,7 +63,6 @@ test("assets loadAll", function() {
     ok(jaws.isImage(jaws.assets.get("rect.png")), "png loaded as Image")
     same(jaws.assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
     start()
-     asset_depending_tests()
   }
 });
 
