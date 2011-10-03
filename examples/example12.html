@@ -11,9 +11,9 @@
   FPS: <span id="fps"></span>. Move with arrow keys.
   
   <div id="info">
-    <h1>TileMap</h1>
-    With TileMap() we can fit game objects into a 2D array, we call it cells. You set the size for the cells, default is 32 x 32 pixels.
-    Once we have the objects in our tile map we can lookup game objects very fast.
+    <h1>TileMap and ViewPort optimizations</h1>
+    Here we have a Huge game world consisting of 700 x 700 tiles ( ~half a million sprites ).
+    We don't want to draw them all so we use viewport.drawTileMap( tile_map )
   </div>
   
   <h3>jaws log</h3>
@@ -24,39 +24,34 @@
       var player
       var blocks
       var fps
+      var width = 700
+      var height = 700
+      var tile_map
+      var viewport
 
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
         fps = document.getElementById("fps")
         blocks = new jaws.SpriteList()
+
+        for(var i = 0; i < width; i++) {
+          for(var i2 = 0; i2 < height; i2++) {
+            blocks.push( new Sprite({image: "grass.png", x: i*32, y: i2*32}) )
+          }
+        }
         
-        /* We create some 32x32 blocks and save them in array blocks */
-        blocks.push( new Sprite({image: "block.bmp", x: 0, y: 0}) )
-        blocks.push( new Sprite({image: "block.bmp", x: 64, y: 64}) )
-        blocks.push( new Sprite({image: "block.bmp", x: 128, y: 64}) )
-        blocks.push( new Sprite({image: "block.bmp", x: 128, y: 128}) )
+        //blocks.push( new Sprite({image: "grass.png", x: 0, y: 0}) )
+        viewport = new jaws.Viewport({max_x: width*32, max_y: height*32})
 
         // A tilemap, each cell is 32x32 pixels. There's 10 such cells across and 10 downwards.
-        var tile_map = new jaws.TileMap({size: [10,10], cell_size: [32,32]})
+        tile_map = new jaws.TileMap({size: [width, height], cell_size: [32,32]})
 
         // Fit all items in array blocks into correct cells in the tilemap
         // Later on we can look them up really fast (see player.move)
         tile_map.push(blocks)
 
-        player = new jaws.Sprite({x:110, y:120, scale: 2, anchor: "center"})
-        player.move = function(x, y) {
-          jaws.log("Player: " + player.rect().toString())
-          
-          // Have our tile map return the items that occupy the cells which are touched by player.rect
-          // If there's any items inside player.rect, reverse the movement (-> stand still)
-          this.x += x
-          if(tile_map.atRect(player.rect()).length > 0) { this.x -= x }
-
-          // Same as above but for vertical movement
-          this.y += y
-          if(tile_map.atRect(player.rect()).length > 0) { this.y -= y }
-        }
-
+        player = new jaws.Sprite({x:10, y:10, scale: 2, anchor: "center"})
+        
         var anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
         player.anim_default = anim.slice(0,5)
         player.anim_up = anim.slice(6,8)
@@ -65,7 +60,6 @@
         player.anim_right = anim.slice(12,14)
 
         player.setImage( player.anim_default.next() )
-        jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
         jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       }
 
@@ -77,25 +71,33 @@
         if(jaws.pressed("up"))    { player.move(0, -2); player.setImage(player.anim_up.next()) }
         if(jaws.pressed("down"))  { player.move(0, 2);  player.setImage(player.anim_down.next()) }
 
-        jaws.forceInsideCanvas(player)
+        viewport.centerAround(player)
         fps.innerHTML = jaws.game_loop.fps + ". player: " + player.x + "/" + player.y
       }
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */
       this.draw = function() {
         jaws.clear()
-        blocks.draw()
-        player.draw()
+        /* 
+        * blocks & tile_map  = ~500.000 sprites 
+        */
 
-        // uncomment to show bounding box rects
-        // blocks.forEach( function(item, total) { item.rect.draw() })
-        // player.rect.draw()
+        // Slow
+        // viewport.apply( function() { blocks.draw(); player.draw(); });
+
+        // Faster:  checks if sprites are with within viewport before calling draw
+        // viewport.draw( blocks )
+
+
+        // Fastest: Use optimized viewport.drawTileMap() */
+        viewport.drawTileMap( tile_map )
+        viewport.draw( player )
       }
     }
     
     jaws.onload = function() {
       jaws.unpack()
-      jaws.assets.add(["droid_11x15.png","block.bmp"])
+      jaws.assets.add(["droid_11x15.png","block.bmp","grass.png"])
       jaws.start(Example)  // Our convenience function jaws.start() will load assets, call setup and loop update/draw in 60 FPS
     }
   </script>

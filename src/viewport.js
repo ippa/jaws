@@ -73,7 +73,7 @@ jaws.Viewport = function ViewPort(options) {
     return( item.x >= that.x && item.x <= (that.x + that.width) && item.y >= that.y && item.y <= (that.y + that.height) )
   };
 
-  /* Returns true if item is partly (down to 1 pixel) inside viewport */
+  /** Returns true if item is partly (down to 1 pixel) inside viewport */
   this.isPartlyInside = function(item) {
     var rect = item.rect()
     return( rect.right >= that.x && rect.x <= (that.x + that.width) && rect.bottom >= that.y && item.y <= (that.y + that.height) )
@@ -150,6 +150,33 @@ jaws.Viewport = function ViewPort(options) {
     func()
     this.context.restore()
   };
+
+  /** 
+   * if obj is an array-like object, iterate through it and call draw() on each item if it's partly inside the viewport 
+   */
+  this.draw = function( obj ) {
+    this.apply( function() {
+      if(obj.forEach) obj.forEach( that.drawIfPartlyInside );
+      else if(obj.draw) that.drawIfPartlyInside(obj);
+      // else if(jaws.isFunction(obj) {};  // add apply()-functionally here?
+    });
+  }
+
+  /** 
+   * draws all items of 'tile_map' that's lies inside the viewport 
+   * this is simular to viewport.draw( tile_map.all() ) but optmized for Huge game worlds (tile maps)
+   */
+  this.drawTileMap = function( tile_map ) {
+    var sprites = tile_map.atRect({ x: this.x, y: this.y, right: this.x + this.width, bottom: this.y + this.height })
+    this.apply( function() {
+      for(var i=0; i < sprites.length; i++) sprites[i].draw();
+    });
+  }
+
+  /** draws 'item' if it's partly inside the viewport */
+  this.drawIfPartlyInside = function(item) { 
+    if(that.isPartlyInside(item)) item.draw(); 
+  }
 
   /** @private */
   this.verifyPosition = function() {

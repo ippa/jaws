@@ -143,9 +143,11 @@ function saveMousePosition(e) {
  *
  */
 jaws.start = function(game_state, options) {
-  var fps = (options && options.fps) || 60
-  
   if(!options) options = {};
+  var fps = options.fps || 60
+  if (options.loading_screen === undefined)
+    options.loading_screen = true
+  
   if(!options.width) options.width = 500; 
   if(!options.height) options.height = 300;
   jaws.init(options)
@@ -155,15 +157,15 @@ jaws.start = function(game_state, options) {
   jaws.setupInput()
 
   function displayProgress(percent_done) {
-    if(jaws.context) {
+    if(jaws.context && options.loading_screen) {
       jaws.context.save()
-      jaws.context.fillStyle  = options.loading_bg_color || "black"
+      jaws.context.fillStyle  = "black"
       jaws.context.fillRect(0, 0, jaws.width, jaws.height);
       jaws.context.textAlign  = "center"
-      jaws.context.fillStyle  = options.loading_text_color || "white"
-      jaws.context.font       = "15px " + options.loading_text || "terminal"
+      jaws.context.fillStyle  = "white"
+      jaws.context.font       = "15px terminal";
       jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
-      jaws.context.font       = "bold 30px " + options.loading_text || "terminal"
+      jaws.context.font       = "bold 30px terminal";
       jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
       jaws.context.restore()
     }

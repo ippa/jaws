@@ -56,7 +56,8 @@ jaws.Sprite.prototype.set = function(options) {
   this.anchor(options.anchor || "top_left");
   if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
   if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
-  options.image && this.setImage(options.image)
+  options.image && this.setImage(options.image);
+  this.image_path = options.image;
   if(options.scale_image) this.scaleImage(options.scale_image);
   this.cacheOffsets()
 
@@ -84,9 +85,6 @@ jaws.Sprite.prototype.clone = function(object) {
  */
 jaws.Sprite.prototype.setImage =      function(value) { 
   var that = this
-
-  // add the root
-  value = jaws.assets.root + value
 
   // An image, great, set this.image and return
   if(jaws.isDrawable(value)) {
@@ -324,13 +322,15 @@ jaws.Sprite.prototype.attributes = function() {
   object["_constructor"] = this._constructor || "jaws.Sprite"
   object["x"] = parseFloat(this.x.toFixed(2))
   object["y"] = parseFloat(this.y.toFixed(2))
+  object["image"] = this.image_path
   object["alpha"] = this.alpha
-  object["angle"] = parseFloat(this.angle.toFixed(2))
   object["flipped"] = this.flipped
-  object["scale_x"] = this.scale_x
-  object["scale_y"] = this.scale_y
+  object["angle"] = parseFloat(this.angle.toFixed(2))
+  object["scale_x"] = this.scale_x;
+  object["scale_y"] = this.scale_y;
   object["anchor_x"] = this.anchor_x
   object["anchor_y"] = this.anchor_y
+
   return object
 }
 
