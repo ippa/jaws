@@ -37,8 +37,6 @@
           sprite.vy = Math.random() * 0.5 - 1
           sprites.push(sprite)
         }
-        
-       sprite_pairs = combinations(sprites, 2)
       }
 
       /* update() will get called each game tick with your specified FPS. Put game logic here. */
@@ -51,13 +49,9 @@
           if(sprite.y < 0 || sprite.rect().bottom > jaws.height) { sprite.vy = -sprite.vy }
         })
 
-        sprite_pairs.forEach( function(pair, index) {
-          sprite = pair[0]
-          sprite2 = pair[1]
-          if(sprite.rect().collideRect(sprite2.rect())) {
-            sprite.collision = true
-            sprite2.collision = true
-          }
+        jaws.collideManyWithMany(sprites, sprites).forEach( function(pair, index) {
+          pair[0].collision = true
+          pair[1].collision = true
         });
 
         fps.innerHTML = jaws.game_loop.fps
@@ -69,23 +63,6 @@
         sprites.forEach( function(sprite, index) {
           sprite.collision ? sprite.rect().draw() : sprite.draw()
         });
-      }
-
-      function combinations(s, n) {
-        var f = function(i){return s[i];};
-        var r = [];
-        var m = new Array(n);
-        for (var i = 0; i < n; i++) m[i] = i; 
-        for (var i = n - 1, sn = s.length; 0 <= i; sn = s.length) {
-          r.push( m.map(f) );
-          while (0 <= i && m[i] == sn - 1) { i--; sn--; }
-          if (0 <= i) { 
-            m[i] += 1;
-            for (var j = i + 1; j < n; j++) m[j] = m[j-1] + 1;
-            i = n - 1;
-          }
-        }
-        return r;
       }
     }
     
