@@ -1,6 +1,12 @@
-/*
+/**
+ * @namespace Collisiondetection
  * 
- *  Add collision detection helpers to "jaws"-object
+ * Collision detection helpers.
+ *
+ * @example
+ *   collideOneWithOne(player, boss)        // -> false
+ *   collideOneWithMany(player, bullets)    // -> [bullet1, bullet1]
+ *   collideManyWithMany(bullets, enemies)  // -> [ [bullet1, enemy1], [bullet2, enemy2] ]
  *
  */
 var jaws = (function(jaws) {
@@ -25,7 +31,7 @@ jaws.collideOneWithMany = function(object, list) {
   return list.filter( function(item) { return jaws.collideOneWithOne(object, item) } ) 
 }
 
-/*
+/**
  * Collides two list of objects -- 'list1' and 'list2'.
  * Returns an array of arrays with colliding pairs from 'list1' and 'list2'.
  * Will never collide objects with themselves, even if you collide the same list with itself.
@@ -96,6 +102,7 @@ function combinations(s, n) {
   return r;
 }
 
+/** @private */
 function hasItems(array) { return (array && array.length > 0) }
 
 
