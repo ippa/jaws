@@ -1465,7 +1465,7 @@ function cutImage(image, x, y, width, height) {
  * @class Cut out invidual frames (images) from a larger spritesheet-image
  *
  * @property {image|image} Image/canvas or asset-string to cut up smaller images from
- * @property {string} orientation How to cut out invidual images from spritesheet, either "left" or "right"
+ * @property {string} orientation How to cut out invidual images from spritesheet, either "right" or "down"
  * @property {array} frame_size  width and height of invidual frames in spritesheet
  * @property {array} frames all single frames cut out from image
 */
@@ -1473,7 +1473,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
   this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
-  this.orientation = options.orientation || "right"
+  this.orientation = options.orientation || "down"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
   
@@ -1485,9 +1485,21 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   }
 
   var index = 0
-  for(var x=0; x < this.image.width; x += this.frame_size[0]) {
+
+  // Cut out tiles from Top -> Bottom
+  if(this.orientation == "down") {  
+    for(var x=0; x < this.image.width; x += this.frame_size[0]) {
+      for(var y=0; y < this.image.height; y += this.frame_size[1]) {
+        this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
+      }
+    }
+  }
+  // Cut out tiles from Left -> Right
+  else {
     for(var y=0; y < this.image.height; y += this.frame_size[1]) {
-      this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
+      for(var x=0; x < this.image.width; x += this.frame_size[0]) {
+        this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
+      }
     }
   }
 }
@@ -2101,9 +2113,15 @@ return jaws;
 
 // Support CommonJS require()
 if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }
-/*
+/**
+ * @namespace Collisiondetection
  * 
- *  Add collision detection helpers to "jaws"-object
+ * Collision detection helpers.
+ *
+ * @example
+ *   collideOneWithOne(player, boss)        // -> false
+ *   collideOneWithMany(player, bullets)    // -> [bullet1, bullet1]
+ *   collideManyWithMany(bullets, enemies)  // -> [ [bullet1, enemy1], [bullet2, enemy2] ]
  *
  */
 var jaws = (function(jaws) {
@@ -2128,7 +2146,7 @@ jaws.collideOneWithMany = function(object, list) {
   return list.filter( function(item) { return jaws.collideOneWithOne(object, item) } ) 
 }
 
-/*
+/**
  * Collides two list of objects -- 'list1' and 'list2'.
  * Returns an array of arrays with colliding pairs from 'list1' and 'list2'.
  * Will never collide objects with themselves, even if you collide the same list with itself.
@@ -2199,6 +2217,7 @@ function combinations(s, n) {
   return r;
 }
 
+/** @private */
 function hasItems(array) { return (array && array.length > 0) }
 
 
