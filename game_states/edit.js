@@ -246,6 +246,12 @@ jaws.game_states.Edit = function(options) {
     createToolbar()
 
     edit_tag = document.getElementById("jaws-edit")
+    if(!edit_tag) {
+      edit_tag = document.createElement("div")
+      edit_tag.id = "jaws-edit"
+      document.body.appendChild(edit_tag)
+    }
+
     edit_tag.style.display = "block"
     viewport = options.viewport || jaws.previous_game_state.viewport
 
