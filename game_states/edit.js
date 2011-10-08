@@ -23,7 +23,15 @@ jaws.game_states.Edit = function(options) {
   var snap_to_grid = options.snap_to_grid || true
   var track_modified = options.track_modified || true
   var title = options.title || window.location.href
+  var isometric = options.isometric
   var url = options.url
+
+  
+  if(isometric) {
+    grid_size[0] = parseInt(grid_size[0] / 2 - 0.5)
+    grid_size[1] = parseInt(grid_size[1] / 2 - 0.5)
+  }
+  
 
   var viewport
   var icons
@@ -300,7 +308,7 @@ jaws.game_states.Edit = function(options) {
  
   this.draw = function() {
     jaws.previous_game_state.draw()
-    if(grid_size) { draw_grid() }
+    if(grid_size) { drawGrid() }
     
     if(viewport) {
       viewport.apply( function() { 
@@ -332,22 +340,40 @@ jaws.game_states.Edit = function(options) {
     else        edit_tag.innerHTML = string + "<br />";
   }
 
-  function draw_grid() {
+
+  function drawGrid() {
     jaws.context.save();
     jaws.context.strokeStyle = "rgba(0,0,255,0.3)";
     jaws.context.beginPath()
 
-    for(var x=-0.5; x < jaws.width; x+=grid_size[0]) {
-      jaws.context.moveTo(x, 0)
-      jaws.context.lineTo(x, jaws.height)
-    }
-    for(var y=-0.5; y < jaws.height; y+=grid_size[1]) {
-      jaws.context.moveTo(0, y)
-      jaws.context.lineTo(jaws.width, y)
-    }
+    if(isometric) drawIsometricGrid();
+    else          drawOrthogonalGrid();
+
     jaws.context.closePath()
     jaws.context.stroke()
     jaws.context.restore()
+  }
+
+  function drawIsometricGrid() {
+    for(var x = -grid_size[0] * 50; x < jaws.width; x += grid_size[0]*2) {
+      jaws.context.moveTo(x, 0)
+      jaws.context.lineTo(x + jaws.height*2, jaws.height)
+    }
+    for(var x = 0; x < jaws.width * 10; x += grid_size[0]*2) {
+      jaws.context.moveTo(x, 0)
+      jaws.context.lineTo(x - jaws.height*2, jaws.height)
+    }
+  }
+
+  function drawOrthogonalGrid() {
+    for(var x =- 0.5; x < jaws.width; x+=grid_size[0]) {
+      jaws.context.moveTo(x, 0)
+      jaws.context.lineTo(x, jaws.height)
+    }
+    for(var y =- 0.5; y < jaws.height; y+=grid_size[1]) {
+      jaws.context.moveTo(0, y)
+      jaws.context.lineTo(jaws.width, y)
+    }
   }
 
 }
