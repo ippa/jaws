@@ -156,6 +156,23 @@ jaws.game_states.Edit = function(options) {
   function isSelected(element, index)     { return element.selected == true }
   function isNotSelected(element, index)  { return !isSelected(element) }
   function drawRect(element, index)       { element.rect().draw() }
+  function drawIsometricRect(element, index) { 
+    var r = element.rect()
+    var c1 = [r.x + r.width/2, r.y]
+    var c2 = [r.right, r.y + r.height/2]
+    var c3 = [r.x + r.width/2, r.bottom]
+    var c4 = [r.x, r.y + r.height/2]
+
+    jaws.context.beginPath();
+    jaws.context.strokeStyle = "red";
+    jaws.context.moveTo(c1[0], c1[1])
+    jaws.context.lineTo(c2[0], c2[1])
+    jaws.context.lineTo(c3[0], c3[1])
+    jaws.context.lineTo(c4[0], c4[1])
+    jaws.context.closePath();
+    jaws.context.stroke();
+  }
+
   function select(obj) {
     forceArray(obj).forEach( function(element, index) { element.selected = true } )
   }
@@ -313,12 +330,16 @@ jaws.game_states.Edit = function(options) {
     if(viewport) {
       viewport.apply( function() { 
         if(cursor_object) cursor_object.draw();
-        game_objects.filter(isSelected).forEach(drawRect) 
+
+        if(isometric) game_objects.filter(isSelected).forEach(drawIsometricRect);
+        else          game_objects.filter(isSelected).forEach(drawRect);
       });
     }
     else { 
       if(cursor_object) cursor_object.draw();
-      game_objects.filter(isSelected).forEach(drawRect) 
+
+      if(isometric) game_objects.filter(isSelected).forEach(drawIsometricRect);
+      else          game_objects.filter(isSelected).forEach(drawRect);
     }
 
     icons.forEach( function(icon) { icon.draw(); icon.rect().draw(); });
