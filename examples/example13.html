@@ -1,0 +1,61 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws-dynamic.js"></script>
+    <script src="../game_states/edit.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #13 - WORK IN PROGRESS - isometric edit</title>
+  </head>
+<body>
+
+  <canvas width=500 height=400></canvas>
+
+  <div id="jaws-edit">Editor output will show here.</div>
+  
+  <div id="info">
+    <h1>press SPACE to start editor</h1>
+  </div>
+  
+  <h3>jaws log</h3>
+  <div id="jaws-log"></div>
+ 
+  <script>
+    function Example() {
+      var blocks = new jaws.SpriteList()
+      var title = window.location.href  // Use URL as unique identifier when saving/fetching game objects from localStorage
+     
+      this.setup = function() {
+        blocks.load(localStorage[title])  // Load  saved sprites from localStorage
+
+        if(blocks.length == 0) {          // No sprites in localStorage? Generate 5 randomly placed blocks!
+          for(var nr=5; nr--; ) {
+            blocks.push( new Grass({x: Math.random()*jaws.width-20, y: Math.random()*jaws.height-20}) )
+          }
+        }
+
+        jaws.on_keydown(["esc","space"], function() { 
+          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [30,15], isometric: true, title: title}))
+        })
+        jaws.preventDefaultKeys(["space"])
+      }
+      
+      this.draw = function() {
+        jaws.clear()
+        blocks.draw()
+      }
+    }
+
+    var Grass = function(options) { options.image = "isometric_grass.bmp"; jaws.Sprite.call(this, options) }
+    
+    jaws.onload = function() {
+      Grass.prototype = new jaws.Sprite({})
+      Grass.prototype.constructor = Grass
+      
+      jaws.assets.add(["isometric_grass.bmp"])
+      jaws.start(Example)
+    }
+  </script>
+
+</body>
+</html>
+
