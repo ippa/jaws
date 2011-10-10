@@ -26,17 +26,14 @@ jaws.game_states.Edit = function(options) {
   var isometric = options.isometric
   var url = options.url
 
-  
   if(isometric) {
     grid_size[0] = parseInt(grid_size[0] / 2 - 0.5)
     grid_size[1] = parseInt(grid_size[1] / 2 - 0.5)
   }
   
-
+  var that = this
   var viewport
   var icons
-
-  var that = this
   var click_at
   var edit_tag
   var cursor_object 
@@ -51,6 +48,14 @@ jaws.game_states.Edit = function(options) {
     return new_object
   }
 
+  function toolbar_mousedown(e) {
+    var clicked_icon = iconAt(jaws.mouse_x, jaws.mouse_y)
+    if(clicked_icon) {
+      cursor_object = cloneObject(clicked_icon)
+      return false;
+    }
+  }
+
   function mousedown(e) {
     var code = ( e.keyCode ? e.keyCode : e.which )
     if(code === 3) {  // Right mouse button
@@ -58,13 +63,7 @@ jaws.game_states.Edit = function(options) {
     }
     else {
       click_at = [mouseX(), mouseY()]
-     
-      var clicked_icon = iconAt(jaws.mouse_x, jaws.mouse_y)
-      if(clicked_icon) {
-        cursor_object = cloneObject(clicked_icon)
-        return false;
-      }
-      
+         
       var clicked_object = gameObjectAt(mouseX(), mouseY())
       if(clicked_object) {
         if(!jaws.pressed("ctrl") && !jaws.pressed("shift")) {
@@ -239,36 +238,36 @@ jaws.game_states.Edit = function(options) {
   function down()   { scrollDown() }
   function left()   { scrollLeft() }
 
-  function scrollRight() {
-    if(viewport)  viewport.move(10, 0);
-  }
-  function scrollLeft() {
-    if(viewport)  viewport.move(-10, 0);
-  }
-  function scrollUp() {
-    if(viewport)  viewport.move(0, -10);
-  }
-  function scrollDown() {
-    if(viewport)  viewport.move(0, 10);
-  }
+  function scrollRight()  { if(viewport) viewport.move(10, 0); }
+  function scrollLeft()   { if(viewport) viewport.move(-10, 0); }
+  function scrollUp()     { if(viewport)  viewport.move(0, -10); }
+  function scrollDown()   { if(viewport)  viewport.move(0, 10); }
   
-  function createToolbar() {
+  function fillToolbar(toolbar_tag) {
     icons = new jaws.SpriteList()
 
-    var x = 32
+    var x = 0
     var y = 32
     constructors.forEach( function(constructor) {
-      var icon = new constructor({x: x, y: y})
+      var icon = new constructor({x: x, y: y, dom: toolbar_tag})
       icon.setBottom(y)
       icon._constructor = constructor.name
       if(icon.update) icon.update();
       icons.push( icon )
-      x += 32
+      x += icon.width
     });
   }
 
   this.setup = function() {
-    createToolbar()
+    viewport = options.viewport || jaws.previous_game_state.viewport
+
+    var toolbar_tag = document.getElementById("jaws-toolbar")
+    if(!toolbar_tag) {
+      toolbar_tag = document.createElement("div")
+      toolbar_tag.id = "jaws-toolbar"
+      document.body.appendChild(toolbar_tag)
+    }
+    fillToolbar(toolbar_tag)
 
     edit_tag = document.getElementById("jaws-edit")
     if(!edit_tag) {
@@ -276,11 +275,7 @@ jaws.game_states.Edit = function(options) {
       edit_tag.id = "jaws-edit"
       document.body.appendChild(edit_tag)
     }
-
     edit_tag.style.display = "block"
-    viewport = options.viewport || jaws.previous_game_state.viewport
-
-    // game_objects.push( new Enemy1({x: 300, y: 30}) )
 
     // Disable right click
     window.oncontextmenu = function(event) {
@@ -300,6 +295,7 @@ jaws.game_states.Edit = function(options) {
     jaws.on_keydown("up", up )
     jaws.on_keydown("down", down )
 
+    toolbar_tag.addEventListener("mousedown", toolbar_mousedown, false)
     jaws.canvas.addEventListener("mousedown", mousedown, false)
     jaws.canvas.addEventListener("mouseup", mouseup, false)
     jaws.canvas.addEventListener("mousemove", mousemove, false)
