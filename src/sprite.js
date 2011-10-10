@@ -231,7 +231,7 @@ jaws.Sprite.prototype.createDiv = function() {
     if(this.image.toDataURL)  { this.div.style.backgroundImage = "url(" + this.image.toDataURL() + ")" }
     else                      { this.div.style.backgroundImage = "url(" + this.image.src + ")" }
   }
-  if(jaws.dom) { jaws.dom.appendChild(this.div) }
+  if(this.dom) { this.dom.appendChild(this.div) }
   this.updateDiv()
 }
 
@@ -260,7 +260,7 @@ jaws.Sprite.prototype.updateDiv = function() {
 /** Draw sprite on active canvas or update it's DOM-properties */
 jaws.Sprite.prototype.draw = function() {
   if(!this.image) { return this }
-  if(jaws.dom)    { return this.updateDiv() }
+  if(this.dom)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
