@@ -392,9 +392,8 @@ jaws.setupInput = function() {
   
   keycode_to_string = k
 
-  window.onkeydown = function(e)  { handleKeyDown(e) }
-  window.onkeyup = function(e)    { handleKeyUp(e) }
-  window.onkeypress = function(e) {};
+  window.addEventListener("keydown", handleKeyDown)
+  window.addEventListener("keyup", handleKeyUp)
 }
 
 /** @private
@@ -405,7 +404,7 @@ function handleKeyUp(e) {
   var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = false
   if(on_keyup_callbacks[human_name]) { 
-    on_keyup_callbacks[human_name]() 
+    on_keyup_callbacks[human_name](human_name)
     e.preventDefault()
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
@@ -419,13 +418,10 @@ function handleKeyDown(e) {
   var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = true
   if(on_keydown_callbacks[human_name]) { 
-    on_keydown_callbacks[human_name]()
+    on_keydown_callbacks[human_name](human_name)
     e.preventDefault()
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
-
-  // jaws.log(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
-  // e.preventDefault();
 }
 
 
@@ -1196,7 +1192,7 @@ jaws.Sprite.prototype.createDiv = function() {
     if(this.image.toDataURL)  { this.div.style.backgroundImage = "url(" + this.image.toDataURL() + ")" }
     else                      { this.div.style.backgroundImage = "url(" + this.image.src + ")" }
   }
-  if(jaws.dom) { jaws.dom.appendChild(this.div) }
+  if(this.dom) { this.dom.appendChild(this.div) }
   this.updateDiv()
 }
 
@@ -1225,7 +1221,7 @@ jaws.Sprite.prototype.updateDiv = function() {
 /** Draw sprite on active canvas or update it's DOM-properties */
 jaws.Sprite.prototype.draw = function() {
   if(!this.image) { return this }
-  if(jaws.dom)    { return this.updateDiv() }
+  if(this.dom)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
