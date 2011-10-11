@@ -20,12 +20,12 @@
   <div id="jaws-log"></div>
  
   <script>
+    var blocks;
     function Example() {
-      var blocks = new jaws.SpriteList()
-      var title = window.location.href  // Use URL as unique identifier when saving/fetching game objects from localStorage
+      blocks = new jaws.SpriteList()
      
       this.setup = function() {
-        blocks.load(localStorage[title])  // Load  saved sprites from localStorage
+        // blocks.load(localStorage[title])  // Load  saved sprites from localStorage
 
         if(blocks.length == 0) {          // No sprites in localStorage? Generate 5 randomly placed blocks!
           for(var nr=5; nr--; ) {
@@ -33,10 +33,9 @@
           }
         }
 
-        jaws.on_keydown(["esc","space"], function() { 
-          jaws.switchGameState( new jaws.game_states.Edit({game_objects: blocks, grid_size: [30,15], isometric: true, title: title}))
-        })
+        jaws.on_keydown(["esc","space"], startEdit);
         jaws.preventDefaultKeys(["space"])
+        startEdit();
       }
       
       this.draw = function() {
@@ -45,13 +44,23 @@
       }
     }
 
-    var Grass = function(options) { options.image = "isometric_grass.bmp"; jaws.Sprite.call(this, options) }
+    function startEdit() {
+      jaws.switchGameState( 
+        new jaws.game_states.Edit({constructors: [Grass, Dirt], game_objects: blocks, grid_size: [30,15], isometric: true, title: window.location.href})
+      )
+    }
+
+    var Grass = function(options) { options.image = "isometric_grass.bmp"; options.scale_image=2; jaws.Sprite.call(this, options) }
+    var Dirt = function(options)  { options.image = "isometric_dirt.bmp"; options.scale_image=2; jaws.Sprite.call(this, options) }
     
     jaws.onload = function() {
       Grass.prototype = new jaws.Sprite({})
       Grass.prototype.constructor = Grass
       
-      jaws.assets.add(["isometric_grass.bmp"])
+      Dirt.prototype = new jaws.Sprite({})
+      Dirt.prototype.constructor = Dirt
+     
+      jaws.assets.add(["isometric_grass.bmp", "isometric_dirt.bmp"])
       jaws.start(Example)
     }
   </script>
