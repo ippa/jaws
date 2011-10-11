@@ -66,9 +66,8 @@ jaws.setupInput = function() {
   
   keycode_to_string = k
 
-  window.onkeydown = function(e)  { handleKeyDown(e) }
-  window.onkeyup = function(e)    { handleKeyUp(e) }
-  window.onkeypress = function(e) {};
+  window.addEventListener("keydown", handleKeyDown)
+  window.addEventListener("keyup", handleKeyUp)
 }
 
 /** @private
@@ -79,7 +78,7 @@ function handleKeyUp(e) {
   var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = false
   if(on_keyup_callbacks[human_name]) { 
-    on_keyup_callbacks[human_name]() 
+    on_keyup_callbacks[human_name]()
     e.preventDefault()
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
@@ -97,9 +96,6 @@ function handleKeyDown(e) {
     e.preventDefault()
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
-
-  // jaws.log(event.type + " - " + event.keyCode + " " + keycode_to_string[event.keyCode]);
-  // e.preventDefault();
 }
 
 
