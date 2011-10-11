@@ -78,7 +78,7 @@ function handleKeyUp(e) {
   var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = false
   if(on_keyup_callbacks[human_name]) { 
-    on_keyup_callbacks[human_name]()
+    on_keyup_callbacks[human_name](human_name)
     e.preventDefault()
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
@@ -92,7 +92,7 @@ function handleKeyDown(e) {
   var human_name = keycode_to_string[event.keyCode]
   pressed_keys[human_name] = true
   if(on_keydown_callbacks[human_name]) { 
-    on_keydown_callbacks[human_name]()
+    on_keydown_callbacks[human_name](human_name)
     e.preventDefault()
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
