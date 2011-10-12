@@ -116,7 +116,7 @@ jaws.init = function(options) {
 
   jaws.mouse_x = 0
   jaws.mouse_y = 0
-  window.addEventListener("mousemove", saveMousePosition)
+  window.addEventListener("mousemove", saveMousePosition, true)
 }
 /**
  * @private
