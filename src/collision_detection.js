@@ -13,7 +13,7 @@ var jaws = (function(jaws) {
 
 /**
  * collides 2 single objects by reading x, y and either method rect() or property radius.
- * returns true if collision
+ * returns true if the two objects are colliding.
  */
 jaws.collideOneWithOne = function(object1, object2) {
   if(object1.radius && object2.radius && object1 !== object2 && jaws.collideCircles(object1, object2))          return true;
