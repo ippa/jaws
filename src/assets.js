@@ -1,6 +1,6 @@
 var jaws = (function(jaws) {
 
-/** 
+/**
  * @class Loads and processes assets as images, sound, video, json
  * Used internally by JawsJS to create <b>jaws.assets</b>
  */
@@ -12,6 +12,7 @@ jaws.Assets = function Assets() {
   this.src_list = []  // Hash of all unloaded URLs that loadAll() will try to load
   this.data = []      // Hash of loaded raw asset data, URLs are keys
 
+  this.bust_cache = false
   this.image_to_canvas = true
   this.fuchia_to_transparent = true
   this.root = ""
@@ -33,7 +34,7 @@ jaws.Assets = function Assets() {
     return this.src_list.length
   }
 
-  /* 
+  /*
    * Get one or many resources
    *
    * @param   String or Array of strings
@@ -54,12 +55,12 @@ jaws.Assets = function Assets() {
   this.isLoading = function(src) {
     return this.loading[src]
   }
-  
+
   /** Return true if src is loaded in full */
   this.isLoaded = function(src) {
     return this.loaded[src]
   }
-  
+
   this.getPostfix = function(src) {
     postfix_regexp = /\.([a-zA-Z0-9]+)/;
     return postfix_regexp.exec(src)[1]
@@ -69,9 +70,9 @@ jaws.Assets = function Assets() {
     var postfix = this.getPostfix(src)
     return (this.file_type[postfix] ? this.file_type[postfix] : postfix)
   }
-  
-  /** 
-   * Add array of paths or single path to asset-list. Later load with loadAll() 
+
+  /**
+   * Add array of paths or single path to asset-list. Later load with loadAll()
    *
    * @example
    *
@@ -86,7 +87,7 @@ jaws.Assets = function Assets() {
     // else                  { var path = this.root + src; this.src_list.push(path) }
     return this
   }
- 
+
   /** Load all pre-specified assets */
   this.loadAll = function(options) {
     this.load_count = 0
@@ -97,7 +98,7 @@ jaws.Assets = function Assets() {
     this.onerror = options.onerror
     this.onfinish = options.onfinish
 
-    for(i=0; this.src_list[i]; i++) { 
+    for(i=0; this.src_list[i]; i++) {
       this.load(this.src_list[i])
     }
   }
@@ -116,9 +117,11 @@ jaws.Assets = function Assets() {
     asset.onerror = onerror
     this.loading[src] = true
 
+    var resolved_src = this.root + asset.src;
+    if (this.bust_cache) { resolved_src += "?" + parseInt(Math.random()*10000000) }
+
     switch(this.getType(asset.src)) {
       case "image":
-        var src = this.root + asset.src + "?" + parseInt(Math.random()*10000000)
         asset.image = new Image()
         asset.image.asset = asset // enables us to access asset in the callback
         //
@@ -126,11 +129,10 @@ jaws.Assets = function Assets() {
         //
         asset.image.onload = this.assetLoaded
         asset.image.onerror = this.assetError
-        asset.image.src = src
+        asset.image.src = resolved_src
         break;
       case "audio":
-        var src = this.root + asset.src + "?" + parseInt(Math.random()*10000000)
-        asset.audio = new Audio(src)
+        asset.audio = new Audio(resolved_src)
         asset.audio.asset = asset         // enables us to access asset in the callback
         this.data[asset.src] = asset.audio
         asset.audio.addEventListener("canplay", this.assetLoaded, false);
@@ -138,11 +140,10 @@ jaws.Assets = function Assets() {
         asset.audio.load()
         break;
       default:
-        var src = this.root + asset.src + "?" + parseInt(Math.random()*10000000)
         var req = new XMLHttpRequest()
         req.asset = asset         // enables us to access asset in the callback
         req.onreadystatechange = this.assetLoaded
-        req.open('GET', src, true)
+        req.open('GET', resolved_src, true)
         req.send(null)
         break;
     }
@@ -158,7 +159,7 @@ jaws.Assets = function Assets() {
     var asset = this.asset
     var src = asset.src
     var filetype = that.getType(asset.src)
-    
+
     // Keep loading and loaded hash up to date
     that.loaded[src] = true
     that.loading[src] = false
@@ -177,7 +178,7 @@ jaws.Assets = function Assets() {
       asset.audio.removeEventListener("canplay", that.assetLoaded, false);
       that.data[asset.src] = asset.audio
     }
-    
+
     that.load_count++
     that.processCallbacks(asset, true)
   }
@@ -188,11 +189,11 @@ jaws.Assets = function Assets() {
     that.error_count++
     that.processCallbacks(asset, false)
   }
-  
+
   /** @private */
   this.processCallbacks = function(asset, ok) {
     var percent = parseInt( (that.load_count+that.error_count) / that.src_list.length * 100)
-    
+
     if(ok) {
       if(that.onload)   that.onload(asset.src, percent);
       if(asset.onload)  asset.onload();
@@ -201,18 +202,18 @@ jaws.Assets = function Assets() {
       if(that.onerror)  that.onerror(asset.src, percent);
       if(asset.onerror) asset.onerror(asset);
     }
-    
+
     // When loadAll() is 100%, call onfinish() and kill callbacks (reset with next loadAll()-call)
-    if(percent==100) { 
+    if(percent==100) {
       if(that.onfinish) { that.onfinish() }
       that.onload = null
       that.onerror = null
       that.onfinish = null
-    }         
+    }
   }
 }
 
-/** @private 
+/** @private
  * Make Fuchia (0xFF00FF) transparent
  * This is the de-facto standard way to do transparency in BMPs
  * Returns: a canvas
