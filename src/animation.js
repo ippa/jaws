@@ -17,7 +17,7 @@ var jaws = (function(jaws) {
  *
  * // in update()
  * player.setImage( anim.next() )
- * 
+ *
  * // in draw()
  * player.draw()
  *
@@ -34,7 +34,8 @@ jaws.Animation = function Animation(options) {
   this.frame_direction = 1
   this.frame_size = options.frame_size
   this.orientation = options.orientation || "down"
-  
+  this.on_end = options.on_end || null
+
   if(options.scale_image) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
     this.frame_size[0] *= options.scale_image
@@ -48,13 +49,13 @@ jaws.Animation = function Animation(options) {
     this.frames = sprite_sheet.frames
   }
 
-  /* Initializing timer-stuff */ 
+  /* Initializing timer-stuff */
   this.current_tick = (new Date()).getTime();
   this.last_tick = (new Date()).getTime();
   this.sum_tick = 0
 }
 
-/** 
+/**
  Propells the animation forward by counting milliseconds and changing this.index accordingly
  Supports looping and bouncing animations
 */
@@ -62,7 +63,7 @@ jaws.Animation.prototype.update = function() {
   this.current_tick = (new Date()).getTime();
   this.sum_tick += (this.current_tick - this.last_tick);
   this.last_tick = this.current_tick;
- 
+
   if(this.sum_tick > this.frame_duration) {
     this.index += this.frame_direction
     this.sum_tick = 0
@@ -77,19 +78,24 @@ jaws.Animation.prototype.update = function() {
     }
     else {
       this.index -= this.frame_direction
+      if (this.on_end) {
+        this.on_end()
+        this.on_end = null
+      }
     }
   }
   return this
 }
 
-/** 
+/**
   works like Array.slice but returns a new Animation-object with a subset of the frames
 */
 jaws.Animation.prototype.slice = function(start, stop) {
-  var o = {} 
+  var o = {}
   o.frame_duration = this.frame_duration
   o.loop = this.loop
   o.bounce = this.bounce
+  o.on_end = this.on_end
   o.frame_direction = this.frame_direction
   o.frames = this.frames.slice().slice(start, stop)
   return new jaws.Animation(o)
@@ -110,14 +116,14 @@ jaws.Animation.prototype.atLastFrame = function() { return (this.index == this.f
 jaws.Animation.prototype.atFirstFrame = function() { return (this.index == 0) }
 
 
-/** 
+/**
   returns the current frame
 */
 jaws.Animation.prototype.currentFrame = function() {
   return this.frames[this.index]
 };
 
-/** 
+/**
  * Debugstring for Animation()-constructor
  * @example
  * var anim = new Animation(...)
