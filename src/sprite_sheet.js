@@ -21,6 +21,7 @@ function cutImage(image, x, y, width, height) {
  * @property {string} orientation How to cut out invidual images from spritesheet, either "right" or "down"
  * @property {array} frame_size  width and height of invidual frames in spritesheet
  * @property {array} frames all single frames cut out from image
+ * @property {integer} offset vertical or horizontal offset to start cutting from
 */
 jaws.SpriteSheet = function SpriteSheet(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
@@ -29,6 +30,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   this.orientation = options.orientation || "down"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
+  this.offset = options.offset || 0
   
   if(options.scale_image) {
     var image = (jaws.isDrawable(options.image) ? options.image : jaws.assets.get(options.image))
@@ -41,7 +43,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
 
   // Cut out tiles from Top -> Bottom
   if(this.orientation == "down") {  
-    for(var x=0; x < this.image.width; x += this.frame_size[0]) {
+    for(var x=this.offset; x < this.image.width; x += this.frame_size[0]) {
       for(var y=0; y < this.image.height; y += this.frame_size[1]) {
         this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
       }
@@ -49,7 +51,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   }
   // Cut out tiles from Left -> Right
   else {
-    for(var y=0; y < this.image.height; y += this.frame_size[1]) {
+    for(var y=this.offset; y < this.image.height; y += this.frame_size[1]) {
       for(var x=0; x < this.image.width; x += this.frame_size[0]) {
         this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
       }
