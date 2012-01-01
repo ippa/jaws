@@ -35,6 +35,7 @@ jaws.Animation = function Animation(options) {
   this.frame_size = options.frame_size
   this.orientation = options.orientation || "down"
   this.on_end = options.on_end || null
+  this.offset = options.offset || 0
 
   if(options.scale_image) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
@@ -45,7 +46,7 @@ jaws.Animation = function Animation(options) {
 
   if(options.sprite_sheet) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
-    var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: this.frame_size, orientation: this.orientation})
+    var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: this.frame_size, orientation: this.orientation, offset: this.offset})
     this.frames = sprite_sheet.frames
   }
 
