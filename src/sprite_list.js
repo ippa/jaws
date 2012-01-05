@@ -3,6 +3,8 @@ var jaws = (function(jaws) {
  
 @class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others.
 
+@augments Array
+
 @example
 // Sprites (your bullets, aliens, enemies, players etc) will need to be
 // updated, draw, deleted. Often in various orders and based on different conditions.
