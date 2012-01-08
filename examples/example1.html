@@ -72,9 +72,9 @@
     function isOutsideCanvas(item) { return (item.x < 0 || item.y < 0 || item.x > canvas.width || item.y > canvas.height) }
     function forceInsideCanvas(item) {
       if(item.x < 0)                    { item.x = 0  }
-      if(item.right > canvas.width)     { item.x = canvas.width - item.width }
+      if(item.x + item.width > canvas.width)     { item.x = canvas.width - item.width }
       if(item.y < 0)                    { item.y = 0 }
-      if(item.bottom  > canvas.height)  { item.y = canvas.height - item.height }
+      if(item.y + item.height  > canvas.height)  { item.y = canvas.height - item.height }
     }
 
     /* Our simple bullet class, basically a circle with a position (x/y) */
