@@ -74,9 +74,9 @@
       }
       function forceInsideCanvas(item) {
         if(item.x < 0)                  { item.x = 0  }
-        if(item.right > jaws.width)     { item.x = jaws.width - item.width }
+        if(item.x + item.width > jaws.width)     { item.x = jaws.width - item.width }
         if(item.y < 0)                  { item.y = 0 }
-        if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
+        if(item.y + item.height  > jaws.height)  { item.y = jaws.height - item.height }
       }
 
       function Bullet(x, y) {
