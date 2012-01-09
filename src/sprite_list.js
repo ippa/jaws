@@ -1,9 +1,7 @@
 var jaws = (function(jaws) {
 /**
  
-@class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others.
-
-@augments Array
+@class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others. Builds on Array. "Field Summary" contains options for the SpriteList()-constructor.
 
 @example
 // Sprites (your bullets, aliens, enemies, players etc) will need to be

@@ -15,7 +15,7 @@ function cutImage(image, x, y, width, height) {
 };
 
 /** 
- * @class Cut out invidual frames (images) from a larger spritesheet-image
+ * @class Cut out invidual frames (images) from a larger spritesheet-image. "Field Summary" contains options for the SpriteSheet()-constructor.
  *
  * @property {image|image} Image/canvas or asset-string to cut up smaller images from
  * @property {string} orientation How to cut out invidual images from spritesheet, either "right" or "down"

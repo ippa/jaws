@@ -1,16 +1,16 @@
 var jaws = (function(jaws) {
 
 /**
-* @class A basic but powerfull sprite for all your onscreen-game objects
+* @class A basic but powerfull sprite for all your onscreen-game objects. "Field Summary" contains options for the Sprite()-constructor.
 * @constructor
 *  
-* @property x horizontal position  (0 = furthest left)
-* @property y vertical position    (0 = top)
-* @property image image/canvas or string pointing to an asset ("player.png")
-* @property alpha transparency 0=fully transparent, 1=no transperency
-* @property angle Angle in degrees (0-360)
-* @property flipped true|false Flip sprite horizontally, usefull for sidescrollers
-* @property anchor string stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
+* @property {int} x     Horizontal position  (0 = furthest left)
+* @property {int} y     Vertical position    (0 = top)
+* @property {image} image   Image/canvas or string pointing to an asset ("player.png")
+* @property {int} alpha     Transparency 0=fully transparent, 1=no transperency
+* @property {int} angle     Angle in degrees (0-360)
+* @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
+* @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
 *
 * @example
 * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")

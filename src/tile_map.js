@@ -1,11 +1,11 @@
 var jaws = (function(jaws) {
 
 /**
- * @class Create and access tilebased 2D maps with very fast access of invidual tiles
+ * @class Create and access tilebased 2D maps with very fast access of invidual tiles. "Field Summary" contains options for the TileMap()-constructor.
  *
- * @property {array} cell_size size of each cell in tilemap. @default [32,32]
- * @property {array} size of tilemap. @default [100,00]
- * @property {function} sortFunction  function used by sortCells() to sort cells. @default undefined, no sorting
+ * @property {array} cell_size        Size of each cell in tilemap, defaults to [32,32]
+ * @property {array} size             Size of tilemap, defaults to [100,100]
+ * @property {function} sortFunction  Function used by sortCells() to sort cells, defaults to no sorting
  *
  * @example
  * var tile_map = new TileMap({size: [10, 10], cell_size: [16,16]})

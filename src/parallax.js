@@ -1,7 +1,7 @@
 var jaws = (function(jaws) {
 
 /** 
-* @class Manage a parallax scroller with different layers
+* @class Manage a parallax scroller with different layers. "Field Summary" contains options for the Parallax()-constructor.
 * @constructor
 *
 * @property scale     number, scale factor for all layers (2 will double everything and so on)

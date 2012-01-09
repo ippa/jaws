@@ -13,7 +13,9 @@ window.requestAnimFrame = (function(){
 })();
 
 /**
- * @class A classic game loop forever looping calls to update() / draw() with given framerate
+ * @class A classic game loop forever looping calls to update() / draw() with given framerate. "Field Summary" contains options for the GameLoop()-constructor.
+ *
+ * @property {int} FPS    targeted frame rate
  *
  * @example
  *
