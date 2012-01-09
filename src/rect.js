@@ -1,7 +1,7 @@
 var jaws = (function(jaws) {
 
 /**
-  @class A Basic rectangle
+  @class A Basic rectangle.
   @example
   rect = new jaws.Rect(5,5,20,20)
   rect.right  // -> 25

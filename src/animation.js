@@ -3,16 +3,16 @@ var jaws = (function(jaws) {
 /**
  * @class Manages an animation with a given list of frames. "Field Summary" contains options for the Animation()-constructor.
  *
- * @property loop   true|false, restart animation when end is reached
- * @property bounce true|false, rewind the animation frame by frame when end is reached
- * @property index  int, start on this frame
- * @property frames array of images/canvaselements
- * @property frame_duration milliseconds  how long should each frame be displayed
- * @property frame_direction int, -1 for backwards animation. 1 is default.
- * @property frame_size array containing width/height
- * @property offset int, when cutting out frames from a sprite sheet, start at this frame
- * @property orientation string, how to cut out frames frmo sprite sheet, possible values are "down" or "right"
- * @property on_end function, function to call when animation ends. triggers only on non-looping, non-bouncing animations
+ * @property {bool} loop        Restart animation when end is reached
+ * @property {bool} bounce      Rewind the animation frame by frame when end is reached
+ * @property {int} index          Start on this frame
+ * @property {array} frames       Images/canvaselements
+ * @property {milliseconds} frame_duration  How long should each frame be displayed
+ * @property {int} frame_direction  -1 for backwards animation. 1 is default
+ * @property {array} frame_size     Containing width/height, eg. [32, 32]
+ * @property {int} offset           When cutting out frames from a sprite sheet, start at this frame
+ * @property {string} orientation   How to cut out frames frmo sprite sheet, possible values are "down" or "right"
+ * @property {function} on_end      Function to call when animation ends. triggers only on non-looping, non-bouncing animations
  *
  * @example
  * // in setup()

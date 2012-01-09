@@ -2,12 +2,14 @@ var jaws = (function(jaws) {
 
 /**
  *
- * @class A window (Rect) into a bigger canvas/image. Viewport is always contained within that given image (called the game world).
+ * @class A window (Rect) into a bigger canvas/image. Viewport is always contained within that given image (called the game world). "Field Summary" contains options for the Viewport()-constructor.
  *
- * @property width  width of viewport, defaults to canvas width
- * @property height height of viewport, defaults to canvas height
- * @property max_x  maximum x-position for viewport, defaults to canvas width
- * @property max_y  maximum y-position for viewport, defaults to canvas height 
+ * @property {int} width  Width of viewport, defaults to canvas width
+ * @property {int} height Height of viewport, defaults to canvas height
+ * @property {int} max_x  Maximum x-position for viewport, defaults to canvas width
+ * @property {int} max_y  Maximum y-position for viewport, defaults to canvas height 
+ * @property {int} x      X-position for the upper left corner of the viewport
+ * @property {int} y      Y-position for the upper left corner of the viewport
  *
  * @example
  * // Center viewport around players position (player needs to have x/y attributes)
