@@ -24,8 +24,8 @@ jaws.TileMap = function TileMap(options) {
 
   this.cell_size = options.cell_size || [32,32]
   this.size = options.size || [100,100]
+  this.sortFunction = options.sortFunction
   this.cells = new Array(this.size[0])
-  this.sortFunction = undefined
 
   for(var col=0; col < this.size[0]; col++) {
     this.cells[col] = new Array(this.size[1])
