@@ -1,5 +1,5 @@
 test("json assets, onload-callback", function() {
-  var assets = new jaws.Assets
+  var assets = new jaws.Assets()
   assets.root = "assets/"
   assets.add("gamedata.json")
   assets.loadAll({onload:loaded})
@@ -44,10 +44,11 @@ test("image asset with 404s", function() {
 
 test("assets loadAll", function() {
   jaws.assets.image_to_canvas = false
+  jaws.assets.root = "assets/"
   jaws.assets.add("droid_11x15.png")
-  jaws.assets.add(["rect.png", "laser.wav"])
   jaws.assets.add("gamedata.json")
   jaws.assets.add("player.png")
+  jaws.assets.add(["rect.png", "laser.wav"])
   jaws.assets.loadAll({onfinish:assetsLoaded})
   
   stop()
