@@ -73,6 +73,7 @@ Jaws accepts contributions, some simple guidelines:
 - Formatting: oneFunction(), OneConstrutor() and one_variable
 - Don't patch jaws.js or jaws-min.js
 - Please bundle tests with non-trivial patches
+- For bigger patches/feature additions, please contact me beforehand to discuss if/how it fits into Jaws and how to form the API
 - Naming shouldn't consist of abbreviations, let's use "context", not "ctx"
 
 Jaws has gotten contributions from:
@@ -81,8 +82,6 @@ https://github.com/gregmax17 - viewport related stuff
 == Issues and bugs
 If you find an issue with Jaws githubs issue-tracker is the place to go. Easiest for the developers is if you put your game online. If you don't have any hosting check out http://pages.github.com/.
 Pasting your problematic code in the issue-ticket itself will usually mean a lot of hassle with supportcode and assets to actually be able to test the code in question.
-
-For simple bugs
 
 == Example
   /*
