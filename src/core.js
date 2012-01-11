@@ -34,11 +34,9 @@ jaws.title = function(value) {
 }
 
 /**
- * Unpacks Jaws core-constructors into the global namespace
- * After calling unpack you can use:
- * "Sprite()" instead of "jaws.Sprite()"
- * "Animation()" instead of "jaws.Animation()"
- * .. and so on.
+ * Unpacks Jaws core-constructors into the global namespace. If a global property is allready taken, a warning will be written to jaws log.
+ * After calling jaws.unpack() you can use <b>Sprite()</b> instead of <b>jaws.Sprite()</b>, <b>Animation()</b> instead of <b>jaws.Animation()</b> and so on.
+ *
  */
 jaws.unpack = function() {
   var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "TileMap", "Rect", "pressed"]
@@ -52,7 +50,7 @@ jaws.unpack = function() {
 
 /**
  * Logs <b>msg</b> to previously found or created <div id="jaws-log">
- * if <b>append</b> is true, append rather then overwrite to last msg.
+ * if <b>append</b> is true, append rather than overwrite the last log-msg.
  */
 jaws.log = function(msg, append) {
   if(log_tag) {
@@ -120,7 +118,8 @@ jaws.init = function(options) {
 }
 /**
  * @private
- * Keeps updates mouse coordinates in jaws.mouse_x / jaws.mouse_y
+ * Keeps updated mouse coordinates in jaws.mouse_x / jaws.mouse_y
+ * This is called each time event "mousemove" triggers.
  */
 function saveMousePosition(e) {
   jaws.mouse_x = (e.pageX || e.clientX)
@@ -132,14 +131,22 @@ function saveMousePosition(e) {
 }
 
 /** 
- * Quick and easy startup of a jaws game loop
+ * Quick and easy startup of a jaws game loop. jaws.start(YourGameState) It will do the following:
+ *
+ * 1) Call jaws.init() that will detect <canvas> (or create one for you) and set up the 2D context, then available in jaws.canvas and jaws.context.
+ *
+ * 2) Pre-load all defined assets with jaws.assets.loadAll() while showing progress, then available in jaws.assets.get("your_asset.png").
+ *
+ * 3) Create an instance of YourGameState() and call setup() on that instance. In setup() you usually create your gameobjects, sprites and so on.
+ * 
+ * 4) Loop calls to update() and draw() with given FPS (default 60) until game ends or another game state is activated.
  *
  * @example
  * jaws.start(MyGame)            // Start game state Game() with default options
- * jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
- * jaws.start(window)            // Use global setup(), update() and draw() where available
+ * jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will run your game with 30 frames per second.
+ * jaws.start(window)            // Use global functions setup(), update() and draw() if available. Not the recommended way but useful for testing and mini-games.
  *
- * It's recomended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
+ * It's recommended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
  *
  */
 jaws.start = function(game_state, options) {
@@ -229,9 +236,9 @@ jaws.switchGameState = function(game_state, options) {
 }
 
 /** 
- * Takes an image, returns a canvas.
- * Benchmarks has proven canvas to be faster to work with then images.
- * Returns: a canvas
+ * Takes an image, returns a canvas-element containing that image.
+ * Benchmarks has proven canvas to be faster to work with then images in certain browsers.
+ * Returns: a canvas-element
  */
 jaws.imageToCanvas = function(image) {
   var canvas = document.createElement("canvas")
@@ -244,58 +251,66 @@ jaws.imageToCanvas = function(image) {
   return canvas
 }
 
-/** Always return obj as an array. forceArray(1) -> [1], forceArray([1,2]) -> [1,2] */
+/** 
+ * Return obj as an array. An array is returned as is. This is useful when you want to iterate over an unknown variable.
+ *
+ * @example
+ *
+ *   jaws.forceArray(1)       // --> [1]
+ *   jaws.forceArray([1,2])   // --> [1,2]
+ *
+ */
 jaws.forceArray = function(obj) {
   return Array.isArray(obj) ? obj : [obj]
 }
 
-/** Clears canvas through context.clearRect() */
+/** Clears screen (the canvas-element) through context.clearRect() */
 jaws.clear = function() {
   jaws.context.clearRect(0,0,jaws.width,jaws.height)
 }
 
-/** returns true if obj is an Image */
+/** Returns true if obj is an Image */
 jaws.isImage = function(obj)  { 
   return Object.prototype.toString.call(obj) === "[object HTMLImageElement]" 
 }
 
-/** returns true of obj is a Canvas-element */
+/** Returns true of obj is a Canvas-element */
 jaws.isCanvas = function(obj) { 
   return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]" 
 }
 
-/** returns true of obj is either an Image or a Canvas-element */
+/** Returns true of obj is either an Image or a Canvas-element */
 jaws.isDrawable = function(obj) { 
   return jaws.isImage(obj) || jaws.isCanvas(obj) 
 }
 
-/** returns true if obj is a String */
+/** Returns true if obj is a String */
 jaws.isString = function(obj) { 
   return (typeof obj == 'string') 
 }
 
-/** returns true if obj is an Array */
+/** Returns true if obj is an Array */
 jaws.isArray = function(obj)  { 
   if(obj === undefined) return false;
   return !(obj.constructor.toString().indexOf("Array") == -1) 
 }
 
-/** returns true of obj is a Function */
+/** Returns true of obj is a Function */
 jaws.isFunction = function(obj) { 
   return (Object.prototype.toString.call(obj) === "[object Function]") 
 }
 
 /**
- * returns true if 'item' is outside canvas
- * 'item' needs to have properties: x,y,width,height
+ * Returns true if <b>item</b> is outside the canvas.
+ * <b>item</b> needs to have the properties x, y, width & height
  */
 jaws.isOutsideCanvas = function(item) { 
   return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height)
 }
 
 /**
- * force 'item' inside canvas by setting its x/y parameters
- * 'item' needs to have properties: x,y,width,height
+ * Force <b>item</b> inside canvas by setting items x/y parameters
+ * <b>item</b> needs to have the properties x, y, width & height
  */
 jaws.forceInsideCanvas = function(item) {
   if(item.x < 0)              { item.x = 0  }
@@ -308,7 +323,8 @@ jaws.forceInsideCanvas = function(item) {
  * Return a hash of url-parameters and their values
  *
  * @example
- * http://test.com/?debug=1&foo=bar  // --> {debug: 1, foo: bar}
+ *   // Given the current URL is <b>http://test.com/?debug=1&foo=bar</b>
+ *   jaws.getUrlParameters() // --> {debug: 1, foo: bar}
  */
 jaws.getUrlParameters = function() {
   var vars = [], hash;

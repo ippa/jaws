@@ -22,9 +22,10 @@ Jaws also:
 - {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Overview and design choices.
 - {http://jawsjs.com/jawsjs/test/index.html}[http://jawsjs.com/jawsjs/test/index.html]    - Jaws testsuite (QUnit)
 
-== Jaws is still beta
-... So don't base your commercial projects on it.
-APIs has started to settle down, but there will still be changes ahead.
+== What kind of games can you make with Jaws?
+Jaws is well suited for "classic" side/top scrolling games (tile based or not) where you have a number of sprite-sheet-animated sprites.
+Jaws comes with basic rect-vs-rect/circle-vs-circle collision detection that works well in most cases. If you have _tons_ of sprites (for example, a bullet hell schmup) you probably want to use a physicslib like Box2D or spatial
+hashing like quad trees to speed things up. Jaws use of canvas makes pixel perfect collisions and worms-style terrain relatively easy to develop. If your game is very GUI-heavy you might want to base your game on pure HTML-elements instead of canvas-sprites.
 
 == Simple examples demonstrating certain features
 Check out the sourcecode for comments and explanations:
@@ -76,6 +77,12 @@ Jaws accepts contributions, some simple guidelines:
 
 Jaws has gotten contributions from:
 https://github.com/gregmax17 - viewport related stuff
+
+== Issues and bugs
+If you find an issue with Jaws githubs issue-tracker is the place to go. Easiest for the developers is if you put your game online. If you don't have any hosting check out http://pages.github.com/.
+Pasting your problematic code in the issue-ticket itself will usually mean a lot of hassle with supportcode and assets to actually be able to test the code in question.
+
+For simple bugs
 
 == Example
   /*
