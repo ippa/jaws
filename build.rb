@@ -1,20 +1,16 @@
 #!/usr/bin/env ruby
 
 #
-# Build standalone,all-including jaws-all.js by combining all files in src/-directory into one
+# Build a standalone, all-including jaws.js by combining all the files in src/-directory into one
 #
-out = File.new("jaws.js", "w")
-prefix = "src/"
-files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_list.js","sprite_sheet.js","parallax.js","animation.js","viewport.js","tile_map.js", "collision_detection.js", "gfx.js"]
-files.each do |file|
-  out.write(File.read(prefix + file))
+File.open("jaws.js", "w") do |out|
+  files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_list.js","sprite_sheet.js","parallax.js","animation.js","viewport.js","tile_map.js", "collision_detection.js", "gfx.js"]
+  files.each { |file| out.write( File.read("src/#{file}") ) }
+  out.write(";window.addEventListener(\"load\", function() { if(jaws.onload) jaws.onload(); }, false);")
 end
-out.write(";window.addEventListener(\"load\", function() { if(jaws.onload) jaws.onload(); }, false);")
-
-out.close
 
 #
-# Minify jaws-all.js into jaws-min.js using googles closure compiler
+# Minify jaws.js into jaws-min.js using googles closure compiler
 #
 require 'net/http'
 require 'uri'
@@ -30,12 +26,10 @@ def compress(js_code, compilation_level)
 end
 
 js_code = File.read("jaws.js")
+File.open("jaws-min.js", "w") { |out| out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") }  # option: ADVANCED_OPTIMIZATIONS
 
-out = File.new("jaws-min.js", "w")
-out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # ADVANCED_OPTIMIZATIONS
-out.close
-
+#
 # Generate documentation into http://jawsjs.com/docs/
 # -a documents All functions
-s = "jsdoc -D='noGlobal:true' -D='title:JawsJS HTML5 game engine documentation' -t=/www/ippa/jawsjs.com/public/codeview -d=/www/ippa/jawsjs.com/public/docs src"
-system(s)
+# 
+`jsdoc -D='noGlobal:true' -D='title:JawsJS HTML5 game engine documentation' -t=/www/ippa/jawsjs.com/public/codeview -d=/www/ippa/jawsjs.com/public/docs src`
