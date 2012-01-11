@@ -1,3 +1,5 @@
+module("Collision Detection")
+
 test("Collision detection", function() {
   var sprite1 = new jaws.Sprite({image: "rect.png", x: 0, y: 0})
   var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
