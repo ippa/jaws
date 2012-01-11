@@ -4,6 +4,7 @@
  * Collision detection helpers.
  *
  * @example
+ *   // collision helper exampels:
  *   collideOneWithOne(player, boss)        // -> false
  *   collideOneWithMany(player, bullets)    // -> [bullet1, bullet1]
  *   collideManyWithMany(bullets, enemies)  // -> [ [bullet1, enemy1], [bullet2, enemy2] ]
@@ -32,7 +33,7 @@ jaws.collideOneWithMany = function(object, list) {
 }
 
 /**
- * Collides two list of objects -- 'list1' and 'list2'.
+ * Collides two list/arrays of objects -- 'list1' and 'list2'.
  * Returns an array of arrays with colliding pairs from 'list1' and 'list2'.
  * Will never collide objects with themselves, even if you collide the same list with itself.
  *

@@ -109,7 +109,16 @@ jaws.Assets = function Assets() {
     else { this.load(src, onload, onerror) }
   }
 
-  /** Load one asset-object, i.e: {src: "foo.png"} */
+  /** 
+   * Load a single url <b>src</b>.
+   * if <b>onload</b> is specified, it's called on loading-success
+   * if <b>onerror</b> is specified, it will be called on any loading-error
+   * 
+   * @example
+   *
+   *   jaws.load("media/foo.png")
+   *
+   */
   this.load = function(src, onload, onerror) {
     var asset = {}
     asset.src = src
@@ -216,7 +225,7 @@ jaws.Assets = function Assets() {
 /** @private
  * Make Fuchia (0xFF00FF) transparent
  * This is the de-facto standard way to do transparency in BMPs
- * Returns: a canvas
+ * Returns: a canvas-element
  */
 function fuchiaToTransparent(image) {
   canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image
