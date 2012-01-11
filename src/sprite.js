@@ -11,6 +11,7 @@ var jaws = (function(jaws) {
 * @property {int} angle     Angle in degrees (0-360)
 * @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
 * @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
+* @property {int} scale_image Scale the sprite by this factor
 *
 * @example
 * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
