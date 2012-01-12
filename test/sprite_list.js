@@ -3,6 +3,10 @@ module("Sprite List")
 test("Empty Sprite List", function() {
   var sprite_list = new jaws.SpriteList()
   same(sprite_list.length, 0, "should start with zero sprites")
+  
+  // This bit is relevant for collision_detection/combinations() to work
+  ok(!jaws.isArray(sprite_list), "sprite_list is NOT an array")
+  ok(sprite_list.isSpriteList(), "isSpriteList() == true")
 })
 
 test("Load Objects", function() {
@@ -19,14 +23,17 @@ test("Load Objects", function() {
   
   sprite_list.load([sprite_one, sprite_two])
   same(sprite_list.length, 2, "should contain two sprites after loading")
+  same(sprite_list.at(0).x, 10)
+  same(sprite_list.at(1).x, 20)
 
-  ok(sprite_list[0].width, 'sprite_one should have a width, after being loaded into a SpriteList')
-  ok(sprite_list[1].width, 'sprite_two should have a width, after being loaded into a SpriteList')
+  ok(sprite_list.at(0).width, 'sprite_one should have a width, after being loaded into a SpriteList')
+  ok(sprite_list.at(1).width, 'sprite_two should have a width, after being loaded into a SpriteList')
   
   var new_sprite_list = new jaws.SpriteList([sprite_one, sprite_two])
   same(new_sprite_list.length, 2, "should contain two sprites after loading (via constructor)")
-  ok(new_sprite_list[0].width, 'sprite_one should have a width, after being loaded into a SpriteList')
-  ok(new_sprite_list[1].width, 'sprite_two should have a width, after being loaded into a SpriteList')
+  same(sprite_list.at(0).x, 10)
+  same(sprite_list.at(1).x, 20)
+  
 })
 
 test("Push and toString", function() {
@@ -167,6 +174,21 @@ test("deleteIf()", function() {
   sprite_list.deleteIf(true_condition)
   same(sprite_list.length, 0, "should have a length of 0, after deleteIf(true_condition)")
 })
+
+test("at()", function() {
+  var sprite_list = new jaws.SpriteList()
+  var sprite = new jaws.Sprite({image: "rect.png"})
+  sprite.x = 10
+  var sprite_two = new jaws.Sprite({image: "rect.png"})
+  sprite_two.x = 20
+  sprite_list.push(sprite)
+  sprite_list.push(sprite_two)
+  
+  same(sprite_list.at(0), sprite, "sprite_list.at(0) should == sprite")
+  same(sprite_list.at(0).x, 10, "sprite_list.at(0).x should == sprite.x")
+  same(sprite_list.at(1), sprite_two, "sprite_list.at(1) should == sprite_two")
+})
+
 
 // Test some Array API / standardized functions
 test("filter()", function() {
