@@ -4,7 +4,7 @@ test("Collision detection", function() {
   var sprite1 = new jaws.Sprite({image: "rect.png", x: 0, y: 0})
   var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
   var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
-  var sprites = [sprite1, sprite2, sprite3]
+  var sprites = new jaws.SpriteList([sprite1, sprite2, sprite3])
 
   // TODO: why are these needed?
   sprite1.setImage("rect.png")
