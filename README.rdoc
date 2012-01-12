@@ -71,6 +71,7 @@ A rule of thumb is that a file named "foo.js" will include a contructor named Fo
 == Contribute
 Jaws accepts contributions, some simple guidelines:
 - Formatting: oneFunction(), OneConstrutor() and one_variable
+- 2 spaces for indentation
 - Don't patch jaws.js or jaws-min.js
 - Please bundle tests with non-trivial patches
 - For bigger patches/feature additions, please contact me beforehand to discuss if/how it fits into Jaws and how to form the API
