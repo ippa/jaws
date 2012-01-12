@@ -35,6 +35,7 @@ test("Collision detection", function() {
   
   // Test collideOneWithMany and collideManyWithMany on SpriteLists
   var sprite_list = new jaws.SpriteList([sprite1, sprite2, sprite3])
+
   same( jaws.collideOneWithMany(sprite1, sprite_list), [sprite2], "collideOneWithMany sprite_list rect")
   same( jaws.collideManyWithMany(sprite_list, sprite_list), [[sprite1, sprite2]], "collideManyWithMany sprite_list rect")
   
