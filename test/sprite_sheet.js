@@ -1,3 +1,5 @@
+module("Sprite Sheet")
+
 test("SpriteSheet", function() {
   sprite_sheet = new jaws.SpriteSheet( {image: "droid_11x15.png", frame_size: [11,15]} )
 

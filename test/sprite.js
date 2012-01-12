@@ -1,3 +1,5 @@
+module("Sprite")
+
 test("Sprite defaults", function() {
   sprite = new jaws.Sprite({})
   same(sprite.x, 0, "x defaults to 0")
