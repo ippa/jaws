@@ -131,22 +131,26 @@ function saveMousePosition(e) {
 }
 
 /** 
- * Quick and easy startup of a jaws game loop. jaws.start(YourGameState) It will do the following:
- *
- * 1) Call jaws.init() that will detect <canvas> (or create one for you) and set up the 2D context, then available in jaws.canvas and jaws.context.
- *
- * 2) Pre-load all defined assets with jaws.assets.loadAll() while showing progress, then available in jaws.assets.get("your_asset.png").
- *
- * 3) Create an instance of YourGameState() and call setup() on that instance. In setup() you usually create your gameobjects, sprites and so on.
- * 
- * 4) Loop calls to update() and draw() with given FPS (default 60) until game ends or another game state is activated.
+ * Quick and easy startup of a jaws game loop. 
  *
  * @example
- * jaws.start(MyGame)            // Start game state Game() with default options
- * jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will run your game with 30 frames per second.
- * jaws.start(window)            // Use global functions setup(), update() and draw() if available. Not the recommended way but useful for testing and mini-games.
  *
- * It's recommended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
+ *  // jaws.start(YourGameState) It will do the following:
+ *  //
+ *  // 1) Call jaws.init() that will detect any canvas-tag (or create one for you) and set up the 2D context, then available in jaws.canvas and jaws.context.
+ *  //
+ *  // 2) Pre-load all defined assets with jaws.assets.loadAll() while showing progress, then available in jaws.assets.get("your_asset.png").
+ *  //
+ *  // 3) Create an instance of YourGameState() and call setup() on that instance. In setup() you usually create your gameobjects, sprites and so on.
+ *  // 
+ *  // 4) Loop calls to update() and draw() with given FPS (default 60) until game ends or another game state is activated.
+ *
+ *
+ *  jaws.start(MyGame)            // Start game state Game() with default options
+ *  jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will run your game with 30 frames per second.
+ *  jaws.start(window)            // Use global functions setup(), update() and draw() if available. Not the recommended way but useful for testing and mini-games.
+ *
+ *  // It's recommended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
  *
  */
 jaws.start = function(game_state, options) {

@@ -22,6 +22,8 @@ function cutImage(image, x, y, width, height) {
  * @property {array} frame_size  width and height of invidual frames in spritesheet
  * @property {array} frames all single frames cut out from image
  * @property {integer} offset vertical or horizontal offset to start cutting from
+ * @property {int} scale_image Scale the sprite sheet by this factor before cutting out the frames. frame_size is automatically re-sized too
+ *
 */
 jaws.SpriteSheet = function SpriteSheet(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
