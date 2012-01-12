@@ -7,14 +7,26 @@ test("Empty Sprite List", function() {
 
 test("Load Objects", function() {
   var sprite_list = new jaws.SpriteList()
-  var sprite_one = new jaws.Sprite({image: "rect.png"})
-  var sprite_two = new jaws.Sprite({image: "rect.png"})
+  var sprite_one = new jaws.Sprite({image: "assets/rect.png"})
+  sprite_one.setImage("rect.png")
+  sprite_one.x = 10
+  var sprite_two = new jaws.Sprite({image: "assets/rect.png"})
+  sprite_two.setImage("rect.png")
+  sprite_two.x = 20
+  
+  ok(sprite_one.width, 'sprite_one should have a width, after calling setImage()')
+  ok(sprite_two.width, 'sprite_two should have a width, after calling setImage()')
   
   sprite_list.load([sprite_one, sprite_two])
   same(sprite_list.length, 2, "should contain two sprites after loading")
+
+  ok(sprite_list[0].width, 'sprite_one should have a width, after being loaded into a SpriteList')
+  ok(sprite_list[1].width, 'sprite_two should have a width, after being loaded into a SpriteList')
   
   var new_sprite_list = new jaws.SpriteList([sprite_one, sprite_two])
   same(new_sprite_list.length, 2, "should contain two sprites after loading (via constructor)")
+  ok(new_sprite_list[0].width, 'sprite_one should have a width, after being loaded into a SpriteList')
+  ok(new_sprite_list[1].width, 'sprite_two should have a width, after being loaded into a SpriteList')
 })
 
 test("Push and toString", function() {
@@ -154,4 +166,22 @@ test("deleteIf()", function() {
   same(sprite_list.length, 2, "should have a length of 2, after deleteIf(false_condition)")
   sprite_list.deleteIf(true_condition)
   same(sprite_list.length, 0, "should have a length of 0, after deleteIf(true_condition)")
+})
+
+// Test some Array API / standardized functions
+test("filter()", function() {
+  var sprite_list = new jaws.SpriteList()
+  var sprite = new jaws.Sprite({image: "rect.png"})
+  sprite.x = 10
+  var sprite_two = new jaws.Sprite({image: "rect.png"})
+  sprite_two.x = 20
+  sprite_list.push(sprite)
+  sprite_list.push(sprite_two)
+  true_condition = function(obj) { return true }
+  false_condition = function(obj) { return false }
+  x_test = function(obj) { return obj.x == 20 }
+  
+  same(sprite_list.filter(false_condition), [], 'sprite_list.filter(false_condition) should return []')
+  same(sprite_list.filter(true_condition), [sprite, sprite_two], 'sprite_list.filter(true_condition) should return [sprite, sprite_two]')
+  same(sprite_list.filter(x_test), [sprite_two], 'sprite_list.filter(x_test) should return [sprite_two]')
 })
