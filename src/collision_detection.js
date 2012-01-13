@@ -39,7 +39,7 @@ jaws.collideOneWithMany = function(object, list) {
  *
  * @example
  *
- *   jaws.collideManyWithMany(bullets, enemies) // --> [[bullet, ememy], [bullet, enemy]]
+ *   jaws.collideManyWithMany(bullets, enemies) // --> [[bullet, enemy], [bullet, enemy]]
  *
  */
 jaws.collideManyWithMany = function(list1, list2) {
@@ -53,7 +53,7 @@ jaws.collideManyWithMany = function(list1, list2) {
   else {
     list1.forEach( function(item1) { 
       list2.forEach( function(item2) { 
-        if(jaws.collideOneWithOne(item1, item2)) a.push([item1, item2]) 
+        if(jaws.collideOneWithOne(item1, item2)) a.push([item1, item2])
       });
     });
   }
@@ -86,12 +86,18 @@ jaws.distanceBetween = function(object1, object2) {
 }
 
 /** private */
-function combinations(s, n) {
-  var f = function(i){return s[i];};
+function combinations(list, n) {
+  var f = function(i) {
+    if(list.isSpriteList !== undefined) {
+      return list.at(i)
+    } else {  // s is an Array
+      return list[i];
+    }
+  };
   var r = [];
   var m = new Array(n);
   for (var i = 0; i < n; i++) m[i] = i; 
-  for (var i = n - 1, sn = s.length; 0 <= i; sn = s.length) {
+  for (var i = n - 1, sn = list.length; 0 <= i; sn = list.length) {
     r.push( m.map(f) );
     while (0 <= i && m[i] == sn - 1) { i--; sn--; }
     if (0 <= i) { 
