@@ -27,9 +27,9 @@ jaws.TileMap = function TileMap(options) {
   this.sortFunction = options.sortFunction
   this.cells = new Array(this.size[0])
 
-  for(var col=0; col < this.size[0]; col++) {
+  for(var col=0, cl=this.size[0]; col < cl; col++) {
     this.cells[col] = new Array(this.size[1])
-    for(var row=0; row < this.size[1]; row++) {
+    for(var row=0, rl=this.size[1]; row < rl; row++) {
       this.cells[col][row] = [] // populate each cell with an empty array
     }
   }
@@ -37,8 +37,8 @@ jaws.TileMap = function TileMap(options) {
 
 /** Clear all cells in tile map */
 jaws.TileMap.prototype.clear = function() {
-  for(var col=0; col < this.size[0]; col++) {
-    for(var row=0; row < this.size[1]; row++) {
+  for(var col=0, cl=this.size[0]; col < cl; col++) {
+    for(var row=0, rl=this.size[0]; row < rl; row++) {
       this.cells[col][row] = []
     }
   }
@@ -46,9 +46,10 @@ jaws.TileMap.prototype.clear = function() {
 
 /** Sort arrays in each cell in tile map according to sorter-function (see Array.sort) */
 jaws.TileMap.prototype.sortCells = function(sortFunction) {
-  for(var col=0; col < this.size[0]; col++) {
-    for(var row=0; row < this.size[1]; row++) {
-      this.cells[col][row].sort( sortFunction )
+  for(var col=0, cl=this.size[0]; col < cl; col++) {
+    var cc=this.cells[col];
+    for(var row=0, rl=this.size[0]; row < rl; row++) {
+      cc[row].sort( sortFunction )
     }
   }
 }
@@ -123,8 +124,8 @@ jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
 
 /** Get objects in cell that exists at coordinates x / y  */
 jaws.TileMap.prototype.at = function(x, y) {
-  var col = parseInt(x / this.cell_size[0])
-  var row = parseInt(y / this.cell_size[1])
+  var col = ~~(x / this.cell_size[0]) // parseInt is slow, but so is Math.floor, bitwise operations are fast
+  var row = ~~(y / this.cell_size[1])
   // console.log("at() col/row: " + col + "/" + row)
   return this.cells[col][row]
 }
@@ -135,11 +136,11 @@ jaws.TileMap.prototype.atRect = function(rect) {
   var items
 
   try {
-    var from_col = parseInt(rect.x / this.cell_size[0])
-    var to_col = parseInt(rect.right / this.cell_size[0])
+    var from_col = ~~(rect.x / this.cell_size[0])
+    var to_col = ~~(rect.right / this.cell_size[0])
     for(var col = from_col; col <= to_col; col++) {
-      var from_row = parseInt(rect.y / this.cell_size[1])
-      var to_row = parseInt(rect.bottom / this.cell_size[1])
+      var from_row = ~~(rect.y / this.cell_size[1])
+      var to_row = ~~(rect.bottom / this.cell_size[1])
       
       for(var row = from_row; row <= to_row; row++) {
         this.cells[col][row].forEach( function(item, total) { 
