@@ -66,8 +66,8 @@ jaws.setupInput = function() {
   
   keycode_to_string = k
 
-  window.addEventListener("keydown", handleKeyDown)
-  window.addEventListener("keyup", handleKeyUp)
+  window.addEventListener("keydown", handleKeyDown, false)
+  window.addEventListener("keyup", handleKeyUp, false)
 }
 
 /** @private
