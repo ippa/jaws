@@ -1,5 +1,14 @@
 /**
- * @namespace JawsJS core functions
+ * @namespace JawsJS core functions. "Field Summary" contains readable properties on the main jaws-object.
+ *
+ * @property {int} mouse_x  Mouse X position with respect to the canvas-element
+ * @property {int} mouse_y  Mouse Y position with respect to the canvas-element
+ * @property {canvas} canvas  The detected/created canvas-element used for the game
+ * @property {context} context  The detected/created canvas 2D-context, used for all draw-operations
+ * @property {int} width  Width of the canvas-element
+ * @property {int} height  Height of the canvas-element
+ *
+ *
  * @example
  * Jaws, a HTML5 canvas/javascript 2D game development framework
  *
@@ -34,11 +43,9 @@ jaws.title = function(value) {
 }
 
 /**
- * Unpacks Jaws core-constructors into the global namespace
- * After calling unpack you can use:
- * "Sprite()" instead of "jaws.Sprite()"
- * "Animation()" instead of "jaws.Animation()"
- * .. and so on.
+ * Unpacks Jaws core-constructors into the global namespace. If a global property is allready taken, a warning will be written to jaws log.
+ * After calling jaws.unpack() you can use <b>Sprite()</b> instead of <b>jaws.Sprite()</b>, <b>Animation()</b> instead of <b>jaws.Animation()</b> and so on.
+ *
  */
 jaws.unpack = function() {
   var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "TileMap", "Rect", "pressed"]
@@ -52,7 +59,7 @@ jaws.unpack = function() {
 
 /**
  * Logs <b>msg</b> to previously found or created <div id="jaws-log">
- * if <b>append</b> is true, append rather then overwrite to last msg.
+ * if <b>append</b> is true, append rather than overwrite the last log-msg.
  */
 jaws.log = function(msg, append) {
   if(log_tag) {
@@ -120,7 +127,8 @@ jaws.init = function(options) {
 }
 /**
  * @private
- * Keeps updates mouse coordinates in jaws.mouse_x / jaws.mouse_y
+ * Keeps updated mouse coordinates in jaws.mouse_x / jaws.mouse_y
+ * This is called each time event "mousemove" triggers.
  */
 function saveMousePosition(e) {
   jaws.mouse_x = (e.pageX || e.clientX)
@@ -132,14 +140,26 @@ function saveMousePosition(e) {
 }
 
 /** 
- * Quick and easy startup of a jaws game loop
+ * Quick and easy startup of a jaws game loop. 
  *
  * @example
- * jaws.start(MyGame)            // Start game state Game() with default options
- * jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will un Game with FPS 30
- * jaws.start(window)            // Use global setup(), update() and draw() where available
  *
- * It's recomended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
+ *  // jaws.start(YourGameState) It will do the following:
+ *  //
+ *  // 1) Call jaws.init() that will detect any canvas-tag (or create one for you) and set up the 2D context, then available in jaws.canvas and jaws.context.
+ *  //
+ *  // 2) Pre-load all defined assets with jaws.assets.loadAll() while showing progress, then available in jaws.assets.get("your_asset.png").
+ *  //
+ *  // 3) Create an instance of YourGameState() and call setup() on that instance. In setup() you usually create your gameobjects, sprites and so on.
+ *  // 
+ *  // 4) Loop calls to update() and draw() with given FPS (default 60) until game ends or another game state is activated.
+ *
+ *
+ *  jaws.start(MyGame)            // Start game state Game() with default options
+ *  jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will run your game with 30 frames per second.
+ *  jaws.start(window)            // Use global functions setup(), update() and draw() if available. Not the recommended way but useful for testing and mini-games.
+ *
+ *  // It's recommended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
  *
  */
 jaws.start = function(game_state, options) {
@@ -229,9 +249,9 @@ jaws.switchGameState = function(game_state, options) {
 }
 
 /** 
- * Takes an image, returns a canvas.
- * Benchmarks has proven canvas to be faster to work with then images.
- * Returns: a canvas
+ * Takes an image, returns a canvas-element containing that image.
+ * Benchmarks has proven canvas to be faster to work with then images in certain browsers.
+ * Returns: a canvas-element
  */
 jaws.imageToCanvas = function(image) {
   var canvas = document.createElement("canvas")
@@ -244,58 +264,66 @@ jaws.imageToCanvas = function(image) {
   return canvas
 }
 
-/** Always return obj as an array. forceArray(1) -> [1], forceArray([1,2]) -> [1,2] */
+/** 
+ * Return obj as an array. An array is returned as is. This is useful when you want to iterate over an unknown variable.
+ *
+ * @example
+ *
+ *   jaws.forceArray(1)       // --> [1]
+ *   jaws.forceArray([1,2])   // --> [1,2]
+ *
+ */
 jaws.forceArray = function(obj) {
   return Array.isArray(obj) ? obj : [obj]
 }
 
-/** Clears canvas through context.clearRect() */
+/** Clears screen (the canvas-element) through context.clearRect() */
 jaws.clear = function() {
   jaws.context.clearRect(0,0,jaws.width,jaws.height)
 }
 
-/** returns true if obj is an Image */
+/** Returns true if obj is an Image */
 jaws.isImage = function(obj)  { 
   return Object.prototype.toString.call(obj) === "[object HTMLImageElement]" 
 }
 
-/** returns true of obj is a Canvas-element */
+/** Returns true of obj is a Canvas-element */
 jaws.isCanvas = function(obj) { 
   return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]" 
 }
 
-/** returns true of obj is either an Image or a Canvas-element */
+/** Returns true of obj is either an Image or a Canvas-element */
 jaws.isDrawable = function(obj) { 
   return jaws.isImage(obj) || jaws.isCanvas(obj) 
 }
 
-/** returns true if obj is a String */
+/** Returns true if obj is a String */
 jaws.isString = function(obj) { 
   return (typeof obj == 'string') 
 }
 
-/** returns true if obj is an Array */
+/** Returns true if obj is an Array */
 jaws.isArray = function(obj)  { 
   if(obj === undefined) return false;
   return !(obj.constructor.toString().indexOf("Array") == -1) 
 }
 
-/** returns true of obj is a Function */
+/** Returns true of obj is a Function */
 jaws.isFunction = function(obj) { 
   return (Object.prototype.toString.call(obj) === "[object Function]") 
 }
 
 /**
- * returns true if 'item' is outside canvas
- * 'item' needs to have properties: x,y,width,height
+ * Returns true if <b>item</b> is outside the canvas.
+ * <b>item</b> needs to have the properties x, y, width & height
  */
 jaws.isOutsideCanvas = function(item) { 
   return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height)
 }
 
 /**
- * force 'item' inside canvas by setting its x/y parameters
- * 'item' needs to have properties: x,y,width,height
+ * Force <b>item</b> inside canvas by setting items x/y parameters
+ * <b>item</b> needs to have the properties x, y, width & height
  */
 jaws.forceInsideCanvas = function(item) {
   if(item.x < 0)              { item.x = 0  }
@@ -308,7 +336,8 @@ jaws.forceInsideCanvas = function(item) {
  * Return a hash of url-parameters and their values
  *
  * @example
- * http://test.com/?debug=1&foo=bar  // --> {debug: 1, foo: bar}
+ *   // Given the current URL is <b>http://test.com/?debug=1&foo=bar</b>
+ *   jaws.getUrlParameters() // --> {debug: 1, foo: bar}
  */
 jaws.getUrlParameters = function() {
   var vars = [], hash;
@@ -604,7 +633,16 @@ jaws.Assets = function Assets() {
     else { this.load(src, onload, onerror) }
   }
 
-  /** Load one asset-object, i.e: {src: "foo.png"} */
+  /** 
+   * Load a single url <b>src</b>.
+   * if <b>onload</b> is specified, it's called on loading-success
+   * if <b>onerror</b> is specified, it will be called on any loading-error
+   * 
+   * @example
+   *
+   *   jaws.load("media/foo.png")
+   *
+   */
   this.load = function(src, onload, onerror) {
     var asset = {}
     asset.src = src
@@ -711,7 +749,7 @@ jaws.Assets = function Assets() {
 /** @private
  * Make Fuchia (0xFF00FF) transparent
  * This is the de-facto standard way to do transparency in BMPs
- * Returns: a canvas
+ * Returns: a canvas-element
  */
 function fuchiaToTransparent(image) {
   canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image
@@ -975,6 +1013,7 @@ var jaws = (function(jaws) {
 * @property {int} angle     Angle in degrees (0-360)
 * @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
 * @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
+* @property {int} scale_image Scale the sprite by this factor
 *
 * @example
 * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
@@ -1337,7 +1376,7 @@ jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_y = value; re
 var jaws = (function(jaws) {
 /**
  
-@class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others. Builds on Array. "Field Summary" contains options for the SpriteList()-constructor.
+@class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others. Implements Array API. "Field Summary" contains options for the SpriteList()-constructor.
 
 @example
 // Sprites (your bullets, aliens, enemies, players etc) will need to be
@@ -1350,30 +1389,170 @@ for(i=0; i < 100; i++) {
   enemies.push(new Sprite({image: "enemy.png", x: i, y: 200}))
 }
 enemies.draw()                    // calls draw() on all enemies 
-enemies.deleteIf(isOutsideCanvas) // deletes each item in enemies that returns true when isOutsideCanvas(item) is called
+enemies.removeIf(isOutsideCanvas) // removes each item in enemies that returns true when isOutsideCanvas(item) is called
 enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
 
 */
 jaws.SpriteList = function SpriteList(options) {
+  // Make both sprite_list = new SpriteList() and sprite_list = SpriteList() work
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
+  this.sprites = []
+  this.length = 0
+  
   if(options) this.load(options);
 }
-jaws.SpriteList.prototype = new Array
 
 /**
- *
- * load sprites into sprite list.
+ * Return the sprite at the specified index.
+ * Replaces the array [] notation.
+ * So:
+ * my_sprite_list.at(1) is equivalent to my_array[1]
+ * 
+ * @param {integer} index
+ * @returns Element at index
+ */
+jaws.SpriteList.prototype.at = function(index) {
+  return this.sprites[index]
+}
+
+// Implement the Array API functions
+
+jaws.SpriteList.prototype.concat = function() {
+  return this.sprites.concat.apply(this.sprites, arguments)
+}
+
+jaws.SpriteList.prototype.indexOf = function(searchElement, fromIndex) {
+  return this.sprites.indexOf(searchElement, fromIndex)
+}
+
+/**
+ * Joins the contents of the sprite list into a string.
+ * 
+ * Implemented mostly for an easy verbose way to display the sprites 
+ * inside the sprite list.
+ */
+jaws.SpriteList.prototype.join = function(separator) {
+  return this.sprites.join(separator)
+}
+
+jaws.SpriteList.prototype.lastIndexOf = function() {
+  return this.sprites.lastIndexOf.apply(this.sprites, arguments)
+}
+
+jaws.SpriteList.prototype.pop = function() {
+  var element = this.sprites.pop()
+  this.updateLength()
+  return element
+}
+
+jaws.SpriteList.prototype.push = function() {
+  this.sprites.push.apply(this.sprites, arguments)
+  this.updateLength()
+  return this.length
+}
+
+jaws.SpriteList.prototype.reverse = function() {
+  this.sprites.reverse()
+}
+
+jaws.SpriteList.prototype.shift = function() {
+  var element = this.sprites.shift()
+  this.updateLength()
+  return element
+}
+
+jaws.SpriteList.prototype.slice = function(start, end) {
+  return this.sprites.slice(start, end)
+}
+
+jaws.SpriteList.prototype.sort = function() {
+  this.sprites.sort.apply(this.sprites, arguments)
+}
+
+jaws.SpriteList.prototype.splice = function() {
+  this.sprites.splice.apply(this.sprites, arguments)
+  this.updateLength()
+}
+
+jaws.SpriteList.prototype.unshift = function() {
+  this.sprites.unshift.apply(this.sprites, arguments)
+  this.updateLength()
+  return this.length
+}
+
+jaws.SpriteList.prototype.updateLength = function() {
+  this.length = this.sprites.length
+}
+
+jaws.SpriteList.prototype.valueOf = function() {
+  return this.toString()
+}
+
+// Implement "extras" / standardized Array functions
+// See http://dev.opera.com/articles/view/javascript-array-extras-in-detail/ for discussion, browser compatibility
+
+// Does not mutate
+jaws.SpriteList.prototype.filter = function() {
+  return this.sprites.filter.apply(this.sprites, arguments)
+}
+
+jaws.SpriteList.prototype.forEach = function() {
+  this.sprites.forEach.apply(this.sprites, arguments)
+  this.updateLength()  // in case the forEach operation changes the sprites array
+}
+
+// Does not mutate
+jaws.SpriteList.prototype.every = function() {
+  return this.sprites.every.apply(this.sprites, arguments)
+}
+
+// Does not mutate
+jaws.SpriteList.prototype.map = function() {
+  return this.sprites.map.apply(this.sprites, arguments)
+}
+
+// Does not mutate
+jaws.SpriteList.prototype.reduce = function() {
+  return this.sprites.reduce.apply(this.sprites, arguments)
+}
+
+// Does not mutate
+jaws.SpriteList.prototype.reduceRight = function() {
+  return this.sprites.reduceRight.apply(this.sprites, arguments)
+}
+
+// Does not mutate
+jaws.SpriteList.prototype.some = function() {
+  return this.sprites.some.apply(this.sprites, arguments)
+}
+
+jaws.SpriteList.prototype.isSpriteList = function() {
+  return true;
+}
+
+/**
+ * Load sprites into sprite list.
  *
  * Argument could either be
+ * - an array of Sprite objects
  * - an array of JSON objects
  * - a JSON.stringified string representing an array of JSON objects
  *
  */
 jaws.SpriteList.prototype.load = function(objects) {
   var that = this;  // Since forEach changes this into DOMWindow.. hm, lame.
-  if(jaws.isArray(objects))       { parseArray(objects) }
+  if(jaws.isArray(objects)) {
+    // If this is an array of JSON representations, parse it
+    if(objects.every(function(item) { return jaws.isArray(item) })) {
+      parseArray(objects)
+    } else {
+      // This is an array of Sprites, load it directly
+      this.sprites = objects
+    }
+  }
   else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ) }
+  this.updateLength()
   
   function parseArray(array) {
     array.forEach( function(data) {
@@ -1388,55 +1567,60 @@ jaws.SpriteList.prototype.load = function(objects) {
   }
 }
 
-/** Remove obj from list */
+/** Removes the first occurrence of obj from list */
 jaws.SpriteList.prototype.remove = function(obj) {
   var index = this.indexOf(obj)
   if(index > -1) { this.splice(index, 1) }
+  this.updateLength()
 }
 
 /** Draw all sprites in spritelist */
 jaws.SpriteList.prototype.draw = function() {
-  for(i=0; this[i]; i++) { 
-    this[i].draw() 
-  }
+  this.forEach(function(ea) {
+    ea.draw()
+  })
 }
 
 /** Draw sprites in spritelist where condition(sprite) returns true */
 jaws.SpriteList.prototype.drawIf = function(condition) {
-  for(i=0; this[i]; i++) {
-    if( condition(this[i]) ) { this[i].draw() }
-  }
+  this.forEach(function(ea) {
+    if( condition(ea) ) {
+      ea.draw()
+    }
+  })
 }
 
 /** Call update() on all sprites in spritelist */
 jaws.SpriteList.prototype.update = function() {
-  for(i=0; this[i]; i++) {
-    this[i].update()
-  }
+  this.forEach(function(ea) {
+    ea.update()
+  })
 }
 
 /** Call update() on sprites in spritelist where condition(sprite) returns true */
 jaws.SpriteList.prototype.updateIf = function(condition) {
-  for(i=0; this[i]; i++) {
-    if( condition(this[i]) ) { this[i].update() }
-  }
+  this.forEach(function(ea) {
+    if( condition(ea) ) {
+      ea.update()
+    }
+  })
 }
 
 /** 
- * Delete sprites in spritelist where condition(sprite) returns true 
+ * Delete sprites in spritelist where condition(sprite) returns true.
+ * Alias for removeIf()
  * @deprecated
  */
 jaws.SpriteList.prototype.deleteIf = function(condition) {
-  for(var i=0; this[i]; i++) {
-    if( condition(this[i]) ) { this.splice(i,1) }
-  }
+  this.removeIf(condition)
 }
 
 /** Remove sprites in spritelist where condition(sprite) returns true  */
 jaws.SpriteList.prototype.removeIf = function(condition) {
-  for(var i=0; this[i]; i++) {
-    if( condition(this[i]) ) { this.splice(i,1) }
-  }
+  this.sprites = this.filter(function(ea) {
+    return !condition(ea)
+  })
+  this.updateLength()
 }
 
 jaws.SpriteList.prototype.toString = function() { return "[SpriteList " + this.length + " sprites]" }
@@ -1468,6 +1652,8 @@ function cutImage(image, x, y, width, height) {
  * @property {array} frame_size  width and height of invidual frames in spritesheet
  * @property {array} frames all single frames cut out from image
  * @property {integer} offset vertical or horizontal offset to start cutting from
+ * @property {int} scale_image Scale the sprite sheet by this factor before cutting out the frames. frame_size is automatically re-sized too
+ *
 */
 jaws.SpriteSheet = function SpriteSheet(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
@@ -1972,8 +2158,8 @@ jaws.TileMap = function TileMap(options) {
 
   this.cell_size = options.cell_size || [32,32]
   this.size = options.size || [100,100]
+  this.sortFunction = options.sortFunction
   this.cells = new Array(this.size[0])
-  this.sortFunction = undefined
 
   for(var col=0; col < this.size[0]; col++) {
     this.cells[col] = new Array(this.size[1])
@@ -2134,6 +2320,7 @@ if(typeof module !== "undefined" && ('exports' in module)) { module.exports = ja
  * Collision detection helpers.
  *
  * @example
+ *   // collision helper exampels:
  *   collideOneWithOne(player, boss)        // -> false
  *   collideOneWithMany(player, bullets)    // -> [bullet1, bullet1]
  *   collideManyWithMany(bullets, enemies)  // -> [ [bullet1, enemy1], [bullet2, enemy2] ]
@@ -2162,13 +2349,13 @@ jaws.collideOneWithMany = function(object, list) {
 }
 
 /**
- * Collides two list of objects -- 'list1' and 'list2'.
+ * Collides two list/arrays of objects -- 'list1' and 'list2'.
  * Returns an array of arrays with colliding pairs from 'list1' and 'list2'.
  * Will never collide objects with themselves, even if you collide the same list with itself.
  *
  * @example
  *
- *   jaws.collideManyWithMany(bullets, enemies) // --> [[bullet, ememy], [bullet, enemy]]
+ *   jaws.collideManyWithMany(bullets, enemies) // --> [[bullet, enemy], [bullet, enemy]]
  *
  */
 jaws.collideManyWithMany = function(list1, list2) {
@@ -2182,7 +2369,7 @@ jaws.collideManyWithMany = function(list1, list2) {
   else {
     list1.forEach( function(item1) { 
       list2.forEach( function(item2) { 
-        if(jaws.collideOneWithOne(item1, item2)) a.push([item1, item2]) 
+        if(jaws.collideOneWithOne(item1, item2)) a.push([item1, item2])
       });
     });
   }
@@ -2215,12 +2402,18 @@ jaws.distanceBetween = function(object1, object2) {
 }
 
 /** private */
-function combinations(s, n) {
-  var f = function(i){return s[i];};
+function combinations(list, n) {
+  var f = function(i) {
+    if(list.isSpriteList !== undefined) {
+      return list.at(i)
+    } else {  // s is an Array
+      return list[i];
+    }
+  };
   var r = [];
   var m = new Array(n);
   for (var i = 0; i < n; i++) m[i] = i; 
-  for (var i = n - 1, sn = s.length; 0 <= i; sn = s.length) {
+  for (var i = n - 1, sn = list.length; 0 <= i; sn = list.length) {
     r.push( m.map(f) );
     while (0 <= i && m[i] == sn - 1) { i--; sn--; }
     if (0 <= i) { 
