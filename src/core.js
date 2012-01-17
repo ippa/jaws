@@ -3,6 +3,13 @@
  * @example
  * Jaws, a HTML5 canvas/javascript 2D game development framework
  *
+ * @property {int} mouse_x  Mousepointer X position inside the canvas
+ * @property {int} mouse_y  Mousepointer Y position inside the canvas
+ * @property {canvas} canvas  The detected/created canvas-element used for the game
+ * @property {context} context  The detected/created canvas 2D-context, used for all draw-operations
+ * @property {int} width  Width of the canvas-element
+ * @property {int} height  Height of the canvas-element
+ *
  * Homepage:      http://jawsjs.com/
  * Source:        http://github.com/ippa/jaws/
  * Documentation: http://jawsjs.com/docs/
