@@ -2193,8 +2193,9 @@ jaws.TileMap.prototype.sortCells = function(sortFunction) {
  * Tries to read obj.x and obj.y to calculate what cell to occopy
  */
 jaws.TileMap.prototype.push = function(obj) {
-  if(obj.length) { 
-    for(var i=0; i < obj.length; i++) { this.push(obj[i]) }
+  var that = this
+  if(obj.forEach) { 
+    obj.forEach( function(item) { that.push(item) } )
     return obj
   }
   if(obj.rect) {
