@@ -4,6 +4,7 @@ var jaws = (function(jaws) {
   var keycode_to_string = []
   var on_keydown_callbacks = []
   var on_keyup_callbacks = []
+  var mousebuttoncode_to_string = []
  
 /** @private
  * Map all javascript keycodes to easy-to-remember letters/words
@@ -54,6 +55,14 @@ jaws.setupInput = function() {
   k[220] = "backslash"
   k[221] = "closebracket"
   k[222] = "singlequote"
+  
+  var m = []
+  
+  m[0] = "left_mouse_button"
+  m[1] = "center_mouse_button"
+  m[2] = "right_mouse_button"
+  
+  mousebuttoncode_to_string = m
 
   var numpadkeys = ["numpad1","numpad2","numpad3","numpad4","numpad5","numpad6","numpad7","numpad8","numpad9"]
   var fkeys = ["f1","f2","f3","f4","f5","f6","f7","f8","f9"]
@@ -106,7 +115,7 @@ function handleKeyDown(e) {
  */
 function handleMouseDown(e) {
   event = (e) ? e : window.event  
-  var human_name = "mouse" + e.button // 0 1 2
+  var human_name = mousebuttoncode_to_string[event.button] // 0 1 2
   pressed_keys[human_name] = true
   if(on_keydown_callbacks[human_name]) { 
     on_keydown_callbacks[human_name](human_name)
@@ -118,7 +127,7 @@ function handleMouseDown(e) {
  */
 function handleMouseUp(e) {
   event = (e) ? e : window.event
-  var human_name = "mouse" + e.button
+  var human_name = mousebuttoncode_to_string[event.button]
   pressed_keys[human_name] = false
   if(on_keyup_callbacks[human_name]) { 
     on_keyup_callbacks[human_name](human_name)
