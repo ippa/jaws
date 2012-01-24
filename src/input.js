@@ -68,6 +68,10 @@ jaws.setupInput = function() {
 
   window.addEventListener("keydown", handleKeyDown)
   window.addEventListener("keyup", handleKeyUp)
+  window.addEventListener('mousedown', handleMouseDown, false);
+  window.addEventListener('mouseup', handleMouseUp, false);
+  // this turns off the right click context menu which screws up the mouseup event for button 2
+  document.oncontextmenu = function() {return false};
 }
 
 /** @private
@@ -97,7 +101,31 @@ function handleKeyDown(e) {
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
 }
-
+/** @private
+ * handle event "onmousedown" by remembering what button was pressed
+ */
+function handleMouseDown(e) {
+  event = (e) ? e : window.event  
+  var human_name = "mouse" + e.button // 0 1 2
+  pressed_keys[human_name] = true
+  if(on_keydown_callbacks[human_name]) { 
+    on_keydown_callbacks[human_name](human_name)
+    e.preventDefault()
+  }
+}
+/** @private
+ * handle event "onmouseup" by remembering what button was un-pressed
+ */
+function handleMouseUp(e) {
+  event = (e) ? e : window.event
+  var human_name = "mouse" + e.button
+  pressed_keys[human_name] = false
+  if(on_keyup_callbacks[human_name]) { 
+    on_keyup_callbacks[human_name](human_name)
+    e.preventDefault()
+  }
+// need to investigate prevent default for mouse actions instead of hard coding the oncontextmenu
+}
 
 var prevent_default_keys = []
 /** 
