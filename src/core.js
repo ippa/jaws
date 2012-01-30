@@ -162,7 +162,7 @@ function saveMousePosition(e) {
  *  // It's recommended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
  *
  */
-jaws.start = function(game_state, options,game_object_setup_options) {
+jaws.start = function(game_state, options,game_state_setup_options) {
   if(!options) options = {};
   var fps = options.fps || 60
   if (options.loading_screen === undefined)
@@ -204,7 +204,7 @@ jaws.start = function(game_state, options,game_object_setup_options) {
   /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
-    jaws.switchGameState(game_state||window, {fps: fps},game_object_setup_options)
+    jaws.switchGameState(game_state||window, {fps: fps},game_state_setup_options)
   }
 
   jaws.log("assets.loadAll()", true)
@@ -235,7 +235,7 @@ jaws.start = function(game_state, options,game_object_setup_options) {
 * jaws.start(MenuState)
 *
 */
-jaws.switchGameState = function(game_state, options,game_object_setup_options) {
+jaws.switchGameState = function(game_state, options,game_state_setup_options) {
   var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60
   
   jaws.game_loop && jaws.game_loop.stop()
@@ -244,7 +244,7 @@ jaws.switchGameState = function(game_state, options,game_object_setup_options) {
   
   jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
-  jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps},game_object_setup_options)
+  jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps},game_state_setup_options)
   jaws.game_loop.start()
 }
 
