@@ -32,7 +32,7 @@ window.requestAnimFrame = (function(){
  * jaws.start(MyGameState, {fps: 30})
  *
  */
-jaws.GameLoop = function GameLoop(game_object, options) {
+jaws.GameLoop = function GameLoop(game_object, options,game_state_setup_options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( game_object, options );
 
   this.ticks = 0
@@ -61,7 +61,7 @@ jaws.GameLoop = function GameLoop(game_object, options) {
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
 
-    if(game_object.setup) { game_object.setup() }
+    if(game_object.setup) { game_object.setup(game_state_setup_options) }
     step_delay = 1000 / options.fps;
    
     if(options.fps == 60) {
