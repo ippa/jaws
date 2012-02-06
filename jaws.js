@@ -162,7 +162,7 @@ function saveMousePosition(e) {
  *  // It's recommended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
  *
  */
-jaws.start = function(game_state, options) {
+jaws.start = function(game_state, options,game_state_setup_options) {
   if(!options) options = {};
   var fps = options.fps || 60
   if (options.loading_screen === undefined)
@@ -204,7 +204,7 @@ jaws.start = function(game_state, options) {
   /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
-    jaws.switchGameState(game_state||window, {fps: fps})
+    jaws.switchGameState(game_state||window, {fps: fps},game_state_setup_options)
   }
 
   jaws.log("assets.loadAll()", true)
@@ -235,7 +235,7 @@ jaws.start = function(game_state, options) {
 * jaws.start(MenuState)
 *
 */
-jaws.switchGameState = function(game_state, options) {
+jaws.switchGameState = function(game_state, options,game_state_setup_options) {
   var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60
   
   jaws.game_loop && jaws.game_loop.stop()
@@ -244,7 +244,7 @@ jaws.switchGameState = function(game_state, options) {
   
   jaws.previous_game_state = jaws.game_state
   jaws.game_state = game_state
-  jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps})
+  jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps},game_state_setup_options)
   jaws.game_loop.start()
 }
 
@@ -359,6 +359,7 @@ var jaws = (function(jaws) {
   var keycode_to_string = []
   var on_keydown_callbacks = []
   var on_keyup_callbacks = []
+  var mousebuttoncode_to_string = []
  
 /** @private
  * Map all javascript keycodes to easy-to-remember letters/words
@@ -409,6 +410,14 @@ jaws.setupInput = function() {
   k[220] = "backslash"
   k[221] = "closebracket"
   k[222] = "singlequote"
+  
+  var m = []
+  
+  m[0] = "left_mouse_button"
+  m[1] = "center_mouse_button"
+  m[2] = "right_mouse_button"
+  
+  mousebuttoncode_to_string = m
 
   var numpadkeys = ["numpad1","numpad2","numpad3","numpad4","numpad5","numpad6","numpad7","numpad8","numpad9"]
   var fkeys = ["f1","f2","f3","f4","f5","f6","f7","f8","f9"]
@@ -423,6 +432,10 @@ jaws.setupInput = function() {
 
   window.addEventListener("keydown", handleKeyDown)
   window.addEventListener("keyup", handleKeyUp)
+  window.addEventListener('mousedown', handleMouseDown, false);
+  window.addEventListener('mouseup', handleMouseUp, false);
+  // this turns off the right click context menu which screws up the mouseup event for button 2
+  document.oncontextmenu = function() {return false};
 }
 
 /** @private
@@ -452,7 +465,31 @@ function handleKeyDown(e) {
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
 }
-
+/** @private
+ * handle event "onmousedown" by remembering what button was pressed
+ */
+function handleMouseDown(e) {
+  event = (e) ? e : window.event  
+  var human_name = mousebuttoncode_to_string[event.button] // 0 1 2
+  pressed_keys[human_name] = true
+  if(on_keydown_callbacks[human_name]) { 
+    on_keydown_callbacks[human_name](human_name)
+    e.preventDefault()
+  }
+}
+/** @private
+ * handle event "onmouseup" by remembering what button was un-pressed
+ */
+function handleMouseUp(e) {
+  event = (e) ? e : window.event
+  var human_name = mousebuttoncode_to_string[event.button]
+  pressed_keys[human_name] = false
+  if(on_keyup_callbacks[human_name]) { 
+    on_keyup_callbacks[human_name](human_name)
+    e.preventDefault()
+  }
+// need to investigate prevent default for mouse actions instead of hard coding the oncontextmenu
+}
 
 var prevent_default_keys = []
 /** 
@@ -803,7 +840,7 @@ window.requestAnimFrame = (function(){
  * jaws.start(MyGameState, {fps: 30})
  *
  */
-jaws.GameLoop = function GameLoop(game_object, options) {
+jaws.GameLoop = function GameLoop(game_object, options,game_state_setup_options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( game_object, options );
 
   this.ticks = 0
@@ -832,7 +869,7 @@ jaws.GameLoop = function GameLoop(game_object, options) {
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
 
-    if(game_object.setup) { game_object.setup() }
+    if(game_object.setup) { game_object.setup(game_state_setup_options) }
     step_delay = 1000 / options.fps;
    
     if(options.fps == 60) {
