@@ -1581,14 +1581,14 @@ jaws.SpriteList.prototype.load = function(objects) {
   var that = this;  // Since forEach changes this into DOMWindow.. hm, lame.
   if(jaws.isArray(objects)) {
     // If this is an array of JSON representations, parse it
-    if(objects.every(function(item) { return jaws.isArray(item) })) {
+    if(objects.every(function(item) { return item._constructor })) {
       parseArray(objects)
     } else {
       // This is an array of Sprites, load it directly
       this.sprites = objects
     }
   }
-  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ) }
+  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ); console.log(objects) }
   this.updateLength()
   
   function parseArray(array) {
@@ -2308,11 +2308,23 @@ jaws.TileMap.prototype.atRect = function(rect) {
 
   try {
     var from_col = parseInt(rect.x / this.cell_size[0])
+	if (from_col < 0) {
+		from_col = 0
+	}
     var to_col = parseInt(rect.right / this.cell_size[0])
+    if (to_col >= this.size[0]) {
+		to_col = this.size[0] - 1
+	}
+	var from_row = parseInt(rect.y / this.cell_size[1])
+	if (from_row < 0) {
+		from_row = 0
+	}
+	var to_row = parseInt(rect.bottom / this.cell_size[1])
+	if (to_row >= this.size[1]) {
+		to_row = this.size[1] - 1
+	}
+
     for(var col = from_col; col <= to_col; col++) {
-      var from_row = parseInt(rect.y / this.cell_size[1])
-      var to_row = parseInt(rect.bottom / this.cell_size[1])
-      
       for(var row = from_row; row <= to_row; row++) {
         this.cells[col][row].forEach( function(item, total) { 
           if(objects.indexOf(item) == -1) { objects.push(item) }
