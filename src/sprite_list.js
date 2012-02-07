@@ -166,17 +166,18 @@ jaws.SpriteList.prototype.isSpriteList = function() {
  *
  */
 jaws.SpriteList.prototype.load = function(objects) {
+  console.log(objects)
   var that = this;  // Since forEach changes this into DOMWindow.. hm, lame.
   if(jaws.isArray(objects)) {
     // If this is an array of JSON representations, parse it
-    if(objects.every(function(item) { return jaws.isArray(item) })) {
+    if(objects.every(function(item) { return item._constructor })) {
       parseArray(objects)
     } else {
       // This is an array of Sprites, load it directly
       this.sprites = objects
     }
   }
-  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ) }
+  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ); console.log(objects) }
   this.updateLength()
   
   function parseArray(array) {
