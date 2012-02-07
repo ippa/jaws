@@ -186,7 +186,7 @@ jaws.SpriteList.prototype.load = function(objects) {
         jaws.log("Creating " + data._constructor + "(" + data.toString() + ")", true)
         var object = new constructor(data)
         object._constructor = data._constructor || data.constructor.name
-        that.push(object);
+        that.sprites.push(object);
       }
     });
   }
