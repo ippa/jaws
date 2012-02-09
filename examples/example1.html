@@ -54,7 +54,7 @@
         bullets.push( new Bullet(player.rect().right, player.y+13) )
       }
       forceInsideCanvas(player)
-      bullets.deleteIf(isOutsideCanvas)
+      bullets.removeIf(isOutsideCanvas)
     }
     
     /* step2. draw the update state on screen */
