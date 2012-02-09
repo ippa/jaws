@@ -57,7 +57,7 @@
         }
 
         forceInsideCanvas(player)
-        bullets.deleteIf(isOutsideCanvas) // delete items for which isOutsideCanvas(item) is true
+        bullets.removeIf(isOutsideCanvas) // delete items for which isOutsideCanvas(item) is true
         fps.innerHTML = jaws.game_loop.fps
       }
 
