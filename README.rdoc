@@ -87,12 +87,11 @@ Pasting your problematic code in the issue-ticket itself will usually mean a lot
 
 == Example
   /*
-  * Jaws will provide powerful functions like jaws.start() to quickly get a robust gameloop running.
-  * It's also possible to do it more manually, fetch your own canvas context and sent it to new Sprite() for example.
+  * Jaws provides powerful functions like jaws.start() to quickly get a robust gameloop running.
+  * It's also possible to do it more manually, fetch your own canvas context and send it to new Sprite().
   * Nothing stops you from using jaws.assets or other jaws.helpers with your own game loop either.
   *
-  * Below code shows the preferred way, letting jaws worry about most of the boring setup stuff
-  * so we can get straight to get game logic.
+  * Below code shows the preferred way, letting jaws worry about most of the setut, so we can get straight to get game logic.
   */
   <html>
   <script src="jaws.js"></script>
@@ -113,16 +112,17 @@ Pasting your problematic code in the issue-ticket itself will usually mean a lot
       /* Put your one-time initializing here. Will get called once each time this game state is activated. */
       this.setup = function() {
         /*
-        * Make a sprite, place it at position 10/200
-        * The string "player.png" will resolve to a previously fetched resource
-        * We let jaws worry about what canvas to paint to here.
-        * If we want we could simple pass {context: my_canvas_context} to Sprite constructor
+        * Make a sprite, place it at position 10/200.
+        * The string "player.png" will resolve to a previously fetched resource.
+        * If we wanted the sprite to be drawn to a special canvas, we could add the option {context: my_canvas_context}.
+        * Otherwise jaws will just pick the most likely canvas, which works 99% of the times.
         */
         player = new jaws.Sprite({image: "player.png", x: 10, y: 200});
     
         /* Let's create an animated robot sprite */
         robot = new jaws.Sprite({x: 200, y: 200});
 
+        /* Creates an animation from a classic sprite sheet */
         robot.animation = new jaws.Animation({sprite_sheet: "images/droid_11x15.png", frame_size: [11,15], frame_duration: 120});
       }
     
@@ -130,7 +130,7 @@ Pasting your problematic code in the issue-ticket itself will usually mean a lot
       this.update = function() {
         if(jaws.pressed("left"))  { player.x--; }
         if(jaws.pressed("right")) { player.x++; }
-        robot.image = robot.animation.next();
+        robot.setImage( robot.animation.next() );
       }
     
       /* draw() is called each gametick just after update() is done. Put your drawing/canvas stuff here. */
@@ -139,37 +139,39 @@ Pasting your problematic code in the issue-ticket itself will usually mean a lot
         robot.draw();
       }
     }
-       
-    /*
-    * jaws.start(YourGameState) is the easiest way to get something up and running. It will in this order:
-    *
-    * 1) Call jaws.init() that will detect <canvas> (or create one for you) and set up the 2D context
-    * - then available in jaws.canvas and jaws.context
-    *
-    * 2) Pre-load all assets
-    * - player.png image is then available with jaws.assets.get("player.png")
-    *
-    * 3) Create an instance of YourGameState and call setup() on that instance
-    * - in setup() you usually create your gameobjects, sprites and so forth
-    *
-    * 4) Loop calls to update() and draw() with given FPS (default 60) until game ends or another game state is activated
-    */
+    
+    /* Let's start jaws after the document is fully loaded... */
     window.onload = function() {
       /*
-      * Add to jaws internal list of assets.
-      * You can then either:
-      * - have jaws.start() load them automatically for you
-      * - or load them manually with jaws.assets.loadAll({loaded: myAssetsAreReadyCall})
+      * Add two images to jaws internal list of assets to be loaded.
+      * You can load them manually with jaws.assets.loadAll({loaded: myAssetsAreReadyCall}).
+      * jaws.start() will automatically load all unloaded assets while displaying a progress meter.
+      *
+      * Alternative way (nice when you have a lot of assets in the same dir): 
+      *   jaws.assets.path = "images/"; 
+      *   jaws.assets.add(["droid_11x15.png", "player.png"]) 
       */
       jaws.assets.add("images/droid_11x15.png");
       jaws.assets.add("images/player.png");
 
       /*
-      * ... or nicer when you have a lot of assets:
-      * jaws.assets.path = "images/"
-      * jaws.assets.add(["droid_11x15.png", "player.png"])
+      * jaws.start(MyGameState) is the easiest way to get something up and running. It will in this order:
+      *
+      * 1) 
+      * Call jaws.init() that will detect <canvas> (or create one for you) and set up the 2D context.
+      * It's then available in jaws.canvas and jaws.context and will be used by all new sprites.
+      *
+      * 2) 
+      * Pre-load all assets while showing progess meter. Assets are then available with jaws.assets.get("player.png").
+      *
+      * 3) 
+      * Create an instance of given game state (in this case MyGameState) and call setup() on that instance.
+      * In setup() you usually initialize that game state, create your gameobjects, sprites and so forth.
+      *
+      * 4) 
+      * Loop calls to update() and draw() with given FPS (default 60) until the game ends, is paused or another game state is activated.
+      *
       */
- 
       jaws.start(MyGameState);
     }
   </script>
