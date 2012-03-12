@@ -48,6 +48,8 @@ Check out the sourcecode for comments and explanations:
 * {http://ippa.se/webgames/the_escape/index.html}[http://ippa.se/webgames/the_escape/index.html] - "The Escape" - My Ludum Dare #21 entry. Adventure/Puzzle.
 * {http://ippa.se/webgames/unexpected_outcome/index.html}[http://ippa.se/webgames/unexpected_outcome/index.html] - A 10-minute adventure game with pixel-perfect collisions
 * {http://ippa.se/webgames/unwaivering/index.html}[http://ippa.se/webgames/unwaivering/index.html]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
+* {http://www.twitchtetris.com/}[http://www.twitchtetris.com/] - A tetris game by http://twitchcode.blogspot.com/
+* {http://dl.dropbox.com/u/15658925/LD22%20release/game.html}[http://dl.dropbox.com/u/15658925/LD22%20release/game.html] - LD#22 entry by "Char" (http://www.ludumdare.com/compo/ludum-dare-22/?action=preview&uid=3407)
 * {http://h31p.com/save-atherton/}[http://h31p.com/save-atherton/] - A political satire mini-game from https://github.com/dalethatcher
 * {http://www.mcfunkypants.com/LD22/}[http://www.mcfunkypants.com/LD22/] - a Ludum Dare #22 entry by Christer Kaitila
 * {http://nibster.net/LD/}[http://nibster.net/LD/] - a Ludum Dare #22 entry by https://github.com/Nibster
