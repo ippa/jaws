@@ -33,3 +33,5 @@ File.open("jaws-min.js", "w") { |out| out.write compress(js_code, "SIMPLE_OPTIMI
 # -a documents All functions
 # 
 `jsdoc -D='noGlobal:true' -D='title:JawsJS HTML5 game engine documentation' -t=/www/ippa/jawsjs.com/public/codeview -d=/www/ippa/jawsjs.com/public/docs src`
+
+`cd /www/ippa/jawsjs.com/public/docs; zip jaws-docs.zip -x jaws-docs.zip -r .`
