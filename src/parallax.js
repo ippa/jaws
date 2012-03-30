@@ -43,7 +43,7 @@ jaws.Parallax.prototype.draw = function(options) {
     layer.y = -(this.camera_y / layer.damping)
 
     while(this.repeat_x && layer.x > 0) { layer.x -= layer.width }
-    while(this.repeat_y && layer.y > 0) { layer.y -= layer.width }
+    while(this.repeat_y && layer.y > 0) { layer.y -= layer.height }
 
     while(this.repeat_x && layer.x < jaws.width) {
       while(this.repeat_y && layer.y < jaws.height) {
