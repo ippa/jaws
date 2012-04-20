@@ -56,6 +56,7 @@ Check out the sourcecode for comments and explanations:
 * {http://nibster.net/LD/}[http://nibster.net/LD/] - a Ludum Dare #22 entry by https://github.com/Nibster
 * {http://memetika.com/iron_santa/}[http://memetika.com/iron_santa/] - a Ludum Dare #22 entry by https://github.com/dmitrizagidulin
 * {http://markbennett.ca/JAWS-on-a-plane/}[http://markbennett.ca/JAWS-on-a-plane/] - A minigame by https://github.com/MarkBennett
+* {http://davidgomes.github.com/paxlure/}[http://davidgomes.github.com/paxlure/] - Zombie blasting minigame by https://github.com/davidgomes
 ... missing your game here? Msg me on github!
 
 == Loading Jaws
