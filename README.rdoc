@@ -47,7 +47,8 @@ Check out the sourcecode for comments and explanations:
 == Games using Jaws
 * {http://ippa.se/webgames/the_escape/index.html}[http://ippa.se/webgames/the_escape/index.html] - "The Escape" - My Ludum Dare #21 entry. Adventure/Puzzle.
 * {http://ippa.se/webgames/unexpected_outcome/index.html}[http://ippa.se/webgames/unexpected_outcome/index.html] - A 10-minute adventure game with pixel-perfect collisions
-* {http://ippa.se/webgames/unwaivering/index.html}[http://ippa.se/webgames/unwaivering/index.html]  - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
+* {http://ippa.se/webgames/unwaivering/index.html}[http://ippa.se/webgames/unwaivering/index.html] - A Jaws-game for http://www.ludumdare.com/compo/2011/01/25/minild-24/
+* {http://dl.dropbox.com/u/73425602/ld23/index.html}[http://dl.dropbox.com/u/73425602/ld23/index.html] - LD #23 game by Nibelung (http://www.ludumdare.com/compo/author/nibelung/)
 * {http://www.twitchtetris.com/}[http://www.twitchtetris.com/] - A tetris game by http://twitchcode.blogspot.com/
 * {http://www.mcfunkypants.com/kart/magma/}[http://www.mcfunkypants.com/kart/magma/] - Another pixel perfect game from MC Funky Pants. Don't touch the rising lava!
 * {http://dl.dropbox.com/u/15658925/LD22%20release/game.html}[http://dl.dropbox.com/u/15658925/LD22%20release/game.html] - LD#22 entry by "Char" (http://www.ludumdare.com/compo/ludum-dare-22/?action=preview&uid=3407)
