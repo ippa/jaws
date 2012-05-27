@@ -41,6 +41,8 @@ jaws.Parallax.prototype.draw = function(options) {
 
     layer.x = -(this.camera_x / layer.damping)
     layer.y = -(this.camera_y / layer.damping)
+    
+    save_y2 = layer.y
 
     while(this.repeat_x && layer.x > 0) { layer.x -= layer.width }
     while(this.repeat_y && layer.y > 0) { layer.y -= layer.height }
@@ -49,16 +51,21 @@ jaws.Parallax.prototype.draw = function(options) {
       while(this.repeat_y && layer.y < jaws.height) {
         layer.draw()
         layer.y += layer.height
-      }    
-      layer.y = save_y
+      }
       layer.draw()
       layer.x += (layer.width-1)  // -1 to compensate for glitches in repeating tiles
+      if (this.repeat_y) {
+        layer.y = save_y2
+      } else {
+        layer.y = save_y
+      }
     }
     while(layer.repeat_y && !layer.repeat_x && layer.y < jaws.height) {
       layer.draw()
       layer.y += layer.height
     }
     layer.x = save_x
+    layer.y = save_y
   }
 }
 /** Add a new layer to the parallax scroller */
