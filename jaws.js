@@ -360,6 +360,7 @@ var jaws = (function(jaws) {
   var on_keydown_callbacks = []
   var on_keyup_callbacks = []
   var mousebuttoncode_to_string = []
+  var ie_mousebuttoncode_to_string = []
  
 /** @private
  * Map all javascript keycodes to easy-to-remember letters/words
@@ -416,8 +417,15 @@ jaws.setupInput = function() {
   m[0] = "left_mouse_button"
   m[1] = "center_mouse_button"
   m[2] = "right_mouse_button"
+
+  var ie_m = [];
+  ie_m[1] = "left_mouse_button";
+  ie_m[2] = "right_mouse_button";
+  ie_m[4] = "center_mouse_button"; 
   
   mousebuttoncode_to_string = m
+  ie_mousebuttoncode_to_string = ie_m;
+
 
   var numpadkeys = ["numpad1","numpad2","numpad3","numpad4","numpad5","numpad6","numpad7","numpad8","numpad9"]
   var fkeys = ["f1","f2","f3","f4","f5","f6","f7","f8","f9"]
@@ -434,6 +442,9 @@ jaws.setupInput = function() {
   window.addEventListener("keyup", handleKeyUp)
   window.addEventListener('mousedown', handleMouseDown, false);
   window.addEventListener('mouseup', handleMouseUp, false);
+  window.addEventListener('touchstart', handleTouchStart, false);
+  window.addEventListener('touchend', handleTouchEnd, false);
+
   // this turns off the right click context menu which screws up the mouseup event for button 2
   document.oncontextmenu = function() {return false};
 }
@@ -471,24 +482,54 @@ function handleKeyDown(e) {
 function handleMouseDown(e) {
   event = (e) ? e : window.event  
   var human_name = mousebuttoncode_to_string[event.button] // 0 1 2
+  if (navigator.appName == 'Microsoft Internet Explorer'){
+	  human_name = ie_mousebuttoncode_to_string[event.button];
+  }
   pressed_keys[human_name] = true
   if(on_keydown_callbacks[human_name]) { 
     on_keydown_callbacks[human_name](human_name)
     e.preventDefault()
   }
 }
+
+
 /** @private
  * handle event "onmouseup" by remembering what button was un-pressed
  */
 function handleMouseUp(e) {
   event = (e) ? e : window.event
-  var human_name = mousebuttoncode_to_string[event.button]
+  var human_name = mousebuttoncode_to_string[event.button]  
+
+  if (navigator.appName == 'Microsoft Internet Explorer'){
+	  human_name = ie_mousebuttoncode_to_string[event.button];
+  }
   pressed_keys[human_name] = false
   if(on_keyup_callbacks[human_name]) { 
     on_keyup_callbacks[human_name](human_name)
     e.preventDefault()
   }
-// need to investigate prevent default for mouse actions instead of hard coding the oncontextmenu
+}
+
+/** @private
+ * handle event "touchstart" by remembering what button was pressed
+ */
+function handleTouchStart(e) {
+	event = (e) ? e : window.event  
+	pressed_keys['left_mouse_button'] = true
+	jaws.mouse_x = e.touches[0].pageX - jaws.canvas.offsetLeft;
+	jaws.mouse_y = e.touches[0].pageY - jaws.canvas.offsetTop;
+	//e.preventDefault()
+}
+
+/** @private
+ * handle event "touchend" by remembering what button was pressed
+ */
+function handleTouchEnd(e) {
+  event = (e) ? e : window.event  
+  pressed_keys['left_mouse_button'] = false
+	jaws.mouse_x = undefined;
+	jaws.mouse_y = undefined;
+
 }
 
 var prevent_default_keys = []
@@ -558,7 +599,6 @@ jaws.clearKeyCallbacks = function() {
 
 return jaws;
 })(jaws || {});
-
 var jaws = (function(jaws) {
 
 /**
