@@ -59,6 +59,7 @@ Check out the sourcecode for comments and explanations:
 * {http://markbennett.ca/JAWS-on-a-plane/}[http://markbennett.ca/JAWS-on-a-plane/] - A minigame by https://github.com/MarkBennett
 * {http://davidgomes.github.com/paxlure/}[http://davidgomes.github.com/paxlure/] - Zombie blasting minigame by https://github.com/davidgomes
 * {http://crystalpart.com/hp/}[http://crystalpart.com/hp/] - A mini game by by Ashan Fernando (http://crystalpart.com/wp/) 
+* {http://magigames.org/runestone_defense.html}[http://magigames.org/runestone_defense.html] - Runestone, a tower defense game by David Blood
 ... missing your game here? Msg me on github!
 
 == Loading Jaws
