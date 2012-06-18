@@ -127,7 +127,7 @@ function handleKeyDown(e) {
 function handleMouseDown(e) {
   event = (e) ? e : window.event  
   var human_name = mousebuttoncode_to_string[event.button] // 0 1 2
-  if (navigator.appName == 'Microsoft Internet Explorer'){
+  if (navigator.appName == "Microsoft Internet Explorer"){
 	  human_name = ie_mousebuttoncode_to_string[event.button];
   }
   pressed_keys[human_name] = true
@@ -145,7 +145,7 @@ function handleMouseUp(e) {
   event = (e) ? e : window.event
   var human_name = mousebuttoncode_to_string[event.button]  
 
-  if (navigator.appName == 'Microsoft Internet Explorer'){
+  if (navigator.appName == "Microsoft Internet Explorer"){
 	  human_name = ie_mousebuttoncode_to_string[event.button];
   }
   pressed_keys[human_name] = false
@@ -160,7 +160,7 @@ function handleMouseUp(e) {
  */
 function handleTouchStart(e) {
 	event = (e) ? e : window.event  
-	pressed_keys['left_mouse_button'] = true
+	pressed_keys["left_mouse_button"] = true
 	jaws.mouse_x = e.touches[0].pageX - jaws.canvas.offsetLeft;
 	jaws.mouse_y = e.touches[0].pageY - jaws.canvas.offsetTop;
 	//e.preventDefault()
@@ -171,7 +171,7 @@ function handleTouchStart(e) {
  */
 function handleTouchEnd(e) {
   event = (e) ? e : window.event  
-  pressed_keys['left_mouse_button'] = false
+  pressed_keys["left_mouse_button"] = false
 	jaws.mouse_x = undefined;
 	jaws.mouse_y = undefined;
 
