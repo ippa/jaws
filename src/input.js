@@ -89,9 +89,17 @@ jaws.setupInput = function() {
   window.addEventListener("mouseup", handleMouseUp, false);
   window.addEventListener("touchstart", handleTouchStart, false);
   window.addEventListener("touchend", handleTouchEnd, false);
+  window.addEventListener("blur", resetPressedKeys, false);
 
   // this turns off the right click context menu which screws up the mouseup event for button 2
   document.oncontextmenu = function() {return false};
+}
+
+/** @private
+ * Reset input-hash. Called when game is blurred so a key-controlled player doesn't keep on moving when the game isn't focused.
+ */
+function resetPressedKeys(e) {
+  pressed_keys = {};
 }
 
 /** @private
