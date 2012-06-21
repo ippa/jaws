@@ -31,42 +31,28 @@ jaws.Parallax = function Parallax(options) {
 
 /** Draw all layers in parallax scroller */
 jaws.Parallax.prototype.draw = function(options) {
-  var layer, save_x, save_y;
+    //TODO: work correctly with repeat_x, repeat_y and scale
+    var layer, numx, numy, initx;
 
-  for(var i=0; i < this.layers.length; i++) {
-    layer = this.layers[i]
-    
-    save_x = layer.x
-    save_y = layer.y
+    for(var i=0; i < this.layers.length; i++) {
+        layer = this.layers[i]
 
-    layer.x = -(this.camera_x / layer.damping)
-    layer.y = -(this.camera_y / layer.damping)
-    
-    save_y2 = layer.y
+        numx = (jaws.width / layer.width)+1;
+        numy = (jaws.height / layer.height)+1;
+        
+        initx = -((this.camera_x / layer.damping) % layer.width);
+        layer.x = initx;
+        layer.y = -((this.camera_y / layer.damping) % layer.height);
 
-    while(this.repeat_x && layer.x > 0) { layer.x -= layer.width }
-    while(this.repeat_y && layer.y > 0) { layer.y -= layer.height }
-
-    while(this.repeat_x && layer.x < jaws.width) {
-      while(this.repeat_y && layer.y < jaws.height) {
-        layer.draw()
-        layer.y += layer.height
-      }
-      layer.draw()
-      layer.x += (layer.width-1)  // -1 to compensate for glitches in repeating tiles
-      if (this.repeat_y) {
-        layer.y = save_y2
-      } else {
-        layer.y = save_y
-      }
+        for (var y = 0; y < numy; y++) {
+            for (var x = 0; x < numx; x++) {
+                layer.draw();
+                layer.x = layer.x + layer.width;                    
+            }
+            layer.y = layer.y + layer.height;
+            layer.x = initx;
+        }
     }
-    while(layer.repeat_y && !layer.repeat_x && layer.y < jaws.height) {
-      layer.draw()
-      layer.y += layer.height
-    }
-    layer.x = save_x
-    layer.y = save_y
-  }
 }
 /** Add a new layer to the parallax scroller */
 jaws.Parallax.prototype.addLayer = function(options) {
