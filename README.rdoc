@@ -60,6 +60,8 @@ Check out the sourcecode for comments and explanations:
 * {http://davidgomes.github.com/paxlure/}[http://davidgomes.github.com/paxlure/] - Zombie blasting minigame by https://github.com/davidgomes
 * {http://crystalpart.com/hp/}[http://crystalpart.com/hp/] - A mini game by by Ashan Fernando (http://crystalpart.com/wp/) 
 * {http://magigames.org/runestone_defense.html}[http://magigames.org/runestone_defense.html] - Runestone, a tower defense game by David Blood
+* {http://www.tinycrate.com/ld48/vivere/}[http://www.tinycrate.com/ld48/vivere/] - TinyCrate - An experimental game about mixing DNA by http://www.thank-etc-ok.com/
+* {http://www.tinycrate.com/ld48/volo/}[http://www.tinycrate.com/ld48/volo/] - VOLO - A game by http://www.thank-etc-ok.com
 ... missing your game here? Msg me on github!
 
 == Loading Jaws
