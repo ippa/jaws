@@ -62,6 +62,7 @@ Check out the sourcecode for comments and explanations:
 * {http://magigames.org/runestone_defense.html}[http://magigames.org/runestone_defense.html] - Runestone, a tower defense game by David Blood
 * {http://www.tinycrate.com/ld48/vivere/}[http://www.tinycrate.com/ld48/vivere/] - TinyCrate - An experimental game about mixing DNA by http://www.thank-etc-ok.com/
 * {http://www.tinycrate.com/ld48/volo/}[http://www.tinycrate.com/ld48/volo/] - VOLO - A game by http://www.thank-etc-ok.com
+* {http://www.philbgarner.com/vampire/}[http://www.philbgarner.com/vampire/] - Scion of Dracula - Play dracula in search for Van Helsing. By Phil Garner.
 ... missing your game here? Msg me on github!
 
 == Loading Jaws
