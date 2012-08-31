@@ -93,12 +93,50 @@ If you find an issue with Jaws githubs issue-tracker is the place to go. Easiest
 Pasting your problematic code in the issue-ticket itself will usually mean a lot of hassle with supportcode and assets to actually be able to test the code in question.
 
 == Example
+  <html>
+  <script src="jaws.js"></script>
+  <body>
+
+  <canvas width=500 height=300></canvas> 
+
+  <script>
+    function MyGameState() {
+      var player;
+      var robot;
+    
+      this.setup = function() {
+        player = new jaws.Sprite({image: "player.png", x: 10, y: 200});
+        robot = new jaws.Sprite({x: 200, y: 200});
+        robot.animation = new jaws.Animation({sprite_sheet: "images/droid_11x15.png", frame_size: [11,15], frame_duration: 120});
+      }
+      this.update = function() {
+        if(jaws.pressed("left"))  { player.x--; }
+        if(jaws.pressed("right")) { player.x++; }
+        robot.setImage( robot.animation.next() );
+      }
+      this.draw = function() {
+        player.draw();
+        robot.draw();
+      }
+    }
+    
+    window.onload = function() {
+      jaws.assets.add("images/droid_11x15.png");
+      jaws.assets.add("images/player.png");
+      jaws.start(MyGameState);
+    }
+  </script>
+  </body>
+  </html>
+
+== The same example with comments
   /*
   * Jaws provides powerful functions like jaws.start() to quickly get a robust gameloop running.
   * It's also possible to do it more manually, fetch your own canvas context and send it to new Sprite().
   * Nothing stops you from using jaws.assets or other jaws.helpers with your own game loop either.
   *
-  * Below code shows the preferred way, letting jaws worry about most of the setut, so we can get straight to get game logic.
+  * Below code shows the preferred way, letting jaws worry about most of the setup, 
+  * so we can get straight to get game logic.
   */
   <html>
   <script src="jaws.js"></script>
@@ -176,7 +214,8 @@ Pasting your problematic code in the issue-ticket itself will usually mean a lot
       * In setup() you usually initialize that game state, create your gameobjects, sprites and so forth.
       *
       * 4) 
-      * Loop calls to update() and draw() with given FPS (default 60) until the game ends, is paused or another game state is activated.
+      * Loop calls to update() and draw() with given FPS (default 60) until the game ends,
+      * is paused or another game state is activated.
       *
       */
       jaws.start(MyGameState);
