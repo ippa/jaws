@@ -123,7 +123,10 @@ jaws.init = function(options) {
 
   jaws.mouse_x = 0
   jaws.mouse_y = 0
+  jaws.mousedown = false;
   window.addEventListener("mousemove", saveMousePosition)
+  jaws.canvas.addEventListener("mousedown", onmousedown)
+  jaws.canvas.addEventListener("mouseup", onmouseup)
 }
 /**
  * @private
@@ -137,6 +140,17 @@ function saveMousePosition(e) {
   var game_area = jaws.canvas ? jaws.canvas : jaws.dom
   jaws.mouse_x -= game_area.offsetLeft
   jaws.mouse_y -= game_area.offsetTop
+}
+
+function onmousedown() {
+  jaws.mousedown = true
+}
+function onmouseup() {
+  jaws.mousedown = false
+}
+
+function jaws.mouseDown = function() {
+  return jaws.mousedown
 }
 
 /** 
