@@ -18,7 +18,7 @@ function cutImage(image, x, y, width, height) {
  * @class Cut out invidual frames (images) from a larger spritesheet-image. "Field Summary" contains options for the SpriteSheet()-constructor.
  *
  * @property {image|image} Image/canvas or asset-string to cut up smaller images from
- * @property {string} orientation How to cut out invidual images from spritesheet, either "right" or "down"
+ * @property {string} orientation How to cut out invidual images from spritesheet, either "right", "down" or "wrap". The last option will map as many frames as possible horizontally, and then wrap and map another row.
  * @property {array} frame_size  width and height of invidual frames in spritesheet
  * @property {array} frames all single frames cut out from image
  * @property {integer} offset vertical or horizontal offset to start cutting from
@@ -43,8 +43,18 @@ jaws.SpriteSheet = function SpriteSheet(options) {
 
   var index = 0
 
+  if (this.orientation == "wrap") {
+    var frame_x = Math.floor(this.image.width / this.frame_size[0]),
+        frame_y = Math.floor(this.image.height / this.frame_size[1]);
+
+    for (var y = 0; y < frame_y; ++y) {
+      for (var x = 0; x < frame_x; ++x) {
+        this.frames.push(cutImage(this.image, x * this.frame_size[0], y * this.frame_size[1], this.frame_size[0], this.frame_size[1]));
+      }
+    }
+  }
   // Cut out tiles from Top -> Bottom
-  if(this.orientation == "down") {  
+  else if(this.orientation == "down") {  
     for(var x=this.offset; x < this.image.width; x += this.frame_size[0]) {
       for(var y=0; y < this.image.height; y += this.frame_size[1]) {
         this.frames.push( cutImage(this.image, x, y, this.frame_size[0], this.frame_size[1]) )
