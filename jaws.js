@@ -1142,8 +1142,8 @@ jaws.Sprite.prototype.set = function(options) {
   this.angle = options.angle || 0
   this.flipped = options.flipped || false
   this.anchor(options.anchor || "top_left");
-  if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
-  if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
+  if(options.anchor_x !== undefined) this.anchor_x = options.anchor_x;
+  if(options.anchor_y !== undefined) this.anchor_y = options.anchor_y; 
   options.image && this.setImage(options.image);
   this.image_path = options.image;
   if(options.scale_image) this.scaleImage(options.scale_image);
@@ -1906,35 +1906,41 @@ jaws.Parallax = function Parallax(options) {
 
 /** Draw all layers in parallax scroller */
 jaws.Parallax.prototype.draw = function(options) {
-  var layer, save_x, save_y;
+    var layer, numx, numy, initx;
 
-  for(var i=0; i < this.layers.length; i++) {
-    layer = this.layers[i]
-    
-    save_x = layer.x
-    save_y = layer.y
+    for(var i=0; i < this.layers.length; i++) {
+        layer = this.layers[i]
 
-    layer.x = -(this.camera_x / layer.damping)
-    layer.y = -(this.camera_y / layer.damping)
+		if (this.repeat_x) {
+			initx = -((this.camera_x / layer.damping) % layer.width);
+		} else {
+			initx = -(this.camera_x / layer.damping) 
+		}		
+        
+		if (this.repeat_y) {
+			layer.y = -((this.camera_y / layer.damping) % layer.height);
+		} else {
+			layer.y = -(this.camera_y / layer.damping);
+		}
 
-    while(this.repeat_x && layer.x > 0) { layer.x -= layer.width }
-    while(this.repeat_y && layer.y > 0) { layer.y -= layer.height }
-
-    while(this.repeat_x && layer.x < jaws.width) {
-      while(this.repeat_y && layer.y < jaws.height) {
-        layer.draw()
-        layer.y += layer.height
-      }    
-      layer.y = save_y
-      layer.draw()
-      layer.x += (layer.width-1)  // -1 to compensate for glitches in repeating tiles
+		layer.x = initx;
+        while (layer.y < jaws.height) {
+            while (layer.x < jaws.width) {
+				if (layer.x + layer.width >= 0 && layer.y + layer.height >= 0) { //Make sure it's on screen
+					layer.draw(); //Draw only if actually on screen, for performance reasons
+				}
+                layer.x = layer.x + layer.width;      
+				if (!this.repeat_x) {
+					break;
+				}
+            }
+            layer.y = layer.y + layer.height;
+            layer.x = initx;
+			if (!this.repeat_y) {
+				break;
+			}
+        }
     }
-    while(layer.repeat_y && !layer.repeat_x && layer.y < jaws.height) {
-      layer.draw()
-      layer.y += layer.height
-    }
-    layer.x = save_x
-  }
 }
 /** Add a new layer to the parallax scroller */
 jaws.Parallax.prototype.addLayer = function(options) {
