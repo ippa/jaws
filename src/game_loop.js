@@ -15,7 +15,9 @@ window.requestAnimFrame = (function(){
 /**
  * @class A classic game loop forever looping calls to update() / draw() with given framerate. "Field Summary" contains options for the GameLoop()-constructor.
  *
- * @property {int} FPS    targeted frame rate
+ * @property {int} tick_duration  duration in ms between the last 2 ticks (often called dt)
+ * @property {int} fps  the real fps (as opposed to the target fps), smoothed out with a moving average
+ * @property {int} ticks  total amount of ticks since game loops start
  *
  * @example
  *
@@ -35,9 +37,9 @@ window.requestAnimFrame = (function(){
 jaws.GameLoop = function GameLoop(game_object, options,game_state_setup_options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( game_object, options );
 
-  this.ticks = 0
   this.tick_duration = 0
   this.fps = 0
+  this.ticks = 0
   
   var update_id
   var paused = false
