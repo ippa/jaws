@@ -55,8 +55,8 @@ jaws.Sprite.prototype.set = function(options) {
   this.angle = options.angle || 0
   this.flipped = options.flipped || false
   this.anchor(options.anchor || "top_left");
-  if(!options.anchor_x == undefined) this.anchor_x = options.anchor_x;
-  if(!options.anchor_y == undefined) this.anchor_y = options.anchor_y; 
+  if(options.anchor_x !== undefined) this.anchor_x = options.anchor_x;
+  if(options.anchor_y !== undefined) this.anchor_y = options.anchor_y; 
   options.image && this.setImage(options.image);
   this.image_path = options.image;
   if(options.scale_image) this.scaleImage(options.scale_image);
