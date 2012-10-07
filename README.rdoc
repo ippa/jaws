@@ -68,8 +68,7 @@ Check out the sourcecode for comments and explanations:
 == Loading Jaws
 * jaws.js - includes the whole framework in one easy-to-include file.
 * jaws-min.js - same as jaws.js but minified with Googles closure compiler. This is probably what you want to include in your project.
-* jaws-dynamic.js - dynamically loads all separate jaws files. Useful for debugging errors in Jaws. Warning, jaws-dynamic.js loads all jaws source-files asynchronously meaning Jaws might not be fully loaded before the browser
-* reaches your game.js or likewise. Jaws tries to solve this issue by calling jaws.onload() when all files are loaded.
+* jaws-dynamic.js - dynamically loads all separate jaws files. Useful for debugging errors when patching jaws since you get exact file/line# of possible errors. Warning, jaws-dynamic.js loads all Jaws-files asynchronously, resulting in Jaws might not be fully loaded when the browser reaches your game.js. You can solve this by hooking into the jaws.onload callback and put your jaws.start() there.
 
 You can also link to invidual files in your HTML:
   <script src="/jawsjs/src/core.js"></script>
