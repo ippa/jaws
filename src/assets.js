@@ -78,7 +78,7 @@ jaws.Assets = function Assets() {
    *
    * jaws.assets.add("player.png")
    * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
-   * jaws.loadAll({onfinish: start_game})
+   * jaws.assets.loadAll({onfinish: start_game})
    *
    */
   this.add = function(src) {
