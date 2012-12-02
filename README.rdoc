@@ -63,7 +63,8 @@ Check out the sourcecode for comments and explanations:
 * {http://www.tinycrate.com/ld48/vivere/}[http://www.tinycrate.com/ld48/vivere/] - TinyCrate - An experimental game about mixing DNA by http://www.thank-etc-ok.com/
 * {http://www.tinycrate.com/ld48/volo/}[http://www.tinycrate.com/ld48/volo/] - VOLO - A game by http://www.thank-etc-ok.com
 * {http://www.philbgarner.com/vampire/}[http://www.philbgarner.com/vampire/] - Scion of Dracula - Play dracula in search for Van Helsing. By Phil Garner.
-... missing your game here? Msg me on github!
+* {http://charitygamejam.com/?Parachute%20Champ}[http://charitygamejam.com/?Parachute%20Champ] - Parachute Champ - land your parachute safely. By Nicholas Wrenn.
+... missing your game here? Mail me about it (my email is on my github profilepage). Or create a new issue.
 
 == Loading Jaws
 * jaws.js - includes the whole framework in one easy-to-include file.
