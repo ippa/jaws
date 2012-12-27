@@ -2502,6 +2502,115 @@ jaws.TileMap.prototype.cell = function(col, row) {
   return this.cells[col][row]
 }
 
+/**
+ * A-Star pathfinding
+ */
+jaws.TileMap.prototype.findPath = function(start_position, end_position) {
+  //console.log("finding Path: "+start_position
+  if (start_position[0] === end_position[0] && start_position[1] === end_position[1]) {
+    return [this.at(start_position[0], start_position[1])]
+  }
+  
+  var start_col = parseInt(start_position[0] / this.cell_size[0])
+  var start_row = parseInt(start_position[1] / this.cell_size[1])
+  
+  var end_col = parseInt(end_position[0] / this.cell_size[0])
+  var end_row = parseInt(end_position[1] / this.cell_size[1])
+  
+  var col = start_col
+  var row = start_row
+  
+  var max_distance = this.size[0]+this.size[1] * 2 //if there were a lot of walls, you might have to go a long way
+  
+  //var node = []
+  //var parent = this.cell(start_col, start_row)
+    
+  var open_nodes = []
+  var closed_nodes = []
+  closed_nodes.push( {node: [col, row], parent: []} )
+  
+  var crowFlies = function(node) {
+    return Math.abs(end_col-node[0]) + Math.abs(end_row-node[1]);
+  }
+  
+  var findInClosed = function(col, row) {
+    for (var i=0 ; i < closed_nodes.length ; i++) {
+      if (closed_nodes[i].node[0] === col && closed_nodes[i].node[1] === row) {
+        return true
+      }
+    }
+    return false
+  }
+  
+  /*
+var findInOpen = function(col, row) {
+    for (var i=0 ; i < open_nodes.length ; i++) {
+      if (open_nodes[i].col === col && open_nodes[i].row === row) {
+        return true
+      }
+    }
+    return false
+  }
+*/
+  
+  //console.log("starting at "+crowFlies([col, row]) +":"+col+","+row)
+  //console.log("heading to :"+end_col+","+end_row)
+  
+  //While something! not sure what yet.
+  while (! (col === end_col && row === end_row) ) {
+    if (this.cell(col-1, row).length === 0 && !findInClosed(col-1, row)) {
+      open_nodes.unshift( {node: [col-1, row], parent: [col, row]} )
+    }
+    
+    if (this.cell(col+1, row).length === 0 && !findInClosed(col+1, row)) {
+      open_nodes.unshift( {node: [col+1, row], parent: [col, row]} )
+    }
+    
+    if (this.cell(col, row-1).length === 0 && !findInClosed(col, row-1)) {
+      open_nodes.unshift( {node: [col, row-1], parent: [col, row]} )
+    }
+    
+    if (this.cell(col, row+1).length === 0 && !findInClosed(col, row+1)) {
+      open_nodes.unshift( {node: [col, row+1], parent: [col, row]} )
+    }
+    
+    var best_node = {score: max_distance, node: [], index: -1, parent: []}
+    var node_score = 0
+    for (var i=0 ; i<open_nodes.length ; i++) {
+      node_score = crowFlies(open_nodes[i].node)
+      //console.log(node_score+":"+open_nodes[i].node[0]+","+open_nodes[i].node[1])
+      if (node_score < best_node.score) {
+        best_node.node = open_nodes[i].node
+        best_node.parent = open_nodes[i].parent
+        best_node.score = node_score
+        best_node.index = i
+      }
+    }
+    if (best_node.node.length === 0) { /* YIKES */ }
+    
+    open_nodes.splice(best_node.index, 1)
+    col = best_node.node[0]
+    row = best_node.node[1]
+    closed_nodes.push( {node: best_node.node, parent: best_node.parent} )
+    //console.log("choosing "+best_node.score+":"+col+","+row)
+  }
+  //this is not complete, need to work backwards through the closed_nodes
+  /*
+var path = []
+  var node = closed_nodes.pop()
+  path.unshift({col: node.node[0], row: node.node[1], parent: node})
+  path.unshift(closed_nodes.pop())
+  
+  while(!(path[0].parent[0] === start_col && path[0].parent[1] === start_row)) {
+    
+  }
+*/
+  
+  closed_nodes.shift() // top node is the start node.
+  return closed_nodes
+  
+}
+
 /** Debugstring for TileMap() */
 jaws.TileMap.prototype.toString = function() { return "[TileMap " + this.size[0] + " cols, " + this.size[1] + " rows]" }
 
