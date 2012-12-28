@@ -2504,11 +2504,22 @@ jaws.TileMap.prototype.cell = function(col, row) {
 
 /**
  * A-Star pathfinding
+ *
+ *  Takes starting and ending x,y co-ordinates (from a mouse-click for example),
+ *  which are then translated onto the TileMap grid. 
+ *  
+ *  Does not allow for Diagonal movements
+ *
+ *  Uses a very simple Heuristic [see crowFlies()] for calculating node scores.
+ *
+ *  Very lightly optimised for speed over memory usage.
+ *
+ *  Returns a list of [col, row] pairs that define a valid path. Due to the simple Heuristic
+ *  the path is not guaranteed to be the best path.
  */
 jaws.TileMap.prototype.findPath = function(start_position, end_position) {
-  //console.log("finding Path: "+start_position
   if (start_position[0] === end_position[0] && start_position[1] === end_position[1]) {
-    return [this.at(start_position[0], start_position[1])]
+    return []
   }
   
   var start_col = parseInt(start_position[0] / this.cell_size[0])
@@ -2519,95 +2530,117 @@ jaws.TileMap.prototype.findPath = function(start_position, end_position) {
   
   var col = start_col
   var row = start_row
+  var step = 0
+  var score = 0
+  //travel corner-to-corner, through every square, plus one, just to make sure
+  var max_distance = (this.size[0]*this.size[1] * 2)+1
   
-  var max_distance = this.size[0]+this.size[1] * 2 //if there were a lot of walls, you might have to go a long way
+  var open_nodes = new Array(this.size[0])
+  for(var i=0; i < this.size[0]; i++) {
+    open_nodes[i] = new Array(this.size[1])
+    for(var j=0; j < this.size[1]; j++) {
+      open_nodes[i][j] = false
+    }
+  }
+  open_nodes[col][row] = {parent: [], G: 0, score: max_distance}
   
-  //var node = []
-  //var parent = this.cell(start_col, start_row)
-    
-  var open_nodes = []
-  var closed_nodes = []
-  closed_nodes.push( {node: [col, row], parent: []} )
-  
-  var crowFlies = function(node) {
-    return Math.abs(end_col-node[0]) + Math.abs(end_row-node[1]);
+  var closed_nodes = new Array(this.size[0])
+  for(var i=0; i < this.size[0]; i++) {
+    closed_nodes[i] = new Array(this.size[1])
+    for(var j=0; j < this.size[1]; j++) {
+      closed_nodes[i][j] = false
+    }
+  }
+
+  var crowFlies = function(from_node, to_node) {
+    return Math.abs(to_node[0]-from_node[0]) + Math.abs(to_node[1]-from_node[1]);
   }
   
   var findInClosed = function(col, row) {
-    for (var i=0 ; i < closed_nodes.length ; i++) {
-      if (closed_nodes[i].node[0] === col && closed_nodes[i].node[1] === row) {
-        return true
-      }
+    if (closed_nodes[col][row])
+    {
+      return true
     }
-    return false
+    else {return false}
   }
   
-  /*
-var findInOpen = function(col, row) {
-    for (var i=0 ; i < open_nodes.length ; i++) {
-      if (open_nodes[i].col === col && open_nodes[i].row === row) {
-        return true
-      }
-    }
-    return false
-  }
-*/
-  
-  //console.log("starting at "+crowFlies([col, row]) +":"+col+","+row)
-  //console.log("heading to :"+end_col+","+end_row)
-  
-  //While something! not sure what yet.
-  while (! (col === end_col && row === end_row) ) {
+  while ( !(col === end_col && row === end_row) ) {
+    /**
+     *  add the nodes above, below, to the left and right of the current node
+     *  if it doesn't have a sprite in it, and it hasn't already been added
+     *  to the closed list, recalculate its score from the current node and
+     *  update it if it's already in the open list.
+     */
     if (this.cell(col-1, row).length === 0 && !findInClosed(col-1, row)) {
-      open_nodes.unshift( {node: [col-1, row], parent: [col, row]} )
+      score = step+1+crowFlies([col-1,row] , [end_col, end_row])
+      if (!open_nodes[col-1][row] || (open_nodes[col-1][row] && open_nodes[col-1][row].score > score)) {
+        open_nodes[col-1][row] = {parent: [col, row], G: step+1, score: score}
+      }
     }
     
     if (this.cell(col+1, row).length === 0 && !findInClosed(col+1, row)) {
-      open_nodes.unshift( {node: [col+1, row], parent: [col, row]} )
+      score = step+1+crowFlies([col+1,row] , [end_col, end_row])
+      if (!open_nodes[col+1][row] || (open_nodes[col+1][row] && open_nodes[col+1][row].score > score)) {
+        open_nodes[col+1][row] = {parent: [col, row], G: step+1, score: score}
+      }
     }
     
     if (this.cell(col, row-1).length === 0 && !findInClosed(col, row-1)) {
-      open_nodes.unshift( {node: [col, row-1], parent: [col, row]} )
+      score = step+1+crowFlies([col,row-1] , [end_col, end_row])
+      if (!open_nodes[col][row-1] || (open_nodes[col][row-1] && open_nodes[col][row-1].score > score)) {
+        open_nodes[col][row-1] = {parent: [col, row], G: step+1, score: score}
+      }
     }
     
     if (this.cell(col, row+1).length === 0 && !findInClosed(col, row+1)) {
-      open_nodes.unshift( {node: [col, row+1], parent: [col, row]} )
-    }
-    
-    var best_node = {score: max_distance, node: [], index: -1, parent: []}
-    var node_score = 0
-    for (var i=0 ; i<open_nodes.length ; i++) {
-      node_score = crowFlies(open_nodes[i].node)
-      //console.log(node_score+":"+open_nodes[i].node[0]+","+open_nodes[i].node[1])
-      if (node_score < best_node.score) {
-        best_node.node = open_nodes[i].node
-        best_node.parent = open_nodes[i].parent
-        best_node.score = node_score
-        best_node.index = i
+      score = step+1+crowFlies([col,row+1] , [end_col, end_row])
+      if (!open_nodes[col][row+1] || (open_nodes[col][row+1] && open_nodes[col][row+1].score > score)) {
+        open_nodes[col][row+1] = {parent: [col, row], G: step+1, score: score}
       }
     }
-    if (best_node.node.length === 0) { /* YIKES */ }
     
-    open_nodes.splice(best_node.index, 1)
+    /**
+     *  find the lowest scoring open node
+     */
+    var best_node = {node: [], parent: [], score: max_distance, G: 0}
+    for (var i=0 ; i<this.size[0] ; i++) {
+      for(var j=0 ; j<this.size[1] ; j++) {
+        if (open_nodes[i][j] && open_nodes[i][j].score < best_node.score) {
+          best_node.node = [i, j]
+          best_node.parent = open_nodes[i][j].parent
+          best_node.score = open_nodes[i][j].score
+          best_node.G = open_nodes[i][j].G
+        }
+      }
+    }
+    if (best_node.node.length === 0) { //open_nodes is empty, no route found to end node
+      return []
+    }
+    
+    //This doesn't stop the node being added again, but it doesn't seem to matter
+    open_nodes[best_node.node[0]][best_node.node[1]] = false
+    
     col = best_node.node[0]
     row = best_node.node[1]
-    closed_nodes.push( {node: best_node.node, parent: best_node.parent} )
-    //console.log("choosing "+best_node.score+":"+col+","+row)
-  }
-  //this is not complete, need to work backwards through the closed_nodes
-  /*
-var path = []
-  var node = closed_nodes.pop()
-  path.unshift({col: node.node[0], row: node.node[1], parent: node})
-  path.unshift(closed_nodes.pop())
-  
-  while(!(path[0].parent[0] === start_col && path[0].parent[1] === start_row)) {
+    step = best_node.G
     
+    closed_nodes[col][row] = {parent: best_node.parent}
   }
-*/
   
-  closed_nodes.shift() // top node is the start node.
-  return closed_nodes
+  /**
+   *  a path has been found, construct it by working backwards from the
+   *  end node, using the closed list
+   */
+  var path = []
+  var current_node = closed_nodes[col][row]
+  path.unshift([col, row])
+  while(! (col === start_col && row === start_row) ) {
+    col = current_node.parent[0]
+    row = current_node.parent[1]
+    path.unshift([col, row])
+    current_node = closed_nodes[col][row]
+  }
+  return path
   
 }
 
