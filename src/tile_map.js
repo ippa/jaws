@@ -200,10 +200,12 @@ jaws.TileMap.prototype.cell = function(col, row) {
  *  Returns a list of [col, row] pairs that define a valid path. Due to the simple Heuristic
  *  the path is not guaranteed to be the best path.
  */
-jaws.TileMap.prototype.findPath = function(start_position, end_position) {
+jaws.TileMap.prototype.findPath = function(start_position, end_position, inverted) {
   if (start_position[0] === end_position[0] && start_position[1] === end_position[1]) {
     return []
   }
+  
+  if (typeof inverted == 'undefined') { inverted = false }
   
   var start_col = parseInt(start_position[0] / this.cell_size[0])
   var start_row = parseInt(start_position[1] / this.cell_size[1])
@@ -254,32 +256,24 @@ jaws.TileMap.prototype.findPath = function(start_position, end_position) {
      *  to the closed list, recalculate its score from the current node and
      *  update it if it's already in the open list.
      */
-    if (this.cell(col-1, row).length === 0 && !findInClosed(col-1, row)) {
-      score = step+1+crowFlies([col-1,row] , [end_col, end_row])
-      if (!open_nodes[col-1][row] || (open_nodes[col-1][row] && open_nodes[col-1][row].score > score)) {
-        open_nodes[col-1][row] = {parent: [col, row], G: step+1, score: score}
-      }
-    }
+    var left_right_up_down = []
+    if (col > 0) { left_right_up_down.push([col-1, row]) }
+    if (col < this.size[0]-1) { left_right_up_down.push([col+1, row]) }
+    if (row > 0) {left_right_up_down.push([col, row-1])}
+    if (row < this.size[1]-1) { left_right_up_down.push([col, row+1]) }
     
-    if (this.cell(col+1, row).length === 0 && !findInClosed(col+1, row)) {
-      score = step+1+crowFlies([col+1,row] , [end_col, end_row])
-      if (!open_nodes[col+1][row] || (open_nodes[col+1][row] && open_nodes[col+1][row].score > score)) {
-        open_nodes[col+1][row] = {parent: [col, row], G: step+1, score: score}
-      }
-    }
-    
-    if (this.cell(col, row-1).length === 0 && !findInClosed(col, row-1)) {
-      score = step+1+crowFlies([col,row-1] , [end_col, end_row])
-      if (!open_nodes[col][row-1] || (open_nodes[col][row-1] && open_nodes[col][row-1].score > score)) {
-        open_nodes[col][row-1] = {parent: [col, row], G: step+1, score: score}
-      }
-    }
-    
-    if (this.cell(col, row+1).length === 0 && !findInClosed(col, row+1)) {
-      score = step+1+crowFlies([col,row+1] , [end_col, end_row])
-      if (!open_nodes[col][row+1] || (open_nodes[col][row+1] && open_nodes[col][row+1].score > score)) {
-        open_nodes[col][row+1] = {parent: [col, row], G: step+1, score: score}
-      }
+    for (var i=0 ; i<left_right_up_down.length ; i++) {
+        var c = left_right_up_down[i][0]
+        var r = left_right_up_down[i][1]
+        if ( ( (this.cell(c, r).length === 0 && !inverted) || 
+               (this.cell(c, r).length  >  0 &&  inverted)    ) && 
+               !findInClosed(c, r) ) 
+        {
+            score = step+1+crowFlies([c, r] , [end_col, end_row])
+            if (!open_nodes[c][r] || (open_nodes[c][r] && open_nodes[c][r].score > score)) {
+                open_nodes[c][r] = {parent: [col, row], G: step+1, score: score}
+            }
+        }
     }
     
     /**
