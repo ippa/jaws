@@ -56,25 +56,31 @@ test("TileMap findPath usage", function () {
     var tile_map = new jaws.TileMap({size: [10, 10], cell_size: [cell_size, cell_size]})
     
     var start_position = [0, 0]
+    
+    var path_zero = tile_map.findPath(start_position, start_position)
+    ok(path_zero.length === 1, "Path should contain a single value when start and end are the same")
+    ok(path_zero[0].x === start_position[0] && path_zero[0].y === start_position[1], "Path should be to start_position")
+    
     var end_position = [0, 64] //2 squares down.
     
     var path_one = tile_map.findPath(start_position, end_position)
-    ok(path_one.length >= 3, "There should be at least 3 nodes in path")
-    ok( ( path_one[0][0] === start_position[0]/cell_size &&
-          path_one[0][1] === start_position[1]/cell_size   ), "The first node in path should be the start_position")
+    ok(path_one.length >= 3, "There should be at least 3 nodes in path when end_position is 2 squares down")
+    ok( ( path_one[0].x === start_position[0] &&
+          path_one[0].y === start_position[1]   ), "The first node in path should be the start_position")
     var last = path_one.length - 1
-    ok( ( path_one[last][0] === end_position[0]/cell_size &&
-          path_one[last][1] === end_position[1]/cell_size   ), "The last node in path should be the end_position")
+    ok( ( path_one[last].x === end_position[0] &&
+          path_one[last].y === end_position[1]   ), "The last node in path should be the end_position")
     
     tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:32}))
     
     var path_two = tile_map.findPath(start_position, end_position)
+    console.log(path_one, path_two)
     ok(path_two.length > path_one.length, "Wall added should force new path to be longer than first path")
     
     var wall_in_path = false
     for(var i=0 ; i<path_two.length ; i++)
     {
-        if (path_two[i][0] === 0 && path_two[i][1] === 1) { wall_in_path = true; }
+        if (path_two[i].x === 0 && path_two[i].y === 32) { wall_in_path = true; }
     }
     ok(!wall_in_path, "The wall added to tile_map should not appear in the path")
     
