@@ -108,3 +108,21 @@ test("TileMap findPath - inverted usage", function () {
     
     ok(path_two.length === 5, "Path length should be the 5 nodes added as 'floor' to tile_map")
 })
+
+test("TileMap lineOfSight", function () {
+    var tile_map = new jaws.TileMap({size: [10, 10], cell_size: [32, 32]})
+    
+    var start_position = [0, 0]
+    var end_position = [0, 64] //2 squares down.
+    
+    ok(false, "tests written")
+})
+
+test("TileMap lineOfSight - inverted", function () {
+    var tile_map = new jaws.TileMap({size: [10, 10], cell_size: [32, 32]})
+    
+    var start_position = [0, 0]
+    var end_position = [0, 64] //2 squares down.
+    
+    ok(false, "tests written")
+})

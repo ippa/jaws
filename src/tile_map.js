@@ -311,17 +311,52 @@ jaws.TileMap.prototype.findPath = function(start_position, end_position, inverte
    */
   var path = []
   var current_node = closed_nodes[col][row]
-  //var cell = this.cell(col, row)[0]
   path.unshift({x: col*this.cell_size[0], y: row*this.cell_size[1]})
   while(! (col === start_col && row === start_row) ) {
     col = current_node.parent[0]
     row = current_node.parent[1]
-    //cell = this.cell(col, row)[0]
     path.unshift({x: col*this.cell_size[0], y: row*this.cell_size[1]})
     current_node = closed_nodes[col][row]
   }
   return path
   
+}
+
+jaws.TileMap.prototype.lineOfSight = function(start_position, end_position, inverted) {
+  if (typeof inverted == 'undefined') { inverted = false }
+  
+  var x0 = start_position[0]
+  var x1 = end_position[0]
+  var y0 = start_position[1]
+  var y1 = end_position[1]
+  
+  var dx = Math.abs(x1-x0)
+  var dy = Math.abs(y1-y0)
+
+  var sx, sy
+  if (x0 < x1) {sx = 1} else {sx = -1}
+  if (y0 < y1) {sy = 1} else {sy = -1}
+  
+  var err = dx-dy
+  var e2
+  
+  while(! (x0 === x1 && y0 === y1) )
+  {
+    if (this.at(x0,y0).length > 0) {return false}
+    e2 = 2 * err
+    if (e2 > -dy)
+    {
+      err = err - dy
+      x0 = x0 + sx
+    }
+    if (e2 < dx)
+    {
+      err = err + dx
+      y0 = y0 + sy
+    }
+  }
+  
+  return true
 }
 
 /** Debugstring for TileMap() */
