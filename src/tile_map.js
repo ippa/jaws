@@ -342,7 +342,8 @@ jaws.TileMap.prototype.lineOfSight = function(start_position, end_position, inve
   
   while(! (x0 === x1 && y0 === y1) )
   {
-    if (this.at(x0,y0).length > 0) {return false}
+    if (inverted) { if (this.at(x0,y0).length === 0) {return false} }
+    else { if (this.at(x0,y0).length > 0) {return false} }
     e2 = 2 * err
     if (e2 > -dy)
     {

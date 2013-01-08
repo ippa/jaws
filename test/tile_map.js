@@ -115,7 +115,12 @@ test("TileMap lineOfSight", function () {
     var start_position = [0, 0]
     var end_position = [0, 64] //2 squares down.
     
-    ok(false, "tests written")
+    ok(tile_map.lineOfSight(start_position, end_position), "No tiles, end_position is visible from start_position")
+    
+    tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:32}))
+    
+    ok(!tile_map.lineOfSight(start_position, end_position), "tiles added, end_position is NOT visible from start_position")
+
 })
 
 test("TileMap lineOfSight - inverted", function () {
@@ -124,5 +129,13 @@ test("TileMap lineOfSight - inverted", function () {
     var start_position = [0, 0]
     var end_position = [0, 64] //2 squares down.
     
-    ok(false, "tests written")
+    ok(!tile_map.lineOfSight(start_position, end_position, true), "No tiles, end_position is NOT visible from start_position")
+    
+    tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:0}))
+    tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:32}))
+    tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:64}))
+    
+    ok(tile_map.lineOfSight(start_position, end_position, true), "end_position visible 'along' tiles added from start to finish")
 })
+
+
