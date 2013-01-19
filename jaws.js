@@ -2223,9 +2223,9 @@ jaws.Viewport = function ViewPort(options) {
    * Usefull for sidescrollers when you wan't to keep the player in the center of the screen no matter how he moves.
    */
   this.centerAround = function(item) {
-    this.x = (item.x - this.width / 2)
-    this.y = (item.y - this.height / 2)
-    this.verifyPosition()
+    this.x = Math.floor(item.x - this.width / 2);
+    this.y = Math.floor(item.y - this.height / 2);
+    this.verifyPosition();
   };
 
   /**
