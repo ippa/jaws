@@ -687,7 +687,7 @@ jaws.Assets = function Assets() {
    *
    * jaws.assets.add("player.png")
    * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
-   * jaws.loadAll({onfinish: start_game})
+   * jaws.assets.loadAll({onfinish: start_game})
    *
    */
   this.add = function(src) {
@@ -871,7 +871,9 @@ window.requestAnimFrame = (function(){
 /**
  * @class A classic game loop forever looping calls to update() / draw() with given framerate. "Field Summary" contains options for the GameLoop()-constructor.
  *
- * @property {int} FPS    targeted frame rate
+ * @property {int} tick_duration  duration in ms between the last 2 ticks (often called dt)
+ * @property {int} fps  the real fps (as opposed to the target fps), smoothed out with a moving average
+ * @property {int} ticks  total amount of ticks since game loops start
  *
  * @example
  *
@@ -891,9 +893,9 @@ window.requestAnimFrame = (function(){
 jaws.GameLoop = function GameLoop(game_object, options,game_state_setup_options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( game_object, options );
 
-  this.ticks = 0
   this.tick_duration = 0
   this.fps = 0
+  this.ticks = 0
   
   var update_id
   var paused = false
@@ -2517,16 +2519,19 @@ jaws.TileMap.prototype.cell = function(col, row) {
  *  Returns a list of [col, row] pairs that define a valid path. Due to the simple Heuristic
  *  the path is not guaranteed to be the best path.
  */
-jaws.TileMap.prototype.findPath = function(start_position, end_position) {
-  if (start_position[0] === end_position[0] && start_position[1] === end_position[1]) {
-    return []
-  }
+jaws.TileMap.prototype.findPath = function(start_position, end_position, inverted) {
+  
+  if (typeof inverted == 'undefined') { inverted = false }
   
   var start_col = parseInt(start_position[0] / this.cell_size[0])
   var start_row = parseInt(start_position[1] / this.cell_size[1])
   
   var end_col = parseInt(end_position[0] / this.cell_size[0])
   var end_row = parseInt(end_position[1] / this.cell_size[1])
+  
+  if (start_col === end_col && start_row === end_row) {
+    return [{x: start_position[0], y:start_position[1]}]
+  }
   
   var col = start_col
   var row = start_row
@@ -2571,32 +2576,24 @@ jaws.TileMap.prototype.findPath = function(start_position, end_position) {
      *  to the closed list, recalculate its score from the current node and
      *  update it if it's already in the open list.
      */
-    if (this.cell(col-1, row).length === 0 && !findInClosed(col-1, row)) {
-      score = step+1+crowFlies([col-1,row] , [end_col, end_row])
-      if (!open_nodes[col-1][row] || (open_nodes[col-1][row] && open_nodes[col-1][row].score > score)) {
-        open_nodes[col-1][row] = {parent: [col, row], G: step+1, score: score}
-      }
-    }
+    var left_right_up_down = []
+    if (col > 0) { left_right_up_down.push([col-1, row]) }
+    if (col < this.size[0]-1) { left_right_up_down.push([col+1, row]) }
+    if (row > 0) {left_right_up_down.push([col, row-1])}
+    if (row < this.size[1]-1) { left_right_up_down.push([col, row+1]) }
     
-    if (this.cell(col+1, row).length === 0 && !findInClosed(col+1, row)) {
-      score = step+1+crowFlies([col+1,row] , [end_col, end_row])
-      if (!open_nodes[col+1][row] || (open_nodes[col+1][row] && open_nodes[col+1][row].score > score)) {
-        open_nodes[col+1][row] = {parent: [col, row], G: step+1, score: score}
-      }
-    }
-    
-    if (this.cell(col, row-1).length === 0 && !findInClosed(col, row-1)) {
-      score = step+1+crowFlies([col,row-1] , [end_col, end_row])
-      if (!open_nodes[col][row-1] || (open_nodes[col][row-1] && open_nodes[col][row-1].score > score)) {
-        open_nodes[col][row-1] = {parent: [col, row], G: step+1, score: score}
-      }
-    }
-    
-    if (this.cell(col, row+1).length === 0 && !findInClosed(col, row+1)) {
-      score = step+1+crowFlies([col,row+1] , [end_col, end_row])
-      if (!open_nodes[col][row+1] || (open_nodes[col][row+1] && open_nodes[col][row+1].score > score)) {
-        open_nodes[col][row+1] = {parent: [col, row], G: step+1, score: score}
-      }
+    for (var i=0 ; i<left_right_up_down.length ; i++) {
+        var c = left_right_up_down[i][0]
+        var r = left_right_up_down[i][1]
+        if ( ( (this.cell(c, r).length === 0 && !inverted) || 
+               (this.cell(c, r).length  >  0 &&  inverted)    ) && 
+               !findInClosed(c, r) ) 
+        {
+            score = step+1+crowFlies([c, r] , [end_col, end_row])
+            if (!open_nodes[c][r] || (open_nodes[c][r] && open_nodes[c][r].score > score)) {
+                open_nodes[c][r] = {parent: [col, row], G: step+1, score: score}
+            }
+        }
     }
     
     /**
@@ -2633,15 +2630,53 @@ jaws.TileMap.prototype.findPath = function(start_position, end_position) {
    */
   var path = []
   var current_node = closed_nodes[col][row]
-  path.unshift([col, row])
+  path.unshift({x: col*this.cell_size[0], y: row*this.cell_size[1]})
   while(! (col === start_col && row === start_row) ) {
     col = current_node.parent[0]
     row = current_node.parent[1]
-    path.unshift([col, row])
+    path.unshift({x: col*this.cell_size[0], y: row*this.cell_size[1]})
     current_node = closed_nodes[col][row]
   }
   return path
   
+}
+
+jaws.TileMap.prototype.lineOfSight = function(start_position, end_position, inverted) {
+  if (typeof inverted == 'undefined') { inverted = false }
+  
+  var x0 = start_position[0]
+  var x1 = end_position[0]
+  var y0 = start_position[1]
+  var y1 = end_position[1]
+  
+  var dx = Math.abs(x1-x0)
+  var dy = Math.abs(y1-y0)
+
+  var sx, sy
+  if (x0 < x1) {sx = 1} else {sx = -1}
+  if (y0 < y1) {sy = 1} else {sy = -1}
+  
+  var err = dx-dy
+  var e2
+  
+  while(! (x0 === x1 && y0 === y1) )
+  {
+    if (inverted) { if (this.at(x0,y0).length === 0) {return false} }
+    else { if (this.at(x0,y0).length > 0) {return false} }
+    e2 = 2 * err
+    if (e2 > -dy)
+    {
+      err = err - dy
+      x0 = x0 + sx
+    }
+    if (e2 < dx)
+    {
+      err = err + dx
+      y0 = y0 + sy
+    }
+  }
+  
+  return true
 }
 
 /** Debugstring for TileMap() */

@@ -7,15 +7,15 @@
 <body style="background:black; color:white;">
 
   <canvas width="320" height="320" style="background:white;"></canvas>
-  <p>FPS: <span id="fps"></span>. Click a dirt tile to move.</p>
+  <p>FPS: <span id="fps"></span>. Click a dirt tile to move. Find the hiding villain.</p>
   
   <div id="info">
-    <h1>Example 14: Pathfinding in a TileMap</h1>
+    <h1>Example 14: Pathfinding and Line of Sight in a TileMap</h1>
   </div>
  
   <script>
     function Rouge() {
-      var player
+      var player, evil_player
       var walls
       var fps
       
@@ -110,10 +110,18 @@
         {
           if (this.path.length > 0)
           {
-            var next_node = this.path.shift()
-            this.destination = floor_map.cell(next_node[0], next_node[1])[0]
+            this.destination = this.path.shift()
           }
           else { this.destination = false }
+        }
+        
+        evil_player = new jaws.Sprite({image: "example14/player.png", x:160, y:192, anchor: "bottom_right", angle:180})
+        evil_player.visible = function()
+        {
+            /**
+             *  check if line of sight between evil player and the player
+             */
+            return wall_map.lineOfSight([this.x, this.y], [player.x, player.y])
         }
 
         jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
@@ -161,6 +169,10 @@
         floor.draw()
         walls.draw()
         player.draw()
+        if (evil_player.visible())
+        {
+            evil_player.draw()
+        }
       }
     }
     
