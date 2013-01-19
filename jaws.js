@@ -612,6 +612,12 @@ var jaws = (function(jaws) {
 /**
  * @class Loads and processes assets as images, sound, video, json
  * Used internally by JawsJS to create <b>jaws.assets</b>
+ *
+ * @property {bool} bust_cache              Add random arguments to assets-url to bypass any cache
+ * @property {bool} fuchia_to_transparent   Convert the color fuchia to transparent when loading .bmp-files
+ * @proparty {bool} image_to_canvas         Convert all image assets to canvas internally
+ * @proparty {string} root                  Rootdir from where all assets are loaded
+ *
  */
 jaws.Assets = function Assets() {
   if( !(this instanceof arguments.callee) ) return new arguments.callee();
@@ -687,7 +693,7 @@ jaws.Assets = function Assets() {
    *
    * jaws.assets.add("player.png")
    * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
-   * jaws.loadAll({onfinish: start_game})
+   * jaws.assets.loadAll({onfinish: start_game})
    *
    */
   this.add = function(src) {
@@ -871,7 +877,9 @@ window.requestAnimFrame = (function(){
 /**
  * @class A classic game loop forever looping calls to update() / draw() with given framerate. "Field Summary" contains options for the GameLoop()-constructor.
  *
- * @property {int} FPS    targeted frame rate
+ * @property {int} tick_duration  duration in ms between the last 2 ticks (often called dt)
+ * @property {int} fps  the real fps (as opposed to the target fps), smoothed out with a moving average
+ * @property {int} ticks  total amount of ticks since game loops start
  *
  * @example
  *
@@ -891,9 +899,9 @@ window.requestAnimFrame = (function(){
 jaws.GameLoop = function GameLoop(game_object, options,game_state_setup_options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( game_object, options );
 
-  this.ticks = 0
   this.tick_duration = 0
   this.fps = 0
+  this.ticks = 0
   
   var update_id
   var paused = false
