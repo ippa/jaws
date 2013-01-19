@@ -77,20 +77,21 @@ You can also link to invidual files in your HTML:
   <script src="/jawsjs/src/sprite.js"></script>
 
 NOTE: core.js is always needed but after that you can pick and choose depending on what you need.
-A rule of thumb is that a file named "foo.js" will include a contructor named Foo().
+A rule of thumb is that a file named "foo.js" will include a constructor named Foo().
 
 == Contribute
 Jaws accepts contributions, some simple guidelines:
 - Formatting: oneFunction(), OneConstrutor() and one_variable
 - 2 spaces for indentation
-- Don't patch jaws.js or jaws-min.js
-- Please bundle tests with non-trivial patches
+- Don't patch jaws.js or jaws-min.js, but rather the invidual files in the src/-directory
+- Please bundle tests with non-trivial patches, see test/-dir for inspiration
 - For bigger patches/feature additions, please contact me beforehand to discuss if/how it fits into Jaws and how to form the API
 - Naming shouldn't consist of abbreviations, let's use "context", not "ctx"
 
 Jaws has gotten bigger contributions from:
 https://github.com/dmitrizagidulin - SpriteList() rewrite
 https://github.com/gregmax17 - Viewport related stuff
+https://github.com/MalphasWats - Viewport pathfinding
 
 == Issues and bugs
 If you find an issue with Jaws githubs issue-tracker is the place to go. Easiest for the developers is if you put your game online. If you don't have any hosting check out http://pages.github.com/.
@@ -209,13 +210,15 @@ Pasting your problematic code in the issue-ticket itself will usually mean a lot
       * 1) 
       * Call jaws.init() that will detect <canvas> (or create one for you) and set up the 2D context.
       * It's then available in jaws.canvas and jaws.context and will be used by all new sprites.
+      * Also setup keyboard input event listeners with jaws.setupInput().
       *
       * 2) 
-      * Pre-load all assets while showing progess meter. Assets are then available with jaws.assets.get("player.png").
+      * Pre-load all assets while showing progress meter through with jaws.assets.loadAll().
+      * Assets are then available with jaws.assets.get("player.png").
       *
       * 3) 
-      * Create an instance of given game state (in this case MyGameState) and call setup() on that instance.
-      * In setup() you usually initialize that game state, create your gameobjects, sprites and so forth.
+      * Create an instance of given game state constructor (in this case MyGameState) and call setup() on that instance.
+      * In setup() you usually initialize the game state, create the gameobjects, sprites and so forth.
       *
       * 4) 
       * Loop calls to update() and draw() with given FPS (default 60) until the game ends,
