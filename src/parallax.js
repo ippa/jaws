@@ -31,41 +31,45 @@ jaws.Parallax = function Parallax(options) {
 
 /** Draw all layers in parallax scroller */
 jaws.Parallax.prototype.draw = function(options) {
-    var layer, numx, numy, initx;
+  var layer, numx, numy, initx;
 
-    for(var i=0; i < this.layers.length; i++) {
-        layer = this.layers[i]
+  for(var i=0; i < this.layers.length; i++) {
+    layer = this.layers[i]
 
-		if (this.repeat_x) {
-			initx = -((this.camera_x / layer.damping) % layer.width);
-		} else {
-			initx = -(this.camera_x / layer.damping) 
-		}		
+  	if(this.repeat_x) {
+  	  initx = -((this.camera_x / layer.damping) % layer.width);
+  	} 
+    else {
+  	  initx = -(this.camera_x / layer.damping) 
+  	}		
+          
+  	if (this.repeat_y) {
+  	  layer.y = -((this.camera_y / layer.damping) % layer.height);
+  	}
+    else {
+  		layer.y = -(this.camera_y / layer.damping);
+  	}
+  
+  	layer.x = initx;
+    while (layer.y < jaws.height) {
+      while (layer.x < jaws.width) {
+  		  if (layer.x + layer.width >= 0 && layer.y + layer.height >= 0) { //Make sure it's on screen
+  			  layer.draw(); //Draw only if actually on screen, for performance reasons
+  			}
+        layer.x = layer.x + layer.width;      
+  				
+        if (!this.repeat_x) {
+  				break;
+  			}
+      }
         
-		if (this.repeat_y) {
-			layer.y = -((this.camera_y / layer.damping) % layer.height);
-		} else {
-			layer.y = -(this.camera_y / layer.damping);
-		}
-
-		layer.x = initx;
-        while (layer.y < jaws.height) {
-            while (layer.x < jaws.width) {
-				if (layer.x + layer.width >= 0 && layer.y + layer.height >= 0) { //Make sure it's on screen
-					layer.draw(); //Draw only if actually on screen, for performance reasons
-				}
-                layer.x = layer.x + layer.width;      
-				if (!this.repeat_x) {
-					break;
-				}
-            }
-            layer.y = layer.y + layer.height;
-            layer.x = initx;
-			if (!this.repeat_y) {
-				break;
-			}
-        }
+      layer.y = layer.y + layer.height;
+      layer.x = initx;
+  		if (!this.repeat_y) {
+  			break;
+  		}
     }
+  }
 }
 /** Add a new layer to the parallax scroller */
 jaws.Parallax.prototype.addLayer = function(options) {
