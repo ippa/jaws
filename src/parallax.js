@@ -40,7 +40,7 @@ jaws.Parallax.prototype.draw = function(options) {
   	  initx = -((this.camera_x / layer.damping) % layer.width);
   	} 
     else {
-  	  initx = -(this.camera_x / layer.damping) 
+  	  initx = -(this.camera_x / layer.damping)
   	}		
           
   	if (this.repeat_y) {
