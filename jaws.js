@@ -132,7 +132,7 @@ jaws.init = function(options) {
  */
 function saveMousePosition(e) {
   jaws.mouse_x = (e.pageX || e.clientX)
-  jaws.mouse_y = (e.pageY || e.clientX)
+  jaws.mouse_y = (e.pageY || e.clientY)
   
   var game_area = jaws.canvas ? jaws.canvas : jaws.dom
   jaws.mouse_x -= game_area.offsetLeft
@@ -427,7 +427,7 @@ jaws.setupInput = function() {
   ie_mousebuttoncode_to_string = ie_m;
 
 
-  var numpadkeys = ["numpad1","numpad2","numpad3","numpad4","numpad5","numpad6","numpad7","numpad8","numpad9"]
+  var numpadkeys = ["numpad0","numpad1","numpad2","numpad3","numpad4","numpad5","numpad6","numpad7","numpad8","numpad9"]
   var fkeys = ["f1","f2","f3","f4","f5","f6","f7","f8","f9"]
   var numbers = ["0","1","2","3","4","5","6","7","8","9"]
   var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
@@ -1914,41 +1914,45 @@ jaws.Parallax = function Parallax(options) {
 
 /** Draw all layers in parallax scroller */
 jaws.Parallax.prototype.draw = function(options) {
-    var layer, numx, numy, initx;
+  var layer, numx, numy, initx;
 
-    for(var i=0; i < this.layers.length; i++) {
-        layer = this.layers[i]
+  for(var i=0; i < this.layers.length; i++) {
+    layer = this.layers[i]
 
-		if (this.repeat_x) {
-			initx = -((this.camera_x / layer.damping) % layer.width);
-		} else {
-			initx = -(this.camera_x / layer.damping) 
-		}		
+  	if(this.repeat_x) {
+  	  initx = -((this.camera_x / layer.damping) % layer.width);
+  	} 
+    else {
+  	  initx = -(this.camera_x / layer.damping)
+  	}		
+          
+  	if (this.repeat_y) {
+  	  layer.y = -((this.camera_y / layer.damping) % layer.height);
+  	}
+    else {
+  		layer.y = -(this.camera_y / layer.damping);
+  	}
+  
+  	layer.x = initx;
+    while (layer.y < jaws.height) {
+      while (layer.x < jaws.width) {
+  		  if (layer.x + layer.width >= 0 && layer.y + layer.height >= 0) { //Make sure it's on screen
+  			  layer.draw(); //Draw only if actually on screen, for performance reasons
+  			}
+        layer.x = layer.x + layer.width;      
+  				
+        if (!this.repeat_x) {
+  				break;
+  			}
+      }
         
-		if (this.repeat_y) {
-			layer.y = -((this.camera_y / layer.damping) % layer.height);
-		} else {
-			layer.y = -(this.camera_y / layer.damping);
-		}
-
-		layer.x = initx;
-        while (layer.y < jaws.height) {
-            while (layer.x < jaws.width) {
-				if (layer.x + layer.width >= 0 && layer.y + layer.height >= 0) { //Make sure it's on screen
-					layer.draw(); //Draw only if actually on screen, for performance reasons
-				}
-                layer.x = layer.x + layer.width;      
-				if (!this.repeat_x) {
-					break;
-				}
-            }
-            layer.y = layer.y + layer.height;
-            layer.x = initx;
-			if (!this.repeat_y) {
-				break;
-			}
-        }
+      layer.y = layer.y + layer.height;
+      layer.x = initx;
+  		if (!this.repeat_y) {
+  			break;
+  		}
     }
+  }
 }
 /** Add a new layer to the parallax scroller */
 jaws.Parallax.prototype.addLayer = function(options) {
