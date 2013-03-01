@@ -85,8 +85,8 @@ jaws.setupInput = function() {
 
   window.addEventListener("keydown", handleKeyDown)
   window.addEventListener("keyup", handleKeyUp)
-  window.addEventListener("mousedown", handleMouseDown, false);
-  window.addEventListener("mouseup", handleMouseUp, false);
+  jaws.canvas.addEventListener("mousedown", handleMouseDown, false);
+  jaws.canvas.addEventListener("mouseup", handleMouseUp, false);
   window.addEventListener("touchstart", handleTouchStart, false);
   window.addEventListener("touchend", handleTouchEnd, false);
   window.addEventListener("blur", resetPressedKeys, false);
