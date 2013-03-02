@@ -29,17 +29,7 @@ var jaws = (function(jaws) {
 jaws.Animation = function Animation(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  this.options = options
-  this.frames = options.frames || []
-  this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
-  this.index = options.index || 0                       // default: start with the very first frame
-  this.loop = (options.loop==undefined) ? 1 : options.loop
-  this.bounce = options.bounce || 0
-  this.frame_direction = 1
-  this.frame_size = options.frame_size
-  this.orientation = options.orientation || "down"
-  this.on_end = options.on_end || null
-  this.offset = options.offset || 0
+  jaws.parseOptions(this, options, this.default_options);
 
   if(options.scale_image) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
@@ -59,6 +49,20 @@ jaws.Animation = function Animation(options) {
   this.last_tick = (new Date()).getTime();
   this.sum_tick = 0
 }
+jaws.Animation.prototype.default_options = {
+  frames: [],
+  frame_duration: 100,  // default: 100ms between each frameswitch
+  index: 0,             // default: start with the very first frame
+  loop: 1,
+  bounce: 0,
+  frame_direction: 1,
+  frame_size: null,
+  orientation: "down",
+  on_end: null,
+  offset: 0,
+  scale_image: null,
+  sprite_sheet: null
+};
 
 /**
  Propells the animation forward by counting milliseconds and changing this.index accordingly
