@@ -43,25 +43,36 @@ jaws.Sprite = function Sprite(options) {
   }
 }
 
+jaws.Sprite.prototype.default_options = {
+  x: 0, 
+  y: 0, 
+  alpha: 1,
+  angle: 0,
+  flipped: false,
+  anchor_x: 0,
+  anchor_y: 0,
+  image: null,
+  image_path: null,
+  anchor: null,
+  scale_image: 1,
+  damping: 1,
+  scale_x: 1,
+  scale_y: 1,
+  scale: 1
+}
+
 /** 
  * @private
  * Call setters from JSON object. Used to parse options.
  */
 jaws.Sprite.prototype.set = function(options) {
-  jaws.verifyOptions(options, ["x","y","scale_x","scale_y","alpha","angle","flipped","anchor","anchor_x","anchor_y","image","scale_image"]);
+  jaws.parseOptions(this, options, this.default_options);
 
-  this.scale_x = this.scale_y = (options.scale || 1)
-  this.x = options.x || 0
-  this.y = options.y || 0
-  this.alpha = (options.alpha === undefined) ? 1 : options.alpha
-  this.angle = options.angle || 0
-  this.flipped = options.flipped || false
-  this.anchor(options.anchor || "top_left");
-  if(options.anchor_x !== undefined) this.anchor_x = options.anchor_x;
-  if(options.anchor_y !== undefined) this.anchor_y = options.anchor_y; 
-  options.image && this.setImage(options.image);
-  this.image_path = options.image;
-  if(options.scale_image) this.scaleImage(options.scale_image);
+  if(this.scale)        this.scale_x = this.scale_y = this.scale;
+  if(this.image)        this.setImage(this.image);
+  if(this.scale_image)  this.scaleImage(this.scale_image);
+  if(this.anchor)       this.setAnchor(this.anchor);
+
   this.cacheOffsets()
 
   return this
@@ -166,10 +177,10 @@ jaws.Sprite.prototype.resizeTo =      function(width, height) {
 * or "when rotating, what point of the of the sprite will it rotate round"
 *
 * @example
-* For example, a topdown shooter could use anchor("center") --> Place middle of the ship on x/y
-* .. and a sidescroller would probably use anchor("center_bottom") --> Place "feet" at x/y
+* For example, a topdown shooter could use setAnchor("center") --> Place middle of the ship on x/y
+* .. and a sidescroller would probably use setAnchor("center_bottom") --> Place "feet" at x/y
 */
-jaws.Sprite.prototype.anchor = function(value) {
+jaws.Sprite.prototype.setAnchor = function(value) {
   var anchors = {
     top_left: [0,0],
     left_top: [0,0],
