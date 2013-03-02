@@ -367,20 +367,6 @@ jaws.parseOptions = function(object, options, defaults) {
   }
 };
 
-
-/**
- * Used in constructors to raise exception if unknown options are given.
- * It's very easy to do 'new Sprite({image_scale: 2})' instead of the correcet 'new Sprite({scale_image: 2})'
- * 
- */
-jaws.verifyOptions = function(options, allowed) {
-  for(option in options) {
-    if(allowed.indexOf(option) == -1) {
-      throw("Unsupported option '" + option + "' sent to constructor");
-    }
-  }
-};
-
 return jaws;
 })(jaws || {});
 
