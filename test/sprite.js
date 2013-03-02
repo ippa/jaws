@@ -9,7 +9,7 @@ test("Sprite defaults", function() {
   same(sprite.scale_y, 1, "scale_y defaults to 1 (no scaling)")
   same(sprite.anchor_x, 0, "anchor_x defaults to 0 (top)")
   same(sprite.anchor_y, 0, "anchor_y defaults to 0 (left)")
-  same(sprite.image, undefined, "image defaults to undefined")
+  same(sprite.image, null, "image defaults to undefined")
   same(sprite.flipped, false, "flipped defaults to false")
   same(sprite.alpha, 1, "alpha defalts to 1 (zero fading)")
 });
@@ -30,7 +30,7 @@ test("Sprite", function() {
   equal(sprite.width, 20, "sprite.width")  
   equal(sprite.height, 20, "sprite.height")
 
-  sprite.scale(2)
+  sprite.scaleAll(2)
   equal(sprite.rect().width, 40, "sprite.rect().width after scaling x2")
   equal(sprite.rect().height, 40, "sprite.rect().height after scaling x2") 
 
