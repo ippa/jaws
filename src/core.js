@@ -350,6 +350,22 @@ jaws.getUrlParameters = function() {
   }
   return vars;
 }
+/**
+ * Check for bad options/catch typos and init object with defaults options.
+ * Used in all major constructors like Sprite() and so on.
+ */
+jaws.parseOptions = function(object, options, defaults) {
+
+  for(option in options) {
+    if(defaults[option] === undefined) {
+      throw("Unsupported option '" + option + "' sent to constructor");
+    }
+  }
+  for(option in defaults) {
+    object[option] = (options[option] !== undefined) ? options[option] : defaults[option];
+  }
+};
+
 
 /**
  * Used in constructors to raise exception if unknown options are given.
