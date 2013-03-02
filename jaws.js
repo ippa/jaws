@@ -69,6 +69,7 @@ jaws.log = function(msg, append) {
   }
 }
 
+
 /**
  * @example
  * Initializes / creates:
@@ -349,6 +350,22 @@ jaws.getUrlParameters = function() {
   }
   return vars;
 }
+/**
+ * Check for bad options/catch typos and init object with defaults options.
+ * Used in all major constructors like Sprite() and so on.
+ */
+jaws.parseOptions = function(object, options, defaults) {
+  object["options"] = options;
+
+  for(option in options) {
+    if(defaults[option] === undefined) {
+      throw("Unsupported option '" + option + "' sent to constructor");
+    }
+  }
+  for(option in defaults) {
+    object[option] = (options[option] !== undefined) ? options[option] : defaults[option];
+  }
+};
 
 return jaws;
 })(jaws || {});
@@ -440,8 +457,8 @@ jaws.setupInput = function() {
 
   window.addEventListener("keydown", handleKeyDown)
   window.addEventListener("keyup", handleKeyUp)
-  window.addEventListener("mousedown", handleMouseDown, false);
-  window.addEventListener("mouseup", handleMouseUp, false);
+  jaws.canvas.addEventListener("mousedown", handleMouseDown, false);
+  jaws.canvas.addEventListener("mouseup", handleMouseUp, false);
   window.addEventListener("touchstart", handleTouchStart, false);
   window.addEventListener("touchend", handleTouchEnd, false);
   window.addEventListener("blur", resetPressedKeys, false);
@@ -896,7 +913,7 @@ window.requestAnimFrame = (function(){
  * jaws.start(MyGameState, {fps: 30})
  *
  */
-jaws.GameLoop = function GameLoop(game_object, options,game_state_setup_options) {
+jaws.GameLoop = function GameLoop(game_object, options, game_state_setup_options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( game_object, options );
 
   this.tick_duration = 0
@@ -1119,7 +1136,6 @@ var jaws = (function(jaws) {
 jaws.Sprite = function Sprite(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  this.options = options
   this.set(options)  
   
   if(options.context) { 
@@ -1138,23 +1154,38 @@ jaws.Sprite = function Sprite(options) {
   }
 }
 
+jaws.Sprite.prototype.default_options = {
+  x: 0, 
+  y: 0, 
+  alpha: 1,
+  angle: 0,
+  flipped: false,
+  anchor_x: 0,
+  anchor_y: 0,
+  image: null,
+  image_path: null,
+  anchor: null,
+  scale_image: 1,
+  damping: 1,
+  scale_x: 1,
+  scale_y: 1,
+  scale: 1,
+  _constructor: null,
+  dom: null
+}
+
 /** 
  * @private
  * Call setters from JSON object. Used to parse options.
  */
 jaws.Sprite.prototype.set = function(options) {
-  this.scale_x = this.scale_y = (options.scale || 1)
-  this.x = options.x || 0
-  this.y = options.y || 0
-  this.alpha = (options.alpha === undefined) ? 1 : options.alpha
-  this.angle = options.angle || 0
-  this.flipped = options.flipped || false
-  this.anchor(options.anchor || "top_left");
-  if(options.anchor_x !== undefined) this.anchor_x = options.anchor_x;
-  if(options.anchor_y !== undefined) this.anchor_y = options.anchor_y; 
-  options.image && this.setImage(options.image);
-  this.image_path = options.image;
-  if(options.scale_image) this.scaleImage(options.scale_image);
+  jaws.parseOptions(this, options, this.default_options);
+
+  if(this.scale)        this.scale_x = this.scale_y = this.scale;
+  if(this.image)        this.setImage(this.image);
+  if(this.scale_image)  this.scaleImage(this.scale_image);
+  if(this.anchor)       this.setAnchor(this.anchor);
+
   this.cacheOffsets()
 
   return this
@@ -1213,7 +1244,7 @@ jaws.Sprite.prototype.move =          function(x,y)   { if(x) this.x += x;  if(y
 * scale sprite by given factor. 1=don't scale. <1 = scale down.  1>: scale up.
 * Modifies width/height. 
 **/
-jaws.Sprite.prototype.scale =         function(value) { this.scale_x *= value; this.scale_y *= value; return this.cacheOffsets() }
+jaws.Sprite.prototype.scaleAll =      function(value) { this.scale_x *= value; this.scale_y *= value; return this.cacheOffsets() }
 /** set scale factor. ie. 2 means a doubling if sprite in both directions. */
 jaws.Sprite.prototype.scaleTo =       function(value) { this.scale_x = this.scale_y = value; return this.cacheOffsets() }
 /** scale sprite horizontally by scale_factor. Modifies width. */
@@ -1259,10 +1290,10 @@ jaws.Sprite.prototype.resizeTo =      function(width, height) {
 * or "when rotating, what point of the of the sprite will it rotate round"
 *
 * @example
-* For example, a topdown shooter could use anchor("center") --> Place middle of the ship on x/y
-* .. and a sidescroller would probably use anchor("center_bottom") --> Place "feet" at x/y
+* For example, a topdown shooter could use setAnchor("center") --> Place middle of the ship on x/y
+* .. and a sidescroller would probably use setAnchor("center_bottom") --> Place "feet" at x/y
 */
-jaws.Sprite.prototype.anchor = function(value) {
+jaws.Sprite.prototype.setAnchor = function(value) {
   var anchors = {
     top_left: [0,0],
     left_top: [0,0],
@@ -1815,19 +1846,6 @@ return jaws;
 
 var jaws = (function(jaws) {
 
-/** @private
- * Cut out a rectangular piece of a an image, returns as canvas-element 
- */
-function cutImage(image, x, y, width, height) {
-  var cut = document.createElement("canvas")
-  cut.width = width
-  cut.height = height
-  
-  var ctx = cut.getContext("2d")
-  ctx.drawImage(image, x, y, width, height, 0, 0, cut.width, cut.height)
-  
-  return cut
-};
 
 /** 
  * @class Cut out invidual frames (images) from a larger spritesheet-image. "Field Summary" contains options for the SpriteSheet()-constructor.
@@ -1843,20 +1861,18 @@ function cutImage(image, x, y, width, height) {
 jaws.SpriteSheet = function SpriteSheet(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
-  this.orientation = options.orientation || "down"
-  this.frame_size = options.frame_size || [32,32]
-  this.frames = []
-  this.offset = options.offset || 0
-  
-  if(options.scale_image) {
-    var image = (jaws.isDrawable(options.image) ? options.image : jaws.assets.get(options.image))
-    this.frame_size[0] *= options.scale_image
-    this.frame_size[1] *= options.scale_image
-    options.image = jaws.gfx.retroScaleImage(image, options.scale_image)
+  jaws.parseOptions(this, options, this.default_options);
+  this.image = jaws.isDrawable(this.image) ? this.image : jaws.assets.data[this.image]
+
+  if(this.scale_image) {
+    var image = (jaws.isDrawable(this.image) ? this.image : jaws.assets.get(this.image))
+    this.frame_size[0] *= this.scale_image
+    this.frame_size[1] *= this.scale_image
+    this.image = jaws.gfx.retroScaleImage(image, this.scale_image)
   }
 
   var index = 0
+  this.frames = []
 
   // Cut out tiles from Top -> Bottom
   if(this.orientation == "down") {  
@@ -1876,12 +1892,35 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   }
 }
 
+jaws.SpriteSheet.prototype.default_options = {
+  image: null,
+  orientation: "down",
+  frame_size: [32,32],
+  offset: 0,
+  scale_image: null
+}
+
+/** @private
+ * Cut out a rectangular piece of a an image, returns as canvas-element 
+ */
+function cutImage(image, x, y, width, height) {
+  var cut = document.createElement("canvas")
+  cut.width = width
+  cut.height = height
+  
+  var ctx = cut.getContext("2d")
+  ctx.drawImage(image, x, y, width, height, 0, 0, cut.width, cut.height)
+  
+  return cut
+};
+
 jaws.SpriteSheet.prototype.toString = function() { return "[SpriteSheet " + this.frames.length + " frames]" }
 
 return jaws;
 })(jaws || {});
 
 var jaws = (function(jaws) {
+
 
 /** 
 * @class Manage a parallax scroller with different layers. "Field Summary" contains options for the Parallax()-constructor.
@@ -1903,13 +1942,16 @@ var jaws = (function(jaws) {
 */
 jaws.Parallax = function Parallax(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+  jaws.parseOptions(this, options, this.default_options)
+}
 
-  this.scale = options.scale || 1
-  this.repeat_x = options.repeat_x
-  this.repeat_y = options.repeat_y
-  this.camera_x = options.camera_x || 0
-  this.camera_y = options.camera_y || 0
-  this.layers = []
+jaws.Parallax.prototype.default_options = {
+  scale: 1,
+  repeat_x: null,
+  repeat_y: null,
+  camera_x: 0,
+  camera_y: 0,
+  layers: []
 }
 
 /** Draw all layers in parallax scroller */
@@ -1957,7 +1999,7 @@ jaws.Parallax.prototype.draw = function(options) {
 /** Add a new layer to the parallax scroller */
 jaws.Parallax.prototype.addLayer = function(options) {
   var layer = new jaws.ParallaxLayer(options)
-  layer.scale(this.scale)
+  layer.scaleAll(this.scale)
   this.layers.push(layer)
 }
 /** Debugstring for Parallax() */
@@ -2016,17 +2058,7 @@ var jaws = (function(jaws) {
 jaws.Animation = function Animation(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  this.options = options
-  this.frames = options.frames || []
-  this.frame_duration = options.frame_duration || 100   // default: 100ms between each frameswitch
-  this.index = options.index || 0                       // default: start with the very first frame
-  this.loop = (options.loop==undefined) ? 1 : options.loop
-  this.bounce = options.bounce || 0
-  this.frame_direction = 1
-  this.frame_size = options.frame_size
-  this.orientation = options.orientation || "down"
-  this.on_end = options.on_end || null
-  this.offset = options.offset || 0
+  jaws.parseOptions(this, options, this.default_options);
 
   if(options.scale_image) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
@@ -2046,6 +2078,20 @@ jaws.Animation = function Animation(options) {
   this.last_tick = (new Date()).getTime();
   this.sum_tick = 0
 }
+jaws.Animation.prototype.default_options = {
+  frames: [],
+  frame_duration: 100,  // default: 100ms between each frameswitch
+  index: 0,             // default: start with the very first frame
+  loop: 1,
+  bounce: 0,
+  frame_direction: 1,
+  frame_size: null,
+  orientation: "down",
+  on_end: null,
+  offset: 0,
+  scale_image: null,
+  sprite_sheet: null
+};
 
 /**
  Propells the animation forward by counting milliseconds and changing this.index accordingly
@@ -2155,17 +2201,20 @@ var jaws = (function(jaws) {
  * });
  *
  */
+
+
 jaws.Viewport = function ViewPort(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  this.options = options
-  this.context = options.context || jaws.context
-  this.width = options.width || jaws.width
-  this.height = options.height || jaws.height
-  this.max_x = options.max_x || jaws.width 
-  this.max_y = options.max_y || jaws.height
-  this.x = options.x || 0
-  this.y = options.y || 0
+  jaws.parseOptions(this, options, this.default_options)
+ 
+  /* This is needed cause default_options is set loadtime, we need to get width etc runtime */
+  if(!this.context) this.context = jaws.context;
+  if(!this.width)   this.width = jaws.width;
+  if(!this.height)  this.height = jaws.height;
+  if(!this.max_x)   this.max_x = jaws.width;
+  if(!this.max_y)   this.max_y = jaws.height;
+
   var that = this
 
   /** Move viewport x pixels horizontally and y pixels vertically */
@@ -2322,6 +2371,16 @@ jaws.Viewport = function ViewPort(options) {
   this.moveTo(options.x||0, options.y||0)
 }
 
+jaws.Viewport.prototype.default_options = {
+  context: null,
+  width: null,
+  height: null,
+  max_x: null,
+  max_y: null,
+  x: 0,
+  y: 0
+};
+
 jaws.Viewport.prototype.toString = function() { return "[Viewport " + this.x.toFixed(2) + ", " + this.y.toFixed(2) + ", " + this.width + ", " + this.height + "]" }
 
 return jaws;
@@ -2351,9 +2410,7 @@ var jaws = (function(jaws) {
 jaws.TileMap = function TileMap(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  this.cell_size = options.cell_size || [32,32]
-  this.size = options.size || [100,100]
-  this.sortFunction = options.sortFunction
+  jaws.parseOptions(this, options, this.default_options);
   this.cells = new Array(this.size[0])
 
   for(var col=0; col < this.size[0]; col++) {
@@ -2362,6 +2419,12 @@ jaws.TileMap = function TileMap(options) {
       this.cells[col][row] = [] // populate each cell with an empty array
     }
   }
+}
+
+jaws.TileMap.prototype.default_options = {
+  cell_size: [32,32],
+  size: [100,100],
+  sortFunction: null
 }
 
 /** Clear all cells in tile map */
