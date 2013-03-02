@@ -18,14 +18,6 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   jaws.parseOptions(this, options, this.default_options);
   this.image = jaws.isDrawable(this.image) ? this.image : jaws.assets.data[this.image]
 
-/*
-  this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
-  this.orientation = options.orientation || "down"
-  this.frame_size = options.frame_size || [32,32]
-  this.frames = []
-  this.offset = options.offset || 0
-*/
-
   if(this.scale_image) {
     var image = (jaws.isDrawable(this.image) ? this.image : jaws.assets.get(this.image))
     this.frame_size[0] *= this.scale_image
@@ -34,6 +26,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   }
 
   var index = 0
+  this.frames = []
 
   // Cut out tiles from Top -> Bottom
   if(this.orientation == "down") {  
@@ -57,7 +50,6 @@ jaws.SpriteSheet.prototype.default_options = {
   image: null,
   orientation: "down",
   frame_size: [32,32],
-  frames: [],
   offset: 0,
   scale_image: null
 }
