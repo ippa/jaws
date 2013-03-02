@@ -23,7 +23,6 @@ test("TileMap findPath usage", function () {
     tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:32}))
     
     var path_two = tile_map.findPath(start_position, end_position)
-    console.log(path_one, path_two)
     ok(path_two.length > path_one.length, "Wall added should force new path to be longer than first path")
     
     var wall_in_path = false
