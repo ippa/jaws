@@ -3,7 +3,7 @@ module("Parallax")
 test ("Performance test: repeat_x=false, repeat_y=false", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
+  jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -48,8 +48,8 @@ test ("Performance test: repeat_x=false, repeat_y=false", function() {
 
 test ("Performance test: repeat_x=true, repeat_y=false", function() {
 	stop();
-	jaws.init()
-	jaws.assets.root = "assets/";
+	jaws.init();
+  jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -95,7 +95,6 @@ test ("Performance test: repeat_x=true, repeat_y=false", function() {
 test ("Performance test: repeat_x=false, repeat_y=true", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -141,7 +140,6 @@ test ("Performance test: repeat_x=false, repeat_y=true", function() {
 test("Performance test: repeat_x=true, repeat_y=true", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -204,7 +202,6 @@ test("Performance test: repeat_x=true, repeat_y=true", function() {
 test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -253,7 +250,6 @@ test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect19.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -312,7 +308,6 @@ test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function
 test ("Accuracy test: repeat_x=true, repeat_y=false", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -395,7 +390,6 @@ test ("Accuracy test: repeat_x=true, repeat_y=false", function() {
 test ("Accuracy test: repeat_x=false, repeat_y=true", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -477,7 +471,6 @@ test ("Accuracy test: repeat_x=false, repeat_y=true", function() {
 test ("Accuracy test: repeat_x=true, repeat_y=true", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -600,7 +593,6 @@ test ("Accuracy test: repeat_x=true, repeat_y=true", function() {
 test ("Accuracy test: repeat_x=true, repeat_y=true, damping=2", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -725,7 +717,6 @@ test ("Accuracy test: repeat_x=true, repeat_y=true, damping=2", function() {
 test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (layer level)", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({
@@ -808,7 +799,6 @@ test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (layer level)", fu
 test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (parallax level)", function() {
 	stop();
 	jaws.init()
-	jaws.assets.root = "assets/";
 	jaws.assets.getOrLoad("rect.png", function(){
 	
 		parallax = new jaws.Parallax({

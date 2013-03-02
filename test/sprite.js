@@ -26,7 +26,7 @@ test("Sprite without image", function() {
 });
 
 test("Sprite", function() {
-  sprite = new jaws.Sprite({image: "rect.png", x:0, y:0})
+  sprite = new jaws.Sprite({image: "assets/rect.png", x:0, y:0})
   equal(sprite.width, 20, "sprite.width")  
   equal(sprite.height, 20, "sprite.height")
 

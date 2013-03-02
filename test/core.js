@@ -6,6 +6,10 @@
     });
 */
 
+test("Setup", function() {
+  jaws.assets.root = "assets/";
+})
+
 test("Various", function() {
   same(jaws.forceArray(1), [1], "forceArray should always return an array")
   same(jaws.forceArray([1,2,3]), [1,2,3], "forceArray should always return an array")      

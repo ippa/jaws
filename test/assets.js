@@ -14,7 +14,6 @@ test("json assets, onload-callback", function() {
 test("assets advanced", function() {
   stop()
 
-  jaws.assets.root = "assets/"
   jaws.assets.load(
     "rect.png", 
     function() { ok(jaws.assets.get("rect.png"), "load-callback loaded image"); start() },
@@ -44,7 +43,6 @@ test("image asset with 404s", function() {
 
 test("assets loadAll", function() {
   jaws.assets.image_to_canvas = false
-  jaws.assets.root = "assets/"
   jaws.assets.add("droid_11x15.png")
   jaws.assets.add("gamedata.json")
   jaws.assets.add("player.png")
