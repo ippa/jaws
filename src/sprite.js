@@ -57,7 +57,9 @@ jaws.Sprite.prototype.default_options = {
   damping: 1,
   scale_x: 1,
   scale_y: 1,
-  scale: 1
+  scale: 1,
+  _constructor: null,
+  dom: null
 }
 
 /** 
