@@ -43,7 +43,7 @@ jaws.Sprite = function Sprite(options) {
   }
 }
 
-jaws.Sprite.default_options = {
+jaws.Sprite.prototype.default_options = {
   x: 0, 
   y: 0, 
   alpha: 1,
