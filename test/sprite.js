@@ -1,5 +1,10 @@
 module("Sprite")
 
+test("Sprite special options", function() {
+  sprite = new jaws.Sprite({dom: null, _constructor: "Troll"})
+  same(sprite.options["_constructor"], "Troll")
+});
+
 test("Sprite defaults", function() {
   sprite = new jaws.Sprite({})
   same(sprite.x, 0, "x defaults to 0")
