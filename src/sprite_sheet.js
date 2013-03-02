@@ -54,7 +54,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
 }
 
 jaws.SpriteSheet.prototype.default_options = {
-  image: "",
+  image: null,
   orientation: "down",
   frame_size: [32,32],
   frames: [],
