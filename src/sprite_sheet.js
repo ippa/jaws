@@ -16,8 +16,16 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
   jaws.parseOptions(this, options, this.default_options);
-  this.image = jaws.isDrawable(this.image) ? this.image : jaws.assets.data[this.image]
 
+  /* Detect framesize from filename, example: droid_10x16.png means each frame is 10px high and 16px wide */
+  if(jaws.isString(this.image) && !options.frame_size) {
+    var regexp = new RegExp("_(\\d+)x(\\d+)", "g");
+    var sizes = regexp.exec(this.image)
+    this.frame_size[0] = parseInt(sizes[1])
+    this.frame_size[1] = parseInt(sizes[2])
+  }
+
+  this.image = jaws.isDrawable(this.image) ? this.image : jaws.assets.data[this.image]
   if(this.scale_image) {
     var image = (jaws.isDrawable(this.image) ? this.image : jaws.assets.get(this.image))
     this.frame_size[0] *= this.scale_image
