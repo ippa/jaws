@@ -1,5 +1,7 @@
 var jaws = (function(jaws) {
 
+
+
 /** 
 * @class Manage a parallax scroller with different layers. "Field Summary" contains options for the Parallax()-constructor.
 * @constructor
@@ -20,13 +22,16 @@ var jaws = (function(jaws) {
 */
 jaws.Parallax = function Parallax(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
+  jaws.parseOptions(this, options, this.default_options)
+}
 
-  this.scale = options.scale || 1
-  this.repeat_x = options.repeat_x
-  this.repeat_y = options.repeat_y
-  this.camera_x = options.camera_x || 0
-  this.camera_y = options.camera_y || 0
-  this.layers = []
+jaws.Parallax.default_options = {
+  scale: 1,
+  repeat_x: null,
+  repeat_y: null,
+  camera_x: 0,
+  camera_y: 0,
+  layers: []
 }
 
 /** Draw all layers in parallax scroller */
