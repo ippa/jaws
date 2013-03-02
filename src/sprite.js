@@ -48,6 +48,8 @@ jaws.Sprite = function Sprite(options) {
  * Call setters from JSON object. Used to parse options.
  */
 jaws.Sprite.prototype.set = function(options) {
+  jaws.verifyOptions(options, ["x","y","scale_x","scale_y","alpha","angle","flipped","anchor","anchor_x","anchor_y","image","scale_image"]);
+
   this.scale_x = this.scale_y = (options.scale || 1)
   this.x = options.x || 0
   this.y = options.y || 0
