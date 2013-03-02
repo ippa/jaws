@@ -33,7 +33,7 @@ jaws.TileMap = function TileMap(options) {
   }
 }
 
-jaws.TileMap.default_options = {
+jaws.TileMap.prototype.default_options = {
   cell_size: [32,32],
   size: [100,100],
   sortFunction: null
