@@ -28,17 +28,22 @@ function cutImage(image, x, y, width, height) {
 jaws.SpriteSheet = function SpriteSheet(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
+  jaws.parseOptions(this, options, this.default_options);
+  this.image = jaws.isDrawable(this.image) ? this.image : jaws.assets.data[this.image]
+
+/*
   this.image = jaws.isDrawable(options.image) ? options.image : jaws.assets.data[options.image]
   this.orientation = options.orientation || "down"
   this.frame_size = options.frame_size || [32,32]
   this.frames = []
   this.offset = options.offset || 0
-  
-  if(options.scale_image) {
-    var image = (jaws.isDrawable(options.image) ? options.image : jaws.assets.get(options.image))
-    this.frame_size[0] *= options.scale_image
-    this.frame_size[1] *= options.scale_image
-    options.image = jaws.gfx.retroScaleImage(image, options.scale_image)
+*/
+
+  if(this.scale_image) {
+    var image = (jaws.isDrawable(this.image) ? this.image : jaws.assets.get(this.image))
+    this.frame_size[0] *= this.scale_image
+    this.frame_size[1] *= this.scale_image
+    this.image = jaws.gfx.retroScaleImage(image, this.scale_image)
   }
 
   var index = 0
@@ -59,6 +64,15 @@ jaws.SpriteSheet = function SpriteSheet(options) {
       }
     }
   }
+}
+
+jaws.SpriteSheet.protoype.default_options = {
+  image: null,
+  orientation: "down",
+  frame_size: [32,32],
+  frames: [],
+  offset: 0,
+  scale_image: null
 }
 
 jaws.SpriteSheet.prototype.toString = function() { return "[SpriteSheet " + this.frames.length + " frames]" }
