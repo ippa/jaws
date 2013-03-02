@@ -1,18 +1,5 @@
 var jaws = (function(jaws) {
 
-/** @private
- * Cut out a rectangular piece of a an image, returns as canvas-element 
- */
-function cutImage(image, x, y, width, height) {
-  var cut = document.createElement("canvas")
-  cut.width = width
-  cut.height = height
-  
-  var ctx = cut.getContext("2d")
-  ctx.drawImage(image, x, y, width, height, 0, 0, cut.width, cut.height)
-  
-  return cut
-};
 
 /** 
  * @class Cut out invidual frames (images) from a larger spritesheet-image. "Field Summary" contains options for the SpriteSheet()-constructor.
@@ -74,6 +61,20 @@ jaws.SpriteSheet.protoype.default_options = {
   offset: 0,
   scale_image: null
 }
+
+/** @private
+ * Cut out a rectangular piece of a an image, returns as canvas-element 
+ */
+function cutImage(image, x, y, width, height) {
+  var cut = document.createElement("canvas")
+  cut.width = width
+  cut.height = height
+  
+  var ctx = cut.getContext("2d")
+  ctx.drawImage(image, x, y, width, height, 0, 0, cut.width, cut.height)
+  
+  return cut
+};
 
 jaws.SpriteSheet.prototype.toString = function() { return "[SpriteSheet " + this.frames.length + " frames]" }
 
