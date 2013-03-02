@@ -355,6 +355,7 @@ jaws.getUrlParameters = function() {
  * Used in all major constructors like Sprite() and so on.
  */
 jaws.parseOptions = function(object, options, defaults) {
+  object["options"] = options;
 
   for(option in options) {
     if(defaults[option] === undefined) {
