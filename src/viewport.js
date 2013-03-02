@@ -27,17 +27,11 @@ var jaws = (function(jaws) {
  * });
  *
  */
+
+
 jaws.Viewport = function ViewPort(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
-
-  this.options = options
-  this.context = options.context || jaws.context
-  this.width = options.width || jaws.width
-  this.height = options.height || jaws.height
-  this.max_x = options.max_x || jaws.width 
-  this.max_y = options.max_y || jaws.height
-  this.x = options.x || 0
-  this.y = options.y || 0
+  jaws.parseOptions(this, options, this.default_options)
   var that = this
 
   /** Move viewport x pixels horizontally and y pixels vertically */
@@ -192,6 +186,16 @@ jaws.Viewport = function ViewPort(options) {
   };
  
   this.moveTo(options.x||0, options.y||0)
+}
+
+jaws.Viewport.prototype.default_options = {
+  context: jaws.context,
+  width: jaws.width,
+  height: jaws.height,
+  max_x: jaws.max_x,
+  max_y: jaws.max_y,
+  x: 0,
+  y: 0
 }
 
 jaws.Viewport.prototype.toString = function() { return "[Viewport " + this.x.toFixed(2) + ", " + this.y.toFixed(2) + ", " + this.width + ", " + this.height + "]" }
