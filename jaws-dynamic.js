@@ -23,6 +23,7 @@
         root+"parallax.js",
         root+"animation.js",
         root+"tile_map.js",
+        root+"tile_map_extra.js",
         root+"viewport.js",
         root+"collision_detection.js",
         root+"gfx.js")
