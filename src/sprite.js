@@ -24,7 +24,6 @@ var jaws = (function(jaws) {
 jaws.Sprite = function Sprite(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  this.options = options
   this.set(options)  
   
   if(options.context) { 
