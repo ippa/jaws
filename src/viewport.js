@@ -32,7 +32,6 @@ var jaws = (function(jaws) {
 jaws.Viewport = function ViewPort(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  console.log(this.default_options)
   jaws.parseOptions(this, options, this.default_options)
  
   /* This is needed cause default_options is set loadtime, we need to get width etc runtime */
