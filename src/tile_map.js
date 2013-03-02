@@ -22,9 +22,7 @@ var jaws = (function(jaws) {
 jaws.TileMap = function TileMap(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  this.cell_size = options.cell_size || [32,32]
-  this.size = options.size || [100,100]
-  this.sortFunction = options.sortFunction
+  jaws.parseOptions(this, options, this.default_options);
   this.cells = new Array(this.size[0])
 
   for(var col=0; col < this.size[0]; col++) {
@@ -33,6 +31,12 @@ jaws.TileMap = function TileMap(options) {
       this.cells[col][row] = [] // populate each cell with an empty array
     }
   }
+}
+
+jaws.TileMap.default_options = {
+  cell_size: [32,32],
+  size: [100,100],
+  sortFunction: null
 }
 
 /** Clear all cells in tile map */
