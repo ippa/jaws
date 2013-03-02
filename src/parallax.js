@@ -78,7 +78,7 @@ jaws.Parallax.prototype.draw = function(options) {
 /** Add a new layer to the parallax scroller */
 jaws.Parallax.prototype.addLayer = function(options) {
   var layer = new jaws.ParallaxLayer(options)
-  layer.scale(this.scale)
+  layer.scaleAll(this.scale)
   this.layers.push(layer)
 }
 /** Debugstring for Parallax() */
