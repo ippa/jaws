@@ -35,10 +35,11 @@ jaws.Viewport = function ViewPort(options) {
   jaws.parseOptions(this, options, this.default_options)
  
   /* This is needed cause default_options is set loadtime, we need to get width etc runtime */
-  if(this.width === undefined)  this.width = jaws.width;
-  if(this.height === undefined) this.height = jaws.height;
-  if(this.max_x === undefined)  this.max_x = jaws.width;
-  if(this.max_y === undefined)  this.max_y = jaws.height;
+  if(!this.context) this.context = jaws.context;
+  if(!this.width)   this.width = jaws.width;
+  if(!this.height)  this.height = jaws.height;
+  if(!this.max_x)   this.max_x = jaws.width;
+  if(!this.max_y)   this.max_y = jaws.height;
 
   var that = this
 
@@ -197,7 +198,7 @@ jaws.Viewport = function ViewPort(options) {
 }
 
 jaws.Viewport.prototype.default_options = {
-  context: jaws.context,
+  context: null,
   width: null,
   height: null,
   max_x: null,
