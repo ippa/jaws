@@ -6,9 +6,9 @@
     });
 */
 
-test("Setup", function() {
+QUnit.testStart( function() {
   jaws.assets.root = "assets/";
-})
+});
 
 test("Various", function() {
   same(jaws.forceArray(1), [1], "forceArray should always return an array")

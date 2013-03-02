@@ -16,22 +16,30 @@ test("Sprite defaults", function() {
 
 test("Sprite without image", function() {
   sprite = new jaws.Sprite({x:0, y:0})
-  equal(sprite.image, undefined, "has no image")
+  equal(sprite.image, null, "has no image")
   equal(sprite.width, undefined, "has no width")
   equal(sprite.height, undefined, "has no width")
-  
-  sprite.setImage("rect.png")
-  equal(sprite.width, 20, "gets width after setImage()");
-  equal(sprite.height, 20, "gets height after setImage()");
-});
-
-test("Sprite", function() {
-  jaws.assets.add("assets/rect.png")
+ 
+  jaws.assets.root = "assets/"
+  jaws.assets.add("rect.png")
   jaws.assets.loadAll({onfinish:assetsLoaded})
   stop();
 
   function assetsLoaded() {
-    sprite = new jaws.Sprite({image: "assets/rect.png", x:0, y:0})
+    sprite.setImage("rect.png")
+    equal(sprite.width, 20, "gets width after setImage()");
+    equal(sprite.height, 20, "gets height after setImage()");
+    start();
+  }
+});
+
+test("Sprite", function() {
+  jaws.assets.add("rect.png")
+  jaws.assets.loadAll({onfinish:assetsLoaded})
+  stop();
+
+  function assetsLoaded() {
+    sprite = new jaws.Sprite({image: "rect.png", x:0, y:0})
     equal(sprite.width, 20, "sprite.width")  
     equal(sprite.height, 20, "sprite.height")
   
@@ -91,6 +99,7 @@ test("Sprite", function() {
     sprite2 = new jaws.Sprite({image: "rect.png", scale_image: 2})
     equal(sprite2.width, 40, "Sprite({scale_image: 2}) and sprite.width")  
     equal(sprite2.height, 40, "Sprite({scale_image: 2}) and sprite.height")
+    start();
   }
 })
 

@@ -10,30 +10,37 @@ test("Empty Sprite List", function() {
 })
 
 test("Load Objects", function() {
-  var sprite_list = new jaws.SpriteList()
-  var sprite_one = new jaws.Sprite({image: "assets/rect.png"})
-  sprite_one.setImage("rect.png")
-  sprite_one.x = 10
-  var sprite_two = new jaws.Sprite({image: "assets/rect.png"})
-  sprite_two.setImage("rect.png")
-  sprite_two.x = 20
-  
-  ok(sprite_one.width, 'sprite_one should have a width, after calling setImage()')
-  ok(sprite_two.width, 'sprite_two should have a width, after calling setImage()')
-  
-  sprite_list.load([sprite_one, sprite_two])
-  same(sprite_list.length, 2, "should contain two sprites after loading")
-  same(sprite_list.at(0).x, 10)
-  same(sprite_list.at(1).x, 20)
+  jaws.assets.root = "assets/"
+  jaws.assets.add("rect.png")
+  jaws.assets.loadAll({onfinish:assetsLoaded})
+  stop();
 
-  ok(sprite_list.at(0).width, 'sprite_one should have a width, after being loaded into a SpriteList')
-  ok(sprite_list.at(1).width, 'sprite_two should have a width, after being loaded into a SpriteList')
+  function assetsLoaded() {
+    var sprite_list = new jaws.SpriteList()
+    var sprite_one = new jaws.Sprite({image: "rect.png"})
+    sprite_one.setImage("rect.png")
+    sprite_one.x = 10
+    var sprite_two = new jaws.Sprite({image: "rect.png"})
+    sprite_two.setImage("rect.png")
+    sprite_two.x = 20
+    
+    ok(sprite_one.width, 'sprite_one should have a width, after calling setImage()')
+    ok(sprite_two.width, 'sprite_two should have a width, after calling setImage()')
+    
+    sprite_list.load([sprite_one, sprite_two])
+    same(sprite_list.length, 2, "should contain two sprites after loading")
+    same(sprite_list.at(0).x, 10)
+    same(sprite_list.at(1).x, 20)
   
-  var new_sprite_list = new jaws.SpriteList([sprite_one, sprite_two])
-  same(new_sprite_list.length, 2, "should contain two sprites after loading (via constructor)")
-  same(sprite_list.at(0).x, 10)
-  same(sprite_list.at(1).x, 20)
-  
+    ok(sprite_list.at(0).width, 'sprite_one should have a width, after being loaded into a SpriteList')
+    ok(sprite_list.at(1).width, 'sprite_two should have a width, after being loaded into a SpriteList')
+    
+    var new_sprite_list = new jaws.SpriteList([sprite_one, sprite_two])
+    same(new_sprite_list.length, 2, "should contain two sprites after loading (via constructor)")
+    same(sprite_list.at(0).x, 10)
+    same(sprite_list.at(1).x, 20)
+    start();
+  }
 })
 
 test("Push and toString", function() {
