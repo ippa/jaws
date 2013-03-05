@@ -31,17 +31,17 @@ jaws.Animation = function Animation(options) {
 
   jaws.parseOptions(this, options, this.default_options);
 
+  if(options.sprite_sheet) {
+    var sprite_sheet = new jaws.SpriteSheet({image: options.sprite_sheet, scale_image: this.scale_image, frame_size: this.frame_size, orientation: this.orientation, offset: this.offset})
+    this.frames = sprite_sheet.frames
+    this.frame_size = sprite_sheet.frame_size
+  }
+
   if(options.scale_image) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
     this.frame_size[0] *= options.scale_image
     this.frame_size[1] *= options.scale_image
     options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.scale_image)
-  }
-
-  if(options.sprite_sheet) {
-    var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
-    var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: this.frame_size, orientation: this.orientation, offset: this.offset})
-    this.frames = sprite_sheet.frames
   }
 
   /* Initializing timer-stuff */
