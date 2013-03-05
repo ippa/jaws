@@ -232,7 +232,7 @@ jaws.Assets = function Assets() {
    * It's called once per finished asset with a single argument, percect (0-100) of the total assets finished.
    *
    * If you want to paint your own loading screen:
-   *   jaws.assets.displayProgress = function(percent_done) { /* your elite code */ }
+   *   jaws.assets.displayProgress = function(percent_done) { ... your elite code ... }
    */
   this.displayProgress = function(percent_done) {
     if(!jaws.context) return;
