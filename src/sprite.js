@@ -53,7 +53,7 @@ jaws.Sprite.prototype.default_options = {
   image: null,
   image_path: null,
   anchor: null,
-  scale_image: 1,
+  scale_image: null,
   damping: 1,
   scale_x: 1,
   scale_y: 1,
