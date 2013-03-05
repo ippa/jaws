@@ -231,8 +231,11 @@ jaws.Sprite.prototype.cacheOffsets = function() {
 
 /** Returns a jaws.Rect() perfectly surrouning sprite. Also cache rect in this.cached_rect. */
 jaws.Sprite.prototype.rect = function() {
-  if(!this.cached_rect) this.cached_rect = new jaws.Rect(this.x, this.top, this.width, this.height)
-  this.cached_rect.moveTo(this.x - this.left_offset, this.y - this.top_offset)
+  if(!this.cached_rect) this.cached_rect = new jaws.Rect(this.x, this.y, this.width, this.height)
+
+  if(!isNaN(this.left_offset) && !isNaN(this.top_offset)) {
+    this.cached_rect.moveTo(this.x - this.left_offset, this.y - this.top_offset)
+  }
   return this.cached_rect
 } 
 
