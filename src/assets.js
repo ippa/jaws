@@ -4,7 +4,7 @@ var jaws = (function(jaws) {
  * @class Loads and processes assets as images, sound, video, json
  * Used internally by JawsJS to create <b>jaws.assets</b>
  *
- * @property {bool} bust_cache              Add random arguments to assets-url to bypass any cache
+ * @property {bool} bust_cache              Add a random argument-string to assets-urls when loading to bypass any cache
  * @property {bool} fuchia_to_transparent   Convert the color fuchia to transparent when loading .bmp-files
  * @proparty {bool} image_to_canvas         Convert all image assets to canvas internally
  * @proparty {string} root                  Rootdir from where all assets are loaded
