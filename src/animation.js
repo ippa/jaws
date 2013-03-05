@@ -48,9 +48,19 @@ jaws.Animation = function Animation(options) {
   this.current_tick = (new Date()).getTime();
   this.last_tick = (new Date()).getTime();
   this.sum_tick = 0
+
+  if(options.subsets) {
+    this.subsets = {}
+    for(subset in options.subsets) {
+      start_stop = options.subsets[subset]
+      this.subsets[subset] = this.slice(start_stop[0], start_stop[1])
+    }
+  }
 }
+
 jaws.Animation.prototype.default_options = {
   frames: [],
+  subsets: [],
   frame_duration: 100,  // default: 100ms between each frameswitch
   index: 0,             // default: start with the very first frame
   loop: 1,
@@ -62,7 +72,15 @@ jaws.Animation.prototype.default_options = {
   offset: 0,
   scale_image: null,
   sprite_sheet: null
-};
+}
+
+/**
+ * Return a special animationsubset created with "subset"-parameter when initializing
+ *
+ */
+jaws.Animation.prototype.subset = function(subset) {
+  return this.subsets[subset]
+}
 
 /**
  Propells the animation forward by counting milliseconds and changing this.index accordingly
