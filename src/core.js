@@ -166,35 +166,20 @@ function saveMousePosition(e) {
 jaws.start = function(game_state, options,game_state_setup_options) {
   if(!options) options = {};
   var fps = options.fps || 60
-  if (options.loading_screen === undefined)
-    options.loading_screen = true
-  
-  if(!options.width) options.width = 500; 
-  if(!options.height) options.height = 300;
+  if(options.loading_screen === undefined)  options.loading_screen = true;
+  if(!options.width)                        options.width = 500; 
+  if(!options.height)                       options.height = 300;
   jaws.init(options)
 
-  displayProgress(0)
+  if(options.loading_screen) { jaws.assets.displayProgress(0) }
+
   jaws.log("setupInput()", true)
   jaws.setupInput()
 
-  function displayProgress(percent_done) {
-    if(jaws.context && options.loading_screen) {
-      jaws.context.save()
-      jaws.context.fillStyle  = "black"
-      jaws.context.fillRect(0, 0, jaws.width, jaws.height);
-      jaws.context.textAlign  = "center"
-      jaws.context.fillStyle  = "white"
-      jaws.context.font       = "15px terminal";
-      jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
-      jaws.context.font       = "bold 30px terminal";
-      jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
-      jaws.context.restore()
-    }
-  }
   /* Callback for when one single assets has been loaded */
   function assetLoaded(src, percent_done) {
-    jaws.log( percent_done + "%: " + src, true)    
-    displayProgress(percent_done)
+    jaws.log(percent_done + "%: " + src, true)
+    if(options.loading_screen) { jaws.assets.displayProgress(percent_done) }
   }
 
   /* Callback for when an asset can't be loaded*/
@@ -205,7 +190,7 @@ jaws.start = function(game_state, options,game_state_setup_options) {
   /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
-    jaws.switchGameState(game_state||window, {fps: fps},game_state_setup_options)
+    jaws.switchGameState(game_state||window, {fps: fps}, game_state_setup_options)
   }
 
   jaws.log("assets.loadAll()", true)

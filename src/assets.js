@@ -226,6 +226,31 @@ jaws.Assets = function Assets() {
       that.onfinish = null
     }
   }
+  this.displayProgress = function(percent_done) {
+    if(!jaws.context) return;
+    
+    jaws.context.save()
+    jaws.context.fillStyle  = "black"
+    jaws.context.fillRect(0, 0, jaws.width, jaws.height)
+
+    jaws.context.fillStyle  = "white"
+    jaws.context.strokeStyle  = "white"
+    jaws.context.textAlign  = "center"
+    
+    jaws.context.strokeRect(50-1, (jaws.height/2)-30-1, jaws.width-100+2, 60+2)
+    jaws.context.fillRect(50, (jaws.height/2)-30, ((jaws.width-100)/100)*percent_done, 60)
+   
+    jaws.context.font       = "11px verdana"
+    jaws.context.fillText("Loading game ... " + percent_done + "%", jaws.width/2, jaws.height/2-35)
+
+    jaws.context.font       = "11px verdana"
+    jaws.context.fillStyle = "#ccc"
+    jaws.context.textBaseline = "bottom"
+    jaws.context.fillText("powered by www.jawsjs.com", jaws.width/2, jaws.height-1)
+
+    jaws.context.restore()
+  }
+
 }
 
 /** @private
