@@ -21,6 +21,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   if(jaws.isString(this.image) && !options.frame_size) {
     var regexp = new RegExp("_(\\d+)x(\\d+)", "g");
     var sizes = regexp.exec(this.image)
+    this.frame_size = []
     this.frame_size[0] = parseInt(sizes[1])
     this.frame_size[1] = parseInt(sizes[2])
   }
