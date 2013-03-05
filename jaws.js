@@ -1043,7 +1043,7 @@ jaws.Rect.prototype.getPosition = function() {
 }
 
 /** Move rect x pixels horizontally and y pixels vertically */
-jaws.Rect.prototype.move = function(x,y) {
+jaws.Rect.prototype.move = function(x, y) {
   this.x += x
   this.y += y
   this.right += x
@@ -1052,7 +1052,7 @@ jaws.Rect.prototype.move = function(x,y) {
 }
 
 /** Set rects x/y */
-jaws.Rect.prototype.moveTo = function(x,y) {
+jaws.Rect.prototype.moveTo = function(x, y) {
   this.x = x
   this.y = y
   this.right = this.x + this.width
@@ -1060,7 +1060,7 @@ jaws.Rect.prototype.moveTo = function(x,y) {
   return this
 }
 /** Modify width and height */
-jaws.Rect.prototype.resize = function(width,height) {
+jaws.Rect.prototype.resize = function(width, height) {
   this.width += width
   this.height += height
   this.right = this.x + this.width
@@ -1068,7 +1068,7 @@ jaws.Rect.prototype.resize = function(width,height) {
   return this
 }
 /** Set width and height */
-jaws.Rect.prototype.resizeTo = function(width,height) {
+jaws.Rect.prototype.resizeTo = function(width, height) {
   this.width = width
   this.height = height
   this.right = this.x + this.width
@@ -1165,7 +1165,7 @@ jaws.Sprite.prototype.default_options = {
   image: null,
   image_path: null,
   anchor: null,
-  scale_image: 1,
+  scale_image: null,
   damping: 1,
   scale_x: 1,
   scale_y: 1,
@@ -1224,7 +1224,10 @@ jaws.Sprite.prototype.setImage =      function(value) {
     if(jaws.assets.isLoaded(value)) { this.image = jaws.assets.get(value); this.cacheOffsets(); }
 
     // Not loaded? Load it with callback to set image.
-    else { jaws.assets.load(value, function() { that.image = jaws.assets.get(value); that.cacheOffsets(); }) }
+    else {
+      console.log("WARNING: Image '" + value + "' not preloaded with jaws.assets.add(). Image and a working sprite.rect() will be delayed.")
+      jaws.assets.load(value, function() { that.image = jaws.assets.get(value); that.cacheOffsets(); }) 
+    }
   }
   return this
 }
@@ -1340,8 +1343,11 @@ jaws.Sprite.prototype.cacheOffsets = function() {
 
 /** Returns a jaws.Rect() perfectly surrouning sprite. Also cache rect in this.cached_rect. */
 jaws.Sprite.prototype.rect = function() {
-  if(!this.cached_rect) this.cached_rect = new jaws.Rect(this.x, this.top, this.width, this.height)
-  this.cached_rect.moveTo(this.x - this.left_offset, this.y - this.top_offset)
+  if(!this.cached_rect) this.cached_rect = new jaws.Rect(this.x, this.y, this.width, this.height)
+
+  if(!isNaN(this.left_offset) && !isNaN(this.top_offset)) {
+    this.cached_rect.moveTo(this.x - this.left_offset, this.y - this.top_offset)
+  }
   return this.cached_rect
 } 
 
@@ -1862,8 +1868,16 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
   jaws.parseOptions(this, options, this.default_options);
-  this.image = jaws.isDrawable(this.image) ? this.image : jaws.assets.data[this.image]
 
+  /* Detect framesize from filename, example: droid_10x16.png means each frame is 10px high and 16px wide */
+  if(jaws.isString(this.image) && !options.frame_size) {
+    var regexp = new RegExp("_(\\d+)x(\\d+)", "g");
+    var sizes = regexp.exec(this.image)
+    this.frame_size[0] = parseInt(sizes[1])
+    this.frame_size[1] = parseInt(sizes[2])
+  }
+
+  this.image = jaws.isDrawable(this.image) ? this.image : jaws.assets.data[this.image]
   if(this.scale_image) {
     var image = (jaws.isDrawable(this.image) ? this.image : jaws.assets.get(this.image))
     this.frame_size[0] *= this.scale_image
