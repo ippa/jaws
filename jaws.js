@@ -166,35 +166,20 @@ function saveMousePosition(e) {
 jaws.start = function(game_state, options,game_state_setup_options) {
   if(!options) options = {};
   var fps = options.fps || 60
-  if (options.loading_screen === undefined)
-    options.loading_screen = true
-  
-  if(!options.width) options.width = 500; 
-  if(!options.height) options.height = 300;
+  if(options.loading_screen === undefined)  options.loading_screen = true;
+  if(!options.width)                        options.width = 500; 
+  if(!options.height)                       options.height = 300;
   jaws.init(options)
 
-  displayProgress(0)
+  if(options.loading_screen) { jaws.assets.displayProgress(0) }
+
   jaws.log("setupInput()", true)
   jaws.setupInput()
 
-  function displayProgress(percent_done) {
-    if(jaws.context && options.loading_screen) {
-      jaws.context.save()
-      jaws.context.fillStyle  = "black"
-      jaws.context.fillRect(0, 0, jaws.width, jaws.height);
-      jaws.context.textAlign  = "center"
-      jaws.context.fillStyle  = "white"
-      jaws.context.font       = "15px terminal";
-      jaws.context.fillText("Loading", jaws.width/2, jaws.height/2-30);
-      jaws.context.font       = "bold 30px terminal";
-      jaws.context.fillText(percent_done + "%", jaws.width/2, jaws.height/2);
-      jaws.context.restore()
-    }
-  }
   /* Callback for when one single assets has been loaded */
   function assetLoaded(src, percent_done) {
-    jaws.log( percent_done + "%: " + src, true)    
-    displayProgress(percent_done)
+    jaws.log(percent_done + "%: " + src, true)
+    if(options.loading_screen) { jaws.assets.displayProgress(percent_done) }
   }
 
   /* Callback for when an asset can't be loaded*/
@@ -205,7 +190,7 @@ jaws.start = function(game_state, options,game_state_setup_options) {
   /* Callback for when all assets are loaded */
   function assetsLoaded() {
     jaws.log("all assets loaded", true)
-    jaws.switchGameState(game_state||window, {fps: fps},game_state_setup_options)
+    jaws.switchGameState(game_state||window, {fps: fps}, game_state_setup_options)
   }
 
   jaws.log("assets.loadAll()", true)
@@ -630,7 +615,7 @@ var jaws = (function(jaws) {
  * @class Loads and processes assets as images, sound, video, json
  * Used internally by JawsJS to create <b>jaws.assets</b>
  *
- * @property {bool} bust_cache              Add random arguments to assets-url to bypass any cache
+ * @property {bool} bust_cache              Add a random argument-string to assets-urls when loading to bypass any cache
  * @property {bool} fuchia_to_transparent   Convert the color fuchia to transparent when loading .bmp-files
  * @proparty {bool} image_to_canvas         Convert all image assets to canvas internally
  * @proparty {string} root                  Rootdir from where all assets are loaded
@@ -852,6 +837,39 @@ jaws.Assets = function Assets() {
       that.onfinish = null
     }
   }
+
+  /*
+   * This is called when assets are loaded, for example by using jaws.start().
+   * It's called once per finished asset with a single argument, percect (0-100) of the total assets finished.
+   *
+   * If you want to paint your own loading screen:
+   *   jaws.assets.displayProgress = function(percent_done) { ... your elite code ... }
+   */
+  this.displayProgress = function(percent_done) {
+    if(!jaws.context) return;
+    
+    jaws.context.save()
+    jaws.context.fillStyle  = "black"
+    jaws.context.fillRect(0, 0, jaws.width, jaws.height)
+
+    jaws.context.fillStyle  = "white"
+    jaws.context.strokeStyle  = "white"
+    jaws.context.textAlign  = "center"
+    
+    jaws.context.strokeRect(50-1, (jaws.height/2)-30-1, jaws.width-100+2, 60+2)
+    jaws.context.fillRect(50, (jaws.height/2)-30, ((jaws.width-100)/100)*percent_done, 60)
+   
+    jaws.context.font       = "11px verdana"
+    jaws.context.fillText("Loading game ... " + percent_done + "%", jaws.width/2, jaws.height/2-35)
+
+    jaws.context.font       = "11px verdana"
+    jaws.context.fillStyle = "#ccc"
+    jaws.context.textBaseline = "bottom"
+    jaws.context.fillText("powered by www.jawsjs.com", jaws.width/2, jaws.height-1)
+
+    jaws.context.restore()
+  }
+
 }
 
 /** @private
