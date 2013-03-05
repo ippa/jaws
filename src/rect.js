@@ -29,7 +29,7 @@ jaws.Rect.prototype.getPosition = function() {
 }
 
 /** Move rect x pixels horizontally and y pixels vertically */
-jaws.Rect.prototype.move = function(x,y) {
+jaws.Rect.prototype.move = function(x, y) {
   this.x += x
   this.y += y
   this.right += x
@@ -38,7 +38,7 @@ jaws.Rect.prototype.move = function(x,y) {
 }
 
 /** Set rects x/y */
-jaws.Rect.prototype.moveTo = function(x,y) {
+jaws.Rect.prototype.moveTo = function(x, y) {
   this.x = x
   this.y = y
   this.right = this.x + this.width
@@ -46,7 +46,7 @@ jaws.Rect.prototype.moveTo = function(x,y) {
   return this
 }
 /** Modify width and height */
-jaws.Rect.prototype.resize = function(width,height) {
+jaws.Rect.prototype.resize = function(width, height) {
   this.width += width
   this.height += height
   this.right = this.x + this.width
@@ -54,7 +54,7 @@ jaws.Rect.prototype.resize = function(width,height) {
   return this
 }
 /** Set width and height */
-jaws.Rect.prototype.resizeTo = function(width,height) {
+jaws.Rect.prototype.resizeTo = function(width, height) {
   this.width = width
   this.height = height
   this.right = this.x + this.width
