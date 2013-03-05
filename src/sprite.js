@@ -112,7 +112,10 @@ jaws.Sprite.prototype.setImage =      function(value) {
     if(jaws.assets.isLoaded(value)) { this.image = jaws.assets.get(value); this.cacheOffsets(); }
 
     // Not loaded? Load it with callback to set image.
-    else { jaws.assets.load(value, function() { that.image = jaws.assets.get(value); that.cacheOffsets(); }) }
+    else {
+      console.log("WARNING: Image '" + value + "' not preloaded with jaws.assets.add(). Image and a working sprite.rect() will be delayed.")
+      jaws.assets.load(value, function() { that.image = jaws.assets.get(value); that.cacheOffsets(); }) 
+    }
   }
   return this
 }
