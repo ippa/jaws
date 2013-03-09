@@ -7,10 +7,10 @@ test("Sprite without pre-loaded image", function() {
   var rect = sprite.rect();
   same(rect.x, 0, "rect.x should be 0 no matter if image is preloaded or not")
   same(rect.y, 0, "rect.y should be 0 no matter if image is preloaded or not")
-  same(rect.right, NaN, "undefined rect.right since image isn't preloaded")
-  same(rect.bottom, NaN, "undefined rect.bottom since image isn't preloaded")
-  same(rect.width, NaN, "undefined rect.width since image isn't preloaded")
-  same(rect.height, NaN, "undefined rect.height since image isn't preloaded")
+  same(rect.right, undefined, "undefined rect.right since image isn't preloaded")
+  same(rect.bottom, undefined, "undefined rect.bottom since image isn't preloaded")
+  same(rect.width, undefined, "undefined rect.width since image isn't preloaded")
+  same(rect.height, undefined, "undefined rect.height since image isn't preloaded")
 });
 
 test("Sprite special options", function() {
