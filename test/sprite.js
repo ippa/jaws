@@ -4,10 +4,7 @@ test("Sprite without pre-loaded image", function() {
   /* We might get a race-condition in these tests */
   jaws.assets.root = ""
   var sprite = new jaws.Sprite({image: 'assets/rect_copy.png'})
-  var rect = sprite.rect();
-  same(rect.x, 0, "rect.x should be 0 no matter if image is preloaded or not")
-  same(rect.y, 0, "rect.y should be 0 no matter if image is preloaded or not")
-  same(rect, undefined, "undefined sprite.rect() since image isn't preloaded")
+  same(sprite.rect(), undefined, "undefined sprite.rect() since image isn't preloaded")
 });
 
 test("Sprite special options", function() {
