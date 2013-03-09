@@ -98,6 +98,10 @@ https://github.com/MalphasWats - Viewport pathfinding
 If you find an issue with Jaws githubs issue-tracker is the place to go. Easiest for the developers is if you put your game online. If you don't have any hosting check out http://pages.github.com/.
 Pasting your problematic code in the issue-ticket itself will usually mean a lot of hassle with supportcode and assets to actually be able to test the code in question.
 
+== API-deprecations since start of 2013
+2013-03: sprite.anchor() is now sprite.setAnchor()
+2013-03: sprite.scale() is now sprite.scaleAll()
+
 == Example
   <html>
   <script src="jaws.js"></script>
