@@ -1,3 +1,4 @@
+/* Built at 2013-03-09 15:23:46 +0100 */
 /**
  * @namespace JawsJS core functions. "Field Summary" contains readable properties on the main jaws-object.
  *
@@ -444,8 +445,8 @@ jaws.setupInput = function() {
   window.addEventListener("keyup", handleKeyUp)
   jaws.canvas.addEventListener("mousedown", handleMouseDown, false);
   jaws.canvas.addEventListener("mouseup", handleMouseUp, false);
-  window.addEventListener("touchstart", handleTouchStart, false);
-  window.addEventListener("touchend", handleTouchEnd, false);
+  jaws.canvas.addEventListener("touchstart", handleTouchStart, false);
+  jaws.canvas.addEventListener("touchend", handleTouchEnd, false);
   window.addEventListener("blur", resetPressedKeys, false);
 
   // this turns off the right click context menu which screws up the mouseup event for button 2
@@ -1361,11 +1362,8 @@ jaws.Sprite.prototype.cacheOffsets = function() {
 
 /** Returns a jaws.Rect() perfectly surrouning sprite. Also cache rect in this.cached_rect. */
 jaws.Sprite.prototype.rect = function() {
-  if(!this.cached_rect) this.cached_rect = new jaws.Rect(this.x, this.y, this.width, this.height)
-
-  if(!isNaN(this.left_offset) && !isNaN(this.top_offset)) {
-    this.cached_rect.moveTo(this.x - this.left_offset, this.y - this.top_offset)
-  }
+  if(!this.cached_rect && this.width)   this.cached_rect = new jaws.Rect(this.x, this.y, this.width, this.height);
+  if(this.cached_rect)                  this.cached_rect.moveTo(this.x - this.left_offset, this.y - this.top_offset);
   return this.cached_rect
 } 
 
@@ -1891,6 +1889,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
   if(jaws.isString(this.image) && !options.frame_size) {
     var regexp = new RegExp("_(\\d+)x(\\d+)", "g");
     var sizes = regexp.exec(this.image)
+    this.frame_size = []
     this.frame_size[0] = parseInt(sizes[1])
     this.frame_size[1] = parseInt(sizes[2])
   }
@@ -2092,6 +2091,12 @@ jaws.Animation = function Animation(options) {
 
   jaws.parseOptions(this, options, this.default_options);
 
+  if(options.sprite_sheet) {
+    var sprite_sheet = new jaws.SpriteSheet({image: options.sprite_sheet, scale_image: this.scale_image, frame_size: this.frame_size, orientation: this.orientation, offset: this.offset})
+    this.frames = sprite_sheet.frames
+    this.frame_size = sprite_sheet.frame_size
+  }
+
   if(options.scale_image) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
     this.frame_size[0] *= options.scale_image
@@ -2099,19 +2104,23 @@ jaws.Animation = function Animation(options) {
     options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.scale_image)
   }
 
-  if(options.sprite_sheet) {
-    var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
-    var sprite_sheet = new jaws.SpriteSheet({image: image, frame_size: this.frame_size, orientation: this.orientation, offset: this.offset})
-    this.frames = sprite_sheet.frames
-  }
-
   /* Initializing timer-stuff */
   this.current_tick = (new Date()).getTime();
   this.last_tick = (new Date()).getTime();
   this.sum_tick = 0
+
+  if(options.subsets) {
+    this.subsets = {}
+    for(subset in options.subsets) {
+      start_stop = options.subsets[subset]
+      this.subsets[subset] = this.slice(start_stop[0], start_stop[1])
+    }
+  }
 }
+
 jaws.Animation.prototype.default_options = {
   frames: [],
+  subsets: [],
   frame_duration: 100,  // default: 100ms between each frameswitch
   index: 0,             // default: start with the very first frame
   loop: 1,
@@ -2123,7 +2132,15 @@ jaws.Animation.prototype.default_options = {
   offset: 0,
   scale_image: null,
   sprite_sheet: null
-};
+}
+
+/**
+ * Return a special animationsubset created with "subset"-parameter when initializing
+ *
+ */
+jaws.Animation.prototype.subset = function(subset) {
+  return this.subsets[subset]
+}
 
 /**
  Propells the animation forward by counting milliseconds and changing this.index accordingly
