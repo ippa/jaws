@@ -20,13 +20,14 @@
         root+"rect.js", 
         root+"sprite_list.js",
         root+"sprite_sheet.js",
+        root+"tile_map.js",
         root+"parallax.js",
         root+"animation.js",
-        root+"tile_map.js",
-        root+"tile_map_extra.js",
         root+"viewport.js",
         root+"collision_detection.js",
-        root+"gfx.js")
+        root+"gfx.js",
+        root+"tile_map_extra.js"
+        )
   .thenRun(function () {
     /*
      * We can't rely on window.onload-callback in our game when using javascript loaders.
