@@ -4,6 +4,7 @@
 # Build a standalone, all-including jaws.js by combining all the files in src/-directory into one
 #
 File.open("jaws.js", "w") do |out|
+  out.write("/* Built at #{Time.now.to_s} */\n")
   files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_list.js","sprite_sheet.js","parallax.js","animation.js","viewport.js","tile_map.js", "collision_detection.js", "gfx.js"]
   files.each { |file| out.write( File.read("src/#{file}") ) }
   out.write(";window.addEventListener(\"load\", function() { if(jaws.onload) jaws.onload(); }, false);")
@@ -26,7 +27,10 @@ def compress(js_code, compilation_level)
 end
 
 js_code = File.read("jaws.js")
-File.open("jaws-min.js", "w") { |out| out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") }  # option: ADVANCED_OPTIMIZATIONS
+File.open("jaws-min.js", "w") { |out| 
+  out.write("/* Built at #{Time.now.to_s} */\n")
+  out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # option: ADVANCED_OPTIMIZATIONS
+}  
 
 #
 # Generate documentation into http://jawsjs.com/docs/
