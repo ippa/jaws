@@ -68,6 +68,9 @@ Check out the sourcecode for comments and explanations:
 * {https://www.facebook.com/appcenter/hopeofabug}[https://www.facebook.com/appcenter/hopeofabug] - Facebook minigame by Fahad Mahmood.
 ... missing your game here? Mail me about it (my email is on my github profilepage). Or create a new issue.
 
+== Libs using Jaws
+* {https://github.com/deisdestiny/Jaws-TS}[https://github.com/deisdestiny/Jaws-TS] - Jaws TypeScript Definitions
+
 == Loading Jaws
 * jaws.js - includes the whole framework in one easy-to-include file.
 * jaws-min.js - same as jaws.js but minified with Googles closure compiler. This is probably what you want to include in your project.
