@@ -13,6 +13,7 @@ var jaws = (function(jaws) {
  * @property {int} offset           When cutting out frames from a sprite sheet, start at this frame
  * @property {string} orientation   How to cut out frames frmo sprite sheet, possible values are "down" or "right"
  * @property {function} on_end      Function to call when animation ends. triggers only on non-looping, non-bouncing animations
+ * @property {object} subsets       Name specific frames-intervals for easy access later, i.e. {move: [2,4], fire: [4,6]}. Access with animation.subset[name]
  *
  * @example
  * // in setup()
