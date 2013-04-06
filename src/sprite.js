@@ -325,8 +325,8 @@ jaws.Sprite.prototype.asCanvasContext = function() {
   context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
   
   if(this.color !== null) {
-    context.strokeStyle = this.color;
-    context.strokeRect(this.x, this.y, this.width, this.height);
+    this.context.fillStyle = this.color;
+    this.context.fillRect(this.x, this.y, this.width, this.height);
   }
   else {
     if(!this.image) { return this; }
@@ -348,8 +348,8 @@ jaws.Sprite.prototype.asCanvas = function() {
   context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
 
   if(this.color) {
-     context.strokeStyle = this.color;
-     context.strokeRect(this.x, this.y, this.width, this.height);
+    this.context.fillStyle = this.color;
+    this.context.fillRect(this.x, this.y, this.width, this.height);
   }
   else {
      if(!this.image) { return this; }
