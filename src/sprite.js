@@ -12,6 +12,7 @@ var jaws = (function(jaws) {
 * @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
 * @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
 * @property {int} scale_image Scale the sprite by this factor
+* @property {string,gradient} color     If set, draws a rectangle of dimensions rect() with specified color or gradient (linear or radial)
 *
 * @example
 * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
@@ -58,6 +59,9 @@ jaws.Sprite.prototype.default_options = {
   scale_x: 1,
   scale_y: 1,
   scale: 1,
+  color: null,
+  width: null,
+  height: null,
   _constructor: null,
   dom: null
 }
@@ -249,6 +253,7 @@ jaws.Sprite.prototype.createDiv = function() {
     if(this.image.toDataURL)  { this.div.style.backgroundImage = "url(" + this.image.toDataURL() + ")" }
     else                      { this.div.style.backgroundImage = "url(" + this.image.src + ")" }
   }
+  if(this.color !== null)              { this.div.style.backgroundColor = this.color; }
   if(this.dom) { this.dom.appendChild(this.div) }
   this.updateDiv()
 }
@@ -277,16 +282,22 @@ jaws.Sprite.prototype.updateDiv = function() {
 
 /** Draw sprite on active canvas or update it's DOM-properties */
 jaws.Sprite.prototype.draw = function() {
-  if(!this.image) { return this }
   if(this.dom)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
-  if(this.angle!=0) { jaws.context.rotate(this.angle * Math.PI / 180) }
+  if(this.angle!==0) { jaws.context.rotate(this.angle * Math.PI / 180) }
   this.flipped && this.context.scale(-1, 1)
   this.context.globalAlpha = this.alpha
   this.context.translate(-this.left_offset, -this.top_offset) // Needs to be separate from above translate call cause of flipped
-  this.context.drawImage(this.image, 0, 0, this.width, this.height)
+  if(this.color !== null) {
+     this.context.fillStyle = this.color;
+     this.context.fillRect(this.x, this.y, this.width, this.height);
+  }
+  else  { 
+     if(!this.image) { return this; }
+     else { this.context.drawImage(this.image, 0, 0, this.width, this.height); }
+  }
   this.context.restore()
   return this
 }
@@ -312,9 +323,17 @@ jaws.Sprite.prototype.asCanvasContext = function() {
 
   var context = canvas.getContext("2d")
   context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
-
-  context.drawImage(this.image, 0, 0, this.width, this.height)
-  return context
+  
+  if(this.color !== null) {
+    context.strokeStyle = this.color;
+    context.strokeRect(this.x, this.y, this.width, this.height);
+  }
+  else {
+    if(!this.image) { return this; }
+    else { context.drawImage(this.image, 0, 0, this.width, this.height); }
+  }
+       
+    return context
 }
 
 /** 
@@ -328,7 +347,16 @@ jaws.Sprite.prototype.asCanvas = function() {
   var context = canvas.getContext("2d")
   context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
 
-  context.drawImage(this.image, 0, 0, this.width, this.height)
+  if(this.color) {
+     context.strokeStyle = this.color;
+     context.strokeRect(this.x, this.y, this.width, this.height);
+  }
+  else {
+     if(!this.image) { return this; }
+     else { this.context.drawImage(this.image, 0, 0, this.width, this.height); }
+  }
+   
+ 
   return canvas
 }
 
@@ -348,6 +376,7 @@ jaws.Sprite.prototype.attributes = function() {
   object["scale_y"] = this.scale_y;
   object["anchor_x"] = this.anchor_x
   object["anchor_y"] = this.anchor_y
+  object["color"] = this.color;
 
   return object
 }
@@ -387,4 +416,3 @@ jaws.Sprite.prototype.moveYTo =       function(y)     { this.y = y; return this 
 jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_x = value; return this.cacheOffsets() }
 jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_y = value; return this.cachOfffsets() }
 */
-
