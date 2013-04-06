@@ -347,7 +347,7 @@ jaws.Sprite.prototype.asCanvas = function() {
   var context = canvas.getContext("2d")
   context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
 
-  if(this.color) {
+  if(this.color !== null) {
     this.context.fillStyle = this.color;
     this.context.fillRect(this.x, this.y, this.width, this.height);
   }
