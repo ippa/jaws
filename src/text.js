@@ -1,30 +1,32 @@
 var jaws = (function(jaws) {
-    
-/*
-* @class A jaws.Text object with word-wrapping functionality.
-* @constructor
-*  
-* @property {int} x     Horizontal position  (0 = furthest left)
-* @property {int} y     Vertical position    (0 = top)
-* @property {int} alpha     Transparency: 0 (fully transparent) to 1 (no transperency)
-* @property {int} angle     Angle in degrees (0-360)
-* @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
-* @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
-* @property {string} text       The actual text to be displayed 
-* @property {string} fontFace   A valid font-family
-* @property {int} fontSize      The size of the text in pixels
-* @property {string} textAlign      "start", "end", "left", "right", or "center"
-* @property {string} textBaseline       "top", "bottom", "hanging", "middle", "alphabetic", or "ideographic"
-* @property {int} width     The width of the rect() containing the text
-* @property {int} height    The height of the rect() containing the text
-* @property {bool} wordWrap     Whether or not to wrap the words within the rect() of the object
-*
-* @example
-* // create new Text at top left of the screen,
-* new Text({text: "Hello world!", x: 0, y: 0, width: 500, height: 500, fontFace: "Terminal", fontSize: 50}) 
-*/
-    
-    
+
+    /*
+     * @class A jaws.Text object with word-wrapping functionality.
+     * @constructor
+     *  
+     * @property {int} x     Horizontal position  (0 = furthest left)
+     * @property {int} y     Vertical position    (0 = top)
+     * @property {int} alpha     Transparency: 0 (fully transparent) to 1 (no transperency)
+     * @property {int} angle     Angle in degrees (0-360)
+     * @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
+     * @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
+     * @property {string} text       The actual text to be displayed 
+     * @property {string} fontFace   A valid font-family
+     * @property {int} fontSize      The size of the text in pixels
+     * @property {string} textAlign      "start", "end", "left", "right", or "center"
+     * @property {string} textBaseline       "top", "bottom", "hanging", "middle", "alphabetic", or "ideographic"
+     * @property {int} width     The width of the rect() containing the text
+     * @property {int} height    The height of the rect() containing the text
+     * @property {string} style     The style to draw the text. Either "bold" or italic"
+     * @property {bool} wordWrap     If true, will attempt to word-wrap text
+     *                               If false, will attempt to draw text within width
+     *
+     * @example
+     * // create new Text at top left of the screen,
+     * new Text({text: "Hello world!", x: 0, y: 0, width: 500, height: 500, fontFace: "Terminal", fontSize: 50}) 
+     */
+
+
     jaws.Text = function(options) {
         if (!(this instanceof arguments.callee))
             return new arguments.callee(options);
@@ -53,7 +55,6 @@ var jaws = (function(jaws) {
         y: 0,
         alpha: 1,
         angle: 0,
-        flipped: false,
         anchor_x: 0,
         anchor_y: 0,
         anchor: null,
@@ -90,11 +91,11 @@ var jaws = (function(jaws) {
             this.setAnchor(this.anchor);
 
         this.text = options.text || "";
-        this.fontFace = options.fontFace || "Terminal";
+        this.fontFace = options.fontFace || "serif";
         this.fontSize = options.fontSize || 25;
         this.color = options.color || "black";
         this.textAlign = options.textAlign || "left";
-        this.textBaseline = options.textBaseline || "top";
+        this.textBaseline = options.textBaseline || "alphabetic";
         this.style = options.style || "";
         this.wordWrap = options.wordWrap || false;
         this.width = options.width || jaws.width;
@@ -119,15 +120,6 @@ var jaws = (function(jaws) {
         return new_sprite;
     };
 
-    /** Flips image vertically, usefull for sidescrollers when player is walking left/right */
-    jaws.Text.prototype.flip = function() {
-        this.flipped = this.flipped ? false : true;
-        return this;
-    };
-    jaws.Text.prototype.flipTo = function(value) {
-        this.flipped = value;
-        return this;
-    };
     /** Rotate sprite by value degrees */
     jaws.Text.prototype.rotate = function(value) {
         this.angle += value;
@@ -309,14 +301,32 @@ var jaws = (function(jaws) {
         this.div.style.width = this.width + "px";
         this.div.style.height = this.height + "px";
         this.div.style.fontSize = this.fontSize + "px";
+        this.div.style.fontFamily = this.fontFace;
+        
+        if(this.textAlign === "start")
+            this.div.style.textAlign = "left";
+        else if(this.textAlign === "end")
+            this.div.style.textAlign = "right";
+        else
+            this.div.style.textAlign = this.textAlign;
+        
+        if(this.textBaseline === "top")
+            this.div.style.verticalAlign = "super";
+        else if(this.textBaseline === "hanging")
+            this.div.style.verticalAlign = "text-top";
+        else if(this.textBaseline === "alphabetic")
+            this.div.style.verticalAlign = "bottom";
+        else if(this.div.style.verticalAlign === "ideographic")
+            this.div.style.verticalAlign = "text-bottom";
+        else
+            this.div.style.verticalAlign = this.textBaseline;
+        
         if (this.div.innerText) {
             this.div.innerText = this.text;
         }
         else {
             this.div.textContent = this.text;
         }
-
-        this.div.fontFamily = this.fontFace;
 
         if (this.dom) {
             this.dom.appendChild(this.div);
@@ -356,20 +366,20 @@ var jaws = (function(jaws) {
         if (this.dom) {
             return this.updateDiv();
         }
-
         this.context.save();
         this.context.translate(this.x, this.y);
         if (this.angle !== 0) {
-            jaws.context.rotate(this.angle * Math.PI / 180);
+            this.context.rotate(this.angle * Math.PI / 180);
         }
         this.flipped && this.context.scale(-1, 1);
         this.context.globalAlpha = this.alpha;
         this.context.translate(-this.left_offset, -this.top_offset); // Needs to be separate from above translate call cause of flipped
         this.context.fillStyle = this.color;
-        this.context.font = this.style + this.fontSize + "px " + this.fontFace;
+        this.context.font = this.style + " " + this.fontSize + "px " + this.fontFace;
         this.context.textBaseline = this.textBaseline;
         this.context.textAlign = this.textAlign;
         var oldY = this.y;
+        var oldX = this.x;
         if (this.wordWrap)
         {
             var words = this.text.split(' ');
@@ -396,9 +406,28 @@ var jaws = (function(jaws) {
         }
         else
         {
-            this.context.fillText(this.text, this.x, this.y);
+            if (this.context.measureText(this.text).width < this.width)
+            {
+                this.context.fillText(this.text, this.x, this.y);
+            }
+            else
+            {
+                var words = this.text.split(' ');
+                var nextLine = ' ';
+                for (var n = 0; n < words.length; n++)
+                {
+                    var testLine = nextLine + words[n] + ' ';
+                    if (this.context.measureText(testLine).width < Math.abs(this.width - this.x))
+                    {
+                        this.context.fillText(testLine, this.x, this.y);
+                        nextLine = words[n] + ' ';
+                        nextLine = testLine;
+                    }
+                }
+            }
         }
         this.y = oldY;
+        this.x = oldX;
         this.context.restore();
         return this;
     };
@@ -420,6 +449,7 @@ var jaws = (function(jaws) {
         this.context.textBaseline = this.textBaseline;
         this.context.textAlign = this.textAlign;
         var oldY = this.y;
+        var oldX = this.x;
         if (this.wordWrap)
         {
             var words = this.text.split(' ');
@@ -446,9 +476,28 @@ var jaws = (function(jaws) {
         }
         else
         {
-            this.context.fillText(this.text, this.x, this.y);
+            if (this.context.measureText(this.text).width < this.width)
+            {
+                this.context.fillText(this.text, this.x, this.y);
+            }
+            else
+            {
+                var words = this.text.split(' ');
+                var nextLine = ' ';
+                for (var n = 0; n < words.length; n++)
+                {
+                    var testLine = nextLine + words[n] + ' ';
+                    if (this.context.measureText(testLine).width < Math.abs(this.width - this.x))
+                    {
+                        this.context.fillText(testLine, this.x, this.y);
+                        nextLine = words[n] + ' ';
+                        nextLine = testLine;
+                    }
+                }
+            }
         }
         this.y = oldY;
+        this.x = oldX;
         return context;
     };
 
@@ -468,6 +517,7 @@ var jaws = (function(jaws) {
         this.context.textBaseline = this.textBaseline;
         this.context.textAlign = this.textAlign;
         var oldY = this.y;
+        var oldX = this.x;
         if (this.wordWrap)
         {
             var words = this.text.split(' ');
@@ -476,27 +526,46 @@ var jaws = (function(jaws) {
             for (var n = 0; n < words.length; n++)
             {
                 var testLine = nextLine + words[n] + ' ';
-                var measurement = this.context.measureText(testLine);
+                var measurement = context.measureText(testLine);
                 if (this.y < oldY + this.height)
                 {
                     if (measurement.width > this.width)
                     {
-                        this.context.fillText(nextLine, this.x, this.y);
+                        context.fillText(nextLine, this.x, this.y);
                         nextLine = words[n] + ' ';
                         this.y += this.fontSize;
                     }
                     else {
                         nextLine = testLine;
                     }
-                    this.context.fillText(nextLine, this.x, this.y);
+                    context.fillText(nextLine, this.x, this.y);
                 }
             }
         }
         else
         {
-            this.context.fillText(this.text, this.x, this.y);
+            if (context.measureText(this.text).width < this.width)
+            {
+                this.context.fillText(this.text, this.x, this.y);
+            }
+            else
+            {
+                var words = this.text.split(' ');
+                var nextLine = ' ';
+                for (var n = 0; n < words.length; n++)
+                {
+                    var testLine = nextLine + words[n] + ' ';
+                    if (context.measureText(testLine).width < Math.abs(this.width - this.x))
+                    {
+                        context.fillText(testLine, this.x, this.y);
+                        nextLine = words[n] + ' ';
+                        nextLine = testLine;
+                    }
+                }
+            }
         }
         this.y = oldY;
+        this.x = oldX;
         return canvas;
     };
 
@@ -518,7 +587,15 @@ var jaws = (function(jaws) {
         object["scale_y"] = this.scale_y;
         object["anchor_x"] = this.anchor_x;
         object["anchor_y"] = this.anchor_y;
-
+        object["style"] = this.style;
+        object["fontSize"] = this.fontSize;
+        object["fontFace"] = this.fontFace;
+        object["color"] = this.color;
+        object["textAlign"] = this.textAlign;
+        object["textBaseline"] = this.textBaseline;
+        object["wordWrap"] = this.wordWrap;
+        object["width"] = this.width;
+        object["height"] = this.height;
         return object;
     };
 
