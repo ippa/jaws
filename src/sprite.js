@@ -286,7 +286,7 @@ jaws.Sprite.prototype.draw = function() {
 
   this.context.save()
   this.context.translate(this.x, this.y)
-  if(this.angle!==0) { jaws.context.rotate(this.angle * Math.PI / 180) }
+  if(this.angle!=0) { jaws.context.rotate(this.angle * Math.PI / 180) }
   this.flipped && this.context.scale(-1, 1)
   this.context.globalAlpha = this.alpha
   this.context.translate(-this.left_offset, -this.top_offset) // Needs to be separate from above translate call cause of flipped
@@ -323,17 +323,16 @@ jaws.Sprite.prototype.asCanvasContext = function() {
 
   var context = canvas.getContext("2d")
   context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
-  
+
   if(this.color !== null) {
     this.context.fillStyle = this.color;
     this.context.fillRect(this.x, this.y, this.width, this.height);
   }
   else {
-    if(!this.image) { return this; }
-    else { context.drawImage(this.image, 0, 0, this.width, this.height); }
+    context.drawImage(this.image, 0, 0, this.width, this.height);
   }
-       
-    return context
+  
+  return context
 }
 
 /** 
@@ -352,11 +351,8 @@ jaws.Sprite.prototype.asCanvas = function() {
     this.context.fillRect(this.x, this.y, this.width, this.height);
   }
   else {
-     if(!this.image) { return this; }
-     else { this.context.drawImage(this.image, 0, 0, this.width, this.height); }
+    context.drawImage(this.image, 0, 0, this.width, this.height);
   }
-   
- 
   return canvas
 }
 
