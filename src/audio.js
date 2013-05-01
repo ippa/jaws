@@ -14,7 +14,7 @@ var jaws = (function(jaws) {
      * @property {function}	onend	Callback on "end" event for audio
      * @property {function}	onload	Callback on "load" event for audio
      * @property {function}	onplay	Callback on "play" event for audio
-     * @property {function}	onpause	Callback on "play" event for audio
+     * @property {function}	onpause	Callback on "pause" event for audio
      *
      * @example
      * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
