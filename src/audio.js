@@ -29,9 +29,7 @@ var jaws = (function(jaws) {
 
     jaws.Audio.prototype.set = function(options) {
 
-        for (option in options) {
-            this[option] = options[option];
-        }
+       jaws.parseOptions(this, options, this.default_options);
 
         if (this.audio) {
             this.setAudio(this.audio);
