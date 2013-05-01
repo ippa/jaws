@@ -85,12 +85,6 @@ test("text", function() {
     equal(text.width, 10, "resize() mods width via scale_x");
     equal(text.height, 10, "resize() mods width via scale_x");
   
-    var flipped = text.flipped;
-    text.flip();
-    equal(text.flipped, !flipped, "text.flip inverts flipped");
-    text.flip();
-    equal(text.flipped, flipped, "text.flip inverts flipped");
-  
     start();
   }
 })
