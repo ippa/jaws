@@ -1,5 +1,28 @@
 var jaws = (function(jaws) {
 
+    /**
+     * @class An Audio class that will try to detect filetype support and load the correct file.
+     * @constructor
+     *  
+     * @property {array,object} audio   An array of file locations initally; replaced with an Audio() object
+     * @property {string}	audio_path     The path to file matching the first supported filetype
+     * @property {bool}	autoplay     Whether to start playing immediately after loading or not
+     * @property {bool}	loop	Whether to loop the playing or not
+     * @property {bool}	muted	Whether to mute the audio or not
+     * @property {bool}	paused	Whether the audio is muted or not
+     * @property {int}	volume	Current audio volume, between 0.1 and 1.0
+     * @property {function}	onend	Callback on "end" event for audio
+     * @property {function}	onload	Callback on "load" event for audio
+     * @property {function}	onplay	Callback on "play" event for audio
+     * @property {function}	onpause	Callback on "play" event for audio
+     *
+     * @example
+     * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
+     * new jaws.Audio({audio: ["file.mp3", "file.ogg"], volume: 1.0}); 
+     * 
+     *
+     */
+    
     jaws.Audio = function Audio(options) {
         if (!(this instanceof arguments.callee))
             return new arguments.callee(options);
@@ -29,21 +52,48 @@ var jaws = (function(jaws) {
 
     jaws.Audio.prototype.set = function(options) {
 
-       jaws.parseOptions(this, options, this.default_options);
+        jaws.parseOptions(this, options, this.default_options);
 
         if (this.audio) {
-            this.setAudio(this.audio);
+            var canPlayType = false;
+            var audioTest = new Audio();
+
+            for (var i = 0; i < this.audio.length; i++) {
+                var ext = this.audio[i].toLowerCase().match(/.+\.([^?]+)(\?|$)/);
+                switch (ext[1]) {
+                    case 'mp3':
+                        canPlayType = !!audioTest.canPlayType('audio/mpeg;').replace(/^no$/, '');
+                        break;
+                    case 'ogg':
+                        canPlayType = !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, '');
+                        break;
+                    case 'wav':
+                        canPlayType = !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, '');
+                        break;
+                    case 'm4a':
+                        canPlayType = !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, '');
+                        break;
+                    case 'weba':
+                        canPlayType = !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '');
+                        break;
+                }
+
+                if (canPlayType)
+                {
+                    this.setAudio(this.audio[i]);
+
+                    if (this.onload)
+                        this.audio.addEventListener("load", this.onload);
+                    if (this.onplay)
+                        this.audio.addEventListener("play", this.onplay);
+                    if (this.onpause)
+                        this.audio.addEventListener("pause", this.onpause);
+                    if (this.onend)
+                        this.audio.addEventListener("ended", this.onend);
+                    break;
+                }
+            }
         }
-
-        if (this.onload)
-            this.audio.addEventListener("load", this.onload);
-        if (this.onplay)
-            this.audio.addEventListener("play", this.onplay);
-        if (this.onpause)
-            this.audio.addEventListener("pause", this.onpause);
-        if (this.onend)
-            this.audio.addEventListener("ended", this.onend);
-
         return this;
     };
 
@@ -57,7 +107,7 @@ var jaws = (function(jaws) {
 
             if (this.autoplay)
                 this.audio.autoplay = this.autoplay;
-            
+
             this.currentTime = this.audio.currentTime;
             this.duration = this.audio.duration;
             this.audio.volume = this.volume;
@@ -89,10 +139,26 @@ var jaws = (function(jaws) {
     jaws.Audio.prototype.pause = function() {
         this.audio.pause();
     };
+    jaws.Audio.prototype.mute = function() {
+        this.audio.mute = true;
+    };
+    jaws.Audio.prototype.unmute = function() {
+        this.audio.mute = false;
+    };
+    jaws.Audio.prototype.seekTo = function(value) {
+        if (value <= this.audio.duration)
+            this.audio.currentTime = value;
+        else
+            this.audio.currentTime = this.audio.duration;
+    };
+    jaws.Audio.prototype.setVolume = function(value) {
+        if(value <= 1.0 && value >= 0)
+            this.audio.volume = value;
+    };
 
     jaws.Audio.prototype.toString = function() {
-        return "[Audio " + this.audio.src + "," + this.audio.volume + "," + "]";
-    }
+        return "[Audio " + this.audio.src + "," + this.audio.currentTime + "," + this.audio.duration + "," + this.audio.volume + "]";
+    };
 
     /** returns Audios state/properties as a pure object */
     jaws.Audio.prototype.attributes = function() {
@@ -104,7 +170,7 @@ var jaws = (function(jaws) {
         object["muted"] = this.muted;
         object["paused"] = this.paused;
         object["volume"] = this.volume;
-        
+
         return object;
     };
 
