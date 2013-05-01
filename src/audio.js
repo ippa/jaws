@@ -17,7 +17,6 @@ var jaws = (function(jaws) {
      * @property {function}	onpause	Callback on "pause" event for audio
      *
      * @example
-     * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
      * new jaws.Audio({audio: ["file.mp3", "file.ogg"], volume: 1.0}); 
      * 
      *
