@@ -23,7 +23,8 @@ test("Sprite defaults", function() {
   same(sprite.anchor_y, 0, "anchor_y defaults to 0 (left)")
   same(sprite.image, null, "image defaults to undefined")
   same(sprite.flipped, false, "flipped defaults to false")
-  same(sprite.alpha, 1, "alpha defalts to 1 (zero fading)")
+  same(sprite.alpha, 1, "alpha defaults to 1 (zero fading)")
+  same(sprite.color, null, "color defaults to null");
 });
 
 test("Sprite without image", function() {
