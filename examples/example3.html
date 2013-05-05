@@ -32,9 +32,9 @@
 
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
-        var anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
+        var anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_duration: 100})
 
-        player = new jaws.Sprite({x:100, y:300, scale: 4, anchor: "center_bottom"})
+        player = new jaws.Sprite({x:100, y:300, scale: 3, anchor: "bottom_center"})
         player.anim_default = anim.slice(0,5)
         player.anim_up = anim.slice(6,8)
         player.anim_down = anim.slice(8,10)
@@ -42,7 +42,6 @@
         player.anim_right = anim.slice(12,14)
       
         player.setImage( player.anim_default.next() )
-        jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
         jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       }
 
@@ -53,19 +52,12 @@
         if(jaws.pressed("right")) { player.x += speed; player.setImage( player.anim_right.next() ) }
         if(jaws.pressed("up"))    { player.y -= speed; player.setImage( player.anim_up.next() ) }
         if(jaws.pressed("down"))  { player.y += speed; player.setImage( player.anim_down.next() ) }
-        //forceInsideCanvas(player)
         fps.innerHTML = jaws.game_loop.fps + ". player: " + player.x + "/" + player.y
       }
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */
       this.draw = function() {
-        jaws.context.clearRect(0,0,jaws.width,jaws.height)
-        jaws.context.lineWidth = 1
-        jaws.context.moveTo(0,300)
-        jaws.context.lineTo(jaws.width,300)
-        jaws.context.strokeStyle = "black"
-        jaws.context.stroke()
-        
+        jaws.clear()       
         jaws.log(player)
         player.draw()
       }
