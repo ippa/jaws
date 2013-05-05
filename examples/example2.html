@@ -37,7 +37,7 @@
       var bullets = new jaws.SpriteList()
 
       this.setup = function() {
-        player = new jaws.Sprite({image: "plane.png", x: 10, y:100})
+        player = new jaws.Sprite({image: "plane.png", x: 10, y:100, scale: 1})
         player.can_fire = true
         jaws.on_keydown("esc",  function() { jaws.switchGameState(MenuState) })
         jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
@@ -62,7 +62,7 @@
       }
 
       this.draw = function() {
-        jaws.context.clearRect(0,0,jaws.width,jaws.height)
+        jaws.clear()
         player.draw()
         bullets.draw()  // will call draw() on all items in the list
       }
