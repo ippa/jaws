@@ -118,7 +118,9 @@ jaws.init = function(options) {
     document.body.appendChild(jaws.canvas)
   }
 
-  
+  /* Let's scale sprites retro-style by default */
+  jaws.useCrispScaling()
+ 
   jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
   jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
 
@@ -126,6 +128,25 @@ jaws.init = function(options) {
   jaws.mouse_y = 0
   window.addEventListener("mousemove", saveMousePosition)
 }
+/**
+ * Use 'retro' crisp scaling when drawing sprites through the canvas API, this is the default
+ */
+jaws.useCrispScaling = function() {
+  jaws.context.imageSmoothingEnabled = false
+  jaws.context.webkitImageSmoothingEnabled = false
+  jaws.context.mozImageSmoothingEnabled = false 
+}
+
+/**
+ * Use smooth antialiased scaling when drawing sprites through the canvas API
+ */
+jaws.useSmoothScaling = function() {
+  jaws.context.imageSmoothingEnabled = true
+  jaws.context.webkitImageSmoothingEnabled = true
+  jaws.context.mozImageSmoothingEnabled = true
+}
+
+
 /**
  * @private
  * Keeps updated mouse coordinates in jaws.mouse_x / jaws.mouse_y
