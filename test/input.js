@@ -1,6 +1,8 @@
 test("Input", function() {
-  same(jaws.pressed("a"), undefined, "jaws.pressed('a') should return undefined if 'a' isn't pressed")
-  same(jaws.pressed("|"), undefined, "test more keys")
+  same(jaws.pressed("a"), false, "jaws.pressed('a') should return false if 'a' isn't pressed")
+  same(jaws.pressed("|"), false, "test more keys")
+  same(jaws.pressed("a b c"), false, "test combo keys")
+  same(jaws.pressed(["a", "b", "c"], true), false, "test array of keys")
 
   /*
   jaws.on_keydown("A", test_on_keydown);
