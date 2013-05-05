@@ -198,13 +198,15 @@ jaws.preventDefaultKeys = function(array_of_strings) {
 }
 
 /**
- * Returns true if *key* is currently pressed down
+ * Check if *keys* are pressed. Second argument specifies use of logical AND when checking multiple keys.
  * @example
- * jaws.pressed("left");  // returns true if arrow key is pressed
- * jaws.pressed("a");     // returns true if key "a" is pressed
+ * jaws.pressed("left a");          // returns true if left arrow key OR a is pressed
+ * jaws.pressed("ctrl c", true);    // returns true if ctrl AND a is pressed
  */
-jaws.pressed = function(key) {
-  return pressed_keys[key]
+jaws.pressed = function(keys, logical_and) {
+  if(jaws.isString(keys)) { keys = keys.split(" ") }
+  if(logical_and) { return  keys.every( function(key) { return pressed_keys[key] } ) }
+  else            { return  keys.some( function(key) { return pressed_keys[key] } ) }
 }
 
 /** 
