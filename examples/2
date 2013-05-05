@@ -1,0 +1,91 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws-dynamic.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Jaws Example #3 - Animation</title>
+  </head>
+<body>
+    
+  <canvas width=500 height=300></canvas>
+  FPS: <span id="fps"></span>. Move with arrow keys.
+    
+  <div id="info">
+    <h1>Animations</h1>
+    Showing of a "complex" animation, all cut up from a spritesheet.
+    We also use {anchor: "center_bottom"} which means when we paint the sprite at 100/200, the feet will be placed there.
+  </div>
+
+  <h3>jaws log</h3>
+  <div id="jaws-log"></div>
+ 
+  <script>
+    /*
+    * A good practice in even a smalish game is to use "game states"
+    * It's easy in jaws. Here we use a constructor that will respond to setup/update/draw.
+    * We pass it into jaws.start() at the bottom to set things in motion.
+    */
+    function Example3() {
+      var player
+      var speed = 2
+      var fps = document.getElementById("fps")
+
+      /* Called once when a game state is activated. Use it for one-time setup code. */
+      this.setup = function() {
+        var anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_duration: 100})
+
+        player = new jaws.Sprite({x:100, y:300, scale: 3, anchor: "bottom_center"})
+        player.anim_default = anim.slice(0,5)
+        player.anim_up = anim.slice(6,8)
+        player.anim_down = anim.slice(8,10)
+        player.anim_left = anim.slice(10,12)
+        player.anim_right = anim.slice(12,14)
+      
+        player.setImage( player.anim_default.next() )
+        jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
+      }
+
+      /* update() will get called each game tick with your specified FPS. Put game logic here. */
+      this.update = function() {
+        player.setImage( player.anim_default.next() )
+        if(jaws.pressed("left"))  { player.x -= speed; player.setImage( player.anim_left.next() ) }
+        if(jaws.pressed("right")) { player.x += speed; player.setImage( player.anim_right.next() ) }
+        if(jaws.pressed("up"))    { player.y -= speed; player.setImage( player.anim_up.next() ) }
+        if(jaws.pressed("down"))  { player.y += speed; player.setImage( player.anim_down.next() ) }
+        jaws.forceInsideCanvas(player)
+        fps.innerHTML = jaws.game_loop.fps + ". player: " + player.x + "/" + player.y
+      }
+
+      /* Directly after each update draw() will be called. Put all your on-screen operations here. */
+      this.draw = function() {
+        jaws.clear()
+        /*
+        jaws.context.lineWidth = 1
+        jaws.context.moveTo(0,300)
+        jaws.context.lineTo(jaws.width, 300)
+        jaws.context.strokeStyle = "black"
+        jaws.context.stroke()
+        */
+        
+        jaws.log(player)
+        player.draw()
+      }
+    
+      /* Force given item's x/y to stay within canvas borders */
+      function forceInsideCanvas(item) {
+        if(item.x < 0)                  { item.x = 0  }
+        if(item.right > jaws.width)     { item.x = jaws.width - item.width }
+        if(item.y < 0)                  { item.y = 0 }
+        if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
+      }
+    }
+    
+    jaws.onload = function() {
+      jaws.assets.add("droid_11x15.png")
+      jaws.start(Example3)  // Our convenience function jaws.start() will load assets, call setup and loop update/draw in 60 FPS
+    }
+  </script>
+
+</body>
+</html>
+

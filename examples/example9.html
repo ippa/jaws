@@ -56,7 +56,7 @@
 
         viewport = new jaws.Viewport({max_x: world.width, max_y: world.height})
 
-        player = new jaws.Sprite({x:110, y:320, scale: 2, anchor: "center_bottom"})
+        player = new jaws.Sprite({x:110, y:320, scale: 3, anchor: "center_bottom"})
 
         player.move = function() {
           this.x += this.vx
@@ -91,7 +91,6 @@
         player.can_jump = true
 
         player.setImage( player.anim_default.next() )
-        jaws.context.mozImageSmoothingEnabled = false;  // non-blurry, blocky retro scaling
         jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       }
 

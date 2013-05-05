@@ -4,8 +4,8 @@ h1 { color: #FF2FE7; font-size: 30px; }
 h2 { color: #45D4FF; font-size: 25px; }
 h3 { color: #45D4FF; font-size: 25px; }
 
-canvas { border: 1px solid; background: white; margin-top: 50px; display: block; }
-#canvas { margin: auto; width: 500px; height: 300px; margin-top: 100px; border: black 1px solid; overflow: hidden; background: white; }
+canvas { border: 0px solid; background: white; margin-top: 50px; display: block; }
+#canvas { margin: auto; width: 500px; height: 300px; margin-top: 100px; border: black 0px solid; overflow: hidden; background: white; }
 
 #info { width: 500px; line-height: 130%; padding-top: 20px; }
 #jaws-log { font: 11px verdana; color: #aaaaaa; background: black; width: 500px; padding: 5px; }
@@ -44,4 +44,5 @@ html, canvas, img {
   image-rendering: -moz-crisp-edges; /* FF */
   image-rendering: -webkit-optimize-contrast; /* Webkit */
   -ms-interpolation-mode: nearest-neighbor;   /* IE */
+  image-rendering: crisp-edges;
 }
