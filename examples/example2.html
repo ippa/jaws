@@ -44,11 +44,11 @@
       }
 
       this.update = function() {
-        if(jaws.pressed("left"))  { player.x -= 2 }
-        if(jaws.pressed("right")) { player.x += 2 }
-        if(jaws.pressed("up"))    { player.y -= 2 }
-        if(jaws.pressed("down"))  { player.y += 2 }
-        if(jaws.pressed("space")) { 
+        if(jaws.pressed("left a"))  { player.x -= 2 }
+        if(jaws.pressed("right d")) { player.x += 2 }
+        if(jaws.pressed("up w"))    { player.y -= 2 }
+        if(jaws.pressed("down s"))  { player.y += 2 }
+        if(jaws.pressed("space enter")) { 
           if(player.can_fire) {
             bullets.push( new Bullet(player.rect().right, player.y) )
             player.can_fire = false
