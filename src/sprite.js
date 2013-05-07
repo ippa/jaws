@@ -12,6 +12,7 @@ var jaws = (function(jaws) {
 * @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
 * @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
 * @property {int} scale_image Scale the sprite by this factor
+* @property {string,gradient} color If set, draws a rectangle of dimensions rect() with specified color or gradient (linear or radial)
 *
 * @example
 * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
@@ -58,6 +59,8 @@ jaws.Sprite.prototype.default_options = {
   scale_x: 1,
   scale_y: 1,
   scale: 1,
+  width: null,
+  height: null,
   _constructor: null,
   dom: null
 }
@@ -73,7 +76,15 @@ jaws.Sprite.prototype.set = function(options) {
   if(this.image)        this.setImage(this.image);
   if(this.scale_image)  this.scaleImage(this.scale_image);
   if(this.anchor)       this.setAnchor(this.anchor);
-
+  
+  if (this.color && this.width && this.height) {
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            context.fillStyle = this.color;
+            context.fillRect(0, 0, this.width, this.height);
+            this.image = context.getImageData(0, 0, this.width, this.height);
+        }
+  
   this.cacheOffsets()
 
   return this
