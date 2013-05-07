@@ -387,4 +387,3 @@ jaws.Sprite.prototype.moveYTo =       function(y)     { this.y = y; return this 
 jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_x = value; return this.cacheOffsets() }
 jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_y = value; return this.cachOfffsets() }
 */
-
