@@ -22,6 +22,17 @@ test("Animation", function() {
     same(animation3.frame_duration, 100, "sub-animation gets frame_duration from parent")
     equal(animation.frames.length, 14, "after slice, frames in animation")
     equal(animation.frames[0], animation3.frames[0], "sub-animation contains same canvas-elements as parent")
+
+    animation3.index = 0;
+    animation3.frame_direction = -1;
+    start_tick = (new Date()).getTime();
+    var ticks = 0;
+    while(animation3.index == 0 && ticks <= animation3.frame_duration) { 
+      animation3.next(); 
+      ticks = (new Date()).getTime() - start_tick;
+    }
+    equal(animation3.index, animation3.frames.length-1, "reverse direction animations loop from index=0 to index=" + (animation3.frames.length -1))
+
     start()
   }
   // equal(animation.frames.length, animation.length, "animation.frames.length == animation.length")

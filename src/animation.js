@@ -102,7 +102,11 @@ jaws.Animation.prototype.update = function() {
       this.index += this.frame_direction * 2
     }
     else if(this.loop) {
-      this.index = 0
+      if(this.frame_direction < 0) { 
+        this.index = this.frames.length -1; 
+      } else { 
+        this.index = 0; 
+      }
     }
     else {
       this.index -= this.frame_direction
