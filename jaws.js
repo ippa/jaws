@@ -1,4 +1,4 @@
-/* Built at 2013-03-09 15:23:46 +0100 */
+/* Built at 2013-05-08 01:16:18 +0200 */
 /**
  * @namespace JawsJS core functions. "Field Summary" contains readable properties on the main jaws-object.
  *
@@ -119,7 +119,9 @@ jaws.init = function(options) {
     document.body.appendChild(jaws.canvas)
   }
 
-  
+  /* Let's scale sprites retro-style by default */
+  jaws.useCrispScaling()
+ 
   jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
   jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
 
@@ -127,6 +129,25 @@ jaws.init = function(options) {
   jaws.mouse_y = 0
   window.addEventListener("mousemove", saveMousePosition)
 }
+/**
+ * Use 'retro' crisp scaling when drawing sprites through the canvas API, this is the default
+ */
+jaws.useCrispScaling = function() {
+  jaws.context.imageSmoothingEnabled = false
+  jaws.context.webkitImageSmoothingEnabled = false
+  jaws.context.mozImageSmoothingEnabled = false 
+}
+
+/**
+ * Use smooth antialiased scaling when drawing sprites through the canvas API
+ */
+jaws.useSmoothScaling = function() {
+  jaws.context.imageSmoothingEnabled = true
+  jaws.context.webkitImageSmoothingEnabled = true
+  jaws.context.mozImageSmoothingEnabled = true
+}
+
+
 /**
  * @private
  * Keeps updated mouse coordinates in jaws.mouse_x / jaws.mouse_y
@@ -556,13 +577,15 @@ jaws.preventDefaultKeys = function(array_of_strings) {
 }
 
 /**
- * Returns true if *key* is currently pressed down
+ * Check if *keys* are pressed. Second argument specifies use of logical AND when checking multiple keys.
  * @example
- * jaws.pressed("left");  // returns true if arrow key is pressed
- * jaws.pressed("a");     // returns true if key "a" is pressed
+ * jaws.pressed("left a");          // returns true if left arrow key OR a is pressed
+ * jaws.pressed("ctrl c", true);    // returns true if ctrl AND a is pressed
  */
-jaws.pressed = function(key) {
-  return pressed_keys[key]
+jaws.pressed = function(keys, logical_and) {
+  if(jaws.isString(keys)) { keys = keys.split(" ") }
+  if(logical_and) { return  keys.every( function(key) { return pressed_keys[key] } ) }
+  else            { return  keys.some( function(key) { return pressed_keys[key] } ) }
 }
 
 /** 
@@ -1143,6 +1166,7 @@ var jaws = (function(jaws) {
 * @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
 * @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
 * @property {int} scale_image Scale the sprite by this factor
+* @property {string,gradient} color If set, draws a rectangle of dimensions rect() with specified color or gradient (linear or radial)
 *
 * @example
 * // create new sprite at top left of the screen, will use jaws.assets.get("foo.png")
@@ -1189,6 +1213,8 @@ jaws.Sprite.prototype.default_options = {
   scale_x: 1,
   scale_y: 1,
   scale: 1,
+  width: null,
+  height: null,
   _constructor: null,
   dom: null
 }
@@ -1204,7 +1230,15 @@ jaws.Sprite.prototype.set = function(options) {
   if(this.image)        this.setImage(this.image);
   if(this.scale_image)  this.scaleImage(this.scale_image);
   if(this.anchor)       this.setAnchor(this.anchor);
-
+  
+  if(!this.image && this.color && this.width && this.height) {
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    context.fillStyle = this.color;
+    context.fillRect(0, 0, this.width, this.height);
+    this.image = context.getImageData(0, 0, this.width, this.height);
+  }
+  
   this.cacheOffsets()
 
   return this
@@ -2073,6 +2107,7 @@ var jaws = (function(jaws) {
  * @property {int} offset           When cutting out frames from a sprite sheet, start at this frame
  * @property {string} orientation   How to cut out frames frmo sprite sheet, possible values are "down" or "right"
  * @property {function} on_end      Function to call when animation ends. triggers only on non-looping, non-bouncing animations
+ * @property {object} subsets       Name specific frames-intervals for easy access later, i.e. {move: [2,4], fire: [4,6]}. Access with animation.subset[name]
  *
  * @example
  * // in setup()
@@ -2161,7 +2196,11 @@ jaws.Animation.prototype.update = function() {
       this.index += this.frame_direction * 2
     }
     else if(this.loop) {
-      this.index = 0
+      if(this.frame_direction < 0) { 
+        this.index = this.frames.length -1; 
+      } else { 
+        this.index = 0; 
+      }
     }
     else {
       this.index -= this.frame_direction
