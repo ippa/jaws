@@ -45,6 +45,13 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/jawsjs/examples/example12.html - jaws.viewport.drawTileMap() - optimized tile map drawing
 
 == Games using Jaws
+* {http://mcfunkypants.com/LD26/}[http://mcfunkypants.com/LD26/] - Colorful abstract platformer by McFunkypants
+* {http://games.subdimension.co.uk/LD26/}[http://games.subdimension.co.uk/LD26/] - Unique painting mini-game by Malphas Wats
+* {http://mcfunkypants.com/RubbaRabbit/}[http://mcfunkypants.com/RubbaRabbit/] - Fullscreen platformer by McFunkypants
+* {http://mcfunkypants.com/Gwendolynn/}[http://mcfunkypants.com/Gwendolynn/] - Gwendolynn, platformer by McFunkypants
+* {http://gamejolt.com/games/arcade/b-w-tennis/13883/}[http://gamejolt.com/games/arcade/b-w-tennis/13883/] - Pong-clone by devpoga
+* {http://gamejolt.com/games/arcade/b-w-tennis/13883/}[http://gamejolt.com/games/arcade/b-w-tennis/13883/] - Sword of Truth by http://ricardonakamura.org/
+* {http://gamejolt.com/games/arcade/for-victory/14267/}[http://gamejolt.com/games/arcade/for-victory/14267/] - Minimalistic game by devpoga
 * {http://www.castleriot.com/}[http://www.castleriot.com/] - Multiplayer game with guards and thieves. By team @ http://nodeknockout.com/teams/third-times-the-char
 * {http://ippa.se/webgames/the_escape/index.html}[http://ippa.se/webgames/the_escape/index.html] - "The Escape" - My Ludum Dare #21 entry. Adventure/Puzzle.
 * {http://ippa.se/webgames/unexpected_outcome/index.html}[http://ippa.se/webgames/unexpected_outcome/index.html] - A 10-minute adventure game with pixel-perfect collisions
@@ -69,6 +76,7 @@ Check out the sourcecode for comments and explanations:
 ... missing your game here? Mail me about it (my email is on my github profilepage). Or create a new issue.
 
 == Libs using Jaws
+* {http://mcfunkypants.com/ludus/}[http://mcfunkypants.com/ludus/] - Platformer Game Starter Kit
 * {https://github.com/deisdestiny/Jaws-TS}[https://github.com/deisdestiny/Jaws-TS] - Jaws TypeScript Definitions
 
 == Loading Jaws
