@@ -22,6 +22,9 @@ Jaws also:
 - {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Overview and design choices.
 - {http://jawsjs.com/jawsjs/test/index.html}[http://jawsjs.com/jawsjs/test/index.html]    - Jaws testsuite (QUnit)
 
+== Tutorials
+- {http://videlais.com/2013/05/17/learning-jawsjs-part-1/}[http://videlais.com/2013/05/17/learning-jawsjs-part-1/] - Intro to sprites, collisions and game states by Dan Cox.
+
 == What kind of games can you make with Jaws?
 Jaws is well suited for "classic" side/top scrolling games (tile based or not) where you have a number of sprite-sheet-animated sprites.
 Jaws comes with basic rect-vs-rect/circle-vs-circle collision detection that works well in most cases. If you have _tons_ of sprites (for example, a bullet hell schmup) you probably want to use a physicslib like Box2D or spatial
