@@ -39,7 +39,7 @@
       canvas = document.getElementsByTagName('canvas')[0]
       context = canvas.getContext('2d');
 
-      player = new jaws.Sprite({image: "plane.png", x: 10, y:100, context: context})
+      player = new jaws.Sprite({image: "plane.png", x: 10, y:100 })
       jaws.on_keydown("esc", setup)
       jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
     }
