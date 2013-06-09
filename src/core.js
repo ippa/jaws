@@ -119,7 +119,7 @@ jaws.init = function(options) {
   }
 
   /* Let's scale sprites retro-style by default */
-  jaws.useCrispScaling()
+  if(jaws.context)  jaws.useCrispScaling();
  
   jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
   jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
