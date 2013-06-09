@@ -49,7 +49,10 @@ jaws.game_states.Edit = function(options) {
   }
 
   function toolbar_mousedown(e) {
-    var clicked_icon = iconAt(jaws.mouse_x, jaws.mouse_y)
+    // console.log(e)
+    // event = (e) ? e : window.event
+
+    var clicked_icon = iconAt(e.pageX, e.pageY)
     if(clicked_icon) {
       cursor_object = cloneObject(clicked_icon)
       return false;
@@ -183,9 +186,17 @@ jaws.game_states.Edit = function(options) {
   }
 
   function gameObjectAt(x, y) {
-    return game_objects.filter( function(obj) { return obj.rect().collidePoint(x, y) } )[0]
+    return game_objects.filter( function(obj) { 
+      try {
+        return obj.rect().collidePoint(x, y) 
+      }
+      catch(err) {
+        return false
+      }
+    })[0]
   }
   function iconAt(x, y) {
+    console.log(x + "/" + y)
     return icons.filter( function(obj) { return obj.rect().collidePoint(x, y) } )[0]
   }
 

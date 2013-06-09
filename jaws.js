@@ -1,4 +1,4 @@
-/* Built at 2013-06-09 17:54:33 +0200 */
+/* Built at 2013-06-09 18:54:11 +0200 */
 /**
  * @namespace JawsJS core functions. "Field Summary" contains readable properties on the main jaws-object.
  *
@@ -120,7 +120,7 @@ jaws.init = function(options) {
   }
 
   /* Let's scale sprites retro-style by default */
-  jaws.useCrispScaling()
+  if(jaws.context)  jaws.useCrispScaling();
  
   jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
   jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
@@ -464,10 +464,13 @@ jaws.setupInput = function() {
 
   window.addEventListener("keydown", handleKeyDown)
   window.addEventListener("keyup", handleKeyUp)
-  jaws.canvas.addEventListener("mousedown", handleMouseDown, false);
-  jaws.canvas.addEventListener("mouseup", handleMouseUp, false);
-  jaws.canvas.addEventListener("touchstart", handleTouchStart, false);
-  jaws.canvas.addEventListener("touchend", handleTouchEnd, false);
+
+  var jawswindow = jaws.canvas || jaws.dom
+  jawswindow.addEventListener("mousedown", handleMouseDown, false);
+  jawswindow.addEventListener("mouseup", handleMouseUp, false);
+  jawswindow.addEventListener("touchstart", handleTouchStart, false);
+  jawswindow.addEventListener("touchend", handleTouchEnd, false);
+
   window.addEventListener("blur", resetPressedKeys, false);
 
   // this turns off the right click context menu which screws up the mouseup event for button 2
