@@ -62,7 +62,8 @@ jaws.Sprite.prototype.default_options = {
   width: null,
   height: null,
   _constructor: null,
-  dom: null
+  dom: null,
+  context: null
 }
 
 /** 
