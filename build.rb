@@ -32,10 +32,11 @@ File.open("jaws-min.js", "w") { |out|
   out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # option: ADVANCED_OPTIMIZATIONS
 }  
 
-#
-# Generate documentation into http://jawsjs.com/docs/
-# -a documents All functions
-# 
-`jsdoc -D='noGlobal:true' -D='title:JawsJS HTML5 game engine documentation' -t=/www/ippa/jawsjs.com/public/codeview -d=/www/ippa/jawsjs.com/public/docs src`
-
-`cd /www/ippa/jawsjs.com/public/docs; zip jaws-docs.zip -x jaws-docs.zip -r .`
+if ARGV.first != "nodoc"
+  #
+  # Generate documentation into http://jawsjs.com/docs/
+  # -a documents All functions
+  # 
+  `jsdoc -D='noGlobal:true' -D='title:JawsJS HTML5 game engine documentation' -t=/www/ippa/jawsjs.com/public/codeview -d=/www/ippa/jawsjs.com/public/docs src`
+  `cd /www/ippa/jawsjs.com/public/docs; zip jaws-docs.zip -x jaws-docs.zip -r .`
+end
