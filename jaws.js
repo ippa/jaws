@@ -1,4 +1,4 @@
-/* Built at 2013-05-08 01:16:18 +0200 */
+/* Built at 2013-06-09 17:54:33 +0200 */
 /**
  * @namespace JawsJS core functions. "Field Summary" contains readable properties on the main jaws-object.
  *
@@ -1216,7 +1216,8 @@ jaws.Sprite.prototype.default_options = {
   width: null,
   height: null,
   _constructor: null,
-  dom: null
+  dom: null,
+  context: null
 }
 
 /** 
