@@ -85,10 +85,13 @@ jaws.setupInput = function() {
 
   window.addEventListener("keydown", handleKeyDown)
   window.addEventListener("keyup", handleKeyUp)
-  jaws.canvas.addEventListener("mousedown", handleMouseDown, false);
-  jaws.canvas.addEventListener("mouseup", handleMouseUp, false);
-  jaws.canvas.addEventListener("touchstart", handleTouchStart, false);
-  jaws.canvas.addEventListener("touchend", handleTouchEnd, false);
+
+  var jawswindow = jaws.canvas || jaws.dom
+  jawswindow.addEventListener("mousedown", handleMouseDown, false);
+  jawswindow.addEventListener("mouseup", handleMouseUp, false);
+  jawswindow.addEventListener("touchstart", handleTouchStart, false);
+  jawswindow.addEventListener("touchend", handleTouchEnd, false);
+
   window.addEventListener("blur", resetPressedKeys, false);
 
   // this turns off the right click context menu which screws up the mouseup event for button 2
