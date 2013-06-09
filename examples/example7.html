@@ -88,14 +88,18 @@
     }
     function forceInsideCanvas(item) {
       if(item.x < 0)                          { item.x = 0  }
-      if(item.rect().right > jaws.width)    { item.x = jaws.width - item.width }
+      if(item.rect().right > jaws.width)      { item.x = jaws.width - item.width }
       if(item.y < 0)                          { item.y = 0 }
-      if(item.rect().bottom  > jaws.height) { item.y = jaws.height - item.height }
+      if(item.rect().bottom  > jaws.height)   { item.y = jaws.height - item.height }
     }
 
     function Bullet(options) {
       this.vx = options.vx
       this.vy = options.vy
+
+      /* Don't send unknwon vx/vy into Sprite()-constructor */
+      delete options.vx
+      delete options.vy
       options.image = "bullet.png"
       jaws.Sprite.call(this, options)
       
