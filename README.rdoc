@@ -26,6 +26,7 @@ Jaws also:
 - {http://videlais.com/2013/05/17/learning-jawsjs-part-1/}[http://videlais.com/2013/05/17/learning-jawsjs-part-1/] - Intro to sprites, collisions and game states by Dan Cox.
 - {http://videlais.com/2013/05/23/learning-jawsjs-part-2/}[http://videlais.com/2013/05/23/learning-jawsjs-part-2/] - SpriteList, collideOneWithMany and more.
 - {http://videlais.com/2013/06/01/learning-jawsjs-part-3/}[http://videlais.com/2013/06/01/learning-jawsjs-part-3/] - Viewport & assets.
+- {http://videlais.com/2013/06/05/learning-jawsjs-part-4/}[http://videlais.com/2013/06/05/learning-jawsjs-part-4/] - SpriteSheet, Animation and game states.
 
 == What kind of games can you make with Jaws?
 Jaws is well suited for "classic" side/top scrolling games (tile based or not) where you have a number of sprite-sheet-animated sprites.
