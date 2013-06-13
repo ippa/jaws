@@ -10,7 +10,7 @@ Licensed under LGPL so you're free to use it for commercial projects.
 * JSDOC Documentation & commented examples
 
 Jaws also:
-- Does <canvas>-sprites and exprimental HTML-based sprites
+- Use <canvas> to draw stuff on the screen (with *very* exprimental DOM-sprite support)
 - Does not depend on any other JavaScript library
 - Doesn't try to force a certain "JS class pattern" on you, just pure JavaScript as mother nature intended it
 - Tries to make assets (images, music, json data) in webgames as easy as possible
