@@ -59,6 +59,7 @@ jaws.Sprite.prototype.default_options = {
   scale_x: 1,
   scale_y: 1,
   scale: 1,
+  color: null,
   width: null,
   height: null,
   _constructor: null,
@@ -82,7 +83,11 @@ jaws.Sprite.prototype.set = function(options) {
             var context = canvas.getContext('2d');
             context.fillStyle = this.color;
             context.fillRect(0, 0, this.width, this.height);
-            this.image = context.getImageData(0, 0, this.width, this.height);
+            canvas.width = this.width;
+            canvas.height = this.height;
+            context.fillStyle = this.color;
+            context.fillRect(0, 0, this.width, this.height);
+            this.image = canvas;
         }
   
   this.cacheOffsets()

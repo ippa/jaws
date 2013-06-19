@@ -26,7 +26,6 @@ test("Text defaults", function() {
 });
 
 test("text", function() {
-  stop();
 
   function assetsLoaded() {
     text = new jaws.Text({text: "rect.png", width:20, height:20});
