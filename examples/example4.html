@@ -48,7 +48,7 @@
           if(sprites.length > 3) sprites.splice(0, 1);
         }
 
-        /* New way with pressedWithoutKeys, see comment below for old verbose workaround */
+        /* The new way with pressedWithoutRepeat(), see comment below for old verbose workaround */
         if(jaws.pressedWithoutRepeat("space")) {
           if(collision_detection_mode == "normal")          collision_detection_mode = "quadtree";
           else if(collision_detection_mode == "quadtree")   collision_detection_mode = "normal";
