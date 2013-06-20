@@ -34,28 +34,28 @@ jaws.setupInput = function() {
   k[45] = "insert"
   k[46] = "delete"
   
-  k[91] = "leftwindowkey"
-  k[92] = "rightwindowkey"
-  k[93] = "selectkey"
-  k[106] = "multiply"
-  k[107] = "add"
-  k[109] = "subtract"
+  k[91] = "left_window_key leftwindowkey"
+  k[92] = "right_window_key rightwindowkey"
+  k[93] = "select_key selectkey"
+  k[106] = "multiply *"
+  k[107] = "add plus +"
+  k[109] = "subtract minus -"
   k[110] = "decimalpoint"
-  k[111] = "divide"
+  k[111] = "divide /"
   
   k[144] = "numlock"
   k[145] = "scrollock"
-  k[186] = "semicolon"
-  k[187] = "equalsign"
-  k[188] = "comma"
-  k[189] = "dash"
-  k[190] = "period"
-  k[191] = "forwardslash"
-  k[192] = "graveaccent"
-  k[219] = "openbracket"
-  k[220] = "backslash"
-  k[221] = "closebracket"
-  k[222] = "singlequote"
+  k[186] = "semicolon ;"
+  k[187] = "equalsign ="
+  k[188] = "comma ,"
+  k[189] = "dash -"
+  k[190] = "period ."
+  k[191] = "forwardslash /"
+  k[192] = "graveaccent `"
+  k[219] = "openbracket ["
+  k[220] = "backslash \\"
+  k[221] = "closebracket ]"
+  k[222] = "singlequote '"
   
   var m = []
   
@@ -110,13 +110,15 @@ function resetPressedKeys(e) {
  */
 function handleKeyUp(e) {
   event = (e) ? e : window.event
-  var human_name = keycode_to_string[event.keyCode]
-  pressed_keys[human_name] = false
-  if(on_keyup_callbacks[human_name]) { 
-    on_keyup_callbacks[human_name](human_name)
-    e.preventDefault()
-  }
-  if(prevent_default_keys[human_name]) { e.preventDefault() }
+  var human_names = keycode_to_string[event.keyCode].split(" ")
+  human_names.forEach( function(human_name) {
+   pressed_keys[human_name] = false
+    if(on_keyup_callbacks[human_name]) { 
+      on_keyup_callbacks[human_name](human_name)
+      e.preventDefault()
+    }
+    if(prevent_default_keys[human_name]) { e.preventDefault() }
+  });
 }
 
 /** @private
@@ -124,13 +126,15 @@ function handleKeyUp(e) {
  */
 function handleKeyDown(e) {
   event = (e) ? e : window.event  
-  var human_name = keycode_to_string[event.keyCode]
-  pressed_keys[human_name] = true
-  if(on_keydown_callbacks[human_name]) { 
-    on_keydown_callbacks[human_name](human_name)
-    e.preventDefault()
-  }
-  if(prevent_default_keys[human_name]) { e.preventDefault() }
+  var human_names = keycode_to_string[event.keyCode].split(" ")
+  human_names.forEach( function(human_name) {
+    pressed_keys[human_name] = true
+    if(on_keydown_callbacks[human_name]) { 
+      on_keydown_callbacks[human_name](human_name)
+      e.preventDefault()
+    }
+    if(prevent_default_keys[human_name]) { e.preventDefault() }
+  });
 }
 /** @private
  * handle event "onmousedown" by remembering what button was pressed
