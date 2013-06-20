@@ -41,16 +41,26 @@
 
       /* update() will get called each game tick with your specified FPS. Put game logic here. */
       this.update = function() {
-        if(jaws.pressed("+"))     sprites.push( createSprite() );
+        if(jaws.pressed("+")) {
+          sprites.push( createSprite() )
+        }
         if(jaws.pressed("-")) {
           if(sprites.length > 3) sprites.splice(0, 1);
         }
+
+        /* New way with pressedWithoutKeys, see comment below for old verbose workaround */
+        if(jaws.pressedWithoutRepeat("space")) {
+          if(collision_detection_mode == "normal")          collision_detection_mode = "quadtree";
+          else if(collision_detection_mode == "quadtree")   collision_detection_mode = "normal";
+        }
+        /*
         if(jaws.pressed("space")) {
           if(!space_down & collision_detection_mode == "normal")          collision_detection_mode = "quadtree";
           else if(!space_down & collision_detection_mode == "quadtree")   collision_detection_mode = "normal";
           space_down = true
         }
         else { space_down = false }
+        */
         
         sprites.forEach(function(sprite, index) {
           sprite.collision = false
