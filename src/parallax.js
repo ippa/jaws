@@ -22,6 +22,10 @@ var jaws = (function(jaws) {
 jaws.Parallax = function Parallax(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
   jaws.parseOptions(this, options, this.default_options)
+  
+  this.width = options.width || jaws.width;
+  this.height = options.height || jaws.height;
+  
 }
 
 jaws.Parallax.prototype.default_options = {
@@ -30,6 +34,8 @@ jaws.Parallax.prototype.default_options = {
   repeat_y: null,
   camera_x: 0,
   camera_y: 0,
+  width: null,
+  height: null,
   layers: []
 }
 
@@ -55,8 +61,8 @@ jaws.Parallax.prototype.draw = function(options) {
   	}
   
   	layer.x = initx;
-    while (layer.y < jaws.height) {
-      while (layer.x < jaws.width) {
+    while (layer.y < this.height) {
+      while (layer.x < this.width) {
   		  if (layer.x + layer.width >= 0 && layer.y + layer.height >= 0) { //Make sure it's on screen
   			  layer.draw(); //Draw only if actually on screen, for performance reasons
   			}
