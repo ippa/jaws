@@ -25,6 +25,7 @@
         root+"animation.js",
         root+"viewport.js",
         root+"collision_detection.js",
+        root+"quadtree.js",
         root+"gfx.js",
         root+"tile_map_extra.js"
         )
