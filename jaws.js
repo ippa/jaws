@@ -1,4 +1,4 @@
-/* Built at 2013-06-09 18:54:11 +0200 */
+/* Built at 2013-06-21 00:23:18 +0200 */
 /**
  * @namespace JawsJS core functions. "Field Summary" contains readable properties on the main jaws-object.
  *
@@ -413,28 +413,28 @@ jaws.setupInput = function() {
   k[45] = "insert"
   k[46] = "delete"
   
-  k[91] = "leftwindowkey"
-  k[92] = "rightwindowkey"
-  k[93] = "selectkey"
-  k[106] = "multiply"
-  k[107] = "add"
-  k[109] = "subtract"
+  k[91] = "left_window_key leftwindowkey"
+  k[92] = "right_window_key rightwindowkey"
+  k[93] = "select_key selectkey"
+  k[106] = "multiply *"
+  k[107] = "add plus +"
+  k[109] = "subtract minus -"
   k[110] = "decimalpoint"
-  k[111] = "divide"
+  k[111] = "divide /"
   
   k[144] = "numlock"
   k[145] = "scrollock"
-  k[186] = "semicolon"
-  k[187] = "equalsign"
-  k[188] = "comma"
-  k[189] = "dash"
-  k[190] = "period"
-  k[191] = "forwardslash"
-  k[192] = "graveaccent"
-  k[219] = "openbracket"
-  k[220] = "backslash"
-  k[221] = "closebracket"
-  k[222] = "singlequote"
+  k[186] = "semicolon ;"
+  k[187] = "equalsign ="
+  k[188] = "comma ,"
+  k[189] = "dash -"
+  k[190] = "period ."
+  k[191] = "forwardslash /"
+  k[192] = "graveaccent `"
+  k[219] = "openbracket ["
+  k[220] = "backslash \\"
+  k[221] = "closebracket ]"
+  k[222] = "singlequote '"
   
   var m = []
   
@@ -489,13 +489,15 @@ function resetPressedKeys(e) {
  */
 function handleKeyUp(e) {
   event = (e) ? e : window.event
-  var human_name = keycode_to_string[event.keyCode]
-  pressed_keys[human_name] = false
-  if(on_keyup_callbacks[human_name]) { 
-    on_keyup_callbacks[human_name](human_name)
-    e.preventDefault()
-  }
-  if(prevent_default_keys[human_name]) { e.preventDefault() }
+  var human_names = keycode_to_string[event.keyCode].split(" ")
+  human_names.forEach( function(human_name) {
+   pressed_keys[human_name] = false
+    if(on_keyup_callbacks[human_name]) { 
+      on_keyup_callbacks[human_name](human_name)
+      e.preventDefault()
+    }
+    if(prevent_default_keys[human_name]) { e.preventDefault() }
+  });
 }
 
 /** @private
@@ -503,13 +505,15 @@ function handleKeyUp(e) {
  */
 function handleKeyDown(e) {
   event = (e) ? e : window.event  
-  var human_name = keycode_to_string[event.keyCode]
-  pressed_keys[human_name] = true
-  if(on_keydown_callbacks[human_name]) { 
-    on_keydown_callbacks[human_name](human_name)
-    e.preventDefault()
-  }
-  if(prevent_default_keys[human_name]) { e.preventDefault() }
+  var human_names = keycode_to_string[event.keyCode].split(" ")
+  human_names.forEach( function(human_name) {
+    pressed_keys[human_name] = true
+    if(on_keydown_callbacks[human_name]) { 
+      on_keydown_callbacks[human_name](human_name)
+      e.preventDefault()
+    }
+    if(prevent_default_keys[human_name]) { e.preventDefault() }
+  });
 }
 /** @private
  * handle event "onmousedown" by remembering what button was pressed
@@ -1216,6 +1220,7 @@ jaws.Sprite.prototype.default_options = {
   scale_x: 1,
   scale_y: 1,
   scale: 1,
+  color: null,
   width: null,
   height: null,
   _constructor: null,
@@ -1242,7 +1247,7 @@ jaws.Sprite.prototype.set = function(options) {
     context.fillRect(0, 0, this.width, this.height);
     this.image = context.getImageData(0, 0, this.width, this.height);
   }
-  
+
   this.cacheOffsets()
 
   return this
@@ -2012,6 +2017,10 @@ var jaws = (function(jaws) {
 jaws.Parallax = function Parallax(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
   jaws.parseOptions(this, options, this.default_options)
+  
+  this.width = options.width || jaws.width;
+  this.height = options.height || jaws.height;
+  
 }
 
 jaws.Parallax.prototype.default_options = {
@@ -2020,6 +2029,8 @@ jaws.Parallax.prototype.default_options = {
   repeat_y: null,
   camera_x: 0,
   camera_y: 0,
+  width: null,
+  height: null,
   layers: []
 }
 
@@ -2045,8 +2056,8 @@ jaws.Parallax.prototype.draw = function(options) {
   	}
   
   	layer.x = initx;
-    while (layer.y < jaws.height) {
-      while (layer.x < jaws.width) {
+    while (layer.y < this.height) {
+      while (layer.x < this.width) {
   		  if (layer.x + layer.width >= 0 && layer.y + layer.height >= 0) { //Make sure it's on screen
   			  layer.draw(); //Draw only if actually on screen, for performance reasons
   			}
