@@ -5,13 +5,17 @@
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #4 - Collision detection</title>
   <head>
-<body>
+<body style="width: 800px;">
   
-  <canvas width=500 height=300></canvas>
+  <canvas width=800 height=400 style="width: 800px; height: 400px;"></canvas>
   FPS: <span id="fps"></span>
   
   <div id="info">
     <h1>Sprite collision detection</h1>
+    <code>PLUS / +</code>: Add sprites<br>
+    <code>MINUS / -</code>: Remove sprites<br>
+    <code>SPACE</code>: Switch between normal/quadtree collision detection<br><br>
+
     Every Sprite (that has an image) will have a function rect() which will return a Rect-object just embracing the sprite.
     Then you can <code>sprite.rect.collideRect(rect2)</code> or <code>sprite.rect.collidePoint(x, y)</code>
   </div>
@@ -24,37 +28,55 @@
       var sprites = []
       var sprite_pairs = []
       var fps = document.getElementById("fps")
+      var collision_detection_mode = "normal"
+      var quadtree = new jaws.QuadTree()
+      var space_down = false
 
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
-
-        var amount_of_rects = 60
-        while(amount_of_rects--) {
-          var x = Math.random() * jaws.canvas.width
-          var y = Math.random() * jaws.canvas.height
-          var sprite = new jaws.Sprite({image: "rect.png", x: x, y: y, anchor: "center"})
-          sprite.vx = Math.random() * 0.5 - 1
-          sprite.vy = Math.random() * 0.5 - 1
-          sprites.push(sprite)
-        }
+        var amount_of_rects = 70
+        while(amount_of_rects--)  sprites.push( createSprite() );
+        jaws.preventDefaultKeys(["space", "+"])
       }
 
       /* update() will get called each game tick with your specified FPS. Put game logic here. */
       this.update = function() {
+        if(jaws.pressed("+"))     sprites.push( createSprite() );
+        if(jaws.pressed("-")) {
+          if(sprites.length > 3) sprites.splice(0, 1);
+        }
+        if(jaws.pressed("space")) {
+          if(!space_down & collision_detection_mode == "normal")          collision_detection_mode = "quadtree";
+          else if(!space_down & collision_detection_mode == "quadtree")   collision_detection_mode = "normal";
+          space_down = true
+        }
+        else { space_down = false }
+        
         sprites.forEach(function(sprite, index) {
           sprite.collision = false
           sprite.move(sprite.vx, sprite.vy)
  
-          if(sprite.x < 0 || sprite.rect().right > jaws.width)  { sprite.vx = -sprite.vx }
-          if(sprite.y < 0 || sprite.rect().bottom > jaws.height) { sprite.vy = -sprite.vy }
+          if(sprite.x < 0 || sprite.rect().right > jaws.width)    { sprite.vx = -sprite.vx }
+          if(sprite.y < 0 || sprite.rect().bottom > jaws.height)  { sprite.vy = -sprite.vy }
         })
 
-        jaws.collideManyWithMany(sprites, sprites).forEach( function(pair, index) {
-          pair[0].collision = true
-          pair[1].collision = true
-        });
+
+        if(collision_detection_mode == "normal") {
+          jaws.collideManyWithMany(sprites, sprites).forEach( function(pair, index) {
+            pair[0].collision = true
+            pair[1].collision = true
+          });
+        }
+        else if(collision_detection_mode == "quadtree") {
+          quadtree.collide(sprites, sprites, function(a, b) {
+            a.collision = true;
+            b.collision = true;
+          });
+        }
 
         fps.innerHTML = jaws.game_loop.fps
+        fps.innerHTML += " - sprites: " + sprites.length
+        fps.innerHTML += " - collision detection: " + collision_detection_mode
       }
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */
@@ -63,6 +85,15 @@
         sprites.forEach( function(sprite, index) {
           sprite.collision ? sprite.rect().draw() : sprite.draw()
         });
+      }
+
+      function createSprite() {
+        var x = Math.random() * jaws.canvas.width
+        var y = Math.random() * jaws.canvas.height
+        var sprite = new jaws.Sprite({image: "rect.png", x: x, y: y, anchor: "center"})
+        sprite.vx = Math.random() * 0.5 - 1
+        sprite.vy = Math.random() * 0.5 - 1
+        return sprite
       }
     }
     
