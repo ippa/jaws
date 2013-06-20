@@ -79,7 +79,6 @@ jaws.Sprite.prototype.set = function(options) {
   if(this.scale_image)  this.scaleImage(this.scale_image);
   if(this.anchor)       this.setAnchor(this.anchor);
   
-<<<<<<< HEAD
   if(!this.image && this.color && this.width && this.height) {
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
@@ -87,20 +86,7 @@ jaws.Sprite.prototype.set = function(options) {
     context.fillRect(0, 0, this.width, this.height);
     this.image = context.getImageData(0, 0, this.width, this.height);
   }
-=======
-  if (this.color && this.width && this.height) {
-            var canvas = document.createElement('canvas');
-            var context = canvas.getContext('2d');
-            context.fillStyle = this.color;
-            context.fillRect(0, 0, this.width, this.height);
-            canvas.width = this.width;
-            canvas.height = this.height;
-            context.fillStyle = this.color;
-            context.fillRect(0, 0, this.width, this.height);
-            this.image = canvas;
-        }
->>>>>>> bc8b0cf243ab0b167797180683c20f2c0511ec31
-  
+
   this.cacheOffsets()
 
   return this
