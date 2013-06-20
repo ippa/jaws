@@ -1,6 +1,7 @@
 var jaws = (function(jaws) {
 
   var pressed_keys = {}
+  var previously_pressed_keys = {}
   var keycode_to_string = []
   var on_keydown_callbacks = []
   var on_keyup_callbacks = []
@@ -214,6 +215,26 @@ jaws.pressed = function(keys, logical_and) {
   if(jaws.isString(keys)) { keys = keys.split(" ") }
   if(logical_and) { return  keys.every( function(key) { return pressed_keys[key] } ) }
   else            { return  keys.some( function(key) { return pressed_keys[key] } ) }
+}
+
+/**
+ * Check if *keys* are pressed, but only return true Once for any given keys. Once keys have been released, pressedWithoutRepeat can return true again when keys are pressed.
+ * Second argument specifies use of logical AND when checking multiple keys.
+ * @example
+ * jaws.pressed("left a");          // returns true if left arrow key OR a is pressed
+ * jaws.pressed("ctrl c", true);    // returns true if ctrl AND a is pressed
+ */
+jaws.pressedWithoutRepeat = function(keys, logical_and) {
+  if( jaws.pressed(keys, logical_and) ) {
+    if(!previously_pressed_keys[keys]) { 
+      previously_pressed_keys[keys] = true
+      return true 
+    }
+  }
+  else {
+    previously_pressed_keys[keys] = false
+    return false
+  }
 }
 
 /** 
