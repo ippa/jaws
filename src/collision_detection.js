@@ -130,33 +130,26 @@ function combinations(list, n) {
 /** @private */
 function hasItems(array) { return (array && array.length > 0) }
 
-
 /*
- * @deprecated
+ * Collides 2 objects or list of objects with eachother. 
+ * For each collision callback is executed with the 2 objects as arguments.
  *
- * Collides 2 objects or list with objects.
- * Returns empty array if no collision took place
- * Returns array of array with object-pairs that collided
+ * The upside of using collide() instead of the more specialised collideOneWithMany() and collideManyWithMany()
+ * is that you can call it withour knowing if you're sending in single objects or lists of objects. 
+ * If there's collisions you'll always get your callback executed with the two colliding objects as arguments.
  *
  * @examples
- *   jaws.collide(player, enemy)     // --> [player, enemy]
- *   jaws.collide(player, enemies)   // --> [[player, enemies[2]]
- *   jaws.collide(bullets, enemies)  // [ [bullet1, enemy1], [bullet2, ememy3] ]
+ *   jaws.collide(player, enemy, function(player, enemy) { ... } )  
+ *   jaws.collide(player, enemies, function(player, enemy) { ... } ) 
+ *   jaws.collide(bullets, enemies, function(bullet, enemy) { ... } )
  *
  */
-/*
-jaws.collide = function(object1, object2) {
-  var a = []
-  if(object1.radius && object2.radius && object1 !== object2 && jaws.collideCircles(object1, object2))  { return [object1, object2]; }
-  if(object1.rect && object2.rect && object1 !== object2 && jaws.collideRects( object1.rect(), object2.rect())) { return [object1, object2]; }
-  if(object1.forEach) a = object1.map( function(item1) { return jaws.collide(item1, object2) } ).filter(hasItems);
-  if(object2.forEach) a = object2.map( function(item2) { return jaws.collide(item2, object1) } ).filter(hasItems);
-
-  // Convert [[[1,2],[2,2]]] -> [[1,1],[2,2]] (flatten one outer array wrapper)
-  if(a[0] && a[0].length == 1)  return a[0];
-  else                          return a;
+jaws.collide = function(x, x2, callback) {
+  if(x.rect     && x2.forEach)  return jaws.collideOneWithMany(x, x2, callback);
+  if(x.forEach  && x2.forEach)  return jaws.collideManyWithMany(x, x2, callback);
+  if(x.forEach  && x2.rect)     return jaws.collideOneWithMany(x2, x, callback);
+  if(x.rect && x2.rect && jaws.collideOneWithOne(x,x2)) callback(x, x2);
 }
-*/
 
 return jaws;
 })(jaws || {});
