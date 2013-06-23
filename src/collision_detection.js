@@ -23,13 +23,25 @@ jaws.collideOneWithOne = function(object1, object2) {
 }
 
 /**
- * collide one single object 'object' with a list of objects 'list'.
- * returns an array of items from 'list' that collided with 'object'.
+ * collide one single object 'object' with a list of objects 'list'. 
+ *
+ * if 'callback' is given it will be called for each collision with the two colliding objects as arguments.
+ *
+ * leaving out 'callback' argument it will return an array of items from 'list' that collided with 'object'.
  * returns empty array of no collisions are found.
  * will never collide objects with themselves.
  */
-jaws.collideOneWithMany = function(object, list) {
-  return list.filter( function(item) { return jaws.collideOneWithOne(object, item) } ) 
+jaws.collideOneWithMany = function(object, list, callback) {
+  if(callback) {
+    for(var i=0; i < list.length; i++)  {
+      if( jaws.collideOneWithOne(object, list[i]) ) { 
+        callback(object, list[i]) 
+      }
+    }
+  }
+  else {
+    return list.filter( function(item) { return jaws.collideOneWithOne(object, item) } ) 
+  }
 }
 
 /**
@@ -42,18 +54,24 @@ jaws.collideOneWithMany = function(object, list) {
  *   jaws.collideManyWithMany(bullets, enemies) // --> [[bullet, enemy], [bullet, enemy]]
  *
  */
-jaws.collideManyWithMany = function(list1, list2) {
+jaws.collideManyWithMany = function(list1, list2, callback) {
   var a = []
 
   if(list1 === list2) {
     combinations(list1, 2).forEach( function(pair) {
-      if( jaws.collideOneWithOne(pair[0], pair[1]) ) a.push([pair[0], pair[1]]);
+      if( jaws.collideOneWithOne(pair[0], pair[1]) ) {
+        if(callback)  { callback(pair[0], pair[1]) }
+        else          { a.push([pair[0], pair[1]]) }
+      }
     });
   }
   else {
     list1.forEach( function(item1) { 
       list2.forEach( function(item2) { 
-        if(jaws.collideOneWithOne(item1, item2)) a.push([item1, item2])
+        if(jaws.collideOneWithOne(item1, item2)) {
+          if(callback)  { callback(item1, item2) }
+          else          { a.push([item1, item2]) }
+        }
       });
     });
   }
