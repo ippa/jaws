@@ -8,10 +8,12 @@ test("QuadTree defaults", function() {
   same(tree.nodes, [], "nodes defaults to []");
   same(tree.objects, [], "objects defaults to []");
 });
+
 test("QuadTree operations: insert, retrieve, and clear", function() {
   var tree = new jaws.QuadTree();
   var a = new jaws.Sprite({color: "white", width: 10, height: 10, x: 0, y: 0});
   var b = new jaws.Sprite({color: "white", width: 10, height: 10, x: 0, y: 0});
+
   tree.insert(a);
   same(tree.retrieve(a.rect())[0], a, "Same object was insert()'d and then retrieve()'d");
   tree.clear();
@@ -21,3 +23,33 @@ test("QuadTree operations: insert, retrieve, and clear", function() {
   equal(tree.collide(a,b), false, "A is at 0,0 and B is at 20,20; they should not collide.");
   start();
 });
+
+test("QuadTree collide spritelists", function() {
+  var tree = new jaws.QuadTree();
+  var s1 = new jaws.Sprite({color: "white", width: 10, height: 10, x: 0, y: 0});
+  var s2 = new jaws.Sprite({color: "white", width: 10, height: 10, x: 5, y: 5});
+  var s3 = new jaws.Sprite({color: "white", width: 10, height: 10, x: 20, y: 20});
+  var sprites = new jaws.SpriteList();
+  sprites.push(s1)
+  sprites.push(s2)
+  sprites.push(s3)
+
+  var collided = false
+  tree.collide(s1, sprites, function(a, b) {
+    collided = true
+    same(s1, a, "tree.collide(sprite, list)")
+    same(s2, b, "tree.collide(sprite, list)")
+  });
+  same(collided, true, "tree.collide(sprite, list) callback got executed")
+
+  var collided = false
+  tree.collide(sprites, sprites, function(a, b) {
+    // console.log(a.toString() + " <-> " + b.toString())
+    collided = true
+    same(s1, a, "tree.collide(list, list)")
+    same(s2, b, "tree.collide(list, list)")
+  });
+  same(collided, true, "tree.collide(list, list) callback got executed")
+
+});
+
