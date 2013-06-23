@@ -53,6 +53,8 @@
           if(collision_detection_mode == "normal")          collision_detection_mode = "quadtree";
           else if(collision_detection_mode == "quadtree")   collision_detection_mode = "normal";
         }
+       
+        // OLD WAY:
         /*
         if(jaws.pressed("space")) {
           if(!space_down & collision_detection_mode == "normal")          collision_detection_mode = "quadtree";
@@ -72,16 +74,17 @@
 
 
         if(collision_detection_mode == "normal") {
+          jaws.collide(sprites, sprites, function(a, b) { a.collision = b.collision = true });
+          // OLD WAY:
+          /*
           jaws.collideManyWithMany(sprites, sprites).forEach( function(pair, index) {
             pair[0].collision = true
             pair[1].collision = true
           });
+          */
         }
         else if(collision_detection_mode == "quadtree") {
-          quadtree.collide(sprites, sprites, function(a, b) {
-            a.collision = true;
-            b.collision = true;
-          });
+          quadtree.collide(sprites, sprites, function(a, b) { a.collision = b.collision = true });
         }
 
         fps.innerHTML = jaws.game_loop.fps
