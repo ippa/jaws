@@ -1,12 +1,12 @@
 module("Collision Detection")
 
-test("Collision detection", function() {
+test("collision detection", function() {
   jaws.assets.root = "assets/"
   jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onfinish:assetsLoaded})
+  jaws.assets.loadAll({onfinish:assetsloaded})
   stop();
 
-  function assetsLoaded() { 
+  function assetsloaded() { 
     var sprite1 = new jaws.Sprite({image: "rect.png", x: 0, y: 0})
     var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
     var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
@@ -59,3 +59,40 @@ test("Collision detection", function() {
   }
 })
 
+test("Collision detection with callbacks", function() {
+  jaws.assets.root = "assets/"
+  jaws.assets.add("rect.png")
+  jaws.assets.loadAll({onfinish:assetsloaded})
+  stop();
+
+  function assetsloaded() { 
+    var sprite1 = new jaws.Sprite({image: "rect.png", x: 0, y: 0})
+    var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
+    var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
+    var sprites = [sprite1, sprite2, sprite3]
+    sprite1.setImage("rect.png")
+    sprite2.setImage("rect.png")
+    sprite3.setImage("rect.png")
+   
+    var callback_status = false
+  
+    jaws.collideOneWithMany(sprite1, sprites, function(a, b) {
+      callback_status = true
+      same(a, sprite1, "collideOneWithMany")
+      same(b, sprite2, "collideOneWithMany")
+    });
+    same(callback_status, true, "collideOneWithMany callback got executed at least once")
+
+    callback_status = false
+    jaws.collideManyWithMany(sprites, sprites, function(a, b) {
+      callback_status = true
+      console.log("callback got executed")
+      same(a, sprite1, "collideManyWithMany, don't collide sprites with themselves")
+      same(b, sprite2, "collideManyWithMany, don't collide sprites with themselves")
+    }); 
+    same(callback_status, true, "collideManyWithMany callback got executed at least once")
+
+    start();
+  }
+
+})
