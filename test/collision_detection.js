@@ -70,12 +70,15 @@ test("Collision detection with callbacks", function() {
     var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
     var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
     var sprites = [sprite1, sprite2, sprite3]
+    var circle1 = { x: 0, y: 0, radius: 5 }
+    var circle2 = { x: 2, y: 2, radius: 5 }
+    var circle3 = { x: 10, y: 10, radius: 5 }
+    var circles = [circle1, circle2, circle3] 
     sprite1.setImage("rect.png")
     sprite2.setImage("rect.png")
     sprite3.setImage("rect.png")
-   
+
     var callback_status = false
-  
     jaws.collideOneWithMany(sprite1, sprites, function(a, b) {
       callback_status = true
       same(a, sprite1, "collideOneWithMany")
@@ -86,13 +89,43 @@ test("Collision detection with callbacks", function() {
     callback_status = false
     jaws.collideManyWithMany(sprites, sprites, function(a, b) {
       callback_status = true
-      console.log("callback got executed")
       same(a, sprite1, "collideManyWithMany, don't collide sprites with themselves")
       same(b, sprite2, "collideManyWithMany, don't collide sprites with themselves")
     }); 
     same(callback_status, true, "collideManyWithMany callback got executed at least once")
 
+    /* Tests of jaws.collide() below */
+    var callback_status = false
+    jaws.collide(sprite1, sprites, function(a, b) {
+      callback_status = true
+      same(a, sprite1, "collide()")
+      same(b, sprite2, "collide()")
+    });
+    same(callback_status, true, "collide() callback got executed at least once")
+
+    callback_status = false
+    jaws.collide(sprites, sprites, function(a, b) {
+      callback_status = true
+      same(a, sprite1, "collide()")
+      same(b, sprite2, "collide()")
+    }); 
+    same(callback_status, true, "collide() callback got executed at least once")
+
+    callback_status = false
+    jaws.collide(circles, circles, function(a, b) {
+      callback_status = true
+      same(a, circle1, "collide() with circles")
+      same(b, circle2, "collide() with circles")
+    }); 
+    same(callback_status, true, "collide() with circles callback got executed at least once")
+
+    callback_status = false
+    jaws.collide(circle1, circle2, function(a, b) { callback_status = true }); 
+    same(callback_status, false, "collide(circle1, circle2) shouldn't executed callback")
+
     start();
   }
 
 })
+
+
