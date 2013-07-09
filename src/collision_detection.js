@@ -148,7 +148,11 @@ jaws.collide = function(x, x2, callback) {
   if(x.rect     && x2.forEach)  return (jaws.collideOneWithMany(x, x2, callback)===[]);
   if(x.forEach  && x2.forEach)  return (jaws.collideManyWithMany(x, x2, callback)===[]);
   if(x.forEach  && x2.rect)     return (jaws.collideOneWithMany(x2, x, callback)===[]);
-  if(x.rect && x2.rect && jaws.collideOneWithOne(x,x2)) callback(x, x2);
+  if(x.rect && x2.rect) {
+    var result = jaws.collideOneWithOne(x,x2);
+    if(callback && result) callback(x, x2);
+    else return result;
+  }
 }
 
 return jaws;
