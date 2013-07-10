@@ -379,7 +379,6 @@ var jaws = (function(jaws) {
             return this.updateDiv();
         }
         this.context.save();
-        this.context.translate(this.x, this.y);
         if (this.angle !== 0) {
             this.context.rotate(this.angle * Math.PI / 180);
         }
