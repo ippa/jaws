@@ -116,3 +116,30 @@ test("Sprite", function() {
   }
 })
 
+test ("Add layer to parallax", function() {
+    var parallax1 = new jaws.Parallax({
+        repeat_x: true,
+        repeat_y: false
+    });
+    parallax1.addLayer({
+        image: "rect.png",
+        damping: 1,
+    });
+    parallax1.addLayer({
+        image: "rect.png",
+        damping: 2,
+    });
+
+    var parallax2 = new jaws.Parallax({
+        repeat_x: true,
+        repeat_y: false
+    });
+    parallax2.addLayer({
+        image: "rect.png",
+        damping: 2,
+    });
+
+    same(parallax1.layers.length, 2, "Two layers has been added");
+    same(parallax2.layers.length, 1, "Only One layer has been added");
+    same(jaws.Parallax.prototype.default_options.layers, [], "Parallax default options should remain intact");
+});
