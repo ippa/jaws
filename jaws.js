@@ -1,4 +1,4 @@
-/* Built at 2013-06-21 00:52:20 +0200 */
+/* Built at 2013-08-07 03:09:56 +0200 */
 /**
  * @namespace JawsJS core functions. "Field Summary" contains readable properties on the main jaws-object.
  *
@@ -312,13 +312,18 @@ jaws.isString = function(obj) {
 
 /** Returns true if obj is an Array */
 jaws.isArray = function(obj)  { 
-  if(obj === undefined) return false;
+  if(!obj) return false;
   return !(obj.constructor.toString().indexOf("Array") == -1) 
 }
 
 /** Returns true of obj is a Function */
 jaws.isFunction = function(obj) { 
   return (Object.prototype.toString.call(obj) === "[object Function]") 
+}
+
+/** Returns true if value is simple Object */
+jaws.isObject = function(value) {
+  return value != null && typeof value == 'object';
 }
 
 /**
@@ -370,9 +375,15 @@ jaws.parseOptions = function(object, options, defaults) {
     }
   }
   for(option in defaults) {
-    object[option] = (options[option] !== undefined) ? options[option] : defaults[option];
+    object[option] = (options[option] !== undefined) ? options[option] : jaws.clone(defaults[option]);
   }
 };
+
+jaws.clone = function(value) {
+  if(jaws.isArray(value))    return value.slice(0);
+  if(jaws.isObject(value))   return JSON.parse(JSON.stringify(value));
+  return value;
+}
 
 return jaws;
 })(jaws || {});
@@ -2040,8 +2051,7 @@ jaws.Parallax = function Parallax(options) {
   jaws.parseOptions(this, options, this.default_options)
   
   this.width = options.width || jaws.width;
-  this.height = options.height || jaws.height;
-  
+  this.height = options.height || jaws.height;  
 }
 
 jaws.Parallax.prototype.default_options = {
@@ -2909,13 +2919,25 @@ jaws.collideOneWithOne = function(object1, object2) {
 }
 
 /**
- * collide one single object 'object' with a list of objects 'list'.
- * returns an array of items from 'list' that collided with 'object'.
+ * collide one single object 'object' with a list of objects 'list'. 
+ *
+ * if 'callback' is given it will be called for each collision with the two colliding objects as arguments.
+ *
+ * leaving out 'callback' argument it will return an array of items from 'list' that collided with 'object'.
  * returns empty array of no collisions are found.
  * will never collide objects with themselves.
  */
-jaws.collideOneWithMany = function(object, list) {
-  return list.filter( function(item) { return jaws.collideOneWithOne(object, item) } ) 
+jaws.collideOneWithMany = function(object, list, callback) {
+  if(callback) {
+    for(var i=0; i < list.length; i++)  {
+      if( jaws.collideOneWithOne(object, list[i]) ) { 
+        callback(object, list[i]) 
+      }
+    }
+  }
+  else {
+    return list.filter( function(item) { return jaws.collideOneWithOne(object, item) } ) 
+  }
 }
 
 /**
@@ -2928,18 +2950,24 @@ jaws.collideOneWithMany = function(object, list) {
  *   jaws.collideManyWithMany(bullets, enemies) // --> [[bullet, enemy], [bullet, enemy]]
  *
  */
-jaws.collideManyWithMany = function(list1, list2) {
+jaws.collideManyWithMany = function(list1, list2, callback) {
   var a = []
 
   if(list1 === list2) {
     combinations(list1, 2).forEach( function(pair) {
-      if( jaws.collideOneWithOne(pair[0], pair[1]) ) a.push([pair[0], pair[1]]);
+      if( jaws.collideOneWithOne(pair[0], pair[1]) ) {
+        if(callback)  { callback(pair[0], pair[1]) }
+        else          { a.push([pair[0], pair[1]]) }
+      }
     });
   }
   else {
     list1.forEach( function(item1) { 
       list2.forEach( function(item2) { 
-        if(jaws.collideOneWithOne(item1, item2)) a.push([item1, item2])
+        if(jaws.collideOneWithOne(item1, item2)) {
+          if(callback)  { callback(item1, item2) }
+          else          { a.push([item1, item2]) }
+        }
       });
     });
   }
@@ -2998,33 +3026,30 @@ function combinations(list, n) {
 /** @private */
 function hasItems(array) { return (array && array.length > 0) }
 
-
 /*
- * @deprecated
+ * Collides 2 objects or list of objects with eachother. 
+ * For each collision callback is executed with the 2 objects as arguments.
  *
- * Collides 2 objects or list with objects.
- * Returns empty array if no collision took place
- * Returns array of array with object-pairs that collided
+ * The upside of using collide() instead of the more specialised collideOneWithMany() and collideManyWithMany()
+ * is that you can call it withour knowing if you're sending in single objects or lists of objects. 
+ * If there's collisions you'll always get your callback executed with the two colliding objects as arguments.
  *
  * @examples
- *   jaws.collide(player, enemy)     // --> [player, enemy]
- *   jaws.collide(player, enemies)   // --> [[player, enemies[2]]
- *   jaws.collide(bullets, enemies)  // [ [bullet1, enemy1], [bullet2, ememy3] ]
+ *   jaws.collide(player, enemy, function(player, enemy) { ... } )  
+ *   jaws.collide(player, enemies, function(player, enemy) { ... } ) 
+ *   jaws.collide(bullets, enemies, function(bullet, enemy) { ... } )
  *
  */
-/*
-jaws.collide = function(object1, object2) {
-  var a = []
-  if(object1.radius && object2.radius && object1 !== object2 && jaws.collideCircles(object1, object2))  { return [object1, object2]; }
-  if(object1.rect && object2.rect && object1 !== object2 && jaws.collideRects( object1.rect(), object2.rect())) { return [object1, object2]; }
-  if(object1.forEach) a = object1.map( function(item1) { return jaws.collide(item1, object2) } ).filter(hasItems);
-  if(object2.forEach) a = object2.map( function(item2) { return jaws.collide(item2, object1) } ).filter(hasItems);
-
-  // Convert [[[1,2],[2,2]]] -> [[1,1],[2,2]] (flatten one outer array wrapper)
-  if(a[0] && a[0].length == 1)  return a[0];
-  else                          return a;
+jaws.collide = function(x, x2, callback) {
+  if(x.rect     && x2.forEach)  return (jaws.collideOneWithMany(x, x2, callback)===[]);
+  if(x.forEach  && x2.forEach)  return (jaws.collideManyWithMany(x, x2, callback)===[]);
+  if(x.forEach  && x2.rect)     return (jaws.collideOneWithMany(x2, x, callback)===[]);
+  if(x.rect && x2.rect) {
+    var result = jaws.collideOneWithOne(x,x2);
+    if(callback && result) callback(x, x2);
+    else return result;
+  }
 }
-*/
 
 return jaws;
 })(jaws || {});
