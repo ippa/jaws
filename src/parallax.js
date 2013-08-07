@@ -24,8 +24,7 @@ jaws.Parallax = function Parallax(options) {
   jaws.parseOptions(this, options, this.default_options)
   
   this.width = options.width || jaws.width;
-  this.height = options.height || jaws.height;
-  
+  this.height = options.height || jaws.height;  
 }
 
 jaws.Parallax.prototype.default_options = {
