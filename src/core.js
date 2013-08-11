@@ -377,7 +377,10 @@ jaws.parseOptions = function(object, options, defaults) {
     object[option] = (options[option] !== undefined) ? options[option] : jaws.clone(defaults[option]);
   }
 };
-
+/**
+ * Clones given array or object. Other types are returned as is.
+ * Used by jaws.parseOptions when parsing defaults.
+ */
 jaws.clone = function(value) {
   if(jaws.isArray(value))    return value.slice(0);
   if(jaws.isObject(value))   return JSON.parse(JSON.stringify(value));
