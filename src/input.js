@@ -221,8 +221,7 @@ jaws.pressed = function(keys, logical_and) {
  * Check if *keys* are pressed, but only return true Once for any given keys. Once keys have been released, pressedWithoutRepeat can return true again when keys are pressed.
  * Second argument specifies use of logical AND when checking multiple keys.
  * @example
- * jaws.pressed("left a");          // returns true if left arrow key OR a is pressed
- * jaws.pressed("ctrl c", true);    // returns true if ctrl AND a is pressed
+ * if(jaws.pressedWithoutRepeat("space")) { player.jump() }  // with this in the gameloop player will only jump once even if space is held down
  */
 jaws.pressedWithoutRepeat = function(keys, logical_and) {
   if( jaws.pressed(keys, logical_and) ) {
