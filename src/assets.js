@@ -273,7 +273,7 @@ var jaws = (function(jaws) {
         req.onreadystatechange = assetLoaded;
         req.onerror = assetError;
         req.open('GET', resolved_src, true);
-        req.responseType = "blob";
+        if(getType(asset.src) != "json")  req.responseType = "blob";
         req.send(null);
       }
     };
