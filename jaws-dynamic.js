@@ -27,7 +27,8 @@
         root+"collision_detection.js",
         root+"quadtree.js",
         root+"gfx.js",
-        root+"tile_map_extra.js"
+        root+"tile_map_extra.js",
+        root+"pixel_map_extra.js"
         )
   .thenRun(function () {
     /*
