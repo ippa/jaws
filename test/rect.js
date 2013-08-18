@@ -10,17 +10,17 @@ test("Rect", function() {
   ok(!rect4.collideRect(rect1), "collideRect()")
 
   rect2.move(10,10)
-  same(rect2.getPosition(), [15,15], "Rect.move modifies position")
+  deepEqual(rect2.getPosition(), [15,15], "Rect.move modifies position")
       
   rect2.moveTo(100,100)
-  same(rect2.getPosition(), [100,100], "Rect.move sets position")
+  deepEqual(rect2.getPosition(), [100,100], "Rect.move sets position")
 
   rect2.resizeTo(30,30)
-  same(rect2.width, 30, "Rect.resizeTo sets width/height")
-  same(rect2.height, 30, "Rect.resizeTo sets width/height")
+  deepEqual(rect2.width, 30, "Rect.resizeTo sets width/height")
+  deepEqual(rect2.height, 30, "Rect.resizeTo sets width/height")
 
   rect2.resize(-10,-10)
-  same(rect2.width, 20, "Rect.resizeTo modifies width/height")
-  same(rect2.height, 20, "Rect.resizeTo modifies width/height")
+  deepEqual(rect2.width, 20, "Rect.resizeTo modifies width/height")
+  deepEqual(rect2.height, 20, "Rect.resizeTo modifies width/height")
 })
 

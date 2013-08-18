@@ -4,26 +4,26 @@ test("Sprite without pre-loaded image", function() {
   /* We might get a race-condition in these tests */
   jaws.assets.root = ""
   var sprite = new jaws.Sprite({image: 'assets/rect_copy.png'})
-  same(sprite.rect(), undefined, "undefined sprite.rect() since image isn't preloaded")
+  deepEqual(sprite.rect(), undefined, "undefined sprite.rect() since image isn't preloaded")
 });
 
 test("Sprite special options", function() {
   sprite = new jaws.Sprite({dom: null, _constructor: "Troll"})
-  same(sprite.options["_constructor"], "Troll")
+  deepEqual(sprite.options["_constructor"], "Troll")
 });
 
 test("Sprite defaults", function() {
   sprite = new jaws.Sprite({})
-  same(sprite.x, 0, "x defaults to 0")
-  same(sprite.y, 0, "y defaults to 0")
-  same(sprite.angle, 0, "angle defaults to 0")
-  same(sprite.scale_x, 1, "scale_x defaults to 1 (no scaling)")
-  same(sprite.scale_y, 1, "scale_y defaults to 1 (no scaling)")
-  same(sprite.anchor_x, 0, "anchor_x defaults to 0 (top)")
-  same(sprite.anchor_y, 0, "anchor_y defaults to 0 (left)")
-  same(sprite.image, null, "image defaults to undefined")
-  same(sprite.flipped, false, "flipped defaults to false")
-  same(sprite.alpha, 1, "alpha defalts to 1 (zero fading)")
+  deepEqual(sprite.x, 0, "x defaults to 0")
+  deepEqual(sprite.y, 0, "y defaults to 0")
+  deepEqual(sprite.angle, 0, "angle defaults to 0")
+  deepEqual(sprite.scale_x, 1, "scale_x defaults to 1 (no scaling)")
+  deepEqual(sprite.scale_y, 1, "scale_y defaults to 1 (no scaling)")
+  deepEqual(sprite.anchor_x, 0, "anchor_x defaults to 0 (top)")
+  deepEqual(sprite.anchor_y, 0, "anchor_y defaults to 0 (left)")
+  deepEqual(sprite.image, null, "image defaults to undefined")
+  deepEqual(sprite.flipped, false, "flipped defaults to false")
+  deepEqual(sprite.alpha, 1, "alpha defalts to 1 (zero fading)")
 });
 
 test("Sprite without image", function() {
@@ -61,7 +61,7 @@ test("Sprite", function() {
     equal(sprite.rect().height, 40, "sprite.rect().height after scaling x2") 
   
     // console.log(sprite.x + " - " + sprite.scale_x + " - " + sprite.anchor_x)
-    same(sprite.rect(), new jaws.Rect(0,0,40,40), "sprite.rect()")
+    deepEqual(sprite.rect(), new jaws.Rect(0,0,40,40), "sprite.rect()")
   
     sprite.setAnchor("bottom_right")
     equal(sprite.x, sprite.rect().right, "sprite.x == sprite.rect().right when anchor is bottom_right")
@@ -139,7 +139,7 @@ test ("Add layer to parallax", function() {
         damping: 2,
     });
 
-    same(parallax1.layers.length, 2, "Two layers has been added");
-    same(parallax2.layers.length, 1, "Only One layer has been added");
-    same(jaws.Parallax.prototype.default_options.layers, [], "Parallax default options should remain intact");
+    deepEqual(parallax1.layers.length, 2, "Two layers has been added");
+    deepEqual(parallax2.layers.length, 1, "Only One layer has been added");
+    deepEqual(jaws.Parallax.prototype.default_options.layers, [], "Parallax default options should remain intact");
 });

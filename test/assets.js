@@ -5,8 +5,8 @@ test("json assets, onload-callback", function() {
   assets.loadAll({onload:loaded})
   stop()
   function loaded() {
-    same(assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
-    same(assets.get("gamedata.json").mode, "angry", "jsondata got parsed into an object")
+    deepEqual(assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
+    deepEqual(assets.get("gamedata.json").mode, "angry", "jsondata got parsed into an object")
     start();
   }
 });
@@ -62,7 +62,7 @@ test("assets loadAll", function() {
     ok(jaws.assets.get("laser.wav"), "audio loaded")
     ok(jaws.assets.get("gamedata.json"), "json loaded")
     ok(jaws.isImage(jaws.assets.get("rect.png")), "png loaded as Image")
-    same(jaws.assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
+    deepEqual(jaws.assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
     start()
   }
 });

@@ -26,23 +26,23 @@ test ("Performance test: repeat_x=false, repeat_y=false", function() {
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 1, "A total of 1 Sprite.draw() calls are required for a parallax draw at 0,0");
+		deepEqual(number_of_calls, 1, "A total of 1 Sprite.draw() calls are required for a parallax draw at 0,0");
 		
 		parallax.camera_x = 10000;
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 10000,0");
+		deepEqual(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 10000,0");
 		
 		parallax.camera_x = 0;
 		parallax.camera_y = 10000;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 0,10000");
+		deepEqual(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 0,10000");
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });
 
@@ -72,23 +72,23 @@ test ("Performance test: repeat_x=true, repeat_y=false", function() {
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 5, "A total of 5 Sprite.draw() calls are required for a parallax draw at 0,0 (5 horizontal rectangles with width=20px)");
+		deepEqual(number_of_calls, 5, "A total of 5 Sprite.draw() calls are required for a parallax draw at 0,0 (5 horizontal rectangles with width=20px)");
 		
 		parallax.camera_x = 10000;
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 5, "A total of 5 Sprite.draw() calls are required for a parallax draw at 10000,0 (5 horizontal rectangles with width=20px)");
+		deepEqual(number_of_calls, 5, "A total of 5 Sprite.draw() calls are required for a parallax draw at 10000,0 (5 horizontal rectangles with width=20px)");
 		
 		parallax.camera_x = 0;
 		parallax.camera_y = 10000;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 0,10000 (no rectangles)");
+		deepEqual(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 0,10000 (no rectangles)");
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });
 
@@ -117,23 +117,23 @@ test ("Performance test: repeat_x=false, repeat_y=true", function() {
 		parallax.camera_y = 0;
 		number_of_calls = 0;	
 		parallax.draw();
-		same(number_of_calls, 5, "A total of 5 Sprite.draw() calls are required for a parallax draw at 0,0 (5 vertical rectangles with height=20px)");
+		deepEqual(number_of_calls, 5, "A total of 5 Sprite.draw() calls are required for a parallax draw at 0,0 (5 vertical rectangles with height=20px)");
 		
 		parallax.camera_x = 0;
 		parallax.camera_y = 10000;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 5, "A total of 5 Sprite.draw() calls are required for a parallax draw at 0,10000 (5 vertical rectangles with height=20px)");
+		deepEqual(number_of_calls, 5, "A total of 5 Sprite.draw() calls are required for a parallax draw at 0,10000 (5 vertical rectangles with height=20px)");
 		
 		parallax.camera_x = 10000;
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 10000,0 (no rectangles)");
+		deepEqual(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 10000,0 (no rectangles)");
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });
 
@@ -165,35 +165,35 @@ test("Performance test: repeat_x=true, repeat_y=true", function() {
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 25, "A total of 25 Sprite.draw() calls are required for a parallax draw at 0,0");
+		deepEqual(number_of_calls, 25, "A total of 25 Sprite.draw() calls are required for a parallax draw at 0,0");
 		
 		parallax.camera_x = -1000;
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 25, "A total of 25 Sprite.draw() calls are required for a parallax draw at -1000,0");
+		deepEqual(number_of_calls, 25, "A total of 25 Sprite.draw() calls are required for a parallax draw at -1000,0");
 
 		parallax.camera_x = 5;
 		parallax.camera_y = 5;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 5,5");
+		deepEqual(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 5,5");
 
 		number_of_calls = 0;
 		parallax.camera_x = 3000;
 		parallax.camera_y = 3000;
 		parallax.draw();
-		same(number_of_calls, 25, "A total of 25 Sprite.draw() calls are required for a parallax draw at 3000,3000");
+		deepEqual(number_of_calls, 25, "A total of 25 Sprite.draw() calls are required for a parallax draw at 3000,3000");
 
 		number_of_calls = 0;
 		parallax.camera_x = 3005;
 		parallax.camera_y = 3005;
 		parallax.draw();
-		same(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 3005,3005");
+		deepEqual(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 3005,3005");
 		
 		jaws.clear(); start();
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 	
 });
@@ -228,17 +228,17 @@ test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 9, "A total of 9 Sprite.draw() calls are required for a parallax draw at 0,0");
+		deepEqual(number_of_calls, 9, "A total of 9 Sprite.draw() calls are required for a parallax draw at 0,0");
 
 		parallax.camera_x = 30;
 		parallax.camera_y = 30;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 16, "A total of 16 Sprite.draw() calls are required for a parallax draw at 30,30");
+		deepEqual(number_of_calls, 16, "A total of 16 Sprite.draw() calls are required for a parallax draw at 30,30");
 
 		jaws.clear(); start();
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 	
 });
@@ -275,29 +275,29 @@ test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 0,0");
+		deepEqual(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 0,0");
 		
 		parallax.camera_x = 18;
 		parallax.camera_y = 18;
 		number_of_calls = 0;
 		parallax.draw();
-		same(number_of_calls, 49, "A total of 49 Sprite.draw() calls are required for a parallax draw at 18,18");
+		deepEqual(number_of_calls, 49, "A total of 49 Sprite.draw() calls are required for a parallax draw at 18,18");
 
 		number_of_calls = 0;
 		parallax.camera_x = 3800;
 		parallax.camera_y = 3800;
 		parallax.draw();
-		same(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 3800,3800");
+		deepEqual(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 3800,3800");
 
 		number_of_calls = 0;
 		parallax.camera_x = 3818;
 		parallax.camera_y = 3818;
 		parallax.draw();
-		same(number_of_calls, 49, "A total of 49 Sprite.draw() calls are required for a parallax draw at 3818,3818");
+		deepEqual(number_of_calls, 49, "A total of 49 Sprite.draw() calls are required for a parallax draw at 3818,3818");
 		
 		jaws.clear(); start();
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 	
 });
@@ -382,7 +382,7 @@ test ("Accuracy test: repeat_x=true, repeat_y=false", function() {
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });
 
@@ -464,7 +464,7 @@ test ("Accuracy test: repeat_x=false, repeat_y=true", function() {
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });
 
@@ -586,7 +586,7 @@ test ("Accuracy test: repeat_x=true, repeat_y=true", function() {
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });
 
@@ -710,7 +710,7 @@ test ("Accuracy test: repeat_x=true, repeat_y=true, damping=2", function() {
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });
 
@@ -792,7 +792,7 @@ test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (layer level)", fu
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });
 
@@ -874,6 +874,6 @@ test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (parallax level)",
 		
 		jaws.clear(); start();	
 	}, function(){
-		same(true,false," Rectangle asset couldn't be loaded"); start();
+		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
 	});
 });

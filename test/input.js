@@ -1,15 +1,15 @@
 test("Input", function() {
-  same(jaws.pressed("a"), false, "jaws.pressed('a') should return false if 'a' isn't pressed")
-  same(jaws.pressed("|"), false, "test more keys")
-  same(jaws.pressed("a b c"), false, "test combo keys")
-  same(jaws.pressed(["a", "b", "c"], true), false, "test array of keys")
+  deepEqual(jaws.pressed("a"), false, "jaws.pressed('a') should return false if 'a' isn't pressed")
+  deepEqual(jaws.pressed("|"), false, "test more keys")
+  deepEqual(jaws.pressed("a b c"), false, "test combo keys")
+  deepEqual(jaws.pressed(["a", "b", "c"], true), false, "test array of keys")
 
   /*
   jaws.on_keydown("A", test_on_keydown);
   stop();
 
   function test_on_keydown(key) {
-    same("A", key, "on_keydown() is called with human name of pressed key");
+    deepEqual("A", key, "on_keydown() is called with human name of pressed key");
     start();
   };
   */

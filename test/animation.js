@@ -18,10 +18,10 @@ test("Animation", function() {
     equal(animation.frame_duration, 100, "frameduration defaults to 100ms")
     equal(animation2.frames.length, 5, "animation.slice creates a new sub-animation")
     equal(animation3.frames.length, 2, "animation.slice creates a new sub-animation")
-    same(animation3.frames[0].toString(), "[object HTMLCanvasElement]", "sub-animation contains canvas-elements")
-    same(animation3.frame_duration, 100, "sub-animation gets frame_duration from parent")
+    deepEqual(animation3.frames[0].toString(), "[object HTMLCanvasElement]", "sub-animation contains canvas-elements")
+    deepEqual(animation3.frame_duration, 100, "sub-animation gets frame_duration from parent")
     equal(animation.frames.length, 14, "after slice, frames in animation")
-    equal(animation.frames[0], animation3.frames[0], "sub-animation contains same canvas-elements as parent")
+    equal(animation.frames[0], animation3.frames[0], "sub-animation contains deepEqual canvas-elements as parent")
 
     animation3.index = 0;
     animation3.frame_direction = -1;

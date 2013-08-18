@@ -2,27 +2,27 @@ module("Text")
 
 test("text special options", function() {
   text = new jaws.Text({dom: null, _constructor: "Troll"})
-  same(text.options["_constructor"], "Troll")
+  deepEqual(text.options["_constructor"], "Troll")
 });
 
 test("Text defaults", function() {
   text = new jaws.Text({});
-  same(text.x, 0, "x defaults to 0");
-  same(text.y, 0, "y defaults to 0");
-  same(text.angle, 0, "angle defaults to 0");
-  same(text.scale_x, 1, "scale_x defaults to 1 (no scaling)");
-  same(text.scale_y, 1, "scale_y defaults to 1 (no scaling)");
-  same(text.anchor_x, 0, "anchor_x defaults to 0 (top)");
-  same(text.anchor_y, 0, "anchor_y defaults to 0 (left)");
-  same(text.text, "", "text defaults to empty string");
-  same(text.alpha, 1, "alpha defalts to 1 (zero fading)");
-  same(text.fontFace, "serif", "text.fontFace defaults to 'serif'");
-  same(text.fontSize, 25, "text.fontSize defaults to 25");
-  same(text.color, "black", "text.color defaults to 'black'");
-  same(text.textAlign, "left", "text.textAlign defaults to 'left'");
-  same(text.textBaseline, "alphabetic", "text.textBaseline defaults to 'alphabetic'");
-  same(text.wordWrap, false, "text.wordWrap defaults to false");
-  same(text.style, "", "text.style defaults to empty string");
+  deepEqual(text.x, 0, "x defaults to 0");
+  deepEqual(text.y, 0, "y defaults to 0");
+  deepEqual(text.angle, 0, "angle defaults to 0");
+  deepEqual(text.scale_x, 1, "scale_x defaults to 1 (no scaling)");
+  deepEqual(text.scale_y, 1, "scale_y defaults to 1 (no scaling)");
+  deepEqual(text.anchor_x, 0, "anchor_x defaults to 0 (top)");
+  deepEqual(text.anchor_y, 0, "anchor_y defaults to 0 (left)");
+  deepEqual(text.text, "", "text defaults to empty string");
+  deepEqual(text.alpha, 1, "alpha defalts to 1 (zero fading)");
+  deepEqual(text.fontFace, "serif", "text.fontFace defaults to 'serif'");
+  deepEqual(text.fontSize, 25, "text.fontSize defaults to 25");
+  deepEqual(text.color, "black", "text.color defaults to 'black'");
+  deepEqual(text.textAlign, "left", "text.textAlign defaults to 'left'");
+  deepEqual(text.textBaseline, "alphabetic", "text.textBaseline defaults to 'alphabetic'");
+  deepEqual(text.wordWrap, false, "text.wordWrap defaults to false");
+  deepEqual(text.style, "", "text.style defaults to empty string");
 });
 
 test("text", function() {
@@ -36,7 +36,7 @@ test("text", function() {
     equal(text.rect().width, 40, "text.rect().width after scaling x2");
     equal(text.rect().height, 40, "text.rect().height after scaling x2") ;
   
-    same(text.rect(), new jaws.Rect(0,0,40,40), "text.rect()");
+    deepEqual(text.rect(), new jaws.Rect(0,0,40,40), "text.rect()");
 	
 	text.style = "italic";
 	equal(text.style, "italic", "text.style changed to 'italic'");

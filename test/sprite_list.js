@@ -2,7 +2,7 @@ module("Sprite List")
 
 test("Empty Sprite List", function() {
   var sprite_list = new jaws.SpriteList()
-  same(sprite_list.length, 0, "should start with zero sprites")
+  deepEqual(sprite_list.length, 0, "should start with zero sprites")
   
   // This bit is relevant for collision_detection/combinations() to work
   ok(!jaws.isArray(sprite_list), "sprite_list is NOT an array")
@@ -28,28 +28,28 @@ test("Load Objects", function() {
     ok(sprite_two.width, 'sprite_two should have a width, after calling setImage()')
     
     sprite_list.load([sprite_one, sprite_two])
-    same(sprite_list.length, 2, "should contain two sprites after loading")
-    same(sprite_list.at(0).x, 10)
-    same(sprite_list.at(1).x, 20)
+    deepEqual(sprite_list.length, 2, "should contain two sprites after loading")
+    deepEqual(sprite_list.at(0).x, 10)
+    deepEqual(sprite_list.at(1).x, 20)
   
     ok(sprite_list.at(0).width, 'sprite_one should have a width, after being loaded into a SpriteList')
     ok(sprite_list.at(1).width, 'sprite_two should have a width, after being loaded into a SpriteList')
     
     var new_sprite_list = new jaws.SpriteList([sprite_one, sprite_two])
-    same(new_sprite_list.length, 2, "should contain two sprites after loading (via constructor)")
-    same(sprite_list.at(0).x, 10)
-    same(sprite_list.at(1).x, 20)
+    deepEqual(new_sprite_list.length, 2, "should contain two sprites after loading (via constructor)")
+    deepEqual(sprite_list.at(0).x, 10)
+    deepEqual(sprite_list.at(1).x, 20)
     start();
   }
 })
 
 test("Push and toString", function() {
   var sprite_list = new jaws.SpriteList()
-  same(sprite_list.toString(), '[SpriteList 0 sprites]')
+  deepEqual(sprite_list.toString(), '[SpriteList 0 sprites]')
   var sprite = new jaws.Sprite({image: "rect.png"})
   sprite_list.push(sprite)
-  same(sprite_list.length, 1, "should update length like array")
-  same(sprite_list.toString(), '[SpriteList 1 sprites]')
+  deepEqual(sprite_list.length, 1, "should update length like array")
+  deepEqual(sprite_list.toString(), '[SpriteList 1 sprites]')
 })
 
 test("Remove", function() {
@@ -59,10 +59,10 @@ test("Remove", function() {
   
   sprite_list.push(sprite_one)
   sprite_list.push(sprite_two)
-  same(sprite_list.length, 2, "should contain two sprites after push() operations")
+  deepEqual(sprite_list.length, 2, "should contain two sprites after push() operations")
   
   sprite_list.remove(sprite_one)
-  same(sprite_list.length, 1, "should now only contain one sprite, after remove()")
+  deepEqual(sprite_list.length, 1, "should now only contain one sprite, after remove()")
 })
 
 test("Remove, and draw() invocation", function() {
@@ -80,7 +80,7 @@ test("Remove, and draw() invocation", function() {
   }, DrawError, "sprite_list.draw() must call draw() on each sprite, throwing a DrawError")
   
   sprite_list.remove(sprite)
-  same(sprite_list.length, 0, "should have a length of 0, after remove()")
+  deepEqual(sprite_list.length, 0, "should have a length of 0, after remove()")
   // Now, invoking draw() on the sprite list should not trigger our DrawError exception (if it does, the test will fail)
   sprite_list.draw()
 })
@@ -122,7 +122,7 @@ test("Remove and update()", function() {
   }, UpdateError, "sprite_list.update() must call update() on each sprite, throwing an UpdateError")
   
   sprite_list.remove(sprite)
-  same(sprite_list.length, 0, "should have a length of 0, after remove()")
+  deepEqual(sprite_list.length, 0, "should have a length of 0, after remove()")
   // Now, invoking update() on the sprite list should not trigger our UpdateError exception (if it does, the test will fail)
   sprite_list.update()
 })
@@ -158,11 +158,11 @@ test("removeIf()", function() {
   true_condition = function(obj) { return true }
   false_condition = function(obj) { return false }
   
-  same(sprite_list.length, 2, "should have a length of 2, before removeIf()")
+  deepEqual(sprite_list.length, 2, "should have a length of 2, before removeIf()")
   sprite_list.removeIf(false_condition)
-  same(sprite_list.length, 2, "should have a length of 2, after removeIf(false_condition)")
+  deepEqual(sprite_list.length, 2, "should have a length of 2, after removeIf(false_condition)")
   sprite_list.removeIf(true_condition)
-  same(sprite_list.length, 0, "should have a length of 0, after removeIf(true_condition)")
+  deepEqual(sprite_list.length, 0, "should have a length of 0, after removeIf(true_condition)")
 })
 
 // Deprecated function, testing just in case
@@ -175,11 +175,11 @@ test("deleteIf()", function() {
   true_condition = function(obj) { return true }
   false_condition = function(obj) { return false }
   
-  same(sprite_list.length, 2, "should have a length of 2, before deleteIf()")
+  deepEqual(sprite_list.length, 2, "should have a length of 2, before deleteIf()")
   sprite_list.deleteIf(false_condition)
-  same(sprite_list.length, 2, "should have a length of 2, after deleteIf(false_condition)")
+  deepEqual(sprite_list.length, 2, "should have a length of 2, after deleteIf(false_condition)")
   sprite_list.deleteIf(true_condition)
-  same(sprite_list.length, 0, "should have a length of 0, after deleteIf(true_condition)")
+  deepEqual(sprite_list.length, 0, "should have a length of 0, after deleteIf(true_condition)")
 })
 
 test("at()", function() {
@@ -191,9 +191,9 @@ test("at()", function() {
   sprite_list.push(sprite)
   sprite_list.push(sprite_two)
   
-  same(sprite_list.at(0), sprite, "sprite_list.at(0) should == sprite")
-  same(sprite_list.at(0).x, 10, "sprite_list.at(0).x should == sprite.x")
-  same(sprite_list.at(1), sprite_two, "sprite_list.at(1) should == sprite_two")
+  deepEqual(sprite_list.at(0), sprite, "sprite_list.at(0) should == sprite")
+  deepEqual(sprite_list.at(0).x, 10, "sprite_list.at(0).x should == sprite.x")
+  deepEqual(sprite_list.at(1), sprite_two, "sprite_list.at(1) should == sprite_two")
 })
 
 
@@ -210,7 +210,7 @@ test("filter()", function() {
   false_condition = function(obj) { return false }
   x_test = function(obj) { return obj.x == 20 }
   
-  same(sprite_list.filter(false_condition), [], 'sprite_list.filter(false_condition) should return []')
-  same(sprite_list.filter(true_condition), [sprite, sprite_two], 'sprite_list.filter(true_condition) should return [sprite, sprite_two]')
-  same(sprite_list.filter(x_test), [sprite_two], 'sprite_list.filter(x_test) should return [sprite_two]')
+  deepEqual(sprite_list.filter(false_condition), [], 'sprite_list.filter(false_condition) should return []')
+  deepEqual(sprite_list.filter(true_condition), [sprite, sprite_two], 'sprite_list.filter(true_condition) should return [sprite, sprite_two]')
+  deepEqual(sprite_list.filter(x_test), [sprite_two], 'sprite_list.filter(x_test) should return [sprite_two]')
 })
