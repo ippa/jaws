@@ -324,7 +324,7 @@ jaws.Sprite.prototype.asCanvasContext = function() {
   canvas.height = this.height
 
   var context = canvas.getContext("2d")
-  context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
+  if(jaws.context)  context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled;
 
   context.drawImage(this.image, 0, 0, this.width, this.height)
   return context
@@ -339,7 +339,7 @@ jaws.Sprite.prototype.asCanvas = function() {
   canvas.height = this.height
 
   var context = canvas.getContext("2d")
-  context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled
+  if(jaws.context)  context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled;
 
   context.drawImage(this.image, 0, 0, this.width, this.height)
   return canvas
