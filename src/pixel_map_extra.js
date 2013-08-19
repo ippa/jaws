@@ -8,15 +8,11 @@ var jaws = (function(jaws) {
 
 jaws.PixelMap = function PixelMap(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
-  jaws.parseOptions(this, options, this.default_options)
-  
-  this.sprite = new jaws.Sprite({x: 0, y: 0, image: this.image})
-  this.update()
-}
 
-jaws.PixelMap.prototype.default_options = {
-  image: null, 
-  scale_image: null,
+  /* Internally we use a sprite, gives us image-argument, image_scaling and so on */
+  this.sprite = new jaws.Sprite(options);
+  this.named_colors = [];
+  this.update();
 }
 
 /**
@@ -24,7 +20,7 @@ jaws.PixelMap.prototype.default_options = {
 * Future idea: Only update parts of the array that's been modified.
 */
 jaws.PixelMap.prototype.update = function(x, y) {
-  this.data = this.sprite.asCanvas().getContext("2d").getImageData(0, 0, sprite.width, sprite.height).data
+  this.data = this.sprite.asCanvasContext().getImageData(0, 0, this.sprite.width, this.sprite.height).data
 }
 
 /**
@@ -33,17 +29,35 @@ jaws.PixelMap.prototype.update = function(x, y) {
 */
 jaws.PixelMap.prototype.at = function(x, y) {
   x = parseInt(x)
-  y = parseInt(y)
+  y = parseInt(y) - 1;
+  if(y < 0) y = 0;
 
-  try { 
-    var start = ((y-1) * this.sprite.width * 4) + (x*4);
-    var R = this.data[start];
-    var G = this.data[start + 1];
-    var B = this.data[start + 2];
-    var A = this.data[start + 3];
-    return [R, G, B, A];
+  var start = (y * this.sprite.width * 4) + (x*4);
+  var R = this.data[start];
+  var G = this.data[start + 1];
+  var B = this.data[start + 2];
+  var A = this.data[start + 3];
+  return [R, G, B, A];
+}
+jaws.PixelMap.prototype.colorAt = function(x, y) {
+  var a = this.at(x,y);
+  return {red: a[0], green: a[1], blue: a[2], alpha: a[3]};
+}
+/**
+* Returns a previously named color if it exists at given x/y-coordinates.
+*
+*/
+jaws.PixelMap.prototype.namedColorAt = function(x, y) {
+  var a = this.at(x, y);
+  for(var i=0; i < this.named_colors.length; i++) {
+    var name = this.named_colors[i].name;
+    var c = this.named_colors[i].color;
+    if(c[0] == a[0] && c[1] == a[1] && c[2] == a[2] && c[3] == a[3]) return name;
   }
-  catch(e) { }
+}
+
+jaws.PixelMap.prototype.nameColor = function(name, color) {
+  this.named_colors.push({name: name, color: color});
 }
 
 return jaws;
