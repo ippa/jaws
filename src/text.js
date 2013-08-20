@@ -6,9 +6,9 @@ var jaws = (function(jaws) {
      *  
      * @property {int} x     Horizontal position  (0 = furthest left)
      * @property {int} y     Vertical position    (0 = top)
-     * @property {int} alpha     Transparency: 0 (fully transparent) to 1 (no transperency)
+     * @property {int} alpha     Transparency: 0 (fully transparent) to 1 (no transparency)
      * @property {int} angle     Angle in degrees (0-360)
-     * @property {bool} flipped    Flip sprite horizontally, usefull for sidescrollers
+     * @property {bool} flipped    Flip sprite horizontally, useful for sidescrollers
      * @property {string} anchor   String stating how to anchor the sprite to canvas, @see Sprite#anchor ("top_left", "center" etc)
      * @property {string} text       The actual text to be displayed 
      * @property {string} fontFace   A valid font-family
@@ -17,9 +17,13 @@ var jaws = (function(jaws) {
      * @property {string} textBaseline       "top", "bottom", "hanging", "middle", "alphabetic", or "ideographic"
      * @property {int} width     The width of the rect() containing the text
      * @property {int} height    The height of the rect() containing the text
-     * @property {string} style     The style to draw the text. Either "bold" or italic"
+     * @property {string} style     The style to draw the text: "normal", "bold" or italic"
      * @property {bool} wordWrap     If true, will attempt to word-wrap text
      *                               If false, will attempt to draw text within width
+     * @property {string} shadowColor   The color of the shadow for the text
+     * @property {int}  shadowBlur    The amount of shadow blur (length away from text)
+     * @property  {int} shadowOffsetX   The start of the shadow from initial x
+     * @property {int}  shadowOffsetY   The start of the shadow from initial y
      *
      * @example
      * // create new Text at top left of the screen,
@@ -72,6 +76,10 @@ var jaws = (function(jaws) {
         wordWrap: false,
         width: 0,
         height: 0,
+        shadowColor: null,
+        shadowBlur: null,
+        shadowOffsetX: null,
+        shadowOffsetY: null,
         _constructor: null,
         dom: null
     };
@@ -94,9 +102,9 @@ var jaws = (function(jaws) {
         this.fontFace = options.fontFace || "serif";
         this.fontSize = options.fontSize || 25;
         this.color = options.color || "black";
-        this.textAlign = options.textAlign || "left";
+        this.textAlign = options.textAlign || "start";
         this.textBaseline = options.textBaseline || "alphabetic";
-        this.style = options.style || "";
+        this.style = options.style || "normal";
         this.wordWrap = options.wordWrap || false;
         this.width = options.width || jaws.width;
         this.height = options.height || jaws.height;
@@ -303,6 +311,10 @@ var jaws = (function(jaws) {
         this.div.style.fontSize = this.fontSize + "px";
         this.div.style.fontFamily = this.fontFace;
         
+        this.div.style.textShadow = (this.shadowOffsetX || "0") + "px "
+          + (this.shadowOffsetY || "0") + "px " + (this.shadowBlur || "0")
+          + "px " + (this.shadowColor || "");
+        
         if(this.textAlign === "start")
             this.div.style.textAlign = "left";
         else if(this.textAlign === "end")
@@ -367,7 +379,6 @@ var jaws = (function(jaws) {
             return this.updateDiv();
         }
         this.context.save();
-        this.context.translate(this.x, this.y);
         if (this.angle !== 0) {
             this.context.rotate(this.angle * Math.PI / 180);
         }
@@ -378,6 +389,10 @@ var jaws = (function(jaws) {
         this.context.font = this.style + " " + this.fontSize + "px " + this.fontFace;
         this.context.textBaseline = this.textBaseline;
         this.context.textAlign = this.textAlign;
+        if(this.shadowColor) this.context.shadowColor = this.shadowColor;
+        if(this.shadowBlur) this.context.shadowBlur = this.shadowBlur;
+        if(this.shadowOffsetX) this.context.shadowOffsetX = this.shadowOffsetX;
+        if(this.shadowOffsetY) this.context.shadowOffsetY = this.shadowOffsetY;
         var oldY = this.y;
         var oldX = this.x;
         if (this.wordWrap)
@@ -448,6 +463,10 @@ var jaws = (function(jaws) {
         this.context.font = this.style + this.fontSize + "px " + this.fontFace;
         this.context.textBaseline = this.textBaseline;
         this.context.textAlign = this.textAlign;
+        if(this.shadowColor) this.context.shadowColor = this.shadowColor;
+        if(this.shadowBlur) this.context.shadowBlur = this.shadowBlur;
+        if(this.shadowOffsetX) this.context.shadowOffsetX = this.shadowOffsetX;
+        if(this.shadowOffsetY) this.context.shadowOffsetY = this.shadowOffsetY;
         var oldY = this.y;
         var oldX = this.x;
         if (this.wordWrap)
@@ -516,6 +535,10 @@ var jaws = (function(jaws) {
         this.context.font = this.style + this.fontSize + "px " + this.fontFace;
         this.context.textBaseline = this.textBaseline;
         this.context.textAlign = this.textAlign;
+        if(this.shadowColor) this.context.shadowColor = this.shadowColor;
+        if(this.shadowBlur) this.context.shadowBlur = this.shadowBlur;
+        if(this.shadowOffsetX) this.context.shadowOffsetX = this.shadowOffsetX;
+        if(this.shadowOffsetY) this.context.shadowOffsetY = this.shadowOffsetY;
         var oldY = this.y;
         var oldX = this.x;
         if (this.wordWrap)

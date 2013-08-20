@@ -311,13 +311,18 @@ jaws.isString = function(obj) {
 
 /** Returns true if obj is an Array */
 jaws.isArray = function(obj)  { 
-  if(obj === undefined) return false;
+  if(!obj) return false;
   return !(obj.constructor.toString().indexOf("Array") == -1) 
 }
 
 /** Returns true of obj is a Function */
 jaws.isFunction = function(obj) { 
   return (Object.prototype.toString.call(obj) === "[object Function]") 
+}
+
+/** Returns true if value is simple Object */
+jaws.isObject = function(value) {
+  return value != null && typeof value == 'object';
 }
 
 /**
@@ -369,9 +374,18 @@ jaws.parseOptions = function(object, options, defaults) {
     }
   }
   for(option in defaults) {
-    object[option] = (options[option] !== undefined) ? options[option] : defaults[option];
+    object[option] = (options[option] !== undefined) ? options[option] : jaws.clone(defaults[option]);
   }
 };
+/**
+ * Clones given array or object. Other types are returned as is.
+ * Used by jaws.parseOptions when parsing defaults.
+ */
+jaws.clone = function(value) {
+  if(jaws.isArray(value))    return value.slice(0);
+  if(jaws.isObject(value))   return JSON.parse(JSON.stringify(value));
+  return value;
+}
 
 return jaws;
 })(jaws || {});
