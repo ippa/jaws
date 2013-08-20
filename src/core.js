@@ -39,7 +39,7 @@ var jaws = (function(jaws) {
   jaws.title = function(value) {
 
     if (!jaws.isString(value)) {
-      jaws.log("jaws.title: Passed in value is not a String.");
+      jaws.log.error("jaws.title: Passed in value is not a String.");
       return;
     }
 
@@ -58,7 +58,7 @@ var jaws = (function(jaws) {
 
     make_global.forEach(function(item) {
       if (window[item]) {
-        jaws.log("jaws.unpack: " + item + " already exists in global namespace.");
+        jaws.log.warn("jaws.unpack: " + item + " already exists in global namespace.");
       }
       else {
         window[item] = jaws[item];
@@ -74,29 +74,102 @@ var jaws = (function(jaws) {
   jaws.log = function(msg, append) {
     if (!jaws.isString(msg)) {
       msg = JSON.stringify(msg);
-    } 
-
-    if (log_tag && jaws.log.useLogElement) {
-      if (append) {
-        log_tag.innerHTML += msg + "<br />";
-      }
-      else {
-        log_tag.innerHTML = msg;
-      }
     }
-    if(console.log && jaws.log.useConsole) {
-      console.log("JawsJS: " + msg);
+
+    if (jaws.log.on) {
+      if (log_tag && jaws.log.use_log_element) {
+        if (append) {
+          log_tag.innerHTML += msg + "<br />";
+        }
+        else {
+          log_tag.innerHTML = msg;
+        }
+      }
+      if (console.log && jaws.log.use_console) {
+        console.log("JawsJS: ", msg);
+      }
     }
   };
-  
-  jaws.log.useConsole = false;
-  jaws.log.useLogElement = true;
+
   /**
-   * Clears the contents of log_tag element (if set)
+   * If logging should take place or not
+   * @type {boolean}
+   */
+  jaws.log.on = true;
+
+  /**
+   * If console.log should be used during log writing 
+   * @type {boolean}
+   */
+  jaws.log.use_console = false;
+
+  /**
+   * If log_tag should be used during log writing
+   * @type {boolean}
+   */
+  jaws.log.use_log_element = true;
+
+  /**
+   * Write messages to console.warn (if it exists) or append current log
+   * @param {string|object} msg String or object to record
+   * @see jaws.log
+   */
+  jaws.log.warn = function(msg) {
+    if (console.warn && jaws.log.use_console && jaws.log.on) {
+      console.warn(msg);
+    } else {
+      jaws.log("[WARNING]: " + JSON.stringify(msg), true);
+    }
+  };
+
+  /**
+   * Write messages to console.error (if it exists) or append current log
+   * @param {string|object} msg String or object to record
+   * @see jaws.log
+   */
+  jaws.log.error = function(msg) {
+    if (console.error && jaws.log.use_console && jaws.log.on) {
+      console.error(msg);
+    } else {
+      jaws.log("[ERROR]: " + JSON.stringify(msg), true);
+    }
+  };
+
+  /**
+   * Write messages to console.info (if it exists) or append current log
+   * @param {string|object} msg String or object to record
+   * @see jaws.log
+   */
+  jaws.log.info = function(msg) {
+    if (console.info && jaws.log.use_console && jaws.log.on) {
+      console.info(msg);
+    } else {
+      jaws.log("[INFO]: " + JSON.stringify(msg), true);
+    }
+  };
+
+  /**
+   * Write messages to console.debug (if it exists) or append current log
+   * @param {string|object} msg String or object to record
+   * @see jaws.log
+   */
+  jaws.log.debug = function(msg) {
+    if (console.debug && jaws.log.use_console && jaws.log.on) {
+      console.debug(msg);
+    } else {
+      jaws.log("[DEBUG]: " + JSON.stringify(msg), true);
+    }
+  };
+
+  /**
+   * Clears the contents of log_tag element (if set) and console.log (if set)
    */
   jaws.log.clear = function() {
-    if(log_tag) {
+    if (log_tag) {
       log_tag.innerHTML = "";
+    } 
+    if (console.clear) {
+      console.clear();
     }
   };
 
@@ -107,9 +180,6 @@ var jaws = (function(jaws) {
    * @see jaws.url_parameters()
    */
   jaws.init = function(options) {
-
-    var width = options.width || 500;
-    var height = options.height || 300;
 
     /* Find <title> tag */
     title = document.getElementsByTagName('title')[0];
@@ -142,8 +212,8 @@ var jaws = (function(jaws) {
       jaws.dom.style.position = "relative";
     } else {
       jaws.canvas = document.createElement("canvas");
-      jaws.canvas.width = width;
-      jaws.canvas.height = height;
+      jaws.canvas.width = options.width;
+      jaws.canvas.height = options.height;
       jaws.context = jaws.canvas.getContext('2d');
       document.body.appendChild(jaws.canvas);
     }
@@ -215,11 +285,11 @@ var jaws = (function(jaws) {
   jaws.start = function(game_state, options, game_state_setup_options) {
 
     if (!jaws.isFunction(game_state)) {
-      jaws.log("jaws.start: Passed in GameState is not a function.");
+      jaws.log.error("jaws.start: Passed in GameState is not a function.");
       return;
     }
-    if(!jaws.isObject(game_state_setup_options) && game_state_setup_options !== undefined) {
-      jaws.log("jaws.start: The setup options for the game state is not an object.");
+    if (!jaws.isObject(game_state_setup_options) && game_state_setup_options !== undefined) {
+      jaws.log.error("jaws.start: The setup options for the game state is not an object.");
       return;
     }
 
@@ -296,22 +366,22 @@ var jaws = (function(jaws) {
   jaws.switchGameState = function(game_state, options, game_state_setup_options) {
 
     if (!jaws.isFunction(game_state)) {
-      jaws.log("jaws.switchGameState: Passed in GameState is not a function.");
+      jaws.log.error("jaws.switchGameState: Passed in GameState is not a function.");
       return;
     }
-    
+
     game_state = new game_state;
-    
+
     if (!game_state.hasOwnProperty("setup")) {
-      jaws.log("jaws.switchGameState: GameState does not have a 'setup' property.");
+      jaws.log.error("jaws.switchGameState: GameState does not have a 'setup' property.");
       return;
     }
     if (!game_state.hasOwnProperty("draw")) {
-      jaws.log("jaws.switchGameState: GameState does not have a 'draw' property.");
+      jaws.log.error("jaws.switchGameState: GameState does not have a 'draw' property.");
       return;
     }
     if (!game_state.hasOwnProperty("update")) {
-      jaws.log("jaws.switchGameState: GameState does not have a 'update' property.");
+      jaws.log.error("jaws.switchGameState: GameState does not have a 'update' property.");
       return;
     }
 
@@ -332,12 +402,12 @@ var jaws = (function(jaws) {
    * @returns {HTMLCanvasElement}         A HTMLCanvasElement with drawn HTMLImageElement content
    */
   jaws.imageToCanvas = function(image) {
-    
-    if(!jaws.isImage(image)) {
-      jaws.log("jaws.imageToCanvas: Passed in object is not an image.");
+
+    if (!jaws.isImage(image)) {
+      jaws.log.error("jaws.imageToCanvas: Passed in object is not an image.");
       return;
     }
-    
+
     var canvas = document.createElement("canvas");
     canvas.src = image.src;
     canvas.width = image.width;
@@ -503,7 +573,7 @@ var jaws = (function(jaws) {
 
     for (var option in options) {
       if (defaults[option] === undefined) {
-        jaws.log("jaws.parseOptions: Unsupported property " + option + "for " + object.constructor);
+        jaws.log.warn("jaws.parseOptions: Unsupported property " + option + "for " + object.constructor);
       }
     }
     for (var option in defaults) {
