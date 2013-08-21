@@ -1,16 +1,7 @@
-/* Built at 2013-08-19 03:06:59 +0200 */
+/* Built at 2013-08-21 22:30:31 +0200 */
 /**
- * @namespace JawsJS core functions. "Field Summary" contains readable properties on the main jaws-object.
+ * @namespace JawsJS core functions.
  *
- * @property {int} mouse_x  Mouse X position with respect to the canvas-element
- * @property {int} mouse_y  Mouse Y position with respect to the canvas-element
- * @property {canvas} canvas  The detected/created canvas-element used for the game
- * @property {context} context  The detected/created canvas 2D-context, used for all draw-operations
- * @property {int} width  Width of the canvas-element
- * @property {int} height  Height of the canvas-element
- *
- *
- * @example
  * Jaws, a HTML5 canvas/javascript 2D game development framework
  *
  * Homepage:      http://jawsjs.com/
@@ -28,367 +19,570 @@
  *   jaws.one_variable = 1
  *   new jaws.OneConstructor
  *
- * Have fun! 
- *
- * ippa. 
- *
+ * @property {int}      mouse_x     Mouse X position with respect to the canvas-element
+ * @property {int}      mouse_y     Mouse Y position with respect to the canvas-element
+ * @property {canvas}   canvas      The detected/created canvas-element used for the game
+ * @property {context}  context     The detected/created canvas 2D-context, used for all draw-operations
+ * @property {int}      width       Width of the canvas-element
+ * @property {int}      height      Height of the canvas-element
  */
 var jaws = (function(jaws) {
 
-var title
-var log_tag  
+  var title;
+  var log_tag;
 
-jaws.title = function(value) {
-  if(value) { return (title.innerHTML = value) }
-  return title.innerHTML
-}
+  /**
+   * Returns or sets contents of title's innerHTML
+   * @private
+   * @param   {type}   value  The new value to set the innerHTML of title
+   * @returns {string}        The innerHTML of title
+   */
+  jaws.title = function(value) {
 
-/**
- * Unpacks Jaws core-constructors into the global namespace. If a global property is allready taken, a warning will be written to jaws log.
- * After calling jaws.unpack() you can use <b>Sprite()</b> instead of <b>jaws.Sprite()</b>, <b>Animation()</b> instead of <b>jaws.Animation()</b> and so on.
- *
- */
-jaws.unpack = function() {
-  var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "TileMap", "Rect", "pressed"]
+    if (!jaws.isString(value)) {
+      jaws.log.error("jaws.title: Passed in value is not a String.");
+      return;
+    }
 
-  make_global.forEach( function(item, array, total) {
-    if(window[item])  { jaws.log(item + "already exists in global namespace") }
-    else              { window[item] = jaws[item] }
-  });
-}
+    if (value) {
+      return (title.innerHTML = value);
+    }
+    return title.innerHTML;
+  };
 
+  /**
+   * Unpacks Jaws core-constructors into the global namespace.
+   * If a global property is already taken, a warning will be written to jaws log.
+   */
+  jaws.unpack = function() {
+    var make_global = ["Sprite", "SpriteList", "Animation", "Viewport", "SpriteSheet", "Parallax", "TileMap", "pressed", "QuadTree"];
 
-/**
- * Logs <b>msg</b> to previously found or created <div id="jaws-log">
- * if <b>append</b> is true, append rather than overwrite the last log-msg.
- */
-jaws.log = function(msg, append) {
-  if(log_tag) {
-    msg += "<br />"
-    if(append) { log_tag.innerHTML = log_tag.innerHTML.toString() + msg } 
-    else { log_tag.innerHTML = msg }
+    make_global.forEach(function(item) {
+      if (window[item]) {
+        jaws.log.warn("jaws.unpack: " + item + " already exists in global namespace.");
+      }
+      else {
+        window[item] = jaws[item];
+      }
+    });
+  };
+
+  /**
+   * Writes messages to either log_tag (if set) or console.log (if available)
+   * @param   {string}  msg     The string to write
+   * @param   {boolean} append  If messages should be appended or not
+   */
+  jaws.log = function(msg, append) {
+    if (!jaws.isString(msg)) {
+      msg = JSON.stringify(msg);
+    }
+
+    if (jaws.log.on) {
+      if (log_tag && jaws.log.use_log_element) {
+        if (append) {
+          log_tag.innerHTML += msg + "<br />";
+        }
+        else {
+          log_tag.innerHTML = msg;
+        }
+      }
+      if (console.log && jaws.log.use_console) {
+        console.log("JawsJS: ", msg);
+      }
+    }
+  };
+
+  /**
+   * If logging should take place or not
+   * @type {boolean}
+   */
+  jaws.log.on = true;
+
+  /**
+   * If console.log should be used during log writing 
+   * @type {boolean}
+   */
+  jaws.log.use_console = false;
+
+  /**
+   * If log_tag should be used during log writing
+   * @type {boolean}
+   */
+  jaws.log.use_log_element = true;
+
+  /**
+   * Write messages to console.warn (if it exists) or append current log
+   * @param {string|object} msg String or object to record
+   * @see jaws.log
+   */
+  jaws.log.warn = function(msg) {
+    if (console.warn && jaws.log.use_console && jaws.log.on) {
+      console.warn(msg);
+    } else {
+      jaws.log("[WARNING]: " + JSON.stringify(msg), true);
+    }
+  };
+
+  /**
+   * Write messages to console.error (if it exists) or append current log
+   * @param {string|object} msg String or object to record
+   * @see jaws.log
+   */
+  jaws.log.error = function(msg) {
+    if (console.error && jaws.log.use_console && jaws.log.on) {
+      console.error(msg);
+    } else {
+      jaws.log("[ERROR]: " + JSON.stringify(msg), true);
+    }
+  };
+
+  /**
+   * Write messages to console.info (if it exists) or append current log
+   * @param {string|object} msg String or object to record
+   * @see jaws.log
+   */
+  jaws.log.info = function(msg) {
+    if (console.info && jaws.log.use_console && jaws.log.on) {
+      console.info(msg);
+    } else {
+      jaws.log("[INFO]: " + JSON.stringify(msg), true);
+    }
+  };
+
+  /**
+   * Write messages to console.debug (if it exists) or append current log
+   * @param {string|object} msg String or object to record
+   * @see jaws.log
+   */
+  jaws.log.debug = function(msg) {
+    if (console.debug && jaws.log.use_console && jaws.log.on) {
+      console.debug(msg);
+    } else {
+      jaws.log("[DEBUG]: " + JSON.stringify(msg), true);
+    }
+  };
+
+  /**
+   * Clears the contents of log_tag element (if set) and console.log (if set)
+   */
+  jaws.log.clear = function() {
+    if (log_tag) {
+      log_tag.innerHTML = "";
+    } 
+    if (console.clear) {
+      console.clear();
+    }
+  };
+
+  /**
+   * Initalizes jaws{canvas, context, dom, width, height}
+   * @private
+   * @param    {object}    options     Object-literal of constructor properties
+   * @see jaws.url_parameters()
+   */
+  jaws.init = function(options) {
+
+    /* Find <title> tag */
+    title = document.getElementsByTagName('title')[0];
+    jaws.url_parameters = jaws.getUrlParameters();
+
+    /*
+     * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
+     * jaws.log(message) will use this div for debug/info output to the gamer or developer
+     *
+     */
+    log_tag = document.getElementById('jaws-log');
+    if (jaws.url_parameters["debug"]) {
+      if (!log_tag) {
+        log_tag = document.createElement("div");
+        log_tag.id = "jaws-log";
+        log_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;";
+        document.body.appendChild(log_tag);
+      }
+    }
+
+    jaws.canvas = document.getElementsByTagName('canvas')[0];
+    if (!jaws.canvas) {
+      jaws.dom = document.getElementById("canvas");
+    }
+
+    // Ordinary <canvas>, get context
+    if (jaws.canvas) {
+      jaws.context = jaws.canvas.getContext('2d');
+    } else if (jaws.dom) {
+      jaws.dom.style.position = "relative";
+    } else {
+      jaws.canvas = document.createElement("canvas");
+      jaws.canvas.width = options.width;
+      jaws.canvas.height = options.height;
+      jaws.context = jaws.canvas.getContext('2d');
+      document.body.appendChild(jaws.canvas);
+    }
+
+    /* Let's scale sprites retro-style by default */
+    if (jaws.context)
+      jaws.useCrispScaling();
+
+    jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth;
+    jaws.height = jaws.canvas ? jaws.canvas.height : jaws.dom.offsetHeight;
+
+    jaws.mouse_x = 0;
+    jaws.mouse_y = 0;
+    window.addEventListener("mousemove", saveMousePosition);
+  };
+
+  /**
+   * Use 'retro' crisp scaling when drawing sprites through the canvas API, this is the default
+   */
+  jaws.useCrispScaling = function() {
+    jaws.context.imageSmoothingEnabled = false;
+    jaws.context.webkitImageSmoothingEnabled = false;
+    jaws.context.mozImageSmoothingEnabled = false;
+  };
+
+  /**
+   * Use smooth antialiased scaling when drawing sprites through the canvas API
+   */
+  jaws.useSmoothScaling = function() {
+    jaws.context.imageSmoothingEnabled = true;
+    jaws.context.webkitImageSmoothingEnabled = true;
+    jaws.context.mozImageSmoothingEnabled = true;
+  };
+
+  /**
+   * Keeps updated mouse coordinates in jaws.mouse_x and jaws.mouse_y
+   * This is called each time event "mousemove" triggers.
+   * @private
+   * @param {EventObject} e The EventObject populated by the calling event
+   */
+  function saveMousePosition(e) {
+    jaws.mouse_x = (e.pageX || e.clientX);
+    jaws.mouse_y = (e.pageY || e.clientY);
+
+    var game_area = jaws.canvas ? jaws.canvas : jaws.dom;
+    jaws.mouse_x -= game_area.offsetLeft;
+    jaws.mouse_y -= game_area.offsetTop;
   }
-}
 
-
-/**
- * @example
- * Initializes / creates:
- * jaws.canvas, jaws.context & jaws.dom   // our drawable gamearea
- * jaws.width & jaws.height               // width/height of drawable gamearea
- * jaws.url_parameters                    // hash of key/values of all parameters in current url
- * title & log_tag                        // used internally by jaws
- *
- * @private
- */
-jaws.init = function(options) {
-  /* Find <title> tag */
-  title = document.getElementsByTagName('title')[0]
-  jaws.url_parameters = jaws.getUrlParameters()
-
-  /*
-   * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
-   * jaws.log(message) will use this div for debug/info output to the gamer or developer
+  /**
+   * 1) Calls jaws.init(), detects or creats a canvas, and sets up the 2D context (jaws.canvas and jaws.context).
+   * 2) Pre-loads all defined assets with jaws.assets.loadAll().
+   * 3) Creates an instance of game_state and calls setup() on that instance.
+   * 4) Loops calls to update() and draw() with given FPS until game ends or another game state is activated.
+   * @param   {function}   game_state                The game state function to be started
+   * @param   {object}     options                   Object-literal of game loop properties
+   * @param   {object}     game_state_setup_options  Object-literal of game state properties and values
+   * @see jaws.init()
+   * @see jaws.setupInput()
+   * @see jaws.assets.loadAll()
+   * @see jaws.switchGameState()
+   * @example
+   *
+   *  jaws.start(MyGame)            // Start game state Game() with default options
+   *  jaws.start(MyGame, {fps: 30}) // Start game state Game() with options, in this case jaws will run your game with 30 frames per second.
+   *  jaws.start(window)            // Use global functions setup(), update() and draw() if available. Not the recommended way but useful for testing and mini-games.
    *
    */
-  log_tag = document.getElementById('jaws-log')
-  if(jaws.url_parameters["debug"]) {
-    if(!log_tag) {
-      log_tag = document.createElement("div")
-      log_tag.id = "jaws-log"
-      log_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;"
-      document.body.appendChild(log_tag)
+  jaws.start = function(game_state, options, game_state_setup_options) {
+
+    if (!jaws.isFunction(game_state)) {
+      jaws.log.error("jaws.start: Passed in GameState is not a function.");
+      return;
     }
-  }
-
-  jaws.canvas = document.getElementsByTagName('canvas')[0]
-  if(!jaws.canvas) { jaws.dom = document.getElementById("canvas") }
-
-  // Ordinary <canvas>, get context
-  if(jaws.canvas) { jaws.context = jaws.canvas.getContext('2d'); }
-
-  // div-canvas / hml5 sprites, set position relative to have sprites with position = "absolute" stay within the canvas
-  else if(jaws.dom) { jaws.dom.style.position = "relative"; }  
-
-  // Niether <canvas> or <div>, create a <canvas> with specified or default width/height
-  else {
-    jaws.canvas = document.createElement("canvas")
-    jaws.canvas.width = options.width
-    jaws.canvas.height = options.height
-    jaws.context = jaws.canvas.getContext('2d')
-    document.body.appendChild(jaws.canvas)
-  }
-
-  /* Let's scale sprites retro-style by default */
-  if(jaws.context)  jaws.useCrispScaling();
- 
-  jaws.width = jaws.canvas ? jaws.canvas.width : jaws.dom.offsetWidth
-  jaws.height = jaws.canvas ? jaws.canvas.height  : jaws.dom.offsetHeight
-
-  jaws.mouse_x = 0
-  jaws.mouse_y = 0
-  window.addEventListener("mousemove", saveMousePosition)
-}
-/**
- * Use 'retro' crisp scaling when drawing sprites through the canvas API, this is the default
- */
-jaws.useCrispScaling = function() {
-  jaws.context.imageSmoothingEnabled = false
-  jaws.context.webkitImageSmoothingEnabled = false
-  jaws.context.mozImageSmoothingEnabled = false 
-}
-
-/**
- * Use smooth antialiased scaling when drawing sprites through the canvas API
- */
-jaws.useSmoothScaling = function() {
-  jaws.context.imageSmoothingEnabled = true
-  jaws.context.webkitImageSmoothingEnabled = true
-  jaws.context.mozImageSmoothingEnabled = true
-}
-
-
-/**
- * @private
- * Keeps updated mouse coordinates in jaws.mouse_x / jaws.mouse_y
- * This is called each time event "mousemove" triggers.
- */
-function saveMousePosition(e) {
-  jaws.mouse_x = (e.pageX || e.clientX)
-  jaws.mouse_y = (e.pageY || e.clientY)
-  
-  var game_area = jaws.canvas ? jaws.canvas : jaws.dom
-  jaws.mouse_x -= game_area.offsetLeft
-  jaws.mouse_y -= game_area.offsetTop
-}
-
-/** 
- * Quick and easy startup of a jaws game loop. 
- *
- * @example
- *
- *  // jaws.start(YourGameState) It will do the following:
- *  //
- *  // 1) Call jaws.init() that will detect any canvas-tag (or create one for you) and set up the 2D context, then available in jaws.canvas and jaws.context.
- *  //
- *  // 2) Pre-load all defined assets with jaws.assets.loadAll() while showing progress, then available in jaws.assets.get("your_asset.png").
- *  //
- *  // 3) Create an instance of YourGameState() and call setup() on that instance. In setup() you usually create your gameobjects, sprites and so on.
- *  // 
- *  // 4) Loop calls to update() and draw() with given FPS (default 60) until game ends or another game state is activated.
- *
- *
- *  jaws.start(MyGame)            // Start game state Game() with default options
- *  jaws.start(MyGame, {fps: 30}) // Start game state Geme() with options, in this case jaws will run your game with 30 frames per second.
- *  jaws.start(window)            // Use global functions setup(), update() and draw() if available. Not the recommended way but useful for testing and mini-games.
- *
- *  // It's recommended not giving fps-option to jaws.start since then it will default to 60 FPS and using requestAnimationFrame when possible.
- *
- */
-jaws.start = function(game_state, options,game_state_setup_options) {
-  if(!options) options = {};
-  var fps = options.fps || 60
-  if(options.loading_screen === undefined)  options.loading_screen = true;
-  if(!options.width)                        options.width = 500; 
-  if(!options.height)                       options.height = 300;
-  jaws.init(options)
-
-  if(options.loading_screen) { jaws.assets.displayProgress(0) }
-
-  jaws.log("setupInput()", true)
-  jaws.setupInput()
-
-  /* Callback for when one single assets has been loaded */
-  function assetLoaded(src, percent_done) {
-    jaws.log(percent_done + "%: " + src, true)
-    if(options.loading_screen) { jaws.assets.displayProgress(percent_done) }
-  }
-
-  /* Callback for when an asset can't be loaded*/
-  function assetError(src) {
-    jaws.log( "Error loading: " + src, true)
-  }
-
-  /* Callback for when all assets are loaded */
-  function assetsLoaded() {
-    jaws.log("all assets loaded", true)
-    jaws.switchGameState(game_state||window, {fps: fps}, game_state_setup_options)
-  }
-
-  jaws.log("assets.loadAll()", true)
-  if(jaws.assets.length() > 0)  { jaws.assets.loadAll({onload:assetLoaded, onerror:assetError, onfinish:assetsLoaded}) }
-  else                          { assetsLoaded() } 
-}
-
-/**
-* Switch to a new active game state
-* Save previous game state in jaws.previous_game_state
-*
-* @example
-* 
-* function MenuState() {
-*   this.setup = function() { ... }
-*   this.draw = function() { ... }
-*   this.update = function() {
-*     if(pressed("enter")) jaws.switchGameState(GameState); // Start game when Enter is pressed
-*   }
-* }
-*
-* function GameState() {
-*   this.setup = function() { ... }
-*   this.update = function() { ... }
-*   this.draw = function() { ... }
-* }
-*
-* jaws.start(MenuState)
-*
-*/
-jaws.switchGameState = function(game_state, options,game_state_setup_options) {
-  var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60
-  
-  jaws.game_loop && jaws.game_loop.stop()
-  jaws.clearKeyCallbacks() // clear out all keyboard callbacks
-  if(jaws.isFunction(game_state)) { game_state = new game_state }
-  
-  jaws.previous_game_state = jaws.game_state
-  jaws.game_state = game_state
-  jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps},game_state_setup_options)
-  jaws.game_loop.start()
-}
-
-/** 
- * Takes an image, returns a canvas-element containing that image.
- * Benchmarks has proven canvas to be faster to work with then images in certain browsers.
- * Returns: a canvas-element
- */
-jaws.imageToCanvas = function(image) {
-  var canvas = document.createElement("canvas")
-  canvas.src = image.src        // Make canvas look more like an image
-  canvas.width = image.width
-  canvas.height = image.height
-
-  var context = canvas.getContext("2d")
-  context.drawImage(image, 0, 0, image.width, image.height)
-  return canvas
-}
-
-/** 
- * Return obj as an array. An array is returned as is. This is useful when you want to iterate over an unknown variable.
- *
- * @example
- *
- *   jaws.forceArray(1)       // --> [1]
- *   jaws.forceArray([1,2])   // --> [1,2]
- *
- */
-jaws.forceArray = function(obj) {
-  return Array.isArray(obj) ? obj : [obj]
-}
-
-/** Clears screen (the canvas-element) through context.clearRect() */
-jaws.clear = function() {
-  jaws.context.clearRect(0,0,jaws.width,jaws.height)
-}
-
-/** Returns true if obj is an Image */
-jaws.isImage = function(obj)  { 
-  return Object.prototype.toString.call(obj) === "[object HTMLImageElement]" 
-}
-
-/** Returns true of obj is a Canvas-element */
-jaws.isCanvas = function(obj) { 
-  return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]" 
-}
-
-/** Returns true of obj is either an Image or a Canvas-element */
-jaws.isDrawable = function(obj) { 
-  return jaws.isImage(obj) || jaws.isCanvas(obj) 
-}
-
-/** Returns true if obj is a String */
-jaws.isString = function(obj) { 
-  return (typeof obj == 'string') 
-}
-
-/** Returns true if obj is an Array */
-jaws.isArray = function(obj)  { 
-  if(!obj) return false;
-  return !(obj.constructor.toString().indexOf("Array") == -1) 
-}
-
-/** Returns true of obj is a Function */
-jaws.isFunction = function(obj) { 
-  return (Object.prototype.toString.call(obj) === "[object Function]") 
-}
-
-/** Returns true if value is simple Object */
-jaws.isObject = function(value) {
-  return value != null && typeof value == 'object';
-}
-
-/**
- * Returns true if <b>item</b> is outside the canvas.
- * <b>item</b> needs to have the properties x, y, width & height
- */
-jaws.isOutsideCanvas = function(item) { 
-  return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height)
-}
-
-/**
- * Force <b>item</b> inside canvas by setting items x/y parameters
- * <b>item</b> needs to have the properties x, y, width & height
- */
-jaws.forceInsideCanvas = function(item) {
-  if(item.x < 0)              { item.x = 0  }
-  if(item.x > jaws.width)     { item.x = jaws.width }
-  if(item.y < 0)              { item.y = 0 }
-  if(item.y > jaws.height)    { item.y = jaws.height }
-}
-
-/**
- * Return a hash of url-parameters and their values
- *
- * @example
- *   // Given the current URL is <b>http://test.com/?debug=1&foo=bar</b>
- *   jaws.getUrlParameters() // --> {debug: 1, foo: bar}
- */
-jaws.getUrlParameters = function() {
-  var vars = [], hash;
-  var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-  for(var i = 0; i < hashes.length; i++) {
-    hash = hashes[i].split('=');
-    vars.push(hash[0]);
-    vars[hash[0]] = hash[1];
-  }
-  return vars;
-}
-/**
- * Check for bad options/catch typos and init object with defaults options.
- * Used in all major constructors like Sprite() and so on.
- */
-jaws.parseOptions = function(object, options, defaults) {
-  object["options"] = options;
-
-  for(option in options) {
-    if(defaults[option] === undefined) {
-      throw("Unsupported option '" + option + "' sent to constructor");
+    if (!jaws.isObject(game_state_setup_options) && game_state_setup_options !== undefined) {
+      jaws.log.error("jaws.start: The setup options for the game state is not an object.");
+      return;
     }
-  }
-  for(option in defaults) {
-    object[option] = (options[option] !== undefined) ? options[option] : jaws.clone(defaults[option]);
-  }
-};
-/**
- * Clones given array or object. Other types are returned as is.
- * Used by jaws.parseOptions when parsing defaults.
- */
-jaws.clone = function(value) {
-  if(jaws.isArray(value))    return value.slice(0);
-  if(jaws.isObject(value))   return JSON.parse(JSON.stringify(value));
-  return value;
-}
 
-return jaws;
+    if (!options)
+      options = {};
+    var fps = options.fps || 60;
+    if (options.loading_screen === undefined)
+      options.loading_screen = true;
+    if (!options.width)
+      options.width = 500;
+    if (!options.height)
+      options.height = 300;
+    jaws.init(options);
+
+    if (options.loading_screen) {
+      jaws.assets.displayProgress(0);
+    }
+
+    jaws.log("setupInput()", true);
+    jaws.setupInput();
+
+    /* Callback for when one single asset has been loaded */
+    function assetLoaded(src, percent_done) {
+      jaws.log(percent_done + "%: " + src, true);
+      if (options.loading_screen) {
+        jaws.assets.displayProgress(percent_done);
+      }
+    }
+
+    /* Callback for when an asset can't be loaded*/
+    function assetError(src, percent_done) {
+      jaws.log(percent_done + "%: Error loading asset " + src, true);
+    }
+
+    /* Callback for when all assets are loaded */
+    function assetsLoaded() {
+      jaws.log("all assets loaded", true);
+      jaws.switchGameState(game_state || window, {fps: fps}, game_state_setup_options);
+    }
+
+    jaws.log("assets.loadAll()", true);
+    if (jaws.assets.length() > 0) {
+      jaws.assets.loadAll({onload: assetLoaded, onerror: assetError, onfinish: assetsLoaded});
+    }
+    else {
+      assetsLoaded();
+    }
+  };
+
+  /**
+   * Switchs to a new active game state and saves previous game state in jaws.previous_game_state
+   * @param   {function}  game_state                The game state function to start
+   * @param   {object}    options                   The object-literal properties to pass to the new game loop
+   * @param   {object}    game_state_setup_options  The object-literal properties to pass to starting game state
+   * @example
+   * 
+   * function MenuState() {
+   *   this.setup = function() { ... }
+   *   this.draw = function() { ... }
+   *   this.update = function() {
+   *     if(pressed("enter")) jaws.switchGameState(GameState); // Start game when Enter is pressed
+   *   }
+   * }
+   *
+   * function GameState() {
+   *   this.setup = function() { ... }
+   *   this.update = function() { ... }
+   *   this.draw = function() { ... }
+   * }
+   *
+   * jaws.start(MenuState)
+   *
+   */
+  jaws.switchGameState = function(game_state, options, game_state_setup_options) {
+
+    if (!jaws.isFunction(game_state)) {
+      jaws.log.error("jaws.switchGameState: Passed in GameState is not a function.");
+      return;
+    }
+
+    game_state = new game_state;
+
+    var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60;
+
+    jaws.game_loop && jaws.game_loop.stop();
+    jaws.clearKeyCallbacks();
+
+    jaws.previous_game_state = jaws.game_state;
+    jaws.game_state = game_state;
+    jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps}, game_state_setup_options);
+    jaws.game_loop.start();
+  };
+
+  /**
+   * Creates a new HTMLCanvasElement from a HTMLImageElement
+   * @param   {HTMLImageElement}  image   The HTMLImageElement to convert to a HTMLCanvasElement
+   * @returns {HTMLCanvasElement}         A HTMLCanvasElement with drawn HTMLImageElement content
+   */
+  jaws.imageToCanvas = function(image) {
+
+    if (!jaws.isImage(image)) {
+      jaws.log.error("jaws.imageToCanvas: Passed in object is not an image.");
+      return;
+    }
+
+    var canvas = document.createElement("canvas");
+    canvas.src = image.src;
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    var context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0, image.width, image.height);
+    return canvas;
+  };
+
+  /**
+   * Returns object as an array
+   * @param   {object}  obj   An array or object
+   * @returns {array}         Either an array or the object as an array 
+   * @example
+   *
+   *   jaws.forceArray(1)       // --> [1]
+   *   jaws.forceArray([1,2])   // --> [1,2]
+   */
+  jaws.forceArray = function(obj) {
+    return Array.isArray(obj) ? obj : [obj];
+  };
+
+  /**
+   * Clears screen (the canvas-element) through context.clearRect()
+   */
+  jaws.clear = function() {
+    jaws.context.clearRect(0, 0, jaws.width, jaws.height);
+  };
+
+  /**
+   * Tests if object is an image or not
+   * @param   {object}  obj   An Image or image-like object
+   * @returns {boolean}       If object's prototype is "HTMLImageElement"
+   */
+  jaws.isImage = function(obj) {
+    return Object.prototype.toString.call(obj) === "[object HTMLImageElement]";
+  };
+
+  /**
+   * Tests if object is a Canvas object
+   * @param   {type}  obj   A canvas or canvas-like object
+   * @returns {boolean}     If object's prototype is "HTMLCanvasElement"
+   */
+  jaws.isCanvas = function(obj) {
+    return Object.prototype.toString.call(obj) === "[object HTMLCanvasElement]";
+  };
+
+  /**
+   * Tests if an object is either a canvas or an image object
+   * @param   {object}  obj   A canvas or canva-like object
+   * @returns {boolean}       If object isImage or isCanvas
+   */
+  jaws.isDrawable = function(obj) {
+    return jaws.isImage(obj) || jaws.isCanvas(obj);
+  };
+
+  /**
+   * Tests if an object is a string or not
+   * @param   {object}  obj   A string or string-like object
+   * @returns {boolean}       The result of typeof and constructor testing
+   */
+  jaws.isString = function(obj) {
+    return typeof obj === "string" || (typeof obj === "object" && obj.constructor === String);
+  };
+
+  /**
+   * Tests if an object is a number or not
+   * @param   {number}  n   A number or number-like value
+   * @returns {boolean}     If n passed isNaN() and isFinite()
+   */
+  jaws.isNumber = function(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  };
+
+  /**
+   * Tests if an object is an Array or not
+   * @param   {object}  obj   An array or array-like object
+   * @returns {boolean}       If object's constructor is "Array"
+   */
+  jaws.isArray = function(obj) {
+    if (!obj)
+      return false;
+    return !(obj.constructor.toString().indexOf("Array") === -1);
+  };
+
+  /**
+   * Tests if an object is an Object or not
+   * @param   {object}  value   An object or object-like enitity
+   * @returns {boolean}         If object is not null and typeof 'object'
+   */
+  jaws.isObject = function(value) {
+    return value !== null && typeof value === 'object';
+  };
+
+  /**
+   * Tests if an object is a function or not
+   * @param   {object}  obj   A function or function-like object
+   * @returns {boolean}       If the prototype of the object is "Function"
+   */
+  jaws.isFunction = function(obj) {
+    return (Object.prototype.toString.call(obj) === "[object Function]");
+  };
+
+  /**
+   * Tests if an object is within drawing canvas (jaws.width and jaws.height) 
+   * @param   {object}  item  An object with both x and y properties
+   * @returns {boolean}       If the item's x and y are less than 0 or more than jaws.width or jaws.height
+   */
+  jaws.isOutsideCanvas = function(item) {
+    if (item.x && item.y) {
+      return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height);
+    }
+  };
+
+  /**
+   * Sets x and y properties to 0 (if less than), or jaws.width or jaws.height (if greater than)
+   * @param   {object}  item  An object with x and y properties
+   */
+  jaws.forceInsideCanvas = function(item) {
+    if (item.x && item.y) {
+      if (item.x < 0) {
+        item.x = 0;
+      }
+      if (item.x > jaws.width) {
+        item.x = jaws.width;
+      }
+      if (item.y < 0) {
+        item.y = 0;
+      }
+      if (item.y > jaws.height) {
+        item.y = jaws.height;
+      }
+    }
+  };
+
+  /**
+   * Parses current window.location for URL parameters and values
+   * @returns   {array}   Hash of url-parameters and their values
+   * @example
+   *   // Given the current URL is <b>http://test.com/?debug=1&foo=bar</b>
+   *   jaws.getUrlParameters() // --> {debug: 1, foo: bar}
+   */
+  jaws.getUrlParameters = function() {
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for (var i = 0; i < hashes.length; i++) {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  };
+
+  /**
+   * Compares an object's default properties against those sent to its constructor
+   * @param   {object}  object    The object to compare and assign new values
+   * @param   {object}  options   Object-literal of constructor properties and new values
+   * @param   {object}  defaults  Object-literal of properties and their default values
+   */
+  jaws.parseOptions = function(object, options, defaults) {
+    object["options"] = options;
+
+    for (var option in options) {
+      if (defaults[option] === undefined) {
+        jaws.log.warn("jaws.parseOptions: Unsupported property " + option + "for " + object.constructor);
+      }
+    }
+    for (var option in defaults) {
+      object[option] = (options[option] !== undefined) ? options[option] : jaws.clone(defaults[option]);
+    }
+  };
+
+  /**
+   * Returns a shallow copy of an array or object
+   * @param   {array|object}  value   The array or object to clone
+   * @returns {array|object}          A copy of an array of object
+   */
+  jaws.clone = function(value) {
+    if (jaws.isArray(value))
+      return value.slice(0);
+    if (jaws.isObject(value))
+      return JSON.parse(JSON.stringify(value));
+    return value;
+  };
+
+  return jaws;
 })(jaws || {});
 
 var jaws = (function(jaws) {
@@ -751,12 +945,12 @@ var jaws = (function(jaws) {
     self.length = function() {
       return self.src_list.length;
     };
-    
+
     /**
      * Get one or more resources from their URLs
      * @public
      * @param   {string|array} src The resource(s) to retrieve 
-     * @returns {array|object|undefined} Array or single resource if found in cache. Undefined otherwise.
+     * @returns {array|object} Array or single resource if found in cache. Undefined otherwise.
      */
     self.get = function(src) {
       if (jaws.isArray(src)) {
@@ -768,15 +962,15 @@ var jaws = (function(jaws) {
         if (self.loaded[src]) {
           return self.data[src];
         } else {
-          jaws.log("No such asset: " + src, true);
+          jaws.log.warn("No such asset: " + src, true);
         }
       }
       else {
-        jaws.log("jaws.get: Neither String nor Array. Incorrect URL resource " + src);
-        return undefined;
+        jaws.log.error("jaws.get: Neither String nor Array. Incorrect URL resource " + src);
+        return;
       }
     };
-    
+
     /**
      * Returns if specified resource is currently loading or not
      * @public 
@@ -787,7 +981,7 @@ var jaws = (function(jaws) {
       if (jaws.isString(src)) {
         return self.loading[src];
       } else {
-        jaws.log("jaws.isLoading: Argument not a String with " + src);
+        jaws.log.error("jaws.isLoading: Argument not a String with " + src);
       }
     };
 
@@ -800,7 +994,7 @@ var jaws = (function(jaws) {
       if (jaws.isString(src)) {
         return self.loaded[src];
       } else {
-        jaws.log("jaws.isLoaded: Argument not a String with " + src);
+        jaws.log.error("jaws.isLoaded: Argument not a String with " + src);
       }
     };
 
@@ -814,7 +1008,7 @@ var jaws = (function(jaws) {
       if (jaws.isString(src)) {
         return src.toLowerCase().match(/.+\.([^?]+)(\?|$)/)[1];
       } else {
-        jaws.log("jaws.assets.getPostfix: Argument not a String with " + src);
+        jaws.log.error("jaws.assets.getPostfix: Argument not a String with " + src);
       }
     };
 
@@ -829,7 +1023,7 @@ var jaws = (function(jaws) {
         var postfix = self.getPostfix(src);
         return (self.file_type[postfix] ? self.file_type[postfix] : postfix);
       } else {
-        jaws.log("jaws.assets.getType: Argument not a String with " + src);
+        jaws.log.error("jaws.assets.getType: Argument not a String with " + src);
       }
     }
 
@@ -850,7 +1044,7 @@ var jaws = (function(jaws) {
       } else if (jaws.isString(src)) {
         self.src_list.push(src);
       } else {
-        jaws.log("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src);
+        jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src);
       }
     };
 
@@ -865,15 +1059,15 @@ var jaws = (function(jaws) {
     self.loadAll = function(options) {
       self.load_count = 0;
       self.error_count = 0;
-      
-      if(options.onload && jaws.isFunction(options.onload))
-      self.onload = options.onload;
-      
-      if(options.onerror && jaws.isFunction(options.onerror))
-      self.onerror = options.onerror;
-      
-      if(options.onfinish && jaws.isFunction(options.onfinish))
-      self.onfinish = options.onfinish;
+
+      if (options.onload && jaws.isFunction(options.onload))
+        self.onload = options.onload;
+
+      if (options.onerror && jaws.isFunction(options.onerror))
+        self.onerror = options.onerror;
+
+      if (options.onfinish && jaws.isFunction(options.onfinish))
+        self.onfinish = options.onfinish;
 
       self.src_list.forEach(function(item) {
         self.load(item);
@@ -896,7 +1090,7 @@ var jaws = (function(jaws) {
     self.load = function(src, onload, onerror) {
 
       if (!jaws.isString(src)) {
-        jaws.log("jaws.assets.load: Argument not a String with " + src);
+        jaws.log.error("jaws.assets.load: Argument not a String with " + src);
         return;
       }
 
@@ -918,39 +1112,60 @@ var jaws = (function(jaws) {
 
       var type = getType(asset.src);
       if (type === "image") {
-        asset.image = new Image();
-        asset.image.asset = asset;
-        asset.image.addEventListener('load', assetLoaded);
-        asset.image.addEventListener('error', assetError);
-        asset.image.src = resolved_src;
+        try {
+          asset.image = new Image();
+          asset.image.asset = asset;
+          asset.image.addEventListener('load', assetLoaded);
+          asset.image.addEventListener('error', assetError);
+          asset.image.src = resolved_src;
+        } catch (e) {
+          jaws.log.error("Cannot load Image resource " + resolved_src +
+                  " (Message: " + e.message + ", Name: " + e.name + ")");
+        }
       } else if (self.can_play[self.getPostfix(asset.src)]) {
         if (type === "audio") {
-          asset.audio = new Audio();
-          asset.audio.asset = asset;
-          asset.audio.addEventListener('error', assetError);
-          asset.audio.addEventListener('canplay', assetLoaded);
-          self.data[asset.src] = asset.audio;
-          asset.audio.src = resolved_src;
-          asset.audio.load();
+          try {
+            asset.audio = new Audio();
+            asset.audio.asset = asset;
+            asset.audio.addEventListener('error', assetError);
+            asset.audio.addEventListener('canplay', assetLoaded);
+            self.data[asset.src] = asset.audio;
+            asset.audio.src = resolved_src;
+            asset.audio.load();
+          } catch (e) {
+            jaws.log.error("Cannot load Audio resource " + resolved_src +
+                    " (Message: " + e.message + ", Name: " + e.name + ")");
+          }
         } else if (type === "video") {
-          asset.video = document.createElement('video');
-          asset.video.asset = asset;
-          self.data[asset.src] = asset.video;
-          asset.video.setAttribute("style", "display:none;");
-          asset.video.addEventListener('error', assetError);
-          asset.video.addEventListener('canplay', assetLoaded);
-          document.body.appendChild(asset.video);
-          asset.video.src = resolved_src;
-          asset.video.load();
+          try {
+            asset.video = document.createElement('video');
+            asset.video.asset = asset;
+            self.data[asset.src] = asset.video;
+            asset.video.setAttribute("style", "display:none;");
+            asset.video.addEventListener('error', assetError);
+            asset.video.addEventListener('canplay', assetLoaded);
+            document.body.appendChild(asset.video);
+            asset.video.src = resolved_src;
+            asset.video.load();
+          } catch (e) {
+            jaws.log.error("Cannot load Video resource " + resolved_src +
+                    " (Message: " + e.message + ", Name: " + e.name + ")");
+          }
         }
       } else {
-        var req = new XMLHttpRequest();
-        req.asset = asset;
-        req.onreadystatechange = assetLoaded;
-        req.onerror = assetError;
-        req.open('GET', resolved_src, true);
-        if(getType(asset.src) != "json")  req.responseType = "blob";
-        req.send(null);
+        try {
+          var req = new XMLHttpRequest();
+          req.asset = asset;
+          req.onreadystatechange = assetLoaded;
+          req.onerror = assetError;
+          req.open('GET', resolved_src, true);
+          if (type !== "json")
+            req.responseType = "blob";
+          req.send(null);
+        } catch (e) {
+          jaws.log.error("Cannot load " + resolved_src +
+                  " (Message: " + e.message + ", Name: " + e.name + ")");
+        }
       }
     };
 
@@ -968,29 +1183,34 @@ var jaws = (function(jaws) {
       self.loaded[src] = true;
       self.loading[src] = false;
 
-      if (filetype === "json") {
-        if (this.readyState !== 4) {
-          return;
+      try {
+        if (filetype === "json") {
+          if (this.readyState !== 4) {
+            return;
+          }
+          self.data[asset.src] = JSON.parse(this.responseText);
         }
-        self.data[asset.src] = JSON.parse(this.responseText);
-      }
-      else if (filetype === "image") {
-        var new_image = self.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image;
-        if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp")
-        {
-          new_image = fuchiaToTransparent(new_image);
+        else if (filetype === "image") {
+          var new_image = self.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image;
+          if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp")
+          {
+            new_image = fuchiaToTransparent(new_image);
+          }
+          self.data[asset.src] = new_image;
         }
-        self.data[asset.src] = new_image;
+        else if (filetype === "audio" && self.can_play[self.getPostfix(asset.src)]) {
+          self.data[asset.src] = asset.audio;
+        }
+        else if (filetype === "video" && self.can_play[self.getPostfix(asset.src)]) {
+          self.data[asset.src] = asset.video;
+        } else {
+          self.data[asset.src] = this.response;
+        }
+      } catch (e) {
+        jaws.log.error("Cannot process " + src +
+                  " (Message: " + e.message + ", Name: " + e.name + ")");
+        self.data[asset.src] = null;
       }
-      else if (filetype === "audio" && self.can_play[self.getPostfix(asset.src)]) {
-        self.data[asset.src] = asset.audio;
-      }
-      else if (filetype === "video" && self.can_play[self.getPostfix(asset.src)]) {
-        self.data[asset.src] = asset.video;
-      } else {
-        self.data[asset.src] = this.response;
-      }
-
       self.load_count++;
       processCallbacks(asset, true, event);
     }
@@ -1077,7 +1297,7 @@ var jaws = (function(jaws) {
       jaws.context.restore();
     };
   };
-  
+
   /** 
    * Make Fuchia (0xFF00FF) transparent (BMPs ONLY)
    * @private
@@ -1085,10 +1305,10 @@ var jaws = (function(jaws) {
    * @returns {CanvasElement} canvas The translated CanvasElement 
    */
   function fuchiaToTransparent(image) {
-    
-    if(!jaws.isImage(image))
+
+    if (!jaws.isImage(image))
       return;
-    
+
     var canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image;
     var context = canvas.getContext("2d");
     var img_data = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -1098,7 +1318,7 @@ var jaws = (function(jaws) {
         pixels[i + 3] = 0; // Set total see-through transparency
       }
     }
-    
+
     context.putImageData(img_data, 0, 0);
     return canvas;
   }
