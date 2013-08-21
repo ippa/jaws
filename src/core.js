@@ -372,19 +372,6 @@ var jaws = (function(jaws) {
 
     game_state = new game_state;
 
-    if (!game_state.hasOwnProperty("setup")) {
-      jaws.log.error("jaws.switchGameState: GameState does not have a 'setup' property.");
-      return;
-    }
-    if (!game_state.hasOwnProperty("draw")) {
-      jaws.log.error("jaws.switchGameState: GameState does not have a 'draw' property.");
-      return;
-    }
-    if (!game_state.hasOwnProperty("update")) {
-      jaws.log.error("jaws.switchGameState: GameState does not have a 'update' property.");
-      return;
-    }
-
     var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60;
 
     jaws.game_loop && jaws.game_loop.stop();
