@@ -75,12 +75,12 @@ var jaws = (function(jaws) {
     self.length = function() {
       return self.src_list.length;
     };
-    
+
     /**
      * Get one or more resources from their URLs
      * @public
      * @param   {string|array} src The resource(s) to retrieve 
-     * @returns {array|object|undefined} Array or single resource if found in cache. Undefined otherwise.
+     * @returns {array|object} Array or single resource if found in cache. Undefined otherwise.
      */
     self.get = function(src) {
       if (jaws.isArray(src)) {
@@ -92,15 +92,15 @@ var jaws = (function(jaws) {
         if (self.loaded[src]) {
           return self.data[src];
         } else {
-          jaws.log("No such asset: " + src, true);
+          jaws.log.warn("No such asset: " + src, true);
         }
       }
       else {
-        jaws.log("jaws.get: Neither String nor Array. Incorrect URL resource " + src);
-        return undefined;
+        jaws.log.error("jaws.get: Neither String nor Array. Incorrect URL resource " + src);
+        return;
       }
     };
-    
+
     /**
      * Returns if specified resource is currently loading or not
      * @public 
@@ -111,7 +111,7 @@ var jaws = (function(jaws) {
       if (jaws.isString(src)) {
         return self.loading[src];
       } else {
-        jaws.log("jaws.isLoading: Argument not a String with " + src);
+        jaws.log.error("jaws.isLoading: Argument not a String with " + src);
       }
     };
 
@@ -124,7 +124,7 @@ var jaws = (function(jaws) {
       if (jaws.isString(src)) {
         return self.loaded[src];
       } else {
-        jaws.log("jaws.isLoaded: Argument not a String with " + src);
+        jaws.log.error("jaws.isLoaded: Argument not a String with " + src);
       }
     };
 
@@ -138,7 +138,7 @@ var jaws = (function(jaws) {
       if (jaws.isString(src)) {
         return src.toLowerCase().match(/.+\.([^?]+)(\?|$)/)[1];
       } else {
-        jaws.log("jaws.assets.getPostfix: Argument not a String with " + src);
+        jaws.log.error("jaws.assets.getPostfix: Argument not a String with " + src);
       }
     };
 
@@ -153,7 +153,7 @@ var jaws = (function(jaws) {
         var postfix = self.getPostfix(src);
         return (self.file_type[postfix] ? self.file_type[postfix] : postfix);
       } else {
-        jaws.log("jaws.assets.getType: Argument not a String with " + src);
+        jaws.log.error("jaws.assets.getType: Argument not a String with " + src);
       }
     }
 
@@ -174,7 +174,7 @@ var jaws = (function(jaws) {
       } else if (jaws.isString(src)) {
         self.src_list.push(src);
       } else {
-        jaws.log("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src);
+        jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src);
       }
     };
 
@@ -189,15 +189,15 @@ var jaws = (function(jaws) {
     self.loadAll = function(options) {
       self.load_count = 0;
       self.error_count = 0;
-      
-      if(options.onload && jaws.isFunction(options.onload))
-      self.onload = options.onload;
-      
-      if(options.onerror && jaws.isFunction(options.onerror))
-      self.onerror = options.onerror;
-      
-      if(options.onfinish && jaws.isFunction(options.onfinish))
-      self.onfinish = options.onfinish;
+
+      if (options.onload && jaws.isFunction(options.onload))
+        self.onload = options.onload;
+
+      if (options.onerror && jaws.isFunction(options.onerror))
+        self.onerror = options.onerror;
+
+      if (options.onfinish && jaws.isFunction(options.onfinish))
+        self.onfinish = options.onfinish;
 
       self.src_list.forEach(function(item) {
         self.load(item);
@@ -220,7 +220,7 @@ var jaws = (function(jaws) {
     self.load = function(src, onload, onerror) {
 
       if (!jaws.isString(src)) {
-        jaws.log("jaws.assets.load: Argument not a String with " + src);
+        jaws.log.error("jaws.assets.load: Argument not a String with " + src);
         return;
       }
 
@@ -242,39 +242,60 @@ var jaws = (function(jaws) {
 
       var type = getType(asset.src);
       if (type === "image") {
-        asset.image = new Image();
-        asset.image.asset = asset;
-        asset.image.addEventListener('load', assetLoaded);
-        asset.image.addEventListener('error', assetError);
-        asset.image.src = resolved_src;
+        try {
+          asset.image = new Image();
+          asset.image.asset = asset;
+          asset.image.addEventListener('load', assetLoaded);
+          asset.image.addEventListener('error', assetError);
+          asset.image.src = resolved_src;
+        } catch (e) {
+          jaws.log.error("Cannot load Image resource " + resolved_src +
+                  " (Message: " + e.message + ", Name: " + e.name + ")");
+        }
       } else if (self.can_play[self.getPostfix(asset.src)]) {
         if (type === "audio") {
-          asset.audio = new Audio();
-          asset.audio.asset = asset;
-          asset.audio.addEventListener('error', assetError);
-          asset.audio.addEventListener('canplay', assetLoaded);
-          self.data[asset.src] = asset.audio;
-          asset.audio.src = resolved_src;
-          asset.audio.load();
+          try {
+            asset.audio = new Audio();
+            asset.audio.asset = asset;
+            asset.audio.addEventListener('error', assetError);
+            asset.audio.addEventListener('canplay', assetLoaded);
+            self.data[asset.src] = asset.audio;
+            asset.audio.src = resolved_src;
+            asset.audio.load();
+          } catch (e) {
+            jaws.log.error("Cannot load Audio resource " + resolved_src +
+                    " (Message: " + e.message + ", Name: " + e.name + ")");
+          }
         } else if (type === "video") {
-          asset.video = document.createElement('video');
-          asset.video.asset = asset;
-          self.data[asset.src] = asset.video;
-          asset.video.setAttribute("style", "display:none;");
-          asset.video.addEventListener('error', assetError);
-          asset.video.addEventListener('canplay', assetLoaded);
-          document.body.appendChild(asset.video);
-          asset.video.src = resolved_src;
-          asset.video.load();
+          try {
+            asset.video = document.createElement('video');
+            asset.video.asset = asset;
+            self.data[asset.src] = asset.video;
+            asset.video.setAttribute("style", "display:none;");
+            asset.video.addEventListener('error', assetError);
+            asset.video.addEventListener('canplay', assetLoaded);
+            document.body.appendChild(asset.video);
+            asset.video.src = resolved_src;
+            asset.video.load();
+          } catch (e) {
+            jaws.log.error("Cannot load Video resource " + resolved_src +
+                    " (Message: " + e.message + ", Name: " + e.name + ")");
+          }
         }
       } else {
-        var req = new XMLHttpRequest();
-        req.asset = asset;
-        req.onreadystatechange = assetLoaded;
-        req.onerror = assetError;
-        req.open('GET', resolved_src, true);
-        if(getType(asset.src) != "json")  req.responseType = "blob";
-        req.send(null);
+        try {
+          var req = new XMLHttpRequest();
+          req.asset = asset;
+          req.onreadystatechange = assetLoaded;
+          req.onerror = assetError;
+          req.open('GET', resolved_src, true);
+          if (type !== "json")
+            req.responseType = "blob";
+          req.send(null);
+        } catch (e) {
+          jaws.log.error("Cannot load " + resolved_src +
+                  " (Message: " + e.message + ", Name: " + e.name + ")");
+        }
       }
     };
 
@@ -292,29 +313,34 @@ var jaws = (function(jaws) {
       self.loaded[src] = true;
       self.loading[src] = false;
 
-      if (filetype === "json") {
-        if (this.readyState !== 4) {
-          return;
+      try {
+        if (filetype === "json") {
+          if (this.readyState !== 4) {
+            return;
+          }
+          self.data[asset.src] = JSON.parse(this.responseText);
         }
-        self.data[asset.src] = JSON.parse(this.responseText);
-      }
-      else if (filetype === "image") {
-        var new_image = self.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image;
-        if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp")
-        {
-          new_image = fuchiaToTransparent(new_image);
+        else if (filetype === "image") {
+          var new_image = self.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image;
+          if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp")
+          {
+            new_image = fuchiaToTransparent(new_image);
+          }
+          self.data[asset.src] = new_image;
         }
-        self.data[asset.src] = new_image;
+        else if (filetype === "audio" && self.can_play[self.getPostfix(asset.src)]) {
+          self.data[asset.src] = asset.audio;
+        }
+        else if (filetype === "video" && self.can_play[self.getPostfix(asset.src)]) {
+          self.data[asset.src] = asset.video;
+        } else {
+          self.data[asset.src] = this.response;
+        }
+      } catch (e) {
+        jaws.log.error("Cannot process " + src +
+                  " (Message: " + e.message + ", Name: " + e.name + ")");
+        self.data[asset.src] = null;
       }
-      else if (filetype === "audio" && self.can_play[self.getPostfix(asset.src)]) {
-        self.data[asset.src] = asset.audio;
-      }
-      else if (filetype === "video" && self.can_play[self.getPostfix(asset.src)]) {
-        self.data[asset.src] = asset.video;
-      } else {
-        self.data[asset.src] = this.response;
-      }
-
       self.load_count++;
       processCallbacks(asset, true, event);
     }
@@ -401,7 +427,7 @@ var jaws = (function(jaws) {
       jaws.context.restore();
     };
   };
-  
+
   /** 
    * Make Fuchia (0xFF00FF) transparent (BMPs ONLY)
    * @private
@@ -409,10 +435,10 @@ var jaws = (function(jaws) {
    * @returns {CanvasElement} canvas The translated CanvasElement 
    */
   function fuchiaToTransparent(image) {
-    
-    if(!jaws.isImage(image))
+
+    if (!jaws.isImage(image))
       return;
-    
+
     var canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image;
     var context = canvas.getContext("2d");
     var img_data = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -422,7 +448,7 @@ var jaws = (function(jaws) {
         pixels[i + 3] = 0; // Set total see-through transparency
       }
     }
-    
+
     context.putImageData(img_data, 0, 0);
     return canvas;
   }
