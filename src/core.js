@@ -308,12 +308,12 @@ var jaws = (function(jaws) {
       jaws.assets.displayProgress(0);
     }
 
-    jaws.log("setupInput()", true);
+    jaws.log.info("setupInput()", true);
     jaws.setupInput();
 
     /* Callback for when one single asset has been loaded */
     function assetLoaded(src, percent_done) {
-      jaws.log(percent_done + "%: " + src, true);
+      jaws.log.info(percent_done + "%: " + src, true);
       if (options.loading_screen) {
         jaws.assets.displayProgress(percent_done);
       }
@@ -321,16 +321,16 @@ var jaws = (function(jaws) {
 
     /* Callback for when an asset can't be loaded*/
     function assetError(src, percent_done) {
-      jaws.log(percent_done + "%: Error loading asset " + src, true);
+      jaws.log.info(percent_done + "%: Error loading asset " + src, true);
     }
 
     /* Callback for when all assets are loaded */
     function assetsLoaded() {
-      jaws.log("all assets loaded", true);
+      jaws.log.info("all assets loaded", true);
       jaws.switchGameState(game_state || window, {fps: fps}, game_state_setup_options);
     }
 
-    jaws.log("assets.loadAll()", true);
+    jaws.log.info("assets.loadAll()", true);
     if (jaws.assets.length() > 0) {
       jaws.assets.loadAll({onload: assetLoaded, onerror: assetError, onfinish: assetsLoaded});
     }
