@@ -184,7 +184,7 @@ var jaws = (function(jaws) {
     /* Find <title> tag */
     title = document.getElementsByTagName('title')[0];
     jaws.url_parameters = jaws.getUrlParameters();
-
+    
     /*
      * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
      * jaws.log(message) will use this div for debug/info output to the gamer or developer
@@ -198,6 +198,11 @@ var jaws = (function(jaws) {
         log_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;";
         document.body.appendChild(log_tag);
       }
+    }
+
+    if(jaws.url_parameters["bust_cache"]) {
+      jaws.log.info("Busting cache when loading assets")
+      jaws.assets.bust_cache = true;
     }
 
     jaws.canvas = document.getElementsByTagName('canvas')[0];
