@@ -24,6 +24,13 @@ jaws.PixelMap.prototype.update = function(x, y) {
 }
 
 /**
+* Draws pixelsmaps image like a sprite
+*/ 
+jaws.PixelMap.prototype.draw = function() {
+  this.sprite.draw();
+}
+
+/**
 * Read current color at given coordinates X/Y 
 * returns array of 4 numbers [R, G, B, A]
 */
