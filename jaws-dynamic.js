@@ -29,7 +29,7 @@
         root+"gfx.js",
         root+"extras/tile_map_pathfinding.js",
         root+"extras/pixel_map.js",
-        root+"extras/audio_wrapper.js"
+        root+"extras/audio.js"
         )
   .thenRun(function () {
     /*
