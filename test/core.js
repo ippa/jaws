@@ -40,17 +40,21 @@ test("isSomething() helpers", function() {
   an_image = new Image()
   an_array = [1,2,3]
   a_canvas = document.createElement("canvas")
+  a_regexp = /test/i
+  an_object = {foo: "bar"}
 
-  deepEqual(jaws.isString(a_string), true, "isString()")
-  deepEqual(jaws.isFunction(a_function), true, "isFunction()")
-  deepEqual(jaws.isArray(an_array), true, "isArray()")
-  deepEqual(jaws.isImage(an_image), true, "isImage()")
-  deepEqual(jaws.isDrawable(an_image), true, "isDrawable()")
+  ok(jaws.isString(a_string), "isString()")
+  ok(jaws.isFunction(a_function), "isFunction()")
+  ok(jaws.isArray(an_array), "isArray()")
+  ok(jaws.isImage(an_image), "isImage()")
+  ok(jaws.isDrawable(an_image), "isDrawable()")
+  ok(jaws.isRegExp(a_regexp), "isRegExp()")
+  ok(jaws.isObject(an_object), "isRegExp()")
 
   // Test some negatives too
-  deepEqual(jaws.isFunction(an_array), false, "isFunction() should fail")
-  deepEqual(jaws.isArray(a_string), false, "isArray() should fail")
-  deepEqual(jaws.isString(an_array), false, "isString() should fail")
-  deepEqual(jaws.isImage(an_array), false, "isImage() should fail")
+  equal(jaws.isFunction(an_array), false, "isFunction() should fail")
+  equal(jaws.isArray(a_string), false, "isArray() should fail")
+  equal(jaws.isString(an_array), false, "isString() should fail")
+  equal(jaws.isImage(an_array), false, "isImage() should fail")
 })
 
