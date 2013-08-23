@@ -89,7 +89,7 @@ var jaws = (function(jaws) {
         });
       }
       else if (jaws.isString(src)) {
-        if (self.loaded[src]) {
+        if (self.data[src]) {     // TODO: self.loaded[src] is false for supported files for some odd reason.
           return self.data[src];
         } else {
           jaws.log.warn("No such asset: " + src, true);
@@ -312,6 +312,7 @@ var jaws = (function(jaws) {
       var asset = this.asset;
       var src = asset.src;
       var filetype = getType(asset.src);
+      
       self.loaded[src] = true;
       self.loading[src] = false;
 
