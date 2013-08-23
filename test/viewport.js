@@ -4,7 +4,7 @@ test("Viewport", function() {
   jaws.init()
   jaws.assets.root = "assets/"
   jaws.assets.add("droid_11x15.png")
-  jaws.assets.loadAll({onfinish:assetsLoaded})
+  jaws.assets.loadAll({onload: assetsLoaded})
   stop();
 
   function assetsLoaded() { 

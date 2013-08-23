@@ -1,8 +1,10 @@
+module("Assets")
+
 test("json assets, onload-callback", function() {
   var assets = new jaws.Assets()
   assets.root = "assets/"
   assets.add("gamedata.json")
-  assets.loadAll({onload:loaded})
+  assets.loadAll({onload: loaded})
   stop()
   function loaded() {
     deepEqual(assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
@@ -11,6 +13,21 @@ test("json assets, onload-callback", function() {
   }
 });
   
+test("audio assets", function() {
+  jaws.assets.root = "assets/";
+  jaws.assets.add(["tones.ogg", "tones.mp3", "tones.wav", "tones.mka", "tones.flac"])
+  jaws.assets.loadAll({onload: loaded});
+  stop(); 
+
+  function loaded() {
+    if(is_chrome) {
+      //ok( jaws.assets.get("tones.ogg"), "chrome supports ogg")
+      console.log(jaws.assets.get("tones.ogg"))
+    }
+    start();
+  };
+});
+
 test("assets advanced", function() {
   stop()
 
@@ -34,7 +51,7 @@ test("image asset with 404s", function() {
   assets.add("droid_11x15.png")
   assets.add("test_404.png")
   assets.image_to_canvas = true
-  assets.loadAll({onfinish: assetsLoaded})
+  assets.loadAll({onload: assetsLoaded})
   stop()
   function assetsLoaded() {
     ok(jaws.isCanvas(assets.get("droid_11x15.png")), "png loaded as Canvas")
@@ -49,11 +66,11 @@ test("assets loadAll", function() {
   jaws.assets.add("gamedata.json")
   jaws.assets.add("player.png")
   jaws.assets.add(["rect.png", "laser.wav"])
-  jaws.assets.loadAll({onfinish:assetsLoaded})
+  jaws.assets.loadAll({onload: assetsLoaded})
   
   stop()
   function assetsLoaded() {
-    ok(1, "onfinish()-callback was called")
+    ok(1, "onload()-callback was called")
     ok(jaws.assets.isLoaded("player.png"), "isLoaded('player.png') returns true")
     ok(! jaws.assets.isLoaded("test_404.png"), "isLoaded('test_404.png') returns false")
     ok(jaws.assets.get("player.png"), "image player.png loaded")
