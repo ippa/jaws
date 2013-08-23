@@ -77,7 +77,12 @@ var jaws = (function(jaws) {
     };
 
     /**
-     * Get one or more resources from their URLs
+     * Get one or more resources from their URLs. Supports simple wildcard (you can end a string with "*").
+     *
+     * @example
+     *   jaws.assets.add(["song.mp3", "song.ogg"])
+     *   jaws.assets.get("song.*")  // -> Will return song.ogg in firefox and song.mp3 in IE
+     *
      * @public
      * @param   {string|array} src The resource(s) to retrieve 
      * @returns {array|object} Array or single resource if found in cache. Undefined otherwise.
@@ -89,11 +94,18 @@ var jaws = (function(jaws) {
         });
       }
       else if (jaws.isString(src)) {
-        if (self.data[src]) {     // TODO: self.loaded[src] is false for supported files for some odd reason.
-          return self.data[src];
-        } else {
-          jaws.log.warn("No such asset: " + src, true);
+        // Wildcard? song.*, match against asset-srcs, make sure it's loaded and return content of first match.
+        if(src[src.length-1] === "*") {
+          var needle = src.replace("*", "")
+          for(var i=0; i < self.src_list.length; i++) {
+            if(self.src_list[i].indexOf(needle) == 0 && self.data[self.src_list[i]]) 
+              return self.data[self.src_list[i]];
+          }
         }
+        
+        // TODO: self.loaded[src] is false for supported files for some odd reason.
+        if (self.data[src]) { return self.data[src]; } 
+        else                { jaws.log.warn("No such asset: " + src, true); }
       }
       else {
         jaws.log.error("jaws.get: Neither String nor Array. Incorrect URL resource " + src);
