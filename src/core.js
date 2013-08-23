@@ -505,6 +505,16 @@ var jaws = (function(jaws) {
   };
 
   /**
+   * Tests if an object is a regular expression or not
+   * @param   {object}  obj   A /regexp/-object
+   * @returns {boolean}       If the object is an instance of RegExp
+   */
+  jaws.isRegExp = function(obj) {
+    return (obj instanceof RegExp);
+  };
+
+
+  /**
    * Tests if an object is within drawing canvas (jaws.width and jaws.height) 
    * @param   {object}  item  An object with both x and y properties
    * @returns {boolean}       If the item's x and y are less than 0 or more than jaws.width or jaws.height
