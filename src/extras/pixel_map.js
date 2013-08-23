@@ -15,6 +15,8 @@ jaws.PixelMap = function PixelMap(options) {
   this.update();
 }
 
+
+
 /**
 * Updates internal datastructure from the canvas. If we modify the 'terrain' we'll need to call this again.
 * Future idea: Only update parts of the array that's been modified.
@@ -46,6 +48,31 @@ jaws.PixelMap.prototype.at = function(x, y) {
   var A = this.data[start + 3];
   return [R, G, B, A];
 }
+
+/**
+* Trace the outline of a Rect until a named color found. Returns found color.
+*
+*/
+jaws.PixelMap.prototype.namedColorAtRect = function(rect, color) {
+  var x = rect.x
+  var y = rect.y
+
+  for(; x < rect.right; x++)  if(this.namedColorAt(x, y) == color) return this.namedColorAt(x,y);
+  for(; y < rect.bottom; y++) if(this.namedColorAt(x, y) == color) return this.namedColorAt(x,y);
+  for(; x > rect.x; x--)      if(this.namedColorAt(x, y) == color) return this.namedColorAt(x,y);
+  for(; y > rect.y; y--)      if(this.namedColorAt(x, y) == color) return this.namedColorAt(x,y);
+}
+
+jaws.PixelMap.prototype.untilNamedColorAtRect = function(callback) {
+  var rect;
+  var color;
+  while(color === undefined) {
+    color = this.namedColorAtRect( callback() );
+  }
+  return color;
+}
+
+
 jaws.PixelMap.prototype.colorAt = function(x, y) {
   var a = this.at(x,y);
   return {red: a[0], green: a[1], blue: a[2], alpha: a[3]};
