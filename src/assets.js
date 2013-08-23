@@ -373,8 +373,8 @@ var jaws = (function(jaws) {
       if (ok) {
         if (self.onprogress)
           self.onprogress(asset.src, percent);
-        if (asset.onload)
-          asset.onload(event);
+        if (asset.onprogress)
+          asset.onprogress(event);
       }
       else {
         if (self.onerror)
