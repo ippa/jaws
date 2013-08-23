@@ -24,26 +24,54 @@ test("audio assets", function() {
   function loaded() {
     if(is_ie) {
       ok( !assets.can_play["ogg"], "ie doesn't support ogg")
-      ok( !assets.can_play["ogg"], "ie doesn't support ogg")
-      ok( !assets.get("tones.ogg"), "ie has not loaded ogg")
+      ok( !assets.get("tones.ogg"), "ie didn't getch tones.ogg")
     }
     if(is_chrome) {
       ok( assets.can_play["ogg"], "chrome supports ogg")
       ok( assets.can_play["mp3"], "chrome supports ogg")
-      ok( assets.get("tones.ogg"), "chrome has loaded ogg")
+      ok( assets.get("tones.ogg"), "chrome fetched tones.ogg");
+      ok( assets.get("tones.mp3"), "chrome fetched tones.mp3");
+      ok( !assets.get("tones.flac"), "chrome didn't fetch tones.flac");
     }
-    ok(true, "noop");
-    console.log(assets.loaded)
+    if(is_ff) {
+      ok( assets.get("tones.ogg"), "chrome fetched tones.ogg");
+      ok( assets.get("tones.wav"), "chrome fetched tones.wav");
+      ok( !assets.get("tones.mp3"), "chrome didn't fetch tones.mp3");
+    }
+
     start();
   };
 
-  window.a_assets = assets
+});
+
+test("audio wildcard assets", function() {
+  jaws.log.use_console = true;
+  var assets = new jaws.Assets()
+  assets.root = "assets/";
+  assets.add(["tones.flac", "tones.mp3", "tones.ogg"])
+  assets.loadAll({onload: loaded});
+  stop(); 
+
+  function loaded() {
+    var asset = assets.get("tones.*")
+    if(is_chrome) {
+      equal( jaws.assets.getPostfix(asset.src), "mp3", "chrome fetched tones.mp3");
+    }
+    if(is_ff) {
+      equal( jaws.assets.getPostfix(asset.src), "ogg", "firefox fetched tones.ogg");
+    }
+    if(is_ie) {
+      equal( jaws.assets.getPostfix(asset.src), "mp3", "ie fetched tones.mp3");
+    }
+
+    start();
+  };
 
 });
 
 /*
 test("assets.load()", function() {
-  var assets = new jaws.Assets
+  var assets = new jaws.Assets()
   assets.root = "assets/"
   var load = function() { ok(jaws.assets.get("rect.png"), "load-callback loaded image"); start() }
   var error = function() { ok(false, "error callback doesn't get called"); start() } 
