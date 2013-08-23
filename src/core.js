@@ -317,7 +317,7 @@ var jaws = (function(jaws) {
     jaws.setupInput();
 
     /* Callback for when one single asset has been loaded */
-    function assetLoaded(src, percent_done) {
+    function assetProgress(src, percent_done) {
       jaws.log.info(percent_done + "%: " + src, true);
       if (options.loading_screen) {
         jaws.assets.displayProgress(percent_done);
@@ -337,7 +337,7 @@ var jaws = (function(jaws) {
 
     jaws.log.info("assets.loadAll()", true);
     if (jaws.assets.length() > 0) {
-      jaws.assets.loadAll({onload: assetLoaded, onerror: assetError, onfinish: assetsLoaded});
+      jaws.assets.loadAll({onprogress: assetProgress, onerror: assetError, onload: assetsLoaded});
     }
     else {
       assetsLoaded();
