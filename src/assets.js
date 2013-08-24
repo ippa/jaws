@@ -337,8 +337,7 @@ var jaws = (function(jaws) {
         }
         else if (filetype === "image") {
           var new_image = self.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image;
-          if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp")
-          {
+          if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp") {
             new_image = fuchiaToTransparent(new_image);
           }
           self.data[asset.src] = new_image;
@@ -450,8 +449,7 @@ var jaws = (function(jaws) {
    * @returns {CanvasElement} canvas The translated CanvasElement 
    */
   function fuchiaToTransparent(image) {
-
-    if (!jaws.isImage(image))
+    if (!jaws.isDrawable(image))  
       return;
 
     var canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image;
