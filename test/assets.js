@@ -43,9 +43,8 @@ test("audio assets", function() {
       ok( !assets.get("tones.flac"), "chrome didn't fetch tones.flac");
     }
     if(is_ff) {
-      ok( assets.get("tones.ogg"), "chrome fetched tones.ogg");
-      ok( assets.get("tones.wav"), "chrome fetched tones.wav");
-      ok( !assets.get("tones.mp3"), "chrome didn't fetch tones.mp3");
+      ok( assets.get("tones.ogg"), "ff fetched tones.ogg");
+      ok( assets.get("tones.wav"), "ff fetched tones.wav");
     }
 
     start();
@@ -67,7 +66,7 @@ test("audio wildcard assets", function() {
       equal( jaws.assets.getPostfix(asset.src), "mp3", "chrome fetched tones.mp3");
     }
     if(is_ff) {
-      equal( jaws.assets.getPostfix(asset.src), "ogg", "firefox fetched tones.ogg");
+      equal( jaws.assets.getPostfix(asset.src), "mp3", "ff fetched tones.mp3");
     }
     if(is_ie) {
       equal( jaws.assets.getPostfix(asset.src), "mp3", "ie fetched tones.mp3");
