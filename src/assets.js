@@ -77,6 +77,21 @@ var jaws = (function(jaws) {
     };
 
     /**
+     * Set root prefix-path to all assets
+     *
+     * @example
+     *   jaws.assets.setRoot("music/").add(["music.mp3", "music.ogg"]).loadAll()
+     *
+     * @public
+     * @param   {string} path-prefix for all following assets
+     * @returns {object} self
+     */
+    self.setRoot = function(path) {
+      self.root = path
+      return self
+    }
+ 
+    /**
      * Get one or more resources from their URLs. Supports simple wildcard (you can end a string with "*").
      *
      * @example
