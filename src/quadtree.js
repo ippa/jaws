@@ -1,27 +1,34 @@
+/*
+ * @class jaws.QuadTree
+ * @property {jaws.Rect}  bounds    Rect(x,y,width,height) defining bounds of tree
+ * @property {number}     depth     The depth of the root node
+ * @property {array}      nodes     The nodes of the root node
+ * @property {array}      objects   The objects of the root node
+ * @example
+ * setup: 
+ *      var quadtree = new jaws.QuadTree();
+ * update:
+ *      quadtree.collide(sprite or list, sprite or list, callback function);
+ */
 var jaws = (function(jaws) {
-  /*
-   * @class A jaws.QuadTree for 2D spatial collsion.
-   * @constructor
-   *  
-   * @property {int} depth     Current node depth
-   * @property {int} bounds    Rect(x,y,width,height) defining bounds of tree
-   * @property {int} maxlevels    The maximum depth of the tree
-   *
-   * @example
-   * setup: 
-   *      var quadtree = new jaws.QuadTree();
-   * update:
-   *      quadtree.collide(sprite or list, sprite or list, callback function);
-   */
 
-  jaws.QuadTree = function(depth, bounds, maxlevels) {
-    this.depth = depth || 0;
+  /**
+   * Creates an empty quadtree with optional bounds and starting depth
+   * @constructor
+   * @param {jaws.Rect}   [bounds]    The defining bounds of the tree
+   * @param {number}      [depth]     The current depth of the tree
+   */
+  jaws.QuadTree = function(bounds) {
+    this.depth = arguments[1] || 0;
     this.bounds = bounds || new jaws.Rect(0, 0, jaws.width, jaws.height);
-    this.MAX_LEVELS = maxlevels || 7;
     this.nodes = [];
     this.objects = [];
   };
-  // Clear the entire tree
+
+  /**
+   * Moves through the nodes and deletes them.
+   * @this {jaws.QuadTree}
+   */
   jaws.QuadTree.prototype.clear = function() {
     this.objects = [];
 
@@ -32,19 +39,30 @@ var jaws = (function(jaws) {
       }
     }
   };
-  //Create four new branches of the tree
+
+  /**
+   * Creates four new branches sub-dividing the current node's width and height
+   * @private
+   * @this {jaws.QuadTree}
+   */
   jaws.QuadTree.prototype.split = function() {
     var subWidth = Math.round((this.bounds.width / 2));
     var subHeight = Math.round((this.bounds.height / 2));
     var x = this.bounds.x;
     var y = this.bounds.y;
 
-    this.nodes[0] = new jaws.QuadTree(this.depth + 1, new jaws.Rect(x + subWidth, y, subWidth, subHeight));
-    this.nodes[1] = new jaws.QuadTree(this.depth + 1, new jaws.Rect(x, y, subWidth, subHeight));
-    this.nodes[2] = new jaws.QuadTree(this.depth + 1, new jaws.Rect(x, y + subHeight, subWidth, subHeight));
-    this.nodes[3] = new jaws.QuadTree(this.depth + 1, new jaws.Rect(x + subWidth, y + subHeight, subWidth, subHeight));
+    this.nodes[0] = new jaws.QuadTree(new jaws.Rect(x + subWidth, y, subWidth, subHeight), this.depth + 1);
+    this.nodes[1] = new jaws.QuadTree(new jaws.Rect(x, y, subWidth, subHeight), this.depth + 1);
+    this.nodes[2] = new jaws.QuadTree(new jaws.Rect(x, y + subHeight, subWidth, subHeight), this.depth + 1);
+    this.nodes[3] = new jaws.QuadTree(new jaws.Rect(x + subWidth, y + subHeight, subWidth, subHeight), this.depth + 1);
   };
-  //Find the index for the object within the set of nodes
+
+  /**
+   * Returns the index of a node's branches if passed-in object fits within it
+   * @private 
+   * @param {object} pRect  An object with the properties x, y, width, and height
+   * @returns {index} The index of nodes[] that matches the dimensions of passed-in object
+   */
   jaws.QuadTree.prototype.getIndex = function(pRect) {
     var index = -1;
     var verticalMidpoint = this.bounds.x + (this.bounds.width / 2);
@@ -72,9 +90,18 @@ var jaws = (function(jaws) {
 
     return index;
   };
-  //Insert the object into the QuadTree, 
-  // splitting into new branches if needed
+
+  /**
+   * Inserts an object into the quadtree, spliting it into new branches if needed
+   * @param {object} pRect An object with the properties x, y, width, and height
+   */
   jaws.QuadTree.prototype.insert = function(pRect) {
+
+    if (!pRect.hasOwnProperty("x") && !pRect.hasOwnProperty("y") &&
+            !pRect.hasOwnProperty("width") && !pRect.hasOwnProperty("height")) {
+      return;
+    }
+
     if (typeof this.nodes[0] !== 'undefined') {
       var index = this.getIndex(pRect);
 
@@ -86,26 +113,35 @@ var jaws = (function(jaws) {
 
     this.objects.push(pRect);
 
-    if (this.depth < this.MAX_LEVELS) {
-      if (typeof this.nodes[0] === 'undefined') {
-        this.split();
-      }
+    if (typeof this.nodes[0] === 'undefined') {
+      this.split();
+    }
 
-      var i = 0;
-      while (i < this.objects.length) {
-        var index = this.getIndex(this.objects[i]);
-        if (index !== -1) {
-          this.nodes[index].insert(this.objects.splice(i, 1)[0]);
-        }
-        else {
-          i++;
-        }
+    var i = 0;
+    while (i < this.objects.length) {
+      var index = this.getIndex(this.objects[i]);
+      if (index !== -1) {
+        this.nodes[index].insert(this.objects.splice(i, 1)[0]);
+      }
+      else {
+        i++;
       }
     }
+
   };
-  //Return all objects within the object's branch
-  // representing all possible collsions.
+
+  /**
+   * Returns those objects on the branch matching the position of the passed-in object
+   * @param {object} pRect An object with properties x, y, width, and height
+   * @returns {array} The objects on the same branch as the passed-in object
+   */
   jaws.QuadTree.prototype.retrieve = function(pRect) {
+
+    if (!pRect.hasOwnProperty("x") && !pRect.hasOwnProperty("y") &&
+            !pRect.hasOwnProperty("width") && !pRect.hasOwnProperty("height")) {
+      return;
+    }
+
     var index = this.getIndex(pRect);
     var returnObjects = this.objects;
     if (typeof this.nodes[0] !== 'undefined') {
@@ -119,46 +155,52 @@ var jaws = (function(jaws) {
     }
     return returnObjects;
   };
-  /*
-   *  Returns if two SpriteLists or other Rect() defined objects collide.
-   *  Calls the callback function, if defined, per collsion detected.
+
+  /**
+   * Checks for collisions between objects by creating a quadtree, inserting one or more objects,
+   *  and then comparing the results of a retrieval against another single or set of objects.
+   *  
+   *  With the callback argument, it will call a function and pass the items found colliding
+   *   as the first and second argument.
+   *   
+   *  Without the callback argument, it will return a boolean value if any collisions were found.
+   * 
+   * @param {object|array} list1 A single or set of objects with properties x, y, width, and height
+   * @param {object|array} list2 A single or set of objects with properties x, y, width, and height
+   * @param {function} [callback]  The function to call per collision
+   * @returns {boolean} If the items (or any within their sets) collide with one another
    */
   jaws.QuadTree.prototype.collide = function(list1, list2, callback) {
 
     var overlap = false;
+    var tree = new jaws.QuadTree();
+    var temp = [];
 
-    if (!(list1 instanceof jaws.SpriteList)) {
-      var temp = new jaws.SpriteList();
+    if (!(list1.forEach)) {
       temp.push(list1);
       list1 = temp;
     }
-    if (!(list2 instanceof jaws.SpriteList)) {
-      var temp = new jaws.SpriteList();
+
+    if (!(list2.forEach)) {
+      temp = [];
       temp.push(list2);
       list2 = temp;
     }
-    var tree = new jaws.QuadTree();
+
     list2.forEach(function(el) {
       tree.insert(el);
     });
+
     list1.forEach(function(el) {
-      var len = tree.retrieve(el);
-      var collide = jaws.collideOneWithMany(el, len);
-      collide.forEach(function(ele) {
-        if (callback) {
-          callback(el, ele);
-        }
-        else {
-          overlap = true;
-        }
-      });
+      overlap = jaws.collide(el, tree.retrieve(el), callback);
     });
 
     tree.clear();
-    delete tree;
     return overlap;
   };
+
   return jaws;
+
 })(jaws || {});
 
 // Support CommonJS require()
