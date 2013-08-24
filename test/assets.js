@@ -12,6 +12,19 @@ test("json assets, onload-callback", function() {
     start();
   }
 });
+test("Image assets", function() {
+  var assets = new jaws.Assets();
+  assets.root = "assets/"
+  assets.add(["block_10x10.bmp", "player.png"])
+  assets.loadAll({onload: loaded})
+  stop();
+
+  function loaded() {
+    ok( assets.get("block_10x10.bmp"), "BMP loaded")
+    ok( assets.get("player.png"), "PNG loaded")
+    start();
+  }
+});
   
 test("audio assets", function() {
   jaws.log.use_console = true;
