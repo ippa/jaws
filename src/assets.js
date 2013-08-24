@@ -188,6 +188,7 @@ var jaws = (function(jaws) {
       } else {
         jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src);
       }
+      return self;
     };
 
     /**
@@ -214,6 +215,8 @@ var jaws = (function(jaws) {
       self.src_list.forEach(function(item) {
         self.load(item);
       });
+
+      return self;
     };
 
     /** 
@@ -311,6 +314,8 @@ var jaws = (function(jaws) {
                   " (Message: " + e.message + ", Name: " + e.name + ")");
         }
       }
+      
+      return self;
     };
 
     /** 
