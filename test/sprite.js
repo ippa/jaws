@@ -1,5 +1,19 @@
 module("Sprite")
 
+test("Sprite stepToWhile", function() {
+  var sprite = new jaws.Sprite({x: 0, y: 0, color: "white"})
+
+  sprite.stepToWhile(10, 12, function(sprite) {
+    if(sprite.x == 10) return false;  // Faked collision!
+    if(sprite.y == 12) return false;  // Faked collision!
+    return true;
+  });
+
+  equal(sprite.x, 9, "sprite stepped to x=9");
+  equal(sprite.y, 11, "sprite stepped to y=10");
+});
+
+
 test("Sprite without pre-loaded image", function() {
   /* We might get a race-condition in these tests */
   jaws.assets.root = ""
