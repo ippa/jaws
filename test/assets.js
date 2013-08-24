@@ -2,9 +2,7 @@ module("Assets")
 
 test("json assets, onload-callback", function() {
   var assets = new jaws.Assets()
-  assets.root = "assets/"
-  assets.add("gamedata.json")
-  assets.loadAll({onload: loaded})
+  assets.setRoot("assets/").add("gamedata.json").loadAll({onload: loaded})
   stop()
   function loaded() {
     deepEqual(assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
@@ -14,9 +12,7 @@ test("json assets, onload-callback", function() {
 });
 test("Image assets", function() {
   var assets = new jaws.Assets();
-  assets.root = "assets/"
-  assets.add(["block_10x10.bmp", "player.png"])
-  assets.loadAll({onload: loaded})
+  assets.setRoot("assets/").add(["block_10x10.bmp", "player.png"]).loadAll({onload: loaded})
   stop();
 
   function loaded() {
