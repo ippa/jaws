@@ -98,6 +98,11 @@ You can also link to invidual files in your HTML:
 NOTE: core.js is always needed but after that you can pick and choose depending on what you need.
 A rule of thumb is that a file named "foo.js" will include a constructor named Foo().
 
+NOTE #2: jaws.js and jaws-min.js does Not include files from src/extras-dir.
+Examples of files that aren't included in the mainbundle are: tile_map_pathfinding.js, pixel_map.js and audio.js (jaws <audio>-wrapper).
+If you want to use them, load them as usual:
+  <script src="/jawsjs/src/extras/tile_map_pathfinding.js"></script>
+
 == Contribute
 Jaws accepts contributions, some simple guidelines:
 - Formatting: oneFunction(), OneConstrutor() and one_variable
