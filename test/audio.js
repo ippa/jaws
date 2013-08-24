@@ -19,7 +19,7 @@ test("Audio", function() {
   jaws.assets.add("tones.mp3");
   jaws.assets.add("tones.ogg");
   jaws.assets.add("tones.wav");
-  jaws.assets.loadAll({onfinish: assetsLoaded});
+  jaws.assets.loadAll({onload: assetsLoaded});
   stop();
 
   function assetsLoaded() {

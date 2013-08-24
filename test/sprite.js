@@ -34,7 +34,7 @@ test("Sprite without image", function() {
  
   jaws.assets.root = "assets/"
   jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onfinish:assetsLoaded})
+  jaws.assets.loadAll({onload: assetsLoaded})
   stop();
 
   function assetsLoaded() {
@@ -48,7 +48,7 @@ test("Sprite without image", function() {
 test("Sprite", function() {
   jaws.assets.root = "assets/"
   jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onfinish:assetsLoaded})
+  jaws.assets.loadAll({onload: assetsLoaded})
   stop();
 
   function assetsLoaded() {

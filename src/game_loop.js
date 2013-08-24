@@ -57,7 +57,7 @@ jaws.GameLoop = function GameLoop(game_object, options, game_state_setup_options
 
   /** Start the game loop by calling setup() once and then loop update()/draw() forever with given FPS */
   this.start = function() {
-    jaws.log("game loop start", true)
+    jaws.log.info("Game loop start", true)
   
     this.first_tick = (new Date()).getTime();
     this.current_tick = (new Date()).getTime();
@@ -72,8 +72,6 @@ jaws.GameLoop = function GameLoop(game_object, options, game_state_setup_options
     else {
       update_id = setInterval(this.loop, step_delay);
     }
-
-    jaws.log("game loop loop", true)
   }
   
   /** The core of the game loop. Calculate a mean FPS and call update()/draw() if game loop is not paused */

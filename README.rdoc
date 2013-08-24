@@ -119,6 +119,8 @@ If you find an issue with Jaws githubs issue-tracker is the place to go. Easiest
 Pasting your problematic code in the issue-ticket itself will usually mean a lot of hassle with supportcode and assets to actually be able to test the code in question.
 
 == API-deprecations since start of 2013
+  2013-08: jaws.assets.loadAll() -  onfinish -> onload, onload -> onprogress
+  2013-08: jaws.assets.load(asset, options)  - options can have properties onload and onerror
   2013-03: sprite.anchor() is now sprite.setAnchor()
   2013-03: sprite.scale() is now sprite.scaleAll()
 

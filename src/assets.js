@@ -77,7 +77,12 @@ var jaws = (function(jaws) {
     };
 
     /**
-     * Get one or more resources from their URLs
+     * Get one or more resources from their URLs. Supports simple wildcard (you can end a string with "*").
+     *
+     * @example
+     *   jaws.assets.add(["song.mp3", "song.ogg"])
+     *   jaws.assets.get("song.*")  // -> Will return song.ogg in firefox and song.mp3 in IE
+     *
      * @public
      * @param   {string|array} src The resource(s) to retrieve 
      * @returns {array|object} Array or single resource if found in cache. Undefined otherwise.
@@ -89,11 +94,18 @@ var jaws = (function(jaws) {
         });
       }
       else if (jaws.isString(src)) {
-        if (self.loaded[src]) {
-          return self.data[src];
-        } else {
-          jaws.log.warn("No such asset: " + src, true);
+        // Wildcard? song.*, match against asset-srcs, make sure it's loaded and return content of first match.
+        if(src[src.length-1] === "*") {
+          var needle = src.replace("*", "")
+          for(var i=0; i < self.src_list.length; i++) {
+            if(self.src_list[i].indexOf(needle) == 0 && self.data[self.src_list[i]]) 
+              return self.data[self.src_list[i]];
+          }
         }
+        
+        // TODO: self.loaded[src] is false for supported files for some odd reason.
+        if (self.data[src]) { return self.data[src]; } 
+        else                { jaws.log.warn("No such asset: " + src, true); }
       }
       else {
         jaws.log.error("jaws.get: Neither String nor Array. Incorrect URL resource " + src);
@@ -164,7 +176,7 @@ var jaws = (function(jaws) {
      * @example
      * jaws.assets.add("player.png")
      * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
-     * jaws.assets.loadAll({onfinish: start_game})
+     * jaws.assets.loadAll({onload: start_game})
      */
     self.add = function(src) {
       if (jaws.isArray(src)) {
@@ -182,22 +194,22 @@ var jaws = (function(jaws) {
      * Iterate through the list of resource URL(s) and load each in turn.
      * @public
      * @param {Object} options Object-literal of callback functions
-     * @config {function} [options.onload] The function to be called when loading
+     * @config {function} [options.onprogress] The function to be called on progress (when one assets of many is loaded)
      * @config {function} [options.onerror] The function to be called if an error occurs
-     * @config {function} [options.onfinish] The function to be called when finished 
+     * @config {function} [options.onload] The function to be called when finished 
      */
     self.loadAll = function(options) {
       self.load_count = 0;
       self.error_count = 0;
 
-      if (options.onload && jaws.isFunction(options.onload))
-        self.onload = options.onload;
+      if (options.onprogress && jaws.isFunction(options.onprogress))
+        self.onprogress = options.onprogress;
 
       if (options.onerror && jaws.isFunction(options.onerror))
         self.onerror = options.onerror;
 
-      if (options.onfinish && jaws.isFunction(options.onfinish))
-        self.onfinish = options.onfinish;
+      if (options.onload && jaws.isFunction(options.onload))
+        self.onload = options.onload;
 
       self.src_list.forEach(function(item) {
         self.load(item);
@@ -211,13 +223,15 @@ var jaws = (function(jaws) {
      * 
      * @public
      * @param {string} src Resource URL
-     * @param {function} [onload] Function to be called when loading
-     * @param {function} [onerror] Function to be called if an error occurs
+     * @param {Object} options Object-literal of callback functions
+     * @config {function} [options.onload] Function to be called when assets has loaded
+     * @config {function} [options.onerror] Function to be called if an error occurs
      * @example
      * jaws.load("media/foo.png")
      * jaws.load("http://place.tld/foo.png")
      */
-    self.load = function(src, onload, onerror) {
+    self.load = function(src, options) {
+      if(!options) options = {};
 
       if (!jaws.isString(src)) {
         jaws.log.error("jaws.assets.load: Argument not a String with " + src);
@@ -227,8 +241,8 @@ var jaws = (function(jaws) {
       var asset = {};
       var resolved_src = "";
       asset.src = src;
-      asset.onload = onload;
-      asset.onerror = onerror;
+      asset.onload = options.onload;
+      asset.onerror = options.onerror;
       self.loading[src] = true;
       var parser = RegExp('^((f|ht)tp(s)?:)?//');
       if (parser.test(src)) {
@@ -310,6 +324,7 @@ var jaws = (function(jaws) {
       var asset = this.asset;
       var src = asset.src;
       var filetype = getType(asset.src);
+      
       self.loaded[src] = true;
       self.loading[src] = false;
 
@@ -369,10 +384,10 @@ var jaws = (function(jaws) {
       var percent = parseInt((self.load_count + self.error_count) / self.src_list.length * 100);
 
       if (ok) {
-        if (self.onload)
-          self.onload(asset.src, percent);
-        if (asset.onload)
-          asset.onload(event);
+        if (self.onprogress)
+          self.onprogress(asset.src, percent);
+        if (asset.onprogress)
+          asset.onprogress(event);
       }
       else {
         if (self.onerror)
@@ -382,12 +397,12 @@ var jaws = (function(jaws) {
       }
 
       if (percent === 100) {
-        if (self.onfinish) {
-          self.onfinish();
-        }
-        self.onload = null;
+        if (self.onload)  
+          self.onload();
+
+        self.onprogress = null;
         self.onerror = null;
-        self.onfinish = null;
+        self.onload = null;
       }
     }
 

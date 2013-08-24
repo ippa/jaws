@@ -184,7 +184,7 @@ var jaws = (function(jaws) {
     /* Find <title> tag */
     title = document.getElementsByTagName('title')[0];
     jaws.url_parameters = jaws.getUrlParameters();
-
+    
     /*
      * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
      * jaws.log(message) will use this div for debug/info output to the gamer or developer
@@ -198,6 +198,11 @@ var jaws = (function(jaws) {
         log_tag.style.cssText = "overflow: auto; color: #aaaaaa; width: 300px; height: 150px; margin: 40px auto 0px auto; padding: 5px; border: #444444 1px solid; clear: both; font: 10px verdana; text-align: left;";
         document.body.appendChild(log_tag);
       }
+    }
+
+    if(jaws.url_parameters["bust_cache"]) {
+      jaws.log.info("Busting cache when loading assets")
+      jaws.assets.bust_cache = true;
     }
 
     jaws.canvas = document.getElementsByTagName('canvas')[0];
@@ -308,12 +313,12 @@ var jaws = (function(jaws) {
       jaws.assets.displayProgress(0);
     }
 
-    jaws.log("setupInput()", true);
+    jaws.log.info("setupInput()", true);
     jaws.setupInput();
 
     /* Callback for when one single asset has been loaded */
-    function assetLoaded(src, percent_done) {
-      jaws.log(percent_done + "%: " + src, true);
+    function assetProgress(src, percent_done) {
+      jaws.log.info(percent_done + "%: " + src, true);
       if (options.loading_screen) {
         jaws.assets.displayProgress(percent_done);
       }
@@ -321,18 +326,18 @@ var jaws = (function(jaws) {
 
     /* Callback for when an asset can't be loaded*/
     function assetError(src, percent_done) {
-      jaws.log(percent_done + "%: Error loading asset " + src, true);
+      jaws.log.info(percent_done + "%: Error loading asset " + src, true);
     }
 
     /* Callback for when all assets are loaded */
     function assetsLoaded() {
-      jaws.log("all assets loaded", true);
+      jaws.log.info("all assets loaded", true);
       jaws.switchGameState(game_state || window, {fps: fps}, game_state_setup_options);
     }
 
-    jaws.log("assets.loadAll()", true);
+    jaws.log.info("assets.loadAll()", true);
     if (jaws.assets.length() > 0) {
-      jaws.assets.loadAll({onload: assetLoaded, onerror: assetError, onfinish: assetsLoaded});
+      jaws.assets.loadAll({onprogress: assetProgress, onerror: assetError, onload: assetsLoaded});
     }
     else {
       assetsLoaded();
@@ -371,19 +376,6 @@ var jaws = (function(jaws) {
     }
 
     game_state = new game_state;
-
-    if (!game_state.hasOwnProperty("setup")) {
-      jaws.log.error("jaws.switchGameState: GameState does not have a 'setup' property.");
-      return;
-    }
-    if (!game_state.hasOwnProperty("draw")) {
-      jaws.log.error("jaws.switchGameState: GameState does not have a 'draw' property.");
-      return;
-    }
-    if (!game_state.hasOwnProperty("update")) {
-      jaws.log.error("jaws.switchGameState: GameState does not have a 'update' property.");
-      return;
-    }
 
     var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60;
 
@@ -511,6 +503,16 @@ var jaws = (function(jaws) {
   jaws.isFunction = function(obj) {
     return (Object.prototype.toString.call(obj) === "[object Function]");
   };
+
+  /**
+   * Tests if an object is a regular expression or not
+   * @param   {object}  obj   A /regexp/-object
+   * @returns {boolean}       If the object is an instance of RegExp
+   */
+  jaws.isRegExp = function(obj) {
+    return (obj instanceof RegExp);
+  };
+
 
   /**
    * Tests if an object is within drawing canvas (jaws.width and jaws.height) 

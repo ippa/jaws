@@ -3,7 +3,7 @@ module("Collision Detection")
 test("collision detection", function() {
   jaws.assets.root = "assets/"
   jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onfinish:assetsloaded})
+  jaws.assets.loadAll({onload: assetsloaded})
   stop();
 
   function assetsloaded() { 
@@ -62,7 +62,7 @@ test("collision detection", function() {
 test("Collision detection with callbacks", function() {
   jaws.assets.root = "assets/"
   jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onfinish:assetsloaded})
+  jaws.assets.loadAll({onload: assetsloaded})
   stop();
 
   function assetsloaded() { 

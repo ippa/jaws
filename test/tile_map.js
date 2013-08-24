@@ -3,7 +3,7 @@ module("TileMap");
 test("TileMap", function() {
   jaws.assets.root = "assets/"
   jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onfinish:assetsLoaded})
+  jaws.assets.loadAll({onload: assetsLoaded})
   stop();
 
   function assetsLoaded() { 

@@ -264,14 +264,14 @@ jaws.SpriteList.prototype.load = function(objects) {
       this.sprites = objects
     }
   }
-  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ); console.log(objects) }
+  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ); jaws.log.info(objects) }
   this.updateLength()
   
   function parseArray(array) {
     array.forEach( function(data) {
       var constructor = data._constructor ? eval(data._constructor) : data.constructor
       if(jaws.isFunction(constructor)) {
-        jaws.log("Creating " + data._constructor + "(" + data.toString() + ")", true)
+        jaws.log.info("Creating " + data._constructor + "(" + data.toString() + ")", true)
         var object = new constructor(data)
         object._constructor = data._constructor || data.constructor.name
         that.push(object);
