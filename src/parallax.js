@@ -21,7 +21,7 @@ var jaws = (function(jaws) {
     if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
     jaws.parseOptions(this, options, this.default_options)
 
-      this.width = options.width || jaws.width;
+    this.width = options.width || jaws.width;
     this.height = options.height || jaws.height;  
   }
 
@@ -43,12 +43,12 @@ var jaws = (function(jaws) {
     for(var i=0; i < this.layers.length; i++) {
       layer = this.layers[i]
 
-        if(this.repeat_x) {
-          initx = -((this.camera_x / layer.damping) % layer.width);
-        } 
-        else {
-          initx = -(this.camera_x / layer.damping)
-        }		
+      if(this.repeat_x) {
+        initx = -((this.camera_x / layer.damping) % layer.width);
+      } 
+      else {
+        initx = -(this.camera_x / layer.damping)
+      }		
 
       if (this.repeat_y) {
         layer.y = -((this.camera_y / layer.damping) % layer.height);
@@ -81,8 +81,8 @@ var jaws = (function(jaws) {
   /** Add a new layer to the parallax scroller */
   jaws.Parallax.prototype.addLayer = function(options) {
     var layer = new jaws.ParallaxLayer(options)
-      layer.scaleAll(this.scale)
-      this.layers.push(layer)
+    layer.scaleAll(this.scale)
+    this.layers.push(layer)
   }
   /** Debugstring for Parallax() */
   jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + ", " + this.y + ". " + this.layers.length + " layers]" }
@@ -98,7 +98,7 @@ var jaws = (function(jaws) {
     if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
     this.damping = options.damping || 0
-      jaws.Sprite.call(this, options)
+    jaws.Sprite.call(this, options)
   }
   jaws.ParallaxLayer.prototype = jaws.Sprite.prototype
 
@@ -106,6 +106,6 @@ var jaws = (function(jaws) {
   // This overwrites Sprites toString, find another sollution.
   // jaws.ParallaxLayer.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
 
-    return jaws;
+  return jaws;
 })(jaws || {});
 
