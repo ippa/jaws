@@ -35,10 +35,9 @@ var jaws = (function(jaws) {
   * When the correct from extras-dir is included, these will be overwritten.
   */
   jaws.Parallax = function() { jaws.log.error("To use jaws.Parallax() you need to include src/extras/parallax.js") }
-  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
-  jaws.TileMap = function() { jaws.log.error("To use SteList() you need to include src/extras/parallax.js") }
-  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
-  jaws.PixelMap = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/sprite_list.js") }
+  jaws.TileMap = function() { jaws.log.error("To use TileMap() you need to include src/extras/tile_map.js") }
+  jaws.PixelMap = function() { jaws.log.error("To use PixelMap() you need to include src/extras/pixel_map.js") }
   jaws.QuadTree = function() { jaws.log.error("To use QuadTree() you need to include src/extras/quadtree.js") }
   jaws.Audio = function() { jaws.log.error("To use jaws.Audio() you need to include src/extras/audio.js") }
 
