@@ -108,9 +108,10 @@ test("image asset with 404s", function() {
 
 test("assets.loadAll()", function() {
   var assets = new jaws.Assets()
+  assets.fuchia_to_transparent = true
   assets.image_to_canvas = false
   assets.root = "assets/"
-  assets.add("droid_11x15.png")
+  assets.add("droid_11x15.png","block_10x10.bmp");
   assets.add("gamedata.json")
   assets.add("player.png")
   assets.add(["rect.png", "laser.wav"])
@@ -126,8 +127,12 @@ test("assets.loadAll()", function() {
     ok(assets.get("rect.png"), "image loaded")
     ok(assets.get("laser.wav"), "audio loaded")
     ok(assets.get("gamedata.json"), "json loaded")
-    ok(jaws.isImage(assets.get("rect.png")), "png loaded as Image")
+    ok(jaws.isImage(assets.get("rect.png")), "PNG loaded as Image")
+    ok(!jaws.isImage(assets.get("block_10x10.bmp")), "BMPs are converted to canva to do fuchia -> transparent")
+    ok(jaws.isDrawable(assets.get("block_10x10.bmp")), "BMPs returned as Canvas (drawable)")
+    ok(jaws.isCanvas(assets.get("block_10x10.bmp")), "BMPs returned as Canvas (drawable)")
     deepEqual(assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
+
     start()
   }
 });
