@@ -30,6 +30,17 @@ var jaws = (function(jaws) {
   var title;
   var log_tag;
 
+  /*
+  * Placeholders for constructors in extras-dir. We define the constructors here to be able to give ppl better error-msgs.
+  * When the correct from extras-dir is included, these will be overwritten.
+  */
+  jaws.Parallax = function() { jaws.log.error("To use jaws.Parallax() you need to include src/extras/parallax.js") }
+  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.TileMap = function() { jaws.log.error("To use SteList() you need to include src/extras/parallax.js") }
+  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.PixelMap = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.Audio = function() { jaws.log.error("To use jaws.Audio() you need to include src/extras/audio.js") }
+
   /**
    * Returns or sets contents of title's innerHTML
    * @private
