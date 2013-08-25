@@ -1,23 +1,15 @@
-module("PixeleMapExtra");
+module("PixeleMap");
 
 test("PixelMap basics", function () {
- jaws.assets.root = "assets/"
-  jaws.assets.add("droid_11x15.png")
-  jaws.assets.loadAll({onload: assetsLoaded});
+  jaws.assets.setRoot("assets/").add("droid_11x15.png").loadAll({onload: loaded});
   stop();
 
-  function assetsLoaded() {
+  function loaded() {
     var pixel_map = new jaws.PixelMap({image: "droid_11x15.png"})  ;
-    deepEqual( pixel_map.at(0,0)[3], 0, "transparency at 0/0");
-    deepEqual( pixel_map.at(5,5)[3], 255, "non-transparency at 5/5");
+    equal( pixel_map.at(0,0)[3], 0, "transparency at 0/0");
+    equal( pixel_map.at(5,5)[3], 255, "non-transparency at 5/5");
     deepEqual( pixel_map.at(5,5), [188,188,188,255], "grey without tranperency");
     
-    var color = pixel_map.colorAt(5,5);
-    deepEqual( color.red, 188, "red part of grey");
-    deepEqual( color.green, 188, "green part of grey");
-    deepEqual( color.blue, 188, "blue part of grey");
-    deepEqual( color.alpha, 255, "alpha part of grey");
-
     pixel_map.nameColor("air", [0,0,0,0])
     pixel_map.nameColor("robot", [188,188,188,255])
     equal( pixel_map.namedColorAt(5,5), "robot", "Find named color");
@@ -25,6 +17,52 @@ test("PixelMap basics", function () {
 
     start();
   }
+});
+
+test("PixelMap vs Rect", function () {
+  jaws.assets.setRoot("assets/").add("block_10x10.bmp").loadAll({onload: loaded});
+  stop();
+
+  function loaded() {
+    var pixel_map = new jaws.PixelMap({image: "block_10x10.bmp"})  ;
+
+    deepEqual( pixel_map.at(0,0), [0,0,0,0], "'black' transparency @ 0/0");
+    deepEqual( pixel_map.at(9,9), [0,0,0,255], "black @ 10/10");
+
+    pixel_map.nameColor("air", [0,0,0,0]);
+    pixel_map.nameColor("ground", [0,0,0,255]);
+
+    var small_rect = jaws.Rect(0,0,2,2)
+    var big_rect = jaws.Rect(0,0,8,8)
+
+    ok( pixel_map.namedColorAtRect("air", small_rect), "small rect is touching air")
+    ok( !pixel_map.namedColorAtRect("ground", small_rect), "small rect is not touching ground")
+    ok( pixel_map.namedColorAtRect("air", big_rect), "big rect is touching air")
+    ok( pixel_map.namedColorAtRect("ground", big_rect), "big rect is touching ground")
+
+    start();
+  }
 })
 
+/*
+test("PixelMap trace methods", function () {
+  jaws.assets.setRoot("assets/").add("block_10x10.bmp").loadAll({onload: loaded});
+  stop();
+  var pixel_map;
 
+  function loaded() {
+    pixel_map = new jaws.PixelMap({image: "block_10x10.bmp"});
+    pixel_map.nameColor("ground", [0,0,0,255]);
+    var sprite = jaws.Sprite({x: 0, y: 0, width: 1, height: 1, color: "white"})
+
+    pixel_map.untilNamedColorAtRect("ground", function() {
+      sprite.y += 1
+      return sprite.rect();
+    });
+
+    equal(sprite.y, 5, "sprite hit ground at y=5")
+    
+    start();
+  }
+})
+*/
