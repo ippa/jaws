@@ -111,7 +111,7 @@ function combinations(list, n) {
     } else {  // s is an Array
       return list[i];
     }
-  };
+  };  
   var r = [];
   var m = new Array(n);
   for (var i = 0; i < n; i++) m[i] = i; 
