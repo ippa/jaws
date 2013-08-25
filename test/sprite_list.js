@@ -43,6 +43,20 @@ test("Load Objects", function() {
   }
 })
 
+test("add", function() {
+  var sprite = new jaws.Sprite({color: "white"});
+  var sprite2 = new jaws.Sprite({color: "white"});
+
+  var sprite_list = new jaws.SpriteList().add([sprite, sprite2])
+  equal(sprite_list.length, 2, "as array")
+
+  var sprite_list = new jaws.SpriteList().add(sprite, sprite2)
+  equal(sprite_list.length, 2, "as argument-lists")
+
+  var sprite_list = new jaws.SpriteList().add(sprite)
+  equal(sprite_list.length, 1, "as single object")
+})
+
 test("Push and toString", function() {
   var sprite_list = new jaws.SpriteList()
   deepEqual(sprite_list.toString(), '[SpriteList 0 sprites]')
