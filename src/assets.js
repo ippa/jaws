@@ -187,22 +187,27 @@ var jaws = (function(jaws) {
     /**
      * Add URL(s) to asset listing for later loading
      * @public
-     * @param {string|array} src The resource URL(s) to add to the asset listing
+     * @param {string|array|arguments} src The resource URL(s) to add to the asset listing
      * @example
      * jaws.assets.add("player.png")
      * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
+     * jaws.assets.add("foo.png", "bar.png")
      * jaws.assets.loadAll({onload: start_game})
      */
     self.add = function(src) {
-      if (jaws.isArray(src)) {
-        src.forEach(function(item) {
-          self.add(item);
-        });
-      } else if (jaws.isString(src)) {
-        self.src_list.push(src);
-      } else {
-        jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src);
+      var list = arguments;
+      if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+      
+      for(var i=0; i < list.length; i++) {
+        if(jaws.isArray(list[i])) {
+          self.add(list[i]);
+        }
+        else {
+          if(jaws.isString(list[i]))  { self.src_list.push(list[i]) }
+          else                        { jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src) }
+        }
       }
+
       return self;
     };
 
