@@ -12,6 +12,12 @@ File.open("jaws.js", "w") do |out|
   out.write(";window.addEventListener(\"load\", function() { if(jaws.onload) jaws.onload(); }, false);")
 end
 
+File.open("extras.js", "w") do |out|
+  out.write("/* Built at #{Time.now.to_s} */\n")
+  extras.each { |file| out.write( File.read("src/extras/#{file}") ) }
+end
+
+
 #
 # Minify jaws.js into jaws-min.js using googles closure compiler
 #
@@ -30,6 +36,12 @@ end
 
 js_code = File.read("jaws.js")
 File.open("jaws-min.js", "w") { |out| 
+  out.write("/* Built at #{Time.now.to_s} */\n")
+  out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # option: ADVANCED_OPTIMIZATIONS
+}  
+
+js_code = File.read("extras.js")
+File.open("extras-min.js", "w") { |out| 
   out.write("/* Built at #{Time.now.to_s} */\n")
   out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # option: ADVANCED_OPTIMIZATIONS
 }  
