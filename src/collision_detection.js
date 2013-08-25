@@ -50,12 +50,15 @@ var jaws = (function(jaws) {
    * });
    */
   jaws.collideOneWithMany = function(object, list, callback) {
+    var a = [];
     if (callback) {
       for (var i = 0; i < list.length; i++) {
         if (jaws.collideOneWithOne(object, list[i])) {
           callback(object, list[i]);
+          a.push(list[i])
         }
       }
+      return a;
     }
     else {
       return list.filter(function(item) {
