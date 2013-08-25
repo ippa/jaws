@@ -98,6 +98,11 @@ You can also link to invidual files in your HTML:
 NOTE: core.js is always needed but after that you can pick and choose depending on what you need.
 A rule of thumb is that a file named "foo.js" will include a constructor named Foo().
 
+NOTE #2: jaws.js and jaws-min.js does Not include files from src/extras-dir.
+Examples of files that aren't included in the mainbundle are: tile_map_pathfinding.js, pixel_map.js and audio.js (jaws <audio>-wrapper).
+If you want to use them, load them as usual:
+  <script src="/jawsjs/src/extras/tile_map_pathfinding.js"></script>
+
 == Contribute
 Jaws accepts contributions, some simple guidelines:
 - Formatting: oneFunction(), OneConstrutor() and one_variable
@@ -118,7 +123,8 @@ https://github.com/MalphasWats - Viewport pathfinding
 If you find an issue with Jaws githubs issue-tracker is the place to go. Easiest for the developers is if you put your game online. If you don't have any hosting check out http://pages.github.com/.
 Pasting your problematic code in the issue-ticket itself will usually mean a lot of hassle with supportcode and assets to actually be able to test the code in question.
 
-== API-deprecations since start of 2013
+== API-deprecations leading up to ver 1.0
+  2013-08: SpriteList, Parallax and TileMap are no longer included in jaws(-min).js bundle
   2013-08: jaws.assets.loadAll() -  onfinish -> onload, onload -> onprogress
   2013-08: jaws.assets.load(asset, options)  - options can have properties onload and onerror
   2013-03: sprite.anchor() is now sprite.setAnchor()

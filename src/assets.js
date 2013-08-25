@@ -77,6 +77,21 @@ var jaws = (function(jaws) {
     };
 
     /**
+     * Set root prefix-path to all assets
+     *
+     * @example
+     *   jaws.assets.setRoot("music/").add(["music.mp3", "music.ogg"]).loadAll()
+     *
+     * @public
+     * @param   {string} path-prefix for all following assets
+     * @returns {object} self
+     */
+    self.setRoot = function(path) {
+      self.root = path
+      return self
+    }
+ 
+    /**
      * Get one or more resources from their URLs. Supports simple wildcard (you can end a string with "*").
      *
      * @example
@@ -172,22 +187,28 @@ var jaws = (function(jaws) {
     /**
      * Add URL(s) to asset listing for later loading
      * @public
-     * @param {string|array} src The resource URL(s) to add to the asset listing
+     * @param {string|array|arguments} src The resource URL(s) to add to the asset listing
      * @example
      * jaws.assets.add("player.png")
      * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
+     * jaws.assets.add("foo.png", "bar.png")
      * jaws.assets.loadAll({onload: start_game})
      */
     self.add = function(src) {
-      if (jaws.isArray(src)) {
-        src.forEach(function(item) {
-          self.add(item);
-        });
-      } else if (jaws.isString(src)) {
-        self.src_list.push(src);
-      } else {
-        jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src);
+      var list = arguments;
+      if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+      
+      for(var i=0; i < list.length; i++) {
+        if(jaws.isArray(list[i])) {
+          self.add(list[i]);
+        }
+        else {
+          if(jaws.isString(list[i]))  { self.src_list.push(list[i]) }
+          else                        { jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src) }
+        }
       }
+
+      return self;
     };
 
     /**
@@ -214,6 +235,8 @@ var jaws = (function(jaws) {
       self.src_list.forEach(function(item) {
         self.load(item);
       });
+
+      return self;
     };
 
     /** 
@@ -311,6 +334,8 @@ var jaws = (function(jaws) {
                   " (Message: " + e.message + ", Name: " + e.name + ")");
         }
       }
+      
+      return self;
     };
 
     /** 
@@ -337,8 +362,7 @@ var jaws = (function(jaws) {
         }
         else if (filetype === "image") {
           var new_image = self.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image;
-          if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp")
-          {
+          if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp") {
             new_image = fuchiaToTransparent(new_image);
           }
           self.data[asset.src] = new_image;
@@ -450,8 +474,7 @@ var jaws = (function(jaws) {
    * @returns {CanvasElement} canvas The translated CanvasElement 
    */
   function fuchiaToTransparent(image) {
-
-    if (!jaws.isImage(image))
+    if (!jaws.isDrawable(image))  
       return;
 
     var canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image;

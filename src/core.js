@@ -30,6 +30,18 @@ var jaws = (function(jaws) {
   var title;
   var log_tag;
 
+  /*
+  * Placeholders for constructors in extras-dir. We define the constructors here to be able to give ppl better error-msgs.
+  * When the correct from extras-dir is included, these will be overwritten.
+  */
+  jaws.Parallax = function() { jaws.log.error("To use jaws.Parallax() you need to include src/extras/parallax.js") }
+  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.TileMap = function() { jaws.log.error("To use SteList() you need to include src/extras/parallax.js") }
+  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.PixelMap = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.QuadTree = function() { jaws.log.error("To use QuadTree() you need to include src/extras/quadtree.js") }
+  jaws.Audio = function() { jaws.log.error("To use jaws.Audio() you need to include src/extras/audio.js") }
+
   /**
    * Returns or sets contents of title's innerHTML
    * @private
@@ -370,12 +382,13 @@ var jaws = (function(jaws) {
    */
   jaws.switchGameState = function(game_state, options, game_state_setup_options) {
 
-    if (!jaws.isFunction(game_state)) {
-      jaws.log.error("jaws.switchGameState: Passed in GameState is not a function.");
+    if(jaws.isFunction(game_state)) {
+      game_state = new game_state;
+    }
+    if(!jaws.isObject(game_state)) {
+      jaws.log.error("jaws.switchGameState: Passed in GameState should be a Function or an Object.");
       return;
     }
-
-    game_state = new game_state;
 
     var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60;
 
@@ -429,6 +442,39 @@ var jaws = (function(jaws) {
   jaws.clear = function() {
     jaws.context.clearRect(0, 0, jaws.width, jaws.height);
   };
+
+  /** Fills the screen with given fill_style */
+  jaws.fill = function(fill_style) {
+    jaws.context.fillStyle = fill_style;
+    jaws.context.fillRect(0, 0, jaws.width, jaws.height);
+  };
+
+
+  /**
+   * calls draw() on everything you throw on it. Give it arrays, argumentlists, arrays of arrays.
+   *
+   */
+  jaws.draw = function() {
+    var list = arguments;
+    if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+    for(var i=0; i < list.length; i++) {
+      if(jaws.isArray(list[i])) jaws.draw(list[i]);  
+      else                      list[i].draw();
+    }
+  }
+
+  /**
+   * calls update() on everything you throw on it. Give it arrays, argumentlists, arrays of arrays.
+   *
+   */
+  jaws.update = function() {
+    var list = arguments;
+    if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+    for(var i=0; i < list.length; i++) {
+      if(jaws.isArray(list[i])) jaws.update(list[i]);  
+      else                      list[i].update();
+    }
+  }
 
   /**
    * Tests if object is an image or not

@@ -1,4 +1,4 @@
-/* Built at 2013-08-23 23:48:13 +0200 */
+/* Built at 2013-08-25 11:34:45 +0200 */
 /**
  * @namespace JawsJS core functions.
  *
@@ -30,6 +30,18 @@ var jaws = (function(jaws) {
 
   var title;
   var log_tag;
+
+  /*
+  * Placeholders for constructors in extras-dir. We define the constructors here to be able to give ppl better error-msgs.
+  * When the correct from extras-dir is included, these will be overwritten.
+  */
+  jaws.Parallax = function() { jaws.log.error("To use jaws.Parallax() you need to include src/extras/parallax.js") }
+  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.TileMap = function() { jaws.log.error("To use SteList() you need to include src/extras/parallax.js") }
+  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.PixelMap = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.QuadTree = function() { jaws.log.error("To use QuadTree() you need to include src/extras/quadtree.js") }
+  jaws.Audio = function() { jaws.log.error("To use jaws.Audio() you need to include src/extras/audio.js") }
 
   /**
    * Returns or sets contents of title's innerHTML
@@ -430,6 +442,39 @@ var jaws = (function(jaws) {
   jaws.clear = function() {
     jaws.context.clearRect(0, 0, jaws.width, jaws.height);
   };
+
+  /** Fills the screen with given fill_style */
+  jaws.fill = function(fill_style) {
+    jaws.context.fillStyle = fill_style;
+    jaws.context.fillRect(0, 0, jaws.width, jaws.height);
+  };
+
+
+  /**
+   * calls draw() on everything you throw on it. Give it arrays, argumentlists, arrays of arrays.
+   *
+   */
+  jaws.draw = function() {
+    var list = arguments;
+    if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+    for(var i=0; i < list.length; i++) {
+      if(jaws.isArray(list[i])) jaws.draw(list[i]);  
+      else                      list[i].draw();
+    }
+  }
+
+  /**
+   * calls update() on everything you throw on it. Give it arrays, argumentlists, arrays of arrays.
+   *
+   */
+  jaws.update = function() {
+    var list = arguments;
+    if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+    for(var i=0; i < list.length; i++) {
+      if(jaws.isArray(list[i])) jaws.update(list[i]);  
+      else                      list[i].update();
+    }
+  }
 
   /**
    * Tests if object is an image or not
@@ -962,6 +1007,21 @@ var jaws = (function(jaws) {
     };
 
     /**
+     * Set root prefix-path to all assets
+     *
+     * @example
+     *   jaws.assets.setRoot("music/").add(["music.mp3", "music.ogg"]).loadAll()
+     *
+     * @public
+     * @param   {string} path-prefix for all following assets
+     * @returns {object} self
+     */
+    self.setRoot = function(path) {
+      self.root = path
+      return self
+    }
+ 
+    /**
      * Get one or more resources from their URLs. Supports simple wildcard (you can end a string with "*").
      *
      * @example
@@ -1057,22 +1117,28 @@ var jaws = (function(jaws) {
     /**
      * Add URL(s) to asset listing for later loading
      * @public
-     * @param {string|array} src The resource URL(s) to add to the asset listing
+     * @param {string|array|arguments} src The resource URL(s) to add to the asset listing
      * @example
      * jaws.assets.add("player.png")
      * jaws.assets.add(["media/bullet1.png", "media/bullet2.png"])
+     * jaws.assets.add("foo.png", "bar.png")
      * jaws.assets.loadAll({onload: start_game})
      */
     self.add = function(src) {
-      if (jaws.isArray(src)) {
-        src.forEach(function(item) {
-          self.add(item);
-        });
-      } else if (jaws.isString(src)) {
-        self.src_list.push(src);
-      } else {
-        jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src);
+      var list = arguments;
+      if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+      
+      for(var i=0; i < list.length; i++) {
+        if(jaws.isArray(list[i])) {
+          self.add(list[i]);
+        }
+        else {
+          if(jaws.isString(list[i]))  { self.src_list.push(list[i]) }
+          else                        { jaws.log.error("jaws.assets.add: Neither String nor Array. Incorrect URL resource " + src) }
+        }
       }
+
+      return self;
     };
 
     /**
@@ -1099,6 +1165,8 @@ var jaws = (function(jaws) {
       self.src_list.forEach(function(item) {
         self.load(item);
       });
+
+      return self;
     };
 
     /** 
@@ -1196,6 +1264,8 @@ var jaws = (function(jaws) {
                   " (Message: " + e.message + ", Name: " + e.name + ")");
         }
       }
+      
+      return self;
     };
 
     /** 
@@ -1222,8 +1292,7 @@ var jaws = (function(jaws) {
         }
         else if (filetype === "image") {
           var new_image = self.image_to_canvas ? jaws.imageToCanvas(asset.image) : asset.image;
-          if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp")
-          {
+          if (self.fuchia_to_transparent && self.getPostfix(asset.src) === "bmp") {
             new_image = fuchiaToTransparent(new_image);
           }
           self.data[asset.src] = new_image;
@@ -1335,8 +1404,7 @@ var jaws = (function(jaws) {
    * @returns {CanvasElement} canvas The translated CanvasElement 
    */
   function fuchiaToTransparent(image) {
-
-    if (!jaws.isImage(image))
+    if (!jaws.isDrawable(image))  
       return;
 
     var canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image;
@@ -1545,6 +1613,23 @@ jaws.Rect.prototype.resize = function(width, height) {
   this.bottom = this.y + this.height
   return this
 }
+
+/** Returns a new rect witht he same dimensions */
+jaws.Rect.prototype.clone = function() {
+  return new jaws.Rect(this.x, this.y, this.width, this.height)
+}
+
+/** Shrink rectangle on both axis with given x/y values  */
+jaws.Rect.prototype.shrink = function(x, y) {
+  this.x += x
+  this.y += y
+  this.width -= (x+x)
+  this.height -= (y+y)
+  this.right = this.x + this.width
+  this.bottom = this.y + this.height
+  return this
+}
+
 /** Set width and height */
 jaws.Rect.prototype.resizeTo = function(width, height) {
   this.width = width
@@ -1723,6 +1808,38 @@ jaws.Sprite.prototype.setImage =      function(value) {
     }
   }
   return this
+}
+
+/** 
+* Steps 1 pixel towards given x/y while continueStep-callback returns true (put your collision detection there :)..)
+*
+* @returns  {object}  Object with 2 x/y-properties indicating what plane we moved in when stepTo was stopped.
+*/
+jaws.Sprite.prototype.stepToWhile = function(target_x, target_y, continueStep) { 
+  var step = 1;
+  var step_x = (target_x < this.x) ? -step : step;
+  var step_y = (target_y < this.y) ? -step : step;
+
+  target_x = parseInt(target_x)
+  target_y = parseInt(target_y)
+
+  var collision_x = false;
+  var collision_y = false;
+
+  while( true ) {
+    if(collision_x === false) {
+      if(this.x != target_x)    { this.x += step_x }
+      if( !continueStep(this) ) { this.x -= step_x; collision_x = true }
+    }
+ 
+    if(collision_y === false) {
+      if(this.y != target_y)    { this.y += step_y }
+      if( !continueStep(this) ) { this.y -= step_y; collision_y = true }
+    }
+
+    if( (collision_x || this.x == target_x) && (collision_y || this.y == target_y) )
+        return {x: collision_x, y: collision_y};
+  }
 }
 
 /** Flips image vertically, usefull for sidescrollers when player is walking left/right */
@@ -1994,353 +2111,6 @@ jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_y = value; re
 */
 
 var jaws = (function(jaws) {
-/**
- * @class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others. Implements Array API. "Field Summary" contains options for the SpriteList()-constructor.
- * 
- * Sprites (your bullets, aliens, enemies, players etc) will need to be
- * updated, draw, deleted. Often in various orders and based on different conditions.
- * This is where SpriteList() comes in:
- * 
- * @example
- * // create 100 enemies 
- * var enemies = new SpriteList()
- * for(i=0; i < 100; i++) { 
- *   enemies.push(new Sprite({image: "enemy.png", x: i, y: 200}))
- * }
- * enemies.draw()                    // calls draw() on all enemies
- * enemies.update()                  // calls update() on all enemies 
- * enemies.removeIf(isOutsideCanvas) // removes each item in enemies that returns true when isOutsideCanvas(item) is called
- * enemies.drawIf(isInsideViewport)  // only call draw() on items that returns true when isInsideViewport is called with item as argument 
- * 
- * @param {Object} [options] Currently used to pass in a literal list of sprites. See {@link SpriteList#load} for details
- */
-jaws.SpriteList = function SpriteList(options) {
-  // Make both sprite_list = new SpriteList() and sprite_list = SpriteList() work
-  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
-
-  this.sprites = []
-  this.length = 0
-  
-  if(options) this.load(options);
-}
-
-/**
- * Return the sprite at the specified index.
- * Replaces the array [] notation.
- * So:
- * my_sprite_list.at(1) is equivalent to my_array[1]
- * 
- * @param {Number} index
- * @returns {Object} Sprite at index
- */
-jaws.SpriteList.prototype.at = function(index) {
-  return this.sprites[index]
-}
-
-// Implement the Array API functions
-
-/**
- * Concatenate this sprite list and another array. Does not modify original.
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/concat 
- * @return {Object} A new SpriteList comprised of this one joined with other lists. 
- */
-jaws.SpriteList.prototype.concat = function() {
-  return this.sprites.concat.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
- * @param {Object} searchElement
- * @param {Number} fromIndex
- * @returns {Number}
- */
-jaws.SpriteList.prototype.indexOf = function(searchElement, fromIndex) {
-  return this.sprites.indexOf(searchElement, fromIndex)
-}
-
-/**
- * Joins the contents of the sprite list into a string.
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/join
- * 
- * Implemented mostly for an easy verbose way to display the sprites 
- * inside the sprite list.
- * @param {String} [separator] String to separate each array element. If ommitted, defaults to comma.
- */
-jaws.SpriteList.prototype.join = function(separator) {
-  return this.sprites.join(separator)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/lastIndexOf
- */
-jaws.SpriteList.prototype.lastIndexOf = function() {
-  return this.sprites.lastIndexOf.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/pop
- * @returns {Object} Last sprite in the list
- */
-jaws.SpriteList.prototype.pop = function() {
-  var element = this.sprites.pop()
-  this.updateLength()
-  return element
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/push
- * @returns {Number} New length of the sprite list
- */
-jaws.SpriteList.prototype.push = function() {
-  this.sprites.push.apply(this.sprites, arguments)
-  this.updateLength()
-  return this.length
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reverse
- */
-jaws.SpriteList.prototype.reverse = function() {
-  this.sprites.reverse()
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/shift
- * @returns {Object} First sprite in the list
- */
-jaws.SpriteList.prototype.shift = function() {
-  var element = this.sprites.shift()
-  this.updateLength()
-  return element
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/slice
- * @param {Number} start
- * @param {Number} end
- * @returns {Object} A new array containing sprites (a section of the sprites array defined by start and end)
- * 
- * @todo Fix it to return SpriteList instead of array 
- */
-jaws.SpriteList.prototype.slice = function(start, end) {
-  return this.sprites.slice(start, end)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/sort
- */
-jaws.SpriteList.prototype.sort = function() {
-  this.sprites.sort.apply(this.sprites, arguments)
-}
-
-/**
- * Add or remove sprites from the list.
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/splice
- * @return {Array} Array containing removed sprites
- */
-jaws.SpriteList.prototype.splice = function() {
-  var removedElements = this.sprites.splice.apply(this.sprites, arguments)
-  this.updateLength()
-  return removedElements
-}
-
-/**
- * Add one or more sprites to the front of the list
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/unshift
- * @returns {Number} New length of the sprite list
- */
-jaws.SpriteList.prototype.unshift = function() {
-  this.sprites.unshift.apply(this.sprites, arguments)
-  this.updateLength()
-  return this.length
-}
-
-/**
- * Update the length of the sprite list.
- * Since we're delegating array operations to sprites array, this is not done automatically
- */
-jaws.SpriteList.prototype.updateLength = function() {
-  this.length = this.sprites.length
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/ValueOf
- * @return {String} Literal string representation (currently, just the value of toString() )
- */
-jaws.SpriteList.prototype.valueOf = function() {
-  return this.toString()
-}
-
-// Implement "extras" / standardized Array functions
-// See http://dev.opera.com/articles/view/javascript-array-extras-in-detail/ for discussion, browser compatibility
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/filter
- * @return {Array}
- */
-jaws.SpriteList.prototype.filter = function() {
-  return this.sprites.filter.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/forEach
- */
-jaws.SpriteList.prototype.forEach = function() {
-  this.sprites.forEach.apply(this.sprites, arguments)
-  this.updateLength()  // in case the forEach operation changes the sprites array
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/every
- * @returns {Boolean}
- */
-jaws.SpriteList.prototype.every = function() {
-  return this.sprites.every.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/map
- * @returns {Array}
- */
-jaws.SpriteList.prototype.map = function() {
-  return this.sprites.map.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/Reduce
- * @returns {Object|Number|String}
- */
-jaws.SpriteList.prototype.reduce = function() {
-  return this.sprites.reduce.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/ReduceRight
- * @returns {Object|Number|String}
- */
-jaws.SpriteList.prototype.reduceRight = function() {
-  return this.sprites.reduceRight.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/some
- * @returns {Boolean}
- */
-jaws.SpriteList.prototype.some = function() {
-  return this.sprites.some.apply(this.sprites, arguments)
-}
-
-/**
- * Returns true if this object is a sprite lsit.
- * Used to tell SpriteLists and Arrays apart
- * @returns {Boolean}
- */
-jaws.SpriteList.prototype.isSpriteList = function() {
-  return true;
-}
-
-/**
- * Load sprites into sprite list.
- *
- * Argument could either be
- * - an array of Sprite objects
- * - an array of JSON objects
- * - a JSON.stringified string representing an array of JSON objects
- *
- */
-jaws.SpriteList.prototype.load = function(objects) {
-  var that = this;  // Since forEach changes this into DOMWindow.. hm, lame.
-  if(jaws.isArray(objects)) {
-    // If this is an array of JSON representations, parse it
-    if(objects.every(function(item) { return item._constructor })) {
-      parseArray(objects)
-    } else {
-      // This is an array of Sprites, load it directly
-      this.sprites = objects
-    }
-  }
-  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ); jaws.log.info(objects) }
-  this.updateLength()
-  
-  function parseArray(array) {
-    array.forEach( function(data) {
-      var constructor = data._constructor ? eval(data._constructor) : data.constructor
-      if(jaws.isFunction(constructor)) {
-        jaws.log.info("Creating " + data._constructor + "(" + data.toString() + ")", true)
-        var object = new constructor(data)
-        object._constructor = data._constructor || data.constructor.name
-        that.push(object);
-      }
-    });
-  }
-}
-
-/** 
- * Removes the first occurrence of obj from list 
- */
-jaws.SpriteList.prototype.remove = function(obj) {
-  var index = this.indexOf(obj)
-  if(index > -1) { this.splice(index, 1) }
-  this.updateLength()
-}
-
-/** 
- * Invoke draw() on each element of the sprite list
- */
-jaws.SpriteList.prototype.draw = function() {
-  this.forEach(function(ea) {
-    ea.draw()
-  })
-}
-
-/** Draw sprites in spritelist where condition(sprite) returns true */
-jaws.SpriteList.prototype.drawIf = function(condition) {
-  this.forEach(function(ea) {
-    if( condition(ea) ) {
-      ea.draw()
-    }
-  })
-}
-
-/** Call update() on all sprites in spritelist */
-jaws.SpriteList.prototype.update = function() {
-  this.forEach(function(ea) {
-    ea.update()
-  })
-}
-
-/** Call update() on sprites in spritelist where condition(sprite) returns true */
-jaws.SpriteList.prototype.updateIf = function(condition) {
-  this.forEach(function(ea) {
-    if( condition(ea) ) {
-      ea.update()
-    }
-  })
-}
-
-/** 
- * Delete sprites in spritelist where condition(sprite) returns true.
- * Alias for removeIf()
- * @deprecated
- */
-jaws.SpriteList.prototype.deleteIf = function(condition) {
-  this.removeIf(condition)
-}
-
-/** Remove sprites in spritelist where condition(sprite) returns true  */
-jaws.SpriteList.prototype.removeIf = function(condition) {
-  this.sprites = this.filter(function(ea) {
-    return !condition(ea)
-  })
-  this.updateLength()
-}
-
-jaws.SpriteList.prototype.toString = function() { return "[SpriteList " + this.length + " sprites]" }
-
-return jaws;
-})(jaws || {});
-
-var jaws = (function(jaws) {
 
 
 /** 
@@ -2420,119 +2190,6 @@ function cutImage(image, x, y, width, height) {
 };
 
 jaws.SpriteSheet.prototype.toString = function() { return "[SpriteSheet " + this.frames.length + " frames]" }
-
-return jaws;
-})(jaws || {});
-
-var jaws = (function(jaws) {
-
-
-/** 
-* @class Manage a parallax scroller with different layers. "Field Summary" contains options for the Parallax()-constructor.
-* @constructor
-*
-* @property scale     number, scale factor for all layers (2 will double everything and so on)
-* @property repeat_x  true|false, repeat all parallax layers horizontally
-* @property repeat_y  true|false, repeat all parallax layers vertically
-* @property camera_x  number, x-position of "camera". add to camera_x and layers will scroll left. defaults to 0
-* @property camera_y  number, y-position of "camera". defaults to 0
-*
-* @example
-* parallax = new jaws.Parallax({repeat_x: true})
-* parallax.addLayer({image: "parallax_1.png", damping: 100})
-* parallax.addLayer({image: "parallax_2.png", damping: 6})
-* parallax.camera_x += 1    // scroll layers horizontally
-* parallax.draw()
-*
-*/
-jaws.Parallax = function Parallax(options) {
-  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
-  jaws.parseOptions(this, options, this.default_options)
-  
-  this.width = options.width || jaws.width;
-  this.height = options.height || jaws.height;  
-}
-
-jaws.Parallax.prototype.default_options = {
-  scale: 1,
-  repeat_x: null,
-  repeat_y: null,
-  camera_x: 0,
-  camera_y: 0,
-  width: null,
-  height: null,
-  layers: []
-}
-
-/** Draw all layers in parallax scroller */
-jaws.Parallax.prototype.draw = function(options) {
-  var layer, numx, numy, initx;
-
-  for(var i=0; i < this.layers.length; i++) {
-    layer = this.layers[i]
-
-  	if(this.repeat_x) {
-  	  initx = -((this.camera_x / layer.damping) % layer.width);
-  	} 
-    else {
-  	  initx = -(this.camera_x / layer.damping)
-  	}		
-          
-  	if (this.repeat_y) {
-  	  layer.y = -((this.camera_y / layer.damping) % layer.height);
-  	}
-    else {
-  		layer.y = -(this.camera_y / layer.damping);
-  	}
-  
-  	layer.x = initx;
-    while (layer.y < this.height) {
-      while (layer.x < this.width) {
-  		  if (layer.x + layer.width >= 0 && layer.y + layer.height >= 0) { //Make sure it's on screen
-  			  layer.draw(); //Draw only if actually on screen, for performance reasons
-  			}
-        layer.x = layer.x + layer.width;      
-  				
-        if (!this.repeat_x) {
-  				break;
-  			}
-      }
-        
-      layer.y = layer.y + layer.height;
-      layer.x = initx;
-  		if (!this.repeat_y) {
-  			break;
-  		}
-    }
-  }
-}
-/** Add a new layer to the parallax scroller */
-jaws.Parallax.prototype.addLayer = function(options) {
-  var layer = new jaws.ParallaxLayer(options)
-  layer.scaleAll(this.scale)
-  this.layers.push(layer)
-}
-/** Debugstring for Parallax() */
-jaws.Parallax.prototype.toString = function() { return "[Parallax " + this.x + ", " + this.y + ". " + this.layers.length + " layers]" }
-
-/**
- * @class A single layer that's contained by Parallax()
- *
- * @property damping  number, higher the number, the slower it will scroll with regards to other layers, defaults to 0
- * @constructor
- * @extends jaws.Sprite
- */
-jaws.ParallaxLayer = function ParallaxLayer(options) {
-  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
-
-  this.damping = options.damping || 0
-  jaws.Sprite.call(this, options)
-}
-jaws.ParallaxLayer.prototype = jaws.Sprite.prototype
-
-/** Debugstring for ParallaxLayer() */
-// This overwrites Sprites toString, find another sollution.
-// jaws.ParallaxLayer.prototype.toString = function() { return "[ParallaxLayer " + this.x + ", " + this.y + "]" }
 
 return jaws;
 })(jaws || {});
@@ -2919,380 +2576,6 @@ jaws.Viewport.prototype.toString = function() { return "[Viewport " + this.x.toF
 return jaws;
 })(jaws || {});
 
-var jaws = (function(jaws) {
-
-/**
- * @class Create and access tilebased 2D maps with very fast access of invidual tiles. "Field Summary" contains options for the TileMap()-constructor.
- *
- * @property {array} cell_size        Size of each cell in tilemap, defaults to [32,32]
- * @property {array} size             Size of tilemap, defaults to [100,100]
- * @property {function} sortFunction  Function used by sortCells() to sort cells, defaults to no sorting
- *
- * @example
- * var tile_map = new TileMap({size: [10, 10], cell_size: [16,16]})
- * var sprite = new jaws.Sprite({x: 40, y: 40})
- * var sprite2 = new jaws.Sprite({x: 41, y: 41})
- * tile_map.push(sprite)
- *
- * tile_map.at(10,10)  // []
- * tile_map.at(40,40)  // [sprite]
- * tile_map.cell(0,0)  // []
- * tile_map.cell(1,1)  // [sprite]
- *
- */
-jaws.TileMap = function TileMap(options) {
-  if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
-
-  jaws.parseOptions(this, options, this.default_options);
-  this.cells = new Array(this.size[0])
-
-  for(var col=0; col < this.size[0]; col++) {
-    this.cells[col] = new Array(this.size[1])
-    for(var row=0; row < this.size[1]; row++) {
-      this.cells[col][row] = [] // populate each cell with an empty array
-    }
-  }
-}
-
-jaws.TileMap.prototype.default_options = {
-  cell_size: [32,32],
-  size: [100,100],
-  sortFunction: null
-}
-
-/** Clear all cells in tile map */
-jaws.TileMap.prototype.clear = function() {
-  for(var col=0; col < this.size[0]; col++) {
-    for(var row=0; row < this.size[1]; row++) {
-      this.cells[col][row] = []
-    }
-  }
-}
-
-/** Sort arrays in each cell in tile map according to sorter-function (see Array.sort) */
-jaws.TileMap.prototype.sortCells = function(sortFunction) {
-  for(var col=0; col < this.size[0]; col++) {
-    for(var row=0; row < this.size[1]; row++) {
-      this.cells[col][row].sort( sortFunction )
-    }
-  }
-}
-
-/**
- * Push obj (or array of objs) into our cell-grid.
- *
- * Tries to read obj.x and obj.y to calculate what cell to occopy
- */
-jaws.TileMap.prototype.push = function(obj) {
-  var that = this
-  if(obj.forEach) { 
-    obj.forEach( function(item) { that.push(item) } )
-    return obj
-  }
-  if(obj.rect) {
-    return this.pushAsRect(obj, obj.rect())
-  }
-  else {
-    var col = parseInt(obj.x / this.cell_size[0])
-    var row = parseInt(obj.y / this.cell_size[1])
-    return this.pushToCell(col, row, obj)
-  }
-}
-/** 
- * Push objects into tilemap.
- * Disregard height and width and only use x/y when calculating cell-position
- */
-jaws.TileMap.prototype.pushAsPoint = function(obj) {
-  if(Array.isArray(obj)) { 
-    for(var i=0; i < obj.length; i++) { this.pushAsPoint(obj[i]) }
-    return obj
-  }
-  else {
-    var col = parseInt(obj.x / this.cell_size[0])
-    var row = parseInt(obj.y / this.cell_size[1])
-    return this.pushToCell(col, row, obj)
-  }
-}
-
-/** push obj into cells touched by rect */
-jaws.TileMap.prototype.pushAsRect = function(obj, rect) {
-  var from_col = parseInt(rect.x / this.cell_size[0])
-  var to_col = parseInt((rect.right-1) / this.cell_size[0])
-  //jaws.log("rect.right: " + rect.right + " from/to col: " + from_col + " " + to_col, true)
-
-  for(var col = from_col; col <= to_col; col++) {
-    var from_row = parseInt(rect.y / this.cell_size[1])
-    var to_row = parseInt((rect.bottom-1) / this.cell_size[1])
-    
-    //jaws.log("rect.bottom " + rect.bottom + " from/to row: " + from_row + " " + to_row, true)
-    for(var row = from_row; row <= to_row; row++) {
-      // console.log("pushAtRect() col/row: " + col + "/" + row + " - " + this.cells[col][row])
-      this.pushToCell(col, row, obj)
-    }
-  }
-  return obj
-}
-
-/** 
- * Push obj to a specific cell specified by col and row 
- * If cell is already occupied we create an array and push to that
- */
-jaws.TileMap.prototype.pushToCell = function(col, row, obj) {
-  this.cells[col][row].push(obj)
-  if(this.sortFunction) this.cells[col][row].sort(this.sortFunction);
-  return this
-}
-
-//
-// READERS
-// 
-
-/** Get objects in cell that exists at coordinates x / y  */
-jaws.TileMap.prototype.at = function(x, y) {
-  var col = parseInt(x / this.cell_size[0])
-  var row = parseInt(y / this.cell_size[1])
-  // console.log("at() col/row: " + col + "/" + row)
-  return this.cells[col][row]
-}
-
-/** Returns occupants of all cells touched by 'rect' */
-jaws.TileMap.prototype.atRect = function(rect) {
-  var objects = []
-  var items
-
-  try {
-    var from_col = parseInt(rect.x / this.cell_size[0])
-	if (from_col < 0) {
-		from_col = 0
-	}
-    var to_col = parseInt(rect.right / this.cell_size[0])
-    if (to_col >= this.size[0]) {
-		to_col = this.size[0] - 1
-	}
-	var from_row = parseInt(rect.y / this.cell_size[1])
-	if (from_row < 0) {
-		from_row = 0
-	}
-	var to_row = parseInt(rect.bottom / this.cell_size[1])
-	if (to_row >= this.size[1]) {
-		to_row = this.size[1] - 1
-	}
-
-    for(var col = from_col; col <= to_col; col++) {
-      for(var row = from_row; row <= to_row; row++) {
-        this.cells[col][row].forEach( function(item, total) { 
-          if(objects.indexOf(item) == -1) { objects.push(item) }
-        })
-      }
-    }
-  }
-  catch(e) {
-    // ... problems
-  }
-  return objects
-}
-
-/** Returns all objects in tile map */
-jaws.TileMap.prototype.all = function() {
-  var all = []
-  for(var col=0; col < this.size[0]; col++) {
-    for(var row=0; row < this.size[1]; row++) {
-      this.cells[col][row].forEach( function(element, total) {
-        all.push(element)
-      });
-    }
-  }
-  return all
-}
-
-/** Get objects in cell at col / row */
-jaws.TileMap.prototype.cell = function(col, row) {
-  return this.cells[col][row]
-}
-
-/**
- * A-Star pathfinding
- *
- *  Takes starting and ending x,y co-ordinates (from a mouse-click for example),
- *  which are then translated onto the TileMap grid. 
- *  
- *  Does not allow for Diagonal movements
- *
- *  Uses a very simple Heuristic [see crowFlies()] for calculating node scores.
- *
- *  Very lightly optimised for speed over memory usage.
- *
- *  Returns a list of [col, row] pairs that define a valid path. Due to the simple Heuristic
- *  the path is not guaranteed to be the best path.
- */
-jaws.TileMap.prototype.findPath = function(start_position, end_position, inverted) {
-  
-  if (typeof inverted == 'undefined') { inverted = false }
-  
-  var start_col = parseInt(start_position[0] / this.cell_size[0])
-  var start_row = parseInt(start_position[1] / this.cell_size[1])
-  
-  var end_col = parseInt(end_position[0] / this.cell_size[0])
-  var end_row = parseInt(end_position[1] / this.cell_size[1])
-  
-  if (start_col === end_col && start_row === end_row) {
-    return [{x: start_position[0], y:start_position[1]}]
-  }
-  
-  var col = start_col
-  var row = start_row
-  var step = 0
-  var score = 0
-  //travel corner-to-corner, through every square, plus one, just to make sure
-  var max_distance = (this.size[0]*this.size[1] * 2)+1
-  
-  var open_nodes = new Array(this.size[0])
-  for(var i=0; i < this.size[0]; i++) {
-    open_nodes[i] = new Array(this.size[1])
-    for(var j=0; j < this.size[1]; j++) {
-      open_nodes[i][j] = false
-    }
-  }
-  open_nodes[col][row] = {parent: [], G: 0, score: max_distance}
-  
-  var closed_nodes = new Array(this.size[0])
-  for(var i=0; i < this.size[0]; i++) {
-    closed_nodes[i] = new Array(this.size[1])
-    for(var j=0; j < this.size[1]; j++) {
-      closed_nodes[i][j] = false
-    }
-  }
-
-  var crowFlies = function(from_node, to_node) {
-    return Math.abs(to_node[0]-from_node[0]) + Math.abs(to_node[1]-from_node[1]);
-  }
-  
-  var findInClosed = function(col, row) {
-    if (closed_nodes[col][row])
-    {
-      return true
-    }
-    else {return false}
-  }
-  
-  while ( !(col === end_col && row === end_row) ) {
-    /**
-     *  add the nodes above, below, to the left and right of the current node
-     *  if it doesn't have a sprite in it, and it hasn't already been added
-     *  to the closed list, recalculate its score from the current node and
-     *  update it if it's already in the open list.
-     */
-    var left_right_up_down = []
-    if (col > 0) { left_right_up_down.push([col-1, row]) }
-    if (col < this.size[0]-1) { left_right_up_down.push([col+1, row]) }
-    if (row > 0) {left_right_up_down.push([col, row-1])}
-    if (row < this.size[1]-1) { left_right_up_down.push([col, row+1]) }
-    
-    for (var i=0 ; i<left_right_up_down.length ; i++) {
-        var c = left_right_up_down[i][0]
-        var r = left_right_up_down[i][1]
-        if ( ( (this.cell(c, r).length === 0 && !inverted) || 
-               (this.cell(c, r).length  >  0 &&  inverted)    ) && 
-               !findInClosed(c, r) ) 
-        {
-            score = step+1+crowFlies([c, r] , [end_col, end_row])
-            if (!open_nodes[c][r] || (open_nodes[c][r] && open_nodes[c][r].score > score)) {
-                open_nodes[c][r] = {parent: [col, row], G: step+1, score: score}
-            }
-        }
-    }
-    
-    /**
-     *  find the lowest scoring open node
-     */
-    var best_node = {node: [], parent: [], score: max_distance, G: 0}
-    for (var i=0 ; i<this.size[0] ; i++) {
-      for(var j=0 ; j<this.size[1] ; j++) {
-        if (open_nodes[i][j] && open_nodes[i][j].score < best_node.score) {
-          best_node.node = [i, j]
-          best_node.parent = open_nodes[i][j].parent
-          best_node.score = open_nodes[i][j].score
-          best_node.G = open_nodes[i][j].G
-        }
-      }
-    }
-    if (best_node.node.length === 0) { //open_nodes is empty, no route found to end node
-      return []
-    }
-    
-    //This doesn't stop the node being added again, but it doesn't seem to matter
-    open_nodes[best_node.node[0]][best_node.node[1]] = false
-    
-    col = best_node.node[0]
-    row = best_node.node[1]
-    step = best_node.G
-    
-    closed_nodes[col][row] = {parent: best_node.parent}
-  }
-  
-  /**
-   *  a path has been found, construct it by working backwards from the
-   *  end node, using the closed list
-   */
-  var path = []
-  var current_node = closed_nodes[col][row]
-  path.unshift({x: col*this.cell_size[0], y: row*this.cell_size[1]})
-  while(! (col === start_col && row === start_row) ) {
-    col = current_node.parent[0]
-    row = current_node.parent[1]
-    path.unshift({x: col*this.cell_size[0], y: row*this.cell_size[1]})
-    current_node = closed_nodes[col][row]
-  }
-  return path
-  
-}
-
-jaws.TileMap.prototype.lineOfSight = function(start_position, end_position, inverted) {
-  if (typeof inverted == 'undefined') { inverted = false }
-  
-  var x0 = start_position[0]
-  var x1 = end_position[0]
-  var y0 = start_position[1]
-  var y1 = end_position[1]
-  
-  var dx = Math.abs(x1-x0)
-  var dy = Math.abs(y1-y0)
-
-  var sx, sy
-  if (x0 < x1) {sx = 1} else {sx = -1}
-  if (y0 < y1) {sy = 1} else {sy = -1}
-  
-  var err = dx-dy
-  var e2
-  
-  while(! (x0 === x1 && y0 === y1) )
-  {
-    if (inverted) { if (this.at(x0,y0).length === 0) {return false} }
-    else { if (this.at(x0,y0).length > 0) {return false} }
-    e2 = 2 * err
-    if (e2 > -dy)
-    {
-      err = err - dy
-      x0 = x0 + sx
-    }
-    if (e2 < dx)
-    {
-      err = err + dx
-      y0 = y0 + sy
-    }
-  }
-  
-  return true
-}
-
-/** Debugstring for TileMap() */
-jaws.TileMap.prototype.toString = function() { return "[TileMap " + this.size[0] + " cols, " + this.size[1] + " rows]" }
-
-return jaws;
-})(jaws || {});
-
-// Support CommonJS require()
-if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.TileMap }
 /**
  * @namespace Collisiondetection
  * 
@@ -3406,7 +2689,7 @@ function combinations(list, n) {
     } else {  // s is an Array
       return list[i];
     }
-  };
+  };  
   var r = [];
   var m = new Array(n);
   for (var i = 0; i < n; i++) m[i] = i; 

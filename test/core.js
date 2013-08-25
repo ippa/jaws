@@ -34,6 +34,24 @@ test("Properties should exist", function() {
   ok(jaws.Rect, "jaws.Rect")
 })
 
+test("jaws.draw", function() {
+  var s1 = { drawed: false, draw: function() { this.drawed = true } }
+  jaws.draw(s1)
+  ok(s1.drawed, "draw() with single argument")
+  
+  var s1 = { drawed: false, draw: function() { this.drawed = true } }
+  var s2 = { drawed: false, draw: function() { this.drawed = true } }
+  jaws.draw([s1, s2])
+  ok(s1.drawed, "draw() with array argument")
+  ok(s2.drawed, "draw() with array argument")
+
+  var s1 = { drawed: false, draw: function() { this.drawed = true } }
+  var s2 = { drawed: false, draw: function() { this.drawed = true } }
+  jaws.draw(s1, s2)
+  ok(s1.drawed, "draw() with argumentlist")
+  ok(s2.drawed, "draw() with argumentlist")
+});
+
 test("isSomething() helpers", function() {
   a_function = function() {}
   a_string = "a string"

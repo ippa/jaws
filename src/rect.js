@@ -53,6 +53,23 @@ jaws.Rect.prototype.resize = function(width, height) {
   this.bottom = this.y + this.height
   return this
 }
+
+/** Returns a new rect witht he same dimensions */
+jaws.Rect.prototype.clone = function() {
+  return new jaws.Rect(this.x, this.y, this.width, this.height)
+}
+
+/** Shrink rectangle on both axis with given x/y values  */
+jaws.Rect.prototype.shrink = function(x, y) {
+  this.x += x
+  this.y += y
+  this.width -= (x+x)
+  this.height -= (y+y)
+  this.right = this.x + this.width
+  this.bottom = this.y + this.height
+  return this
+}
+
 /** Set width and height */
 jaws.Rect.prototype.resizeTo = function(width, height) {
   this.width = width

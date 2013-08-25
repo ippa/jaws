@@ -135,6 +135,38 @@ jaws.Sprite.prototype.setImage =      function(value) {
   return this
 }
 
+/** 
+* Steps 1 pixel towards given x/y while continueStep-callback returns true (put your collision detection there :)..)
+*
+* @returns  {object}  Object with 2 x/y-properties indicating what plane we moved in when stepTo was stopped.
+*/
+jaws.Sprite.prototype.stepToWhile = function(target_x, target_y, continueStep) { 
+  var step = 1;
+  var step_x = (target_x < this.x) ? -step : step;
+  var step_y = (target_y < this.y) ? -step : step;
+
+  target_x = parseInt(target_x)
+  target_y = parseInt(target_y)
+
+  var collision_x = false;
+  var collision_y = false;
+
+  while( true ) {
+    if(collision_x === false) {
+      if(this.x != target_x)    { this.x += step_x }
+      if( !continueStep(this) ) { this.x -= step_x; collision_x = true }
+    }
+ 
+    if(collision_y === false) {
+      if(this.y != target_y)    { this.y += step_y }
+      if( !continueStep(this) ) { this.y -= step_y; collision_y = true }
+    }
+
+    if( (collision_x || this.x == target_x) && (collision_y || this.y == target_y) )
+        return {x: collision_x, y: collision_y};
+  }
+}
+
 /** Flips image vertically, usefull for sidescrollers when player is walking left/right */
 jaws.Sprite.prototype.flip =          function()      { this.flipped = this.flipped ? false : true; return this }
 jaws.Sprite.prototype.flipTo =        function(value) { this.flipped = value; return this }

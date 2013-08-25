@@ -2,13 +2,22 @@ module("Assets")
 
 test("json assets, onload-callback", function() {
   var assets = new jaws.Assets()
-  assets.root = "assets/"
-  assets.add("gamedata.json")
-  assets.loadAll({onload: loaded})
+  assets.setRoot("assets/").add("gamedata.json").loadAll({onload: loaded})
   stop()
   function loaded() {
     deepEqual(assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
     deepEqual(assets.get("gamedata.json").mode, "angry", "jsondata got parsed into an object")
+    start();
+  }
+});
+test("Image assets", function() {
+  var assets = new jaws.Assets();
+  assets.setRoot("assets/").add(["block_10x10.bmp", "player.png"]).loadAll({onload: loaded})
+  stop();
+
+  function loaded() {
+    ok( assets.get("block_10x10.bmp"), "BMP loaded")
+    ok( assets.get("player.png"), "PNG loaded")
     start();
   }
 });
@@ -34,9 +43,8 @@ test("audio assets", function() {
       ok( !assets.get("tones.flac"), "chrome didn't fetch tones.flac");
     }
     if(is_ff) {
-      ok( assets.get("tones.ogg"), "chrome fetched tones.ogg");
-      ok( assets.get("tones.wav"), "chrome fetched tones.wav");
-      ok( !assets.get("tones.mp3"), "chrome didn't fetch tones.mp3");
+      ok( assets.get("tones.ogg"), "ff fetched tones.ogg");
+      ok( assets.get("tones.wav"), "ff fetched tones.wav");
     }
 
     start();
@@ -58,7 +66,7 @@ test("audio wildcard assets", function() {
       equal( jaws.assets.getPostfix(asset.src), "mp3", "chrome fetched tones.mp3");
     }
     if(is_ff) {
-      equal( jaws.assets.getPostfix(asset.src), "ogg", "firefox fetched tones.ogg");
+      equal( jaws.assets.getPostfix(asset.src), "mp3", "ff fetched tones.mp3");
     }
     if(is_ie) {
       equal( jaws.assets.getPostfix(asset.src), "mp3", "ie fetched tones.mp3");
