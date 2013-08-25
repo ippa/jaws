@@ -23,6 +23,7 @@
         root+"viewport.js",
         root+"collision_detection.js",
         root+"gfx.js",
+        root+"text.js",
         root+"extras/sprite_list.js",
         root+"extras/parallax.js",
         root+"extras/tile_map.js",
