@@ -28,6 +28,25 @@ jaws.SpriteList = function SpriteList(options) {
   
   if(options) this.load(options);
 }
+/**
+* Adds one or more sprites to sprite_list
+*/
+jaws.SpriteList.prototype.add = function() {
+  var list = arguments;
+  if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+
+  if(list.length > 1) { 
+    for(var i=0; i < list.length; i++) { 
+      this.sprites.push(list[i])
+    }
+  }
+  else {
+    this.sprites.push(arguments)
+  }
+
+  this.updateLength()
+  return this;
+}
 
 /**
  * Return the sprite at the specified index.
