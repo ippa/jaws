@@ -438,6 +438,32 @@ var jaws = (function(jaws) {
 
 
   /**
+   * calls draw() on everything you throw on it. Give it arrays, argumentlists, arrays of arrays.
+   *
+   */
+  jaws.draw = function() {
+    var list = arguments;
+    if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+    for(var i=0; i < list.length; i++) {
+      if(jaws.isArray(list[i])) jaws.draw(list[i]);  
+      else                      list[i].draw();
+    }
+  }
+
+  /**
+   * calls update() on everything you throw on it. Give it arrays, argumentlists, arrays of arrays.
+   *
+   */
+  jaws.update = function() {
+    var list = arguments;
+    if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+    for(var i=0; i < list.length; i++) {
+      if(jaws.isArray(list[i])) jaws.update(list[i]);  
+      else                      list[i].update();
+    }
+  }
+
+  /**
    * Tests if object is an image or not
    * @param   {object}  obj   An Image or image-like object
    * @returns {boolean}       If object's prototype is "HTMLImageElement"
