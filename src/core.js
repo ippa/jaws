@@ -430,6 +430,13 @@ var jaws = (function(jaws) {
     jaws.context.clearRect(0, 0, jaws.width, jaws.height);
   };
 
+  /** Fills the screen with given fill_style */
+  jaws.fill = function(fill_style) {
+    jaws.context.fillStyle = fill_style;
+    jaws.context.fillRect(0, 0, jaws.width, jaws.height);
+  };
+
+
   /**
    * Tests if object is an image or not
    * @param   {object}  obj   An Image or image-like object
