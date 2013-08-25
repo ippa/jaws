@@ -144,7 +144,7 @@ test("Collision detection with SpriteLists", function() {
     var sprite_list = new jaws.SpriteList().add(sprite1, sprite2, sprite3);
  
     callback_status = true
-    jaws.collideManyWithMany(sprite_list, sprite_list, function(a, b) {
+    jaws.collide(sprite_list, sprite_list, function(a, b) {
       callback_status = true
       deepEqual(a, sprite1, "collide()")
       deepEqual(b, sprite2, "collide()")
