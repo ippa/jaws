@@ -123,7 +123,8 @@ https://github.com/MalphasWats - Viewport pathfinding
 If you find an issue with Jaws githubs issue-tracker is the place to go. Easiest for the developers is if you put your game online. If you don't have any hosting check out http://pages.github.com/.
 Pasting your problematic code in the issue-ticket itself will usually mean a lot of hassle with supportcode and assets to actually be able to test the code in question.
 
-== API-deprecations since start of 2013
+== API-deprecations leading up to ver 1.0
+  2013-08: SpriteList, Parallax and TileMap are no longer included in jaws(-min).js bundle
   2013-08: jaws.assets.loadAll() -  onfinish -> onload, onload -> onprogress
   2013-08: jaws.assets.load(asset, options)  - options can have properties onload and onerror
   2013-03: sprite.anchor() is now sprite.setAnchor()
