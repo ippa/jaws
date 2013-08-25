@@ -39,6 +39,7 @@ var jaws = (function(jaws) {
   jaws.TileMap = function() { jaws.log.error("To use SteList() you need to include src/extras/parallax.js") }
   jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
   jaws.PixelMap = function() { jaws.log.error("To use SpriteList() you need to include src/extras/parallax.js") }
+  jaws.QuadTree = function() { jaws.log.error("To use QuadTree() you need to include src/extras/quadtree.js") }
   jaws.Audio = function() { jaws.log.error("To use jaws.Audio() you need to include src/extras/audio.js") }
 
   /**
