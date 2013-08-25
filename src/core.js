@@ -406,9 +406,10 @@ var jaws = (function(jaws) {
    * @returns {HTMLCanvasElement}         A HTMLCanvasElement with drawn HTMLImageElement content
    */
   jaws.imageToCanvas = function(image) {
+    if (jaws.isCanvas(image)) return image;
 
     if (!jaws.isImage(image)) {
-      jaws.log.error("jaws.imageToCanvas: Passed in object is not an image.");
+      jaws.log.error("jaws.imageToCanvas: Passed in object is not an Image.");
       return;
     }
 
