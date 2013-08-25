@@ -382,12 +382,13 @@ var jaws = (function(jaws) {
    */
   jaws.switchGameState = function(game_state, options, game_state_setup_options) {
 
-    if (!jaws.isFunction(game_state)) {
-      jaws.log.error("jaws.switchGameState: Passed in GameState is not a function.");
+    if(jaws.isFunction(game_state)) {
+      game_state = new game_state;
+    }
+    if(!jaws.isObject(game_state)) {
+      jaws.log.error("jaws.switchGameState: Passed in GameState should be a Function or an Object.");
       return;
     }
-
-    game_state = new game_state;
 
     var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60;
 
