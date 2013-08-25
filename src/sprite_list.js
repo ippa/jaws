@@ -1,6 +1,7 @@
 var jaws = (function(jaws) {
 /**
- * @class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others. Implements Array API. "Field Summary" contains options for the SpriteList()-constructor.
+ * @class Manages all your Sprites in lists. Makes easy mass-draw() / update() possible among others. 
+ * Implements a subset of the Array API. "Field Summary" contains options for the SpriteList()-constructor.
  * 
  * Sprites (your bullets, aliens, enemies, players etc) will need to be
  * updated, draw, deleted. Often in various orders and based on different conditions.
@@ -10,7 +11,7 @@ var jaws = (function(jaws) {
  * // create 100 enemies 
  * var enemies = new SpriteList()
  * for(i=0; i < 100; i++) { 
- *   enemies.push(new Sprite({image: "enemy.png", x: i, y: 200}))
+ *   enemies.add(new Sprite({image: "enemy.png", x: i, y: 200}))
  * }
  * enemies.draw()                    // calls draw() on all enemies
  * enemies.update()                  // calls update() on all enemies 
@@ -61,16 +62,6 @@ jaws.SpriteList.prototype.at = function(index) {
   return this.sprites[index]
 }
 
-// Implement the Array API functions
-
-/**
- * Concatenate this sprite list and another array. Does not modify original.
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/concat 
- * @return {Object} A new SpriteList comprised of this one joined with other lists. 
- */
-jaws.SpriteList.prototype.concat = function() {
-  return this.sprites.concat.apply(this.sprites, arguments)
-}
 
 /**
  * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
@@ -83,59 +74,10 @@ jaws.SpriteList.prototype.indexOf = function(searchElement, fromIndex) {
 }
 
 /**
- * Joins the contents of the sprite list into a string.
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/join
- * 
- * Implemented mostly for an easy verbose way to display the sprites 
- * inside the sprite list.
- * @param {String} [separator] String to separate each array element. If ommitted, defaults to comma.
- */
-jaws.SpriteList.prototype.join = function(separator) {
-  return this.sprites.join(separator)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/lastIndexOf
- */
-jaws.SpriteList.prototype.lastIndexOf = function() {
-  return this.sprites.lastIndexOf.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/pop
- * @returns {Object} Last sprite in the list
- */
-jaws.SpriteList.prototype.pop = function() {
-  var element = this.sprites.pop()
-  this.updateLength()
-  return element
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/push
- * @returns {Number} New length of the sprite list
+ * Alias for SpriteList add
  */
 jaws.SpriteList.prototype.push = function() {
-  this.sprites.push.apply(this.sprites, arguments)
-  this.updateLength()
-  return this.length
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reverse
- */
-jaws.SpriteList.prototype.reverse = function() {
-  this.sprites.reverse()
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/shift
- * @returns {Object} First sprite in the list
- */
-jaws.SpriteList.prototype.shift = function() {
-  var element = this.sprites.shift()
-  this.updateLength()
-  return element
+  this.add(arguments)
 }
 
 /**
@@ -158,28 +100,6 @@ jaws.SpriteList.prototype.sort = function() {
 }
 
 /**
- * Add or remove sprites from the list.
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/splice
- * @return {Array} Array containing removed sprites
- */
-jaws.SpriteList.prototype.splice = function() {
-  var removedElements = this.sprites.splice.apply(this.sprites, arguments)
-  this.updateLength()
-  return removedElements
-}
-
-/**
- * Add one or more sprites to the front of the list
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/unshift
- * @returns {Number} New length of the sprite list
- */
-jaws.SpriteList.prototype.unshift = function() {
-  this.sprites.unshift.apply(this.sprites, arguments)
-  this.updateLength()
-  return this.length
-}
-
-/**
  * Update the length of the sprite list.
  * Since we're delegating array operations to sprites array, this is not done automatically
  */
@@ -198,13 +118,6 @@ jaws.SpriteList.prototype.valueOf = function() {
 // Implement "extras" / standardized Array functions
 // See http://dev.opera.com/articles/view/javascript-array-extras-in-detail/ for discussion, browser compatibility
 
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/filter
- * @return {Array}
- */
-jaws.SpriteList.prototype.filter = function() {
-  return this.sprites.filter.apply(this.sprites, arguments)
-}
 
 /**
  * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/forEach
@@ -212,46 +125,6 @@ jaws.SpriteList.prototype.filter = function() {
 jaws.SpriteList.prototype.forEach = function() {
   this.sprites.forEach.apply(this.sprites, arguments)
   this.updateLength()  // in case the forEach operation changes the sprites array
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/every
- * @returns {Boolean}
- */
-jaws.SpriteList.prototype.every = function() {
-  return this.sprites.every.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/map
- * @returns {Array}
- */
-jaws.SpriteList.prototype.map = function() {
-  return this.sprites.map.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/Reduce
- * @returns {Object|Number|String}
- */
-jaws.SpriteList.prototype.reduce = function() {
-  return this.sprites.reduce.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/ReduceRight
- * @returns {Object|Number|String}
- */
-jaws.SpriteList.prototype.reduceRight = function() {
-  return this.sprites.reduceRight.apply(this.sprites, arguments)
-}
-
-/**
- * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/some
- * @returns {Boolean}
- */
-jaws.SpriteList.prototype.some = function() {
-  return this.sprites.some.apply(this.sprites, arguments)
 }
 
 /**
