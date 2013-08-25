@@ -70,6 +70,9 @@ test("Collision detection with callbacks", function() {
     var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
     var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
     var sprites = [sprite1, sprite2, sprite3]
+    var sprite_list = new jaws.SpriteList()
+    sprite_list.push([sprite1, sprite2, sprite3]);
+
     var circle1 = { x: 0, y: 0, radius: 5 }
     var circle2 = { x: 2, y: 2, radius: 5 }
     var circle3 = { x: 10, y: 10, radius: 5 }
@@ -84,7 +87,7 @@ test("Collision detection with callbacks", function() {
       deepEqual(a, sprite1, "collideOneWithMany")
       deepEqual(b, sprite2, "collideOneWithMany")
     });
-    deepEqual(callback_status, true, "collideOneWithMany callback got executed at least once")
+    ok(callback_status, "collideOneWithMany callback got executed at least once")
 
     callback_status = false
     jaws.collideManyWithMany(sprites, sprites, function(a, b) {
@@ -92,7 +95,7 @@ test("Collision detection with callbacks", function() {
       deepEqual(a, sprite1, "collideManyWithMany, don't collide sprites with themselves")
       deepEqual(b, sprite2, "collideManyWithMany, don't collide sprites with themselves")
     }); 
-    deepEqual(callback_status, true, "collideManyWithMany callback got executed at least once")
+    ok(callback_status, "collideManyWithMany callback got executed at least once")
 
     /* Tests of jaws.collide() below */
     var callback_status = false
@@ -101,7 +104,7 @@ test("Collision detection with callbacks", function() {
       deepEqual(a, sprite1, "collide()")
       deepEqual(b, sprite2, "collide()")
     });
-    deepEqual(callback_status, true, "collide() callback got executed at least once")
+    ok(callback_status, "collide() callback got executed at least once")
 
     callback_status = false
     jaws.collide(sprites, sprites, function(a, b) {
@@ -109,15 +112,15 @@ test("Collision detection with callbacks", function() {
       deepEqual(a, sprite1, "collide()")
       deepEqual(b, sprite2, "collide()")
     }); 
-    deepEqual(callback_status, true, "collide() callback got executed at least once")
-
+    ok(callback_status, "collide() callback got executed at least once")
+    
     callback_status = false
     jaws.collide(circles, circles, function(a, b) {
       callback_status = true
       deepEqual(a, circle1, "collide() with circles")
       deepEqual(b, circle2, "collide() with circles")
     }); 
-    deepEqual(callback_status, true, "collide() with circles callback got executed at least once")
+    ok(callback_status, "collide() with circles callback got executed at least once")
 
     callback_status = false
     jaws.collide(circle1, circle2, function(a, b) { callback_status = true }); 
@@ -128,4 +131,27 @@ test("Collision detection with callbacks", function() {
 
 })
 
+test("Collision detection with SpriteLists", function() {
+  jaws.assets.root = "assets/"
+  jaws.assets.add("rect.png")
+  jaws.assets.loadAll({onload: loaded})
+  stop();
+
+  function loaded() { 
+    var sprite1 = new jaws.Sprite({image: "rect.png", x: 0, y: 0})
+    var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
+    var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
+    var sprite_list = new jaws.SpriteList().add(sprite1, sprite2, sprite3);
+ 
+    callback_status = true
+    jaws.collideManyWithMany(sprite_list, sprite_list, function(a, b) {
+      callback_status = true
+      deepEqual(a, sprite1, "collide()")
+      deepEqual(b, sprite2, "collide()")
+    }); 
+    ok(callback_status, "collide() with spritelists callback got executed at least once")
+
+    start();
+  }
+});
 
