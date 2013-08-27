@@ -192,7 +192,9 @@ var jaws = (function(jaws) {
     });
 
     list1.forEach(function(el) {
-      overlap = jaws.collide(el, tree.retrieve(el), callback);
+      if(jaws.collide(el, tree.retrieve(el), callback)) {
+        overlap = true;
+      }
     });
 
     tree.clear();
