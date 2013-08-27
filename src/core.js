@@ -625,6 +625,7 @@ var jaws = (function(jaws) {
       }
     }
     for (var option in defaults) {
+      if( jaws.isFunction(defaults[option]) ) defaults[option] = defaults[option]();
       object[option] = (options[option] !== undefined) ? options[option] : jaws.clone(defaults[option]);
     }
   };
