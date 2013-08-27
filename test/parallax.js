@@ -2,16 +2,15 @@ module("Parallax")
 
 test ("Performance test: repeat_x=false, repeat_y=false", function() {
 	stop();
-	jaws.init()
-  jaws.assets.root = "assets/";
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded}) 
+
+  function loaded() {	
 		parallax = new jaws.Parallax({
 			repeat_x: false,
 			repeat_y: false
 		});
 		parallax.addLayer({
-			image: "rect.png",
+			image: assets.get("rect.png"),
 			damping: 1
 		});
 		
@@ -32,26 +31,24 @@ test ("Performance test: repeat_x=false, repeat_y=false", function() {
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		deepEqual(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 10000,0");
+		equal(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 10000,0");
 		
 		parallax.camera_x = 0;
 		parallax.camera_y = 10000;
 		number_of_calls = 0;
 		parallax.draw();
-		deepEqual(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 0,10000");
+		equal(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 0,10000");
 		
-		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+		start();
+	}
 });
 
 test ("Performance test: repeat_x=true, repeat_y=false", function() {
-	stop();
+  stop();
 	jaws.init();
-  jaws.assets.root = "assets/";
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded}) 
+
+  function loaded() {
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: false
@@ -87,16 +84,15 @@ test ("Performance test: repeat_x=true, repeat_y=false", function() {
 		deepEqual(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 0,10000 (no rectangles)");
 		
 		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+	}
 });
 
 test ("Performance test: repeat_x=false, repeat_y=true", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded}) 
+
+  function loaded() {
 		parallax = new jaws.Parallax({
 			repeat_x: false,
 			repeat_y: true
@@ -132,16 +128,15 @@ test ("Performance test: repeat_x=false, repeat_y=true", function() {
 		deepEqual(number_of_calls, 0, "A total of 0 Sprite.draw() calls are required for a parallax draw at 10000,0 (no rectangles)");
 		
 		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+	}
 });
 
 test("Performance test: repeat_x=true, repeat_y=true", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+
+  function loaded() {
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: true
@@ -152,7 +147,6 @@ test("Performance test: repeat_x=true, repeat_y=true", function() {
 		});
 		parallax.layers[0].setImage("rect.png");
 		var number_of_calls = 0;
-		
 		
 		parallax.layers[0]
 		parallax.layers[0]._old_draw = parallax.layers[0].draw;
@@ -192,18 +186,15 @@ test("Performance test: repeat_x=true, repeat_y=true", function() {
 		deepEqual(number_of_calls, 36, "A total of 36 Sprite.draw() calls are required for a parallax draw at 3005,3005");
 		
 		jaws.clear(); start();
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
-	
+	}
 });
 
 
 test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  function loaded() {
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: true
@@ -237,21 +228,16 @@ test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 		deepEqual(number_of_calls, 16, "A total of 16 Sprite.draw() calls are required for a parallax draw at 30,30");
 
 		jaws.clear(); start();
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+	}
 	
 });
 
-
-
-
-
 test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function() {
 	stop();
-	jaws.init()
-	jaws.assets.getOrLoad("rect19.png", function(){
-	
+	jaws.init();
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+
+  function loaded() {
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: true
@@ -262,8 +248,7 @@ test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function
 		});
 		parallax.layers[0].setImage("rect19.png");
 		var number_of_calls = 0;
-		
-		
+				
 		parallax.layers[0]
 		parallax.layers[0]._old_draw = parallax.layers[0].draw;
 		parallax.layers[0].draw = function() {
@@ -296,20 +281,14 @@ test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function
 		deepEqual(number_of_calls, 49, "A total of 49 Sprite.draw() calls are required for a parallax draw at 3818,3818");
 		
 		jaws.clear(); start();
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
-	
+	}
 });
-
-
-
 
 test ("Accuracy test: repeat_x=true, repeat_y=false", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  function loaded()	{
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: false
@@ -381,17 +360,16 @@ test ("Accuracy test: repeat_x=true, repeat_y=false", function() {
 		ok(subtest1, "All sprites' Y positions are 0                         (camera_x=10, camera_y=10)");
 		
 		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+	}
 });
 
 
 test ("Accuracy test: repeat_x=false, repeat_y=true", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
 	
+  function loaded() {
 		parallax = new jaws.Parallax({
 			repeat_x: false,
 			repeat_y: true
@@ -463,16 +441,14 @@ test ("Accuracy test: repeat_x=false, repeat_y=true", function() {
 		ok(subtest2, "All sprites' Y positions on screen are a multiple of 20 (-10)    (camera_x=10, camera_y=10)");
 		
 		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+	}
 });
 
 test ("Accuracy test: repeat_x=true, repeat_y=true", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  function loaded() {	
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: true
@@ -585,15 +561,14 @@ test ("Accuracy test: repeat_x=true, repeat_y=true", function() {
 		ok(subtest1, "A sprite is drawn at 60,60   (camera_x=1000, camera_y=1000)");
 		
 		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+	}
 });
 
 test ("Accuracy test: repeat_x=true, repeat_y=true, damping=2", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  function loaded() {
 	
 		parallax = new jaws.Parallax({
 			repeat_x: true,
@@ -705,20 +680,16 @@ test ("Accuracy test: repeat_x=true, repeat_y=true, damping=2", function() {
 			}
 		}
 		ok(subtest1, "A sprite is drawn at 60,60   (camera_x=1000, camera_y=1000)");
-		
-		
-		
+			
 		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+	}
 });
 
 test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (layer level)", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  function loaded() {	
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: false,
@@ -791,16 +762,14 @@ test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (layer level)", fu
 		ok(subtest2, "All sprites' Y positions on screen are -10                       (camera_x=10, camera_y=10)");
 		
 		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+	}
 });
 
 test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (parallax level)", function() {
 	stop();
 	jaws.init()
-	jaws.assets.getOrLoad("rect.png", function(){
-	
+  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+	function loaded() {
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: false,
@@ -873,7 +842,5 @@ test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (parallax level)",
 		ok(subtest2, "All sprites' Y positions on screen are -10                       (camera_x=10, camera_y=10)");
 		
 		jaws.clear(); start();	
-	}, function(){
-		deepEqual(true,false," Rectangle asset couldn't be loaded"); start();
-	});
+  }
 });
