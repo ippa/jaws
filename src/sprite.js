@@ -174,8 +174,17 @@ jaws.Sprite.prototype.flipTo =        function(value) { this.flipped = value; re
 jaws.Sprite.prototype.rotate =        function(value) { this.angle += value; return this }
 /** Force an rotation-angle on sprite */
 jaws.Sprite.prototype.rotateTo =      function(value) { this.angle = value; return this }
+
 /** Set x/y */
-jaws.Sprite.prototype.moveTo =        function(x,y)   { this.x = x; this.y = y; return this }
+jaws.Sprite.prototype.moveTo =        function(x, y)  {
+  if(x !== undefined && jaws.isArray(x) && y===undefined) {
+    x = x[0]
+    y = x[1]
+  }
+  this.x = x; 
+  this.y = y; 
+  return this;
+}
 /** Modify x/y */
 jaws.Sprite.prototype.move =          function(x,y)   { if(x) this.x += x;  if(y) this.y += y; return this }
 /** 
