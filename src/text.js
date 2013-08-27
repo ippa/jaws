@@ -73,8 +73,8 @@ var jaws = (function(jaws) {
     textBaseline: "alphabetic",
     text: "",
     wordWrap: false,
-    width: jaws.width,
-    height: jaws.height,
+    width: null,
+    height: null,
     shadowColor: null,
     shadowBlur: null,
     shadowOffsetX: null,
@@ -96,6 +96,9 @@ var jaws = (function(jaws) {
 
     if (this.anchor)
       this.setAnchor(this.anchor);
+      
+    this.width = options.width || jaws.width;
+    this.height = options.height || jaws.height;
 
     this.cacheOffsets();
 
