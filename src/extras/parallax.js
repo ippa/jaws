@@ -20,12 +20,11 @@ var jaws = (function(jaws) {
   jaws.Parallax = function Parallax(options) {
     if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
     jaws.parseOptions(this, options, this.default_options)
-
-    this.width = options.width || jaws.width;
-    this.height = options.height || jaws.height;  
   }
 
   jaws.Parallax.prototype.default_options = {
+    width: function() { jaws.width },
+    height: function() { jaws.height },
     scale: 1,
     repeat_x: null,
     repeat_y: null,
