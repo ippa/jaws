@@ -177,7 +177,7 @@ jaws.Sprite.prototype.rotateTo =      function(value) { this.angle = value; retu
 
 /** Set x/y */
 jaws.Sprite.prototype.moveTo =        function(x, y)  {
-  if(x !== undefined && jaws.isArray(x) && y===undefined) {
+  if(x !== undefined && y === undefined && jaws.isArray(x)) {
     x = x[0]
     y = x[1]
   }
@@ -186,7 +186,16 @@ jaws.Sprite.prototype.moveTo =        function(x, y)  {
   return this;
 }
 /** Modify x/y */
-jaws.Sprite.prototype.move =          function(x,y)   { if(x) this.x += x;  if(y) this.y += y; return this }
+jaws.Sprite.prototype.move =          function(x, y)   { 
+  if(x !== undefined && y === undefined && jaws.isArray(x)) {
+    x = x[0]
+    y = x[1]
+  }
+
+  if(x) this.x += x;  
+  if(y) this.y += y; 
+  return this 
+}
 /** 
 * scale sprite by given factor. 1=don't scale. <1 = scale down.  1>: scale up.
 * Modifies width/height. 
@@ -219,6 +228,11 @@ jaws.Sprite.prototype.setWidth  =     function(value) { this.scale_x = value/thi
 jaws.Sprite.prototype.setHeight =     function(value) { this.scale_y = value/this.image.height; return this.cacheOffsets() }
 /** Resize sprite by adding width */
 jaws.Sprite.prototype.resize =        function(width, height) { 
+  if(width !== undefined && height === undefined && jaws.isArray(width)) {
+    width = width[0]
+    height = width[1]
+  }
+
   this.scale_x = (this.width + width) / this.image.width
   this.scale_y = (this.height + height) / this.image.height
   return this.cacheOffsets()
@@ -227,6 +241,11 @@ jaws.Sprite.prototype.resize =        function(width, height) {
  * Resize sprite to exact width/height 
  */
 jaws.Sprite.prototype.resizeTo =      function(width, height) {
+  if(width !== undefined && height === undefined && jaws.isArray(width)) {
+    width = width[0]
+    height = width[1]
+  }
+
   this.scale_x = width / this.image.width
   this.scale_y = height / this.image.height
   return this.cacheOffsets()
