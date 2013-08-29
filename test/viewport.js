@@ -1,15 +1,12 @@
 module("Viewport")
-
 test("Viewport", function() {
-  jaws.init()
-  jaws.assets.root = "assets/"
-  jaws.assets.add("droid_11x15.png")
-  jaws.assets.loadAll({onload: assetsLoaded})
   stop();
+  var assets = new jaws.Assets();
+  assets.setRoot("assets/").add("droid_11x15.png").loadAll({onload: loaded})
 
-  function assetsLoaded() { 
+  function loaded()  {
     viewport = new jaws.Viewport({max_x: 1000, max_y: 1000, width: 50, height: 40})
-    sprite = new jaws.Sprite({image: "rect.png", x:30, y:40})
+    sprite = new jaws.Sprite({image: assets.get("rect.png"), x:30, y:40})
   
     equal(viewport.x, 0, "viewport.x defaults to 0")
     equal(viewport.y, 0, "viewport.y defaults to 0")
@@ -37,4 +34,3 @@ test("Viewport", function() {
     start();
   }
 })
-
