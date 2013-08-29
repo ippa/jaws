@@ -32,10 +32,9 @@ test("audio assets", function() {
   function loaded() {
     if(is_ie) {
       ok( !assets.can_play["ogg"], "ie doesn't support ogg")
-      ok( !assets.get("tones.ogg"), "ie didn't getch tones.ogg")
+      ok( !assets.get("tones.ogg"), "ie didn't fetch tones.ogg")
     }
     if(is_chrome) {
-      alert("chrome")
       ok( assets.can_play["ogg"], "chrome supports ogg")
       ok( assets.can_play["mp3"], "chrome supports ogg")
       ok( assets.get("tones.ogg"), "chrome fetched tones.ogg");
@@ -43,7 +42,6 @@ test("audio assets", function() {
       ok( !assets.get("tones.flac"), "chrome didn't fetch tones.flac");
     }
     if(is_ff) {
-      alert("ff")
       ok( assets.get("tones.ogg"), "ff fetched tones.ogg");
       ok( assets.get("tones.wav"), "ff fetched tones.wav");
     }
