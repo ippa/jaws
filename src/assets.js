@@ -289,7 +289,8 @@ var jaws = (function(jaws) {
           jaws.log.error("Cannot load Image resource " + resolved_src +
                   " (Message: " + e.message + ", Name: " + e.name + ")");
         }
-      } else if (self.can_play[self.getPostfix(asset.src)]) {
+      } 
+      else if (self.can_play[self.getPostfix(asset.src)]) {
         if (type === "audio") {
           try {
             asset.audio = new Audio();
@@ -303,7 +304,8 @@ var jaws = (function(jaws) {
             jaws.log.error("Cannot load Audio resource " + resolved_src +
                     " (Message: " + e.message + ", Name: " + e.name + ")");
           }
-        } else if (type === "video") {
+        } 
+      else if (type === "video") {
           try {
             asset.video = document.createElement('video');
             asset.video.asset = asset;
@@ -319,7 +321,16 @@ var jaws = (function(jaws) {
                     " (Message: " + e.message + ", Name: " + e.name + ")");
           }
         }
-      } else {
+      }
+      
+      //Load everything else as raw blobs...
+      else {
+        // ... But don't load un-supported audio-files.
+        if(type === "audio" && !self.can_play[self.getPostfix(asset.src)]) {
+          assetSkipped(asset);
+          return self;
+        }
+
         try {
           var req = new XMLHttpRequest();
           req.asset = asset;
@@ -388,6 +399,19 @@ var jaws = (function(jaws) {
       self.loaded[src] = true;
       self.loading[src] = false;
 
+      processCallbacks(asset, true, event);
+    }
+    
+    /** 
+     * Called when jaws asset-handler decides that an asset shouldn't be loaded
+     * For example, an unsupported audio-format won't be loaded.
+     *
+     * @private
+    */
+    function assetSkipped(asset) {
+      self.loaded[asset.src] = true;
+      self.loading[asset.src] = false;
+      self.load_count++;
       processCallbacks(asset, true, event);
     }
 
