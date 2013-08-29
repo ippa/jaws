@@ -41,18 +41,16 @@ test("Sprite defaults", function() {
 });
 
 test("Sprite without image", function() {
-  stop();
   sprite = new jaws.Sprite({x:0, y:0})
   equal(sprite.image, null, "has no image")
   equal(sprite.width, undefined, "has no width")
   equal(sprite.height, undefined, "has no width")
-
-  jaws.assets.root = "assets/"
-  jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onload: assetsLoaded})
+ 
+  stop();
+  var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: assetsLoaded})
 
   function assetsLoaded() {
-    sprite.setImage("rect.png");
+    sprite.setImage( assets.get("rect.png") );
     equal(sprite.width, 20, "gets width after setImage()");
     equal(sprite.height, 20, "gets height after setImage()");
     start();
@@ -61,8 +59,7 @@ test("Sprite without image", function() {
 
 test("Sprite", function() {
   stop();
-  var assets = new jaws.Assets();
-  assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded});
+  var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded});
 
   function loaded() {
     sprite = new jaws.Sprite({image: assets.get("rect.png"), x:0, y:0});
@@ -121,9 +118,10 @@ test("Sprite", function() {
     sprite.flip();
     equal(sprite.flipped, flipped, "sprite.flip inverts flipped");
 
-    sprite2 = new jaws.Sprite({image: "rect.png", scale_image: 2});
+    sprite2 = new jaws.Sprite({image: assets.get("rect.png"), scale_image: 2});
     equal(sprite2.width, 40, "Sprite({scale_image: 2}) and sprite.width");
     equal(sprite2.height, 40, "Sprite({scale_image: 2}) and sprite.height");
+  
     start();
   }
 })
@@ -131,7 +129,7 @@ test("Sprite", function() {
 test ("Add layer to parallax", function() {
   var parallax1 = new jaws.Parallax({
     repeat_x: true,
-      repeat_y: false
+    repeat_y: false
   });
   parallax1.addLayer({
     image: "rect.png",
@@ -144,7 +142,7 @@ test ("Add layer to parallax", function() {
 
   var parallax2 = new jaws.Parallax({
     repeat_x: true,
-      repeat_y: false
+    repeat_y: false
   });
   parallax2.addLayer({
     image: "rect.png",
