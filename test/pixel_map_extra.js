@@ -1,11 +1,11 @@
 module("PixeleMap");
 
 test("PixelMap basics", function () {
-  jaws.assets.setRoot("assets/").add("droid_11x15.png").loadAll({onload: loaded});
   stop();
+  var assets = new jaws.Assets().setRoot("assets/").add("droid_11x15.png").loadAll({onload: loaded});
 
   function loaded() {
-    var pixel_map = new jaws.PixelMap({image: "droid_11x15.png"})  ;
+    var pixel_map = new jaws.PixelMap({image: assets.get("droid_11x15.png") });
     equal( pixel_map.at(0,0)[3], 0, "transparency at 0/0");
     equal( pixel_map.at(5,5)[3], 255, "non-transparency at 5/5");
     deepEqual( pixel_map.at(5,5), [188,188,188,255], "grey without tranperency");
@@ -20,11 +20,11 @@ test("PixelMap basics", function () {
 });
 
 test("PixelMap vs Rect", function () {
-  jaws.assets.setRoot("assets/").add("block_10x10.bmp").loadAll({onload: loaded});
   stop();
+  var assets = new jaws.Assets().setRoot("assets/").add("block_10x10.bmp").loadAll({onload: loaded});
 
   function loaded() {
-    var pixel_map = new jaws.PixelMap({image: "block_10x10.bmp"})  ;
+    var pixel_map = new jaws.PixelMap({image: assets.get("block_10x10.bmp")}) ;
 
     deepEqual( pixel_map.at(0,0), [0,0,0,0], "'black' transparency @ 0/0");
     deepEqual( pixel_map.at(9,9), [0,0,0,255], "black @ 10/10");
