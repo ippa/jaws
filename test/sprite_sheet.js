@@ -1,13 +1,12 @@
 module("Sprite Sheet")
 
 test("SpriteSheet", function() {
-  jaws.assets.root = "assets/"
-  jaws.assets.add("droid_11x15.png")
-  jaws.assets.loadAll({onload: assetsLoaded})
   stop();
+  var assets = new jaws.Assets();
+  assets.setRoot("assets/").add("droid_11x15.png").loadAll({onload: assetsLoaded})
 
   function assetsLoaded() {
-    sprite_sheet = new jaws.SpriteSheet( {image: "droid_11x15.png", frame_size: [11,15]} )
+    sprite_sheet = new jaws.SpriteSheet( {image: assets.get("droid_11x15.png"), frame_size: [11,15]} )
   
     ok(jaws.assets.get("droid_11x15.png"), "asset available")
     ok(jaws.isDrawable(jaws.assets.get("droid_11x15.png")), "isDrawable")

@@ -10,18 +10,18 @@ test("Empty Sprite List", function() {
 })
 
 test("Load Objects", function() {
-  jaws.assets.root = "assets/"
-  jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onload: assetsLoaded})
   stop();
+  var assets = new jaws.Assets();
+  assets.setRoot("assets/").add("rect.png").loadAll({onload: assetsLoaded})
 
   function assetsLoaded() {
+    var image = assets.get("rect.png")
     var sprite_list = new jaws.SpriteList()
-    var sprite_one = new jaws.Sprite({image: "rect.png"})
-    sprite_one.setImage("rect.png")
+    var sprite_one = new jaws.Sprite({image: image})
+    sprite_one.setImage(image)
     sprite_one.x = 10
-    var sprite_two = new jaws.Sprite({image: "rect.png"})
-    sprite_two.setImage("rect.png")
+    var sprite_two = new jaws.Sprite({image: image})
+    sprite_two.setImage(image)
     sprite_two.x = 20
     
     ok(sprite_one.width, 'sprite_one should have a width, after calling setImage()')
