@@ -25,7 +25,7 @@ test ("Performance test: repeat_x=false, repeat_y=false", function() {
 		parallax.camera_y = 0;
 		number_of_calls = 0;
 		parallax.draw();
-		deepEqual(number_of_calls, 1, "A total of 1 Sprite.draw() calls are required for a parallax draw at 0,0");
+		equal(number_of_calls, 1, "A total of 1 Sprite.draw() calls are required for a parallax draw at 0,0");
 		
 		parallax.camera_x = 10000;
 		parallax.camera_y = 0;
@@ -132,8 +132,7 @@ test ("Performance test: repeat_x=false, repeat_y=true", function() {
 
 test("Performance test: repeat_x=true, repeat_y=true", function() {
 	stop();
-	jaws.init()
-  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded})
 
   function loaded() {
 		parallax = new jaws.Parallax({
@@ -141,10 +140,10 @@ test("Performance test: repeat_x=true, repeat_y=true", function() {
 			repeat_y: true
 		});
 		parallax.addLayer({
-			image: "rect.png",
+			image: assets.get("rect.png"),
 			damping: 1
 		});
-		parallax.layers[0].setImage("rect.png");
+		parallax.layers[0].setImage( assets.get("rect.png") );
 		var number_of_calls = 0;
 		
 		parallax.layers[0]
@@ -191,19 +190,19 @@ test("Performance test: repeat_x=true, repeat_y=true", function() {
 
 test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 	stop();
-	jaws.init()
-  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  var assets = new Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+
   function loaded() {
 		parallax = new jaws.Parallax({
 			repeat_x: true,
 			repeat_y: true
 		});
 		parallax.addLayer({
-			image: "rect.png",
+			image: assets.get("rect.png"),
 			damping: 1,
 			scale: 2
 		});
-		parallax.layers[0].setImage("rect.png");
+		parallax.layers[0].setImage( assets.get("rect.png") );
 		var number_of_calls = 0;
 		
 		
@@ -233,8 +232,7 @@ test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 
 test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function() {
 	stop();
-	jaws.init();
-  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  var assets = new jaws.Assets().setRoot("assets/").add("rect19.png").loadAll({onload: loaded})
 
   function loaded() {
 		parallax = new jaws.Parallax({
@@ -242,10 +240,10 @@ test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function
 			repeat_y: true
 		});
 		parallax.addLayer({
-			image: "rect19.png",
+			image: assets.get("rect19.png"),
 			damping: 1
 		});
-		parallax.layers[0].setImage("rect19.png");
+		parallax.layers[0].setImage( assets.get("rect19.png") );
 		var number_of_calls = 0;
 				
 		parallax.layers[0]
