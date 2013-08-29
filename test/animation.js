@@ -1,13 +1,12 @@
 module("Animation")
 
 test("Animation", function() {
-  jaws.assets.root = "assets/"
-  jaws.assets.add("droid_11x15.png")
-  jaws.assets.loadAll({onload: assetsLoaded})
   stop()
 
+  var assets = jaws.Assets().setRoot("assets/").add("droid_11x15.png").loadAll({onload: assetsLoaded})
+
   function assetsLoaded() {
-    sprite_sheet = new jaws.SpriteSheet( {image: "droid_11x15.png", frame_size: [11,15]} )
+    sprite_sheet = new jaws.SpriteSheet( {image: assets.get("droid_11x15.png"), frame_size: [11,15]} )
     animation = new jaws.Animation({frames: sprite_sheet.frames})
     animation2 = animation.slice(0,5) 
     animation3 = animation.slice(0,2) 
@@ -29,7 +28,7 @@ test("Animation", function() {
     var ticks = 0;
     while(animation3.index == 0 && ticks <= animation3.frame_duration) { 
       animation3.next(); 
-      ticks = (new Date()).getTime() - start_tick;
+      ticks = (new Date()).getTime() - start_tick - 1;
     }
     equal(animation3.index, animation3.frames.length-1, "reverse direction animations loop from index=0 to index=" + (animation3.frames.length -1))
 
