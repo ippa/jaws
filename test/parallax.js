@@ -45,8 +45,7 @@ test ("Performance test: repeat_x=false, repeat_y=false", function() {
 
 test ("Performance test: repeat_x=true, repeat_y=false", function() {
   stop();
-	jaws.init();
-  jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded}) 
+  var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded}) 
 
   function loaded() {
 		parallax = new jaws.Parallax({
@@ -54,7 +53,7 @@ test ("Performance test: repeat_x=true, repeat_y=false", function() {
 			repeat_y: false
 		});
 		parallax.addLayer({
-			image: "rect.png",
+			image: assets.get("rect.png"),
 			damping: 1
 		});
 		
