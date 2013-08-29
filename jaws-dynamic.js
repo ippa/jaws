@@ -24,12 +24,12 @@
         root+"collision_detection.js",
         root+"gfx.js",
         root+"text.js",
-        root+"extras/sprite_list.js",
-        root+"extras/parallax.js",
-        root+"extras/tile_map.js",
-        root+"extras/quadtree.js",
+        root+"parallax.js",
+        root+"tile_map.js",
+        root+"quadtree.js",
+        root+"pixel_map.js",
         root+"extras/tile_map_pathfinding.js",
-        root+"extras/pixel_map.js",
+        root+"extras/sprite_list.js",
         root+"extras/audio.js"
         )
   .thenRun(function () {

@@ -3,18 +3,21 @@
 #
 # Build a standalone, all-including jaws.js by combining all the files in src/-directory into one
 #
-files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_sheet.js","animation.js","viewport.js","collision_detection.js", "gfx.js"]
-extras = ["audio.js", "quadtree.js", "parallax.js", "pixel_map.js", "sprite_list.js", "tile_map.js", "tile_map_pathfinding.js"]
+#files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_sheet.js","animation.js","viewport.js","collision_detection.js","parallax.js","tile_map.js","quadtree.js", "gfx.js"]
+#extras = ["audio.js", "quadtree.js", "pixel_map.js", "sprite_list.js", "tile_map_pathfinding.js"]
+
+files = Dir['src/*'].select { |f| !File.directory?(f) }
+extras = Dir['src/extras/*'].select { |f| !File.directory?(f) }
 
 File.open("jaws.js", "w") do |out|
   out.write("/* Built at #{Time.now.to_s} */\n")
-  files.each { |file| out.write( File.read("src/#{file}") ) }
+  files.each { |file| out.write( File.read(file) ) }
   out.write(";window.addEventListener(\"load\", function() { if(jaws.onload) jaws.onload(); }, false);")
 end
 
 File.open("extras.js", "w") do |out|
   out.write("/* Built at #{Time.now.to_s} */\n")
-  extras.each { |file| out.write( File.read("src/extras/#{file}") ) }
+  extras.each { |file| out.write( File.read(file) ) }
 end
 
 
