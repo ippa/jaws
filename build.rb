@@ -3,9 +3,6 @@
 #
 # Build a standalone, all-including jaws.js by combining all the files in src/-directory into one
 #
-#files = ["core.js","input.js","assets.js","game_loop.js","rect.js","sprite.js","sprite_sheet.js","animation.js","viewport.js","collision_detection.js","parallax.js","tile_map.js","quadtree.js", "gfx.js"]
-#extras = ["audio.js", "quadtree.js", "pixel_map.js", "sprite_list.js", "tile_map_pathfinding.js"]
-
 files = Dir['src/*'].select { |f| !File.directory?(f) }
 extras = Dir['src/extras/*'].select { |f| !File.directory?(f) }
 
@@ -54,6 +51,6 @@ if ARGV.first != "nodoc"
   # Generate documentation into http://jawsjs.com/docs/
   # -a documents All functions
   # 
-  `jsdoc -D='noGlobal:true' -D='title:JawsJS HTML5 game engine documentation' -t=/www/ippa/jawsjs.com/public/codeview -d=/www/ippa/jawsjs.com/public/docs src src/extras`
+  `jsdoc -D='noGlobal:true' -D='title:JawsJS HTML5 game engine documentation' -t=/www/ippa/jawsjs.com/public/codeview -d=/www/ippa/jawsjs.com/public/docs src`
   `cd /www/ippa/jawsjs.com/public/docs; zip jaws-docs.zip -x jaws-docs.zip -r .`
 end
