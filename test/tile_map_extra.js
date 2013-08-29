@@ -20,19 +20,18 @@ test("TileMap findPath usage", function () {
   ok( ( path_one[last].x === end_position[0] &&
       path_one[last].y === end_position[1]   ), "The last node in path should be the end_position")
 
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:32}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:0, y:32}))
 
   var path_two = tile_map.findPath(start_position, end_position)
   ok(path_two.length > path_one.length, "Wall added should force new path to be longer than first path")
 
   var wall_in_path = false
-  for(var i=0 ; i<path_two.length ; i++)
-  {
+  for(var i=0 ; i<path_two.length ; i++) {
     if (path_two[i].x === 0 && path_two[i].y === 32) { wall_in_path = true; }
   }
-ok(!wall_in_path, "The wall added to tile_map should not appear in the path")
+  ok(!wall_in_path, "The wall added to tile_map should not appear in the path")
 
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:32, y:0}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:32, y:0}))
   var path_four = tile_map.findPath(start_position, end_position)
   deepEqual(path_four, [], "Path should now be empty because there is no path to end_position from start_position")
 })
@@ -46,11 +45,11 @@ test("TileMap findPath - inverted usage", function () {
   var path_one = tile_map.findPath(start_position, end_position, true)
   deepEqual(path_one, [], "No path should be found as the tile_map is empty")
 
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:0}))
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:32, y:0}))
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:32, y:32}))
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:32, y:64}))
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:64}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:0, y:0}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:32, y:0}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:32, y:32}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:32, y:64}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:0, y:64}))
 
   var path_two = tile_map.findPath(start_position, end_position, true)
 
@@ -65,7 +64,7 @@ test("TileMap lineOfSight", function () {
 
   ok(tile_map.lineOfSight(start_position, end_position), "No tiles, end_position is visible from start_position")
 
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:32}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:0, y:32}))
 
   ok(!tile_map.lineOfSight(start_position, end_position), "tiles added, end_position is NOT visible from start_position")
 
@@ -79,9 +78,9 @@ test("TileMap lineOfSight - inverted", function () {
 
   ok(!tile_map.lineOfSight(start_position, end_position, true), "No tiles, end_position is NOT visible from start_position")
 
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:0}))
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:32}))
-  tile_map.push(new jaws.Sprite({image: "rect.png", x:0, y:64}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:0, y:0}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:0, y:32}))
+  tile_map.push(new jaws.Sprite({width: 20, height: 20, color: "white", x:0, y:64}))
 
   ok(tile_map.lineOfSight(start_position, end_position, true), "end_position visible 'along' tiles added from start to finish")
 })
