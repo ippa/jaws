@@ -412,7 +412,7 @@ var jaws = (function(jaws) {
       self.loaded[asset.src] = true;
       self.loading[asset.src] = false;
       self.load_count++;
-      processCallbacks(asset, true, event);
+      processCallbacks(asset, true);
     }
 
     /**
@@ -439,21 +439,20 @@ var jaws = (function(jaws) {
       var percent = parseInt((self.load_count + self.error_count) / self.src_list.length * 100);
 
       if (ok) {
-        if (self.onprogress)
+        if(self.onprogress)
           self.onprogress(asset.src, percent);
-        if (asset.onprogress)
+        if(asset.onprogress && event !== undefined)
           asset.onprogress(event);
       }
       else {
-        if (self.onerror)
+        if(self.onerror)
           self.onerror(asset.src, percent);
-        if (asset.onerror)
+        if(asset.onerror && event !== undefined)
           asset.onerror(event);
       }
 
       if (percent === 100) {
-        if (self.onload)  
-          self.onload();
+        if(self.onload) self.onload();
 
         self.onprogress = null;
         self.onerror = null;
