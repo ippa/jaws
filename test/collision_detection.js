@@ -1,23 +1,17 @@
 module("Collision Detection")
 
 test("collision detection", function() {
-  jaws.assets.root = "assets/"
-  jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onload: assetsloaded})
   stop();
+  var assets = new jaws.Assets();
+  assets.setRoot("assets/").add("rect.png").loadAll({onload: assetsloaded})
 
-  function assetsloaded() { 
-    var sprite1 = new jaws.Sprite({image: "rect.png", x: 0, y: 0})
-    var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
-    var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
+  function assetsloaded() {
+    var image = assets.get("rect.png")
+    var sprite1 = new jaws.Sprite({image: image, x: 0, y: 0})
+    var sprite2 = new jaws.Sprite({image: image, x: 10, y: 10})
+    var sprite3 = new jaws.Sprite({image: image, x: 60, y: 60})
     var sprites = [sprite1, sprite2, sprite3]
-  
-    // TODO: why are these needed?
-    sprite1.setImage("rect.png")
-    sprite2.setImage("rect.png")
-    sprite3.setImage("rect.png")
-    // alert(sprite1.rect())
-  
+   
     var circle1 = { x: 0, y: 0, radius: 5 }
     var circle2 = { x: 2, y: 2, radius: 5 }
     var circle3 = { x: 10, y: 10, radius: 5 }
@@ -45,30 +39,29 @@ test("collision detection", function() {
     deepEqual( jaws.collideOneWithMany(sprite1, sprite_list), [sprite2], "collideOneWithMany sprite_list rect")
     deepEqual( jaws.collideManyWithMany(sprite_list, sprite_list), [[sprite1, sprite2]], "collideManyWithMany sprite_list rect")
     
-    /* Deprecated API */
-    /*
-    deepEqual( jaws.collide(circle1, circle3), [], "[] when no collides" )
-    deepEqual( jaws.collide(circle1, circle2), [circle1, circle2], "array with colliding pair when colliding" )
-    deepEqual( jaws.collide(circle1, circles), [[circle2, circle1]], "array of array with colliding pairs when colliding" )
-    deepEqual( jaws.collide(circles, circles), [[circle2, circle1]], "array of array when colliding lists with eachother" )
-    deepEqual( jaws.collide(sprite1, sprite2), [sprite1, sprite2], "collide(sprite1, sprite2)" )
-    deepEqual( jaws.collide(sprites, sprites), [[sprite2, sprite1]], "array of array when colliding lists with eachother" )
-    console.log( jaws.collide(circle1, circles) ) 
-    */
+    ok( !jaws.collide(circle1, circle3), "false when no collisions" )
+    ok( jaws.collide(circles, circles), "true if any collisions" )
+    ok( jaws.collide(sprite1, sprite2), "true if any collisions" )
+    ok( jaws.collide(sprites, sprites), "true if any collisions" )
+
+    // TODO: revisit these two tests:
+    //ok( jaws.collide(circle1, circle2), "true if any collisions" )
+    //ok( jaws.collide(circle1, circles), "true if any collisions" )
+
     start();
   }
 })
 
 test("Collision detection with callbacks", function() {
-  jaws.assets.root = "assets/"
-  jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onload: assetsloaded})
   stop();
+  var assets = new jaws.Assets();
+  assets.setRoot("assets/").add("rect.png").loadAll({onload: assetsloaded})
 
   function assetsloaded() { 
-    var sprite1 = new jaws.Sprite({image: "rect.png", x: 0, y: 0})
-    var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
-    var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
+    var image = assets.get("rect.png")
+    var sprite1 = new jaws.Sprite({image: image, x: 0, y: 0})
+    var sprite2 = new jaws.Sprite({image: image, x: 10, y: 10})
+    var sprite3 = new jaws.Sprite({image: image, x: 60, y: 60})
     var sprites = [sprite1, sprite2, sprite3]
     var sprite_list = new jaws.SpriteList()
     sprite_list.push([sprite1, sprite2, sprite3]);
@@ -77,9 +70,6 @@ test("Collision detection with callbacks", function() {
     var circle2 = { x: 2, y: 2, radius: 5 }
     var circle3 = { x: 10, y: 10, radius: 5 }
     var circles = [circle1, circle2, circle3] 
-    sprite1.setImage("rect.png")
-    sprite2.setImage("rect.png")
-    sprite3.setImage("rect.png")
 
     var callback_status = false
     jaws.collideOneWithMany(sprite1, sprites, function(a, b) {
@@ -132,15 +122,15 @@ test("Collision detection with callbacks", function() {
 })
 
 test("Collision detection with SpriteLists", function() {
-  jaws.assets.root = "assets/"
-  jaws.assets.add("rect.png")
-  jaws.assets.loadAll({onload: loaded})
   stop();
+  var assets = new jaws.Assets();
+  assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
 
   function loaded() { 
-    var sprite1 = new jaws.Sprite({image: "rect.png", x: 0, y: 0})
-    var sprite2 = new jaws.Sprite({image: "rect.png", x: 10, y: 10})
-    var sprite3 = new jaws.Sprite({image: "rect.png", x: 60, y: 60})
+    var image = assets.get("rect.png")
+    var sprite1 = new jaws.Sprite({image: image, x: 0, y: 0})
+    var sprite2 = new jaws.Sprite({image: image, x: 10, y: 10})
+    var sprite3 = new jaws.Sprite({image: image, x: 60, y: 60})
     var sprite_list = new jaws.SpriteList().add(sprite1, sprite2, sprite3);
  
     callback_status = true
