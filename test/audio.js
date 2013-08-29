@@ -2,16 +2,17 @@ module("Audio");
 
 test("Audio defaults", function() {
   var audio = new jaws.Audio({});
-  deepEqual(audio.audio, null, "audio defaults to null");
-  deepEqual(audio.autoplay, false, "autoplay defaults to false");
-  deepEqual(audio.loop, false, "loop defaults to false");
-  deepEqual(audio.volume, 0, "volume defaults to 0");
-  deepEqual(audio.onend, null, "onend defaults to null");
-  deepEqual(audio.onplay, null, "onplay defaults to null");
-  deepEqual(audio.onpause, null, "onpause defaults to null");
+  equal(audio.audio, null, "audio defaults to null");
+  equal(audio.autoplay, false, "autoplay defaults to false");
+  equal(audio.loop, false, "loop defaults to false");
+  equal(audio.volume, 0, "volume defaults to 0");
+  equal(audio.onend, null, "onend defaults to null");
+  equal(audio.onplay, null, "onplay defaults to null");
+  equal(audio.onpause, null, "onpause defaults to null");
 });
 
 test("Audio", function() {
+  stop();
   jaws.assets.root = "assets/";
   jaws.assets.add("tones.aac");
   jaws.assets.add("tones.flac");
@@ -20,7 +21,6 @@ test("Audio", function() {
   jaws.assets.add("tones.ogg");
   jaws.assets.add("tones.wav");
   jaws.assets.loadAll({onload: assetsLoaded});
-  stop();
 
   function assetsLoaded() {
 
@@ -57,6 +57,5 @@ test("Audio", function() {
     }
 
     start();
-
   }
 });
