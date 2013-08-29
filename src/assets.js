@@ -295,7 +295,7 @@ var jaws = (function(jaws) {
             asset.audio = new Audio();
             asset.audio.asset = asset;
             asset.audio.addEventListener('error', assetError);
-            asset.audio.addEventListener('canplay', assetLoaded);
+            asset.audio.addEventListener('canplay', assetLoaded); // NOTE: assetLoaded can be called several times during loading.
             self.data[asset.src] = asset.audio;
             asset.audio.src = resolved_src;
             asset.audio.load();
@@ -350,9 +350,6 @@ var jaws = (function(jaws) {
       var src = asset.src;
       var filetype = getType(asset.src);
       
-      self.loaded[src] = true;
-      self.loading[src] = false;
-
       try {
         if (filetype === "json") {
           if (this.readyState !== 4) {
@@ -380,7 +377,17 @@ var jaws = (function(jaws) {
                   " (Message: " + e.message + ", Name: " + e.name + ")");
         self.data[asset.src] = null;
       }
-      self.load_count++;
+
+      /*
+      * Only increment load_count ONCE per unique asset.
+      * This is needed cause assetLoaded-callback can in certain cases be called several for a single asset...
+      * ..and not only Once when it's loaded.
+      */
+      if( !self.loaded[src]) self.load_count++;
+
+      self.loaded[src] = true;
+      self.loading[src] = false;
+
       processCallbacks(asset, true, event);
     }
 
