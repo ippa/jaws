@@ -13,6 +13,18 @@ test("Sprite stepToWhile", function() {
   equal(sprite.y, 11, "sprite stepped to y=10");
 });
 
+test("Sprite moveTo", function() {
+  var sprite = new jaws.Sprite({x: 0, y: 0, color: "white"});
+
+  sprite.moveTo(10, 10)
+  equal(sprite.x, 10, "moveTo with normal arguments");
+  equal(sprite.y, 10, "moveTo with normal arguments");
+
+  sprite.moveTo([20, 20])
+  equal(sprite.x, 20, "moveTo with array-arg");
+  equal(sprite.y, 20, "moveTo with array-arg");
+
+});
 
 test("Sprite without pre-loaded image", function() {
   /* We might get a race-condition in these tests */
