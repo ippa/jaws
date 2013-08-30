@@ -195,7 +195,27 @@ var jaws = (function(jaws) {
     /* Find <title> tag */
     title = document.getElementsByTagName('title')[0];
     jaws.url_parameters = jaws.getUrlParameters();
-    
+
+    jaws.canvas = document.getElementsByTagName('canvas')[0];
+    if (!jaws.canvas) {
+      jaws.dom = document.getElementById("canvas");
+    }
+
+    // Ordinary <canvas>, get context
+    if (jaws.canvas) {
+      jaws.context = jaws.canvas.getContext('2d');
+    } 
+    else if (jaws.dom) {
+      jaws.dom.style.position = "relative";
+    } 
+    else {
+      jaws.canvas = document.createElement("canvas");
+      jaws.canvas.width = options.width;
+      jaws.canvas.height = options.height;
+      jaws.context = jaws.canvas.getContext('2d');
+      document.body.appendChild(jaws.canvas);
+    }
+
     /*
      * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
      * jaws.log(message) will use this div for debug/info output to the gamer or developer
@@ -211,27 +231,10 @@ var jaws = (function(jaws) {
       }
     }
 
+
     if(jaws.url_parameters["bust_cache"]) {
       jaws.log.info("Busting cache when loading assets")
       jaws.assets.bust_cache = true;
-    }
-
-    jaws.canvas = document.getElementsByTagName('canvas')[0];
-    if (!jaws.canvas) {
-      jaws.dom = document.getElementById("canvas");
-    }
-
-    // Ordinary <canvas>, get context
-    if (jaws.canvas) {
-      jaws.context = jaws.canvas.getContext('2d');
-    } else if (jaws.dom) {
-      jaws.dom.style.position = "relative";
-    } else {
-      jaws.canvas = document.createElement("canvas");
-      jaws.canvas.width = options.width;
-      jaws.canvas.height = options.height;
-      jaws.context = jaws.canvas.getContext('2d');
-      document.body.appendChild(jaws.canvas);
     }
 
     /* Let's scale sprites retro-style by default */
@@ -318,6 +321,7 @@ var jaws = (function(jaws) {
       options.width = 500;
     if (!options.height)
       options.height = 300;
+    
     jaws.init(options);
 
     if (options.loading_screen) {
