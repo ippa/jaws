@@ -50,8 +50,8 @@ test("Audio", function() {
       audio3.unmute();
       equal(audio3.audio.mute, false, "The audio was unmuted");
 
-      audio3.seekTo(0.1);
-      equal(audio3.audio.currentTime, 0.1, "The currentTime was moved to 0.1");
+      audio3.seekTo(1.0);
+      equal(audio3.audio.currentTime, 1.0, "The currentTime was moved to 1.0");
     } else {
       equal(audio.audio, null, "No audio was loaded");
     }
