@@ -27,10 +27,12 @@ test("QuadTree collide spritelists", function() {
   var s1 = new jaws.Sprite({color: "white", width: 10, height: 10, x: 0, y: 0});
   var s2 = new jaws.Sprite({color: "white", width: 10, height: 10, x: 0, y: 0});
   var s3 = new jaws.Sprite({color: "white", width: 10, height: 10, x: 40, y: 40});
-  var sprites = new jaws.SpriteList();
+  var sprites = [];
+  var sprites2 = [];
   sprites.push(s1);
   sprites.push(s2);
   sprites.push(s3);
+  sprites2.push(s2);
 
   var collided = false;
   tree.collide(s1, sprites, function(a, b) {
@@ -41,8 +43,7 @@ test("QuadTree collide spritelists", function() {
   deepEqual(collided, true, "tree.collide(sprite, list) callback got executed");
 
   var collided = false;
-  tree.collide(sprites, sprites, function(a, b) {
-    // console.log(a.toString() + " <-> " + b.toString())
+  tree.collide(sprites, sprites2, function(a, b) {
     collided = true;
     deepEqual(s1, a, "tree.collide(list, list)");
     deepEqual(s2, b, "tree.collide(list, list)");
