@@ -9,14 +9,31 @@ var jaws = (function(jaws) {
 jaws.PixelMap = function PixelMap(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
-  /* Internally we use a sprite, gives us image-argument, image_scaling and so on */
-  this.sprite = new jaws.Sprite(options);
+  this.options = options
+  if(options.image) {
+    this.setContext(options.image);
+
+    if(options.scale_image) {
+      this.setContext(  jaws.gfx.retroScaleImage(this.context.canvas, options.scale_image) )
+    }
+
+    this.width = this.context.canvas.width;
+    this.height = this.context.canvas.height;
+  }
+  else { console.log.warn("PixelMap needs an image to work with") }
+  
   this.named_colors = [];
-  this.context = this.sprite.asCanvasContext();
   this.update();
 }
 
-
+/*
+* Initiates a drawable context from given image.
+* @private
+*/
+jaws.PixelMap.prototype.setContext = function(image) {
+  var image = jaws.isDrawable(image) ? image : jaws.assets.get(image)
+  this.context = jaws.imageToCanvasContext(image)
+} 
 
 /**
 * Updates internal datastructure from the canvas. If we modify the 'terrain' we'll need to call this again.
@@ -25,9 +42,10 @@ jaws.PixelMap = function PixelMap(options) {
 jaws.PixelMap.prototype.update = function(x, y, width, height) {
   if(x === undefined) x = 0;
   if(y === undefined) y = 0;
-  if(width === undefined)   width = this.sprite.width;
-  if(height === undefined)  height = this.sprite.height;
-  
+  if(width === undefined)   width = this.width;
+  if(height === undefined)  height = this.height;
+ 
+  console.log("getImageData", x, " ", y, " - ", width, " ", height);
   // No arguments? Read whole canvas, replace this.data
   if(arguments.length == 0) {
     this.data = this.context.getImageData(x, y, width, height).data
@@ -46,7 +64,9 @@ jaws.PixelMap.prototype.update = function(x, y, width, height) {
 * Draws pixelsmaps image like a sprite
 */ 
 jaws.PixelMap.prototype.draw = function() {
-  this.sprite.draw();
+  //jaws.context.drawImage(jaws.assets.get(this.options.image), 0, 0, this.width, this.height)
+  jaws.context.drawImage(this.context.canvas, 0, 0, this.width, this.height)
+  //this.sprite.draw();
 }
 
 
@@ -76,7 +96,7 @@ jaws.PixelMap.prototype.at = function(x, y) {
   y = parseInt(y)
   if(y < 0) y = 0;
 
-  var start = (y * this.sprite.width * 4) + (x*4);
+  var start = (y * this.width * 4) + (x*4);
   var R = this.data[start];
   var G = this.data[start + 1];
   var B = this.data[start + 2];
