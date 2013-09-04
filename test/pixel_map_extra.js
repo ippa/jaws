@@ -44,6 +44,24 @@ test("PixelMap vs Rect", function () {
   }
 })
 
+test("PixelMap pixel perfect", function () {
+  stop();
+  var assets = new jaws.Assets().setRoot("assets/").add("chess_2x2.bmp").loadAll({onload: loaded});
+
+  function loaded() {
+    var pixel_map = new jaws.PixelMap({image: assets.get("chess_2x2.bmp")}) ;
+    pixel_map.nameColor("black", [0,0,0,255]);
+    pixel_map.nameColor("white", [255,255,255,255]);
+ 
+    equal( pixel_map.namedColorAt(0, 0), "black", "black @ 0/0")
+    equal( pixel_map.namedColorAt(1, 1), "black", "black @ 1/1")
+    equal( pixel_map.namedColorAt(1, 0), "white", "white @ 1/0")
+    equal( pixel_map.namedColorAt(0, 1), "white", "white @ 0/1")
+
+    start();
+  }
+})
+
 /*
 test("PixelMap trace methods", function () {
   jaws.assets.setRoot("assets/").add("block_10x10.bmp").loadAll({onload: loaded});
