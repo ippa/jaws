@@ -30,17 +30,7 @@ jaws.Sprite = function Sprite(options) {
   if(options.context) { 
     this.context = options.context
   }
-  else if(options.dom) {  // No canvas context? Switch to DOM-based spritemode
-    this.dom = options.dom
-    this.createDiv() 
-  }
-  if(!options.context && !options.dom) {                  // Defaults to jaws.context or jaws.dom
-    if(jaws.context)  this.context = jaws.context;
-    else {
-      this.dom = jaws.dom;
-      this.createDiv() 
-    }
-  }
+  if(jaws.context)  this.context = jaws.context;
 }
 
 jaws.Sprite.prototype.default_options = {
@@ -63,7 +53,6 @@ jaws.Sprite.prototype.default_options = {
   width: null,
   height: null,
   _constructor: null,
-  dom: null,
   context: null
 }
 
@@ -82,8 +71,8 @@ jaws.Sprite.prototype.set = function(options) {
   if(!this.image && this.color && this.width && this.height) {
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
-	canvas.width = this.width;
-	canvas.height = this.height;
+	  canvas.width = this.width;
+  	canvas.height = this.height;
     context.fillStyle = this.color;
     context.fillRect(0, 0, this.width, this.height);
     this.image = canvas;
@@ -311,49 +300,9 @@ jaws.Sprite.prototype.rect = function() {
   return this.cached_rect
 } 
 
-/**
- * Make this sprite a DOM-based <div> sprite 
- * @private
- */
-jaws.Sprite.prototype.createDiv = function() {
-  this.div = document.createElement("div")
-  this.div.style.position = "absolute"
-  if(this.image) {
-    this.div.style.width = this.image.width + "px"
-    this.div.style.height = this.image.height + "px"
-    if(this.image.toDataURL)  { this.div.style.backgroundImage = "url(" + this.image.toDataURL() + ")" }
-    else                      { this.div.style.backgroundImage = "url(" + this.image.src + ")" }
-  }
-  if(this.dom) { this.dom.appendChild(this.div) }
-  this.updateDiv()
-}
-
-/** 
- * @private
- * Update properties for DOM-based sprite 
- */
-jaws.Sprite.prototype.updateDiv = function() {
-  this.div.style.left = this.x + "px"
-  this.div.style.top = this.y + "px"
-
-  var transform = ""
-  transform += "rotate(" + this.angle + "deg) "
-  if(this.flipped)  { transform += "scale(-" + this.scale_x + "," + this.scale_y + ")"; }
-  else              { transform += "scale(" + this.scale_x + "," + this.scale_y + ")"; }
-
-  this.div.style.MozTransform = transform
-  this.div.style.WebkitTransform = transform
-  this.div.style.OTransform = transform
-  this.div.style.msTransform = transform
-  this.div.style.transform = transform
-
-  return this
-}
-
-/** Draw sprite on active canvas or update it's DOM-properties */
+/** Draw sprite on active canvas */
 jaws.Sprite.prototype.draw = function() {
   if(!this.image) { return this }
-  if(this.dom)    { return this.updateDiv() }
 
   this.context.save()
   this.context.translate(this.x, this.y)
