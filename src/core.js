@@ -647,6 +647,25 @@ var jaws = (function(jaws) {
     return value;
   };
 
+  /*
+  * Converts image to canvas context
+  */
+  jaws.imageToCanvasContext = function(image) {
+    var canvas = document.createElement("canvas")
+    canvas.width = image.width
+    canvas.height = image.height
+  
+    var context = canvas.getContext("2d")
+    if(jaws.context) {
+      context.imageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled;
+      context.webkitImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled;
+      context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled;
+    } 
+
+    context.drawImage(image, 0, 0, width, height)
+    return context
+  }
+
   return jaws;
 })(jaws || {});
 
