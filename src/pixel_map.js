@@ -23,7 +23,23 @@ jaws.PixelMap = function PixelMap(options) {
 * Future idea: Only update parts of the array that's been modified.
 */
 jaws.PixelMap.prototype.update = function(x, y, width, height) {
-  this.data = this.context.getImageData(0, 0, this.sprite.width, this.sprite.height).data
+  if(x === undefined) x = 0;
+  if(y === undefined) y = 0;
+  if(width === undefined)   width = this.sprite.width;
+  if(height === undefined)  height = this.sprite.height;
+  
+  // No arguments? Read whole canvas, replace this.data
+  if(arguments.length == 0) {
+    this.data = this.context.getImageData(x, y, width, height).data
+  }
+  // Read a rectangle from the canvas, replacing relevant pixels in this.data
+  else {
+    var tmp = this.context.getImageData(x, y, width, height).data
+    var offset = (y * this.sprite.width * 4) + (x*4)
+    for(var i=0; i < tmp.length; i++) {
+      this.data[offset + i] = tmp[i];
+    }
+  }
 }
 
 /**
