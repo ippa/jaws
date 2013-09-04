@@ -648,7 +648,7 @@ var jaws = (function(jaws) {
   };
 
   /*
-  * Converts image to canvas context
+  * Converts image to canvas 2D context. Then you can draw on it :).
   */
   jaws.imageToCanvasContext = function(image) {
     var canvas = document.createElement("canvas")
@@ -662,7 +662,7 @@ var jaws = (function(jaws) {
       context.mozImageSmoothingEnabled = jaws.context.mozImageSmoothingEnabled;
     } 
 
-    context.drawImage(image, 0, 0, width, height)
+    context.drawImage(image, 0, 0, canvas.width, canvas.height)
     return context
   }
 
