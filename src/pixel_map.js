@@ -73,7 +73,7 @@ jaws.PixelMap.prototype.namedColorAtRect = function(color, rect) {
 */
 jaws.PixelMap.prototype.at = function(x, y) {
   x = parseInt(x)
-  y = parseInt(y) - 1;
+  y = parseInt(y)
   if(y < 0) y = 0;
 
   var start = (y * this.sprite.width * 4) + (x*4);
