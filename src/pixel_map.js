@@ -12,6 +12,7 @@ jaws.PixelMap = function PixelMap(options) {
   /* Internally we use a sprite, gives us image-argument, image_scaling and so on */
   this.sprite = new jaws.Sprite(options);
   this.named_colors = [];
+  this.context = this.sprite.asCanvasContext();
   this.update();
 }
 
@@ -21,8 +22,8 @@ jaws.PixelMap = function PixelMap(options) {
 * Updates internal datastructure from the canvas. If we modify the 'terrain' we'll need to call this again.
 * Future idea: Only update parts of the array that's been modified.
 */
-jaws.PixelMap.prototype.update = function(x, y) {
-  this.data = this.sprite.asCanvasContext().getImageData(0, 0, this.sprite.width, this.sprite.height).data
+jaws.PixelMap.prototype.update = function(x, y, width, height) {
+  this.data = this.context.getImageData(0, 0, this.sprite.width, this.sprite.height).data
 }
 
 /**
