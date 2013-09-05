@@ -39,17 +39,10 @@ var jaws = (function(jaws) {
     if (options.context) {
       this.context = options.context;
     }
-    else if (options.dom) {  // No canvas context? Switch to DOM-based spritemode
-      this.dom = options.dom;
-      this.createDiv();
-    }
-    if (!options.context && !options.dom) { // Defaults to jaws.context or jaws.dom
+   
+    if (!options.context) { // Defaults to jaws.context
       if (jaws.context)
         this.context = jaws.context;
-      else {
-        this.dom = jaws.dom;
-        this.createDiv();
-      }
     }
   };
 
@@ -80,7 +73,6 @@ var jaws = (function(jaws) {
     shadowOffsetX: null,
     shadowOffsetY: null,
     _constructor: null,
-    dom: null
   };
 
   /**
@@ -228,33 +220,36 @@ var jaws = (function(jaws) {
   /**
    * Set new width.
    * @param {number} value The new width
-   * @returns {jaws.Rect}
+   * @returns {this}
    */
   jaws.Text.prototype.setWidth = function(value) {
     this.width = value;
-    return this.cacheOffsets();
+    this.cacheOffsets();
+    return this;
   };
 
   /**
    * Set new height. 
    * @param {number} value The new height
-   * @returns {jaws.Rect}
+   * @returns {this}
    */
   jaws.Text.prototype.setHeight = function(value) {
     this.height = value;
-    return this.cacheOffsets();
+    this.cacheOffsets();
+    return this;
   };
 
   /**
    * Resize sprite by adding width or height
    * @param {number} width
    * @param {number} height
-   * @returns {jaws.Rect}
+   * @returns {this}
    */
   jaws.Text.prototype.resize = function(width, height) {
     this.width += width;
     this.height += height;
-    return this.cacheOffsets();
+    this.cacheOffsets();
+    return this;
   };
 
   /**
@@ -262,12 +257,13 @@ var jaws = (function(jaws) {
    * @this {jaws.Text}
    * @param {number} width
    * @param {number} height
-   * @returns {jaws.Rect}
+   * @returns {this}
    */
   jaws.Text.prototype.resizeTo = function(width, height) {
     this.width = width;
     this.height = height;
-    return this.cacheOffsets();
+    this.cacheOffsets();
+    return this;
   };
 
   /**
@@ -339,82 +335,11 @@ var jaws = (function(jaws) {
   };
 
   /**
-   * Make this sprite a DOM-based <div> sprite 
-   * @private
-   */
-  jaws.Text.prototype.createDiv = function() {
-    this.div = document.createElement("div");
-    this.div.style.position = "absolute";
-    this.div.style.width = this.width + "px";
-    this.div.style.height = this.height + "px";
-    this.div.style.fontSize = this.fontSize + "px";
-    this.div.style.fontFamily = this.fontFace;
-
-    this.div.style.textShadow = (this.shadowOffsetX || "0") + "px "
-            + (this.shadowOffsetY || "0") + "px " + (this.shadowBlur || "0")
-            + "px " + (this.shadowColor || "");
-
-    if (this.textAlign === "start")
-      this.div.style.textAlign = "left";
-    else if (this.textAlign === "end")
-      this.div.style.textAlign = "right";
-    else
-      this.div.style.textAlign = this.textAlign;
-
-    if (this.textBaseline === "top")
-      this.div.style.verticalAlign = "super";
-    else if (this.textBaseline === "hanging")
-      this.div.style.verticalAlign = "text-top";
-    else if (this.textBaseline === "alphabetic")
-      this.div.style.verticalAlign = "bottom";
-    else if (this.div.style.verticalAlign === "ideographic")
-      this.div.style.verticalAlign = "text-bottom";
-    else
-      this.div.style.verticalAlign = this.textBaseline;
-
-    if (this.div.innerText) {
-      this.div.innerText = this.text;
-    }
-    else {
-      this.div.textContent = this.text;
-    }
-
-    if (this.dom) {
-      this.dom.appendChild(this.div);
-    }
-
-    this.updateDiv();
-  };
-
-  /** 
-   * Update properties for DOM-based sprite
-   * @private
-   */
-  jaws.Text.prototype.updateDiv = function() {
-    this.div.style.left = this.x + "px";
-    this.div.style.top = this.y + "px";
-
-    var transform = "";
-    transform += "rotate(" + this.angle + "deg) ";
-
-    this.div.style.MozTransform = transform;
-    this.div.style.WebkitTransform = transform;
-    this.div.style.OTransform = transform;
-    this.div.style.msTransform = transform;
-    this.div.style.transform = transform;
-
-    return this;
-  };
-
-  /**
    * Draw sprite on active canvas or update its DOM-properties
    * @this {jaws.Text}
    * @returns {this} The current function instance
    */
   jaws.Text.prototype.draw = function() {
-    if (this.dom) {
-      return this.updateDiv();
-    }
     this.context.save();
     if (this.angle !== 0) {
       this.context.rotate(this.angle * Math.PI / 180);
