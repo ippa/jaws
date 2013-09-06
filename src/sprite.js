@@ -49,7 +49,7 @@ jaws.Sprite.prototype.default_options = {
   scale_x: 1,
   scale_y: 1,
   scale: 1,
-  color: null,
+  color: "#ddd",
   width: null,
   height: null,
   _constructor: null,
