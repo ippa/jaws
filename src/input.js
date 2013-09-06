@@ -200,9 +200,12 @@ var prevent_default_keys = []
  * jaws.preventDefaultKeys( ["down"] )  // Stop down-arrow-key from scrolling page down
  */
 jaws.preventDefaultKeys = function(array_of_strings) {
-  array_of_strings.forEach( function(item, index) {
-    prevent_default_keys[item] = true
-  });
+  var list = arguments;
+  if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
+
+  for(var i=0; i < list.length; i++) {
+    prevent_default_keys[list[i]] = true;
+  }
 }
 
 /**
