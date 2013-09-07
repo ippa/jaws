@@ -64,9 +64,7 @@ jaws.PixelMap.prototype.update = function(x, y, width, height) {
 * Draws pixelsmaps image like a sprite
 */ 
 jaws.PixelMap.prototype.draw = function() {
-  //jaws.context.drawImage(jaws.assets.get(this.options.image), 0, 0, this.width, this.height)
   jaws.context.drawImage(this.context.canvas, 0, 0, this.width, this.height)
-  //this.sprite.draw();
 }
 
 
