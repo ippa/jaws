@@ -4,9 +4,9 @@
 # Build a standalone, all-including jaws.js by combining all the files in src/-directory into one
 #
 
-#files = %w{core.js input.js assets.js game_loop.js rect.js sprite.js sprite_sheet.js animation.js viewport.js collision_detection.js pixel_map.js parallax.js quadtree.js gfx.js}
-files = Dir['src/*'].select { |f| !File.directory?(f) }
-extras = Dir['src/extras/*'].select { |f| !File.directory?(f) }
+files = %w{core.js gfx.js input.js assets.js game_loop.js rect.js sprite.js sprite_sheet.js animation.js viewport.js collision_detection.js pixel_map.js parallax.js quadtree.js}.map { |file| "src/#{file}"}
+#files = Dir['src/*'].select { |f| !File.directory?(f) }
+#extras = Dir['src/extras/*'].select { |f| !File.directory?(f) }
 
 File.open("jaws.js", "w") do |out|
   out.write("/* Built at #{Time.now.to_s} */\n")
