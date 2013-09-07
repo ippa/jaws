@@ -10,6 +10,7 @@ jaws.PixelMap = function PixelMap(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
   this.options = options
+  this.scale = options.scale || 1
   if(options.image) {
     this.setContext(options.image);
 
@@ -17,8 +18,8 @@ jaws.PixelMap = function PixelMap(options) {
       this.setContext(  jaws.gfx.retroScaleImage(this.context.canvas, options.scale_image) )
     }
 
-    this.width = this.context.canvas.width;
-    this.height = this.context.canvas.height;
+    this.width = this.context.canvas.width * this.scale;
+    this.height = this.context.canvas.height * this.scale;
   }
   else { console.log.warn("PixelMap needs an image to work with") }
   
