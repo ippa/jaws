@@ -255,7 +255,7 @@ jaws.game_states.Edit = function(options) {
   function scrollDown()   { if(viewport)  viewport.move(0, 10); }
   
   function fillToolbar(toolbar_tag) {
-    icons = new jaws.SpriteList()
+    icons = []
 
     var x = 0
     var y = 32
