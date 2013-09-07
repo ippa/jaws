@@ -3,6 +3,8 @@
 #
 # Build a standalone, all-including jaws.js by combining all the files in src/-directory into one
 #
+
+#files = %w{core.js input.js assets.js game_loop.js rect.js sprite.js sprite_sheet.js animation.js viewport.js collision_detection.js pixel_map.js parallax.js quadtree.js gfx.js}
 files = Dir['src/*'].select { |f| !File.directory?(f) }
 extras = Dir['src/extras/*'].select { |f| !File.directory?(f) }
 
@@ -12,10 +14,11 @@ File.open("jaws.js", "w") do |out|
   out.write(";window.addEventListener(\"load\", function() { if(jaws.onload) jaws.onload(); }, false);")
 end
 
-File.open("extras.js", "w") do |out|
-  out.write("/* Built at #{Time.now.to_s} */\n")
-  extras.each { |file| out.write( File.read(file) ) }
-end
+# Create extras.js with src/extras/*.js
+#File.open("extras.js", "w") do |out|
+#  out.write("/* Built at #{Time.now.to_s} */\n")
+#  extras.each { |file| out.write( File.read(file) ) }
+#end
 
 
 #
@@ -40,11 +43,12 @@ File.open("jaws-min.js", "w") { |out|
   out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # option: ADVANCED_OPTIMIZATIONS
 }  
 
-js_code = File.read("extras.js")
-File.open("extras-min.js", "w") { |out| 
-  out.write("/* Built at #{Time.now.to_s} */\n")
-  out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # option: ADVANCED_OPTIMIZATIONS
-}  
+# Create extras-min.js with src/extras/*.js
+#js_code = File.read("extras.js")
+#File.open("extras-min.js", "w") { |out| 
+#  out.write("/* Built at #{Time.now.to_s} */\n")
+#  out.write compress(js_code, "SIMPLE_OPTIMIZATIONS") # option: ADVANCED_OPTIMIZATIONS
+#}  
 
 if ARGV.first != "nodoc"
   #
