@@ -15,7 +15,7 @@ jaws.PixelMap = function PixelMap(options) {
     this.setContext(options.image);
 
     if(options.scale_image) {
-      this.setContext(  jaws.gfx.retroScaleImage(this.context.canvas, options.scale_image) )
+      this.setContext(  jaws.retroScaleImage(this.context.canvas, options.scale_image) )
     }
 
     this.width = this.context.canvas.width * this.scale;

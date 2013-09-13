@@ -321,7 +321,7 @@ jaws.Sprite.prototype.draw = function() {
  */
 jaws.Sprite.prototype.scaleImage = function(factor) {
   if(!this.image) return;
-  this.setImage( jaws.gfx.retroScaleImage(this.image, factor) )
+  this.setImage( jaws.retroScaleImage(this.image, factor) )
   return this
 }
 
