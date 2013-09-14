@@ -320,20 +320,10 @@ jaws.game_states.Edit = function(options) {
     };
 
     jaws.log("Editor activated!")
-    jaws.preventDefaultKeys("left", "right", "up", "down", "ctrl", "f1", "f2", "home", "end", "pageup", "pagedown")
+    jaws.preventDefaultKeys("left", "right", "up", "down", "ctrl", "f1", "f2", "home", "end", "pageup", "pagedown", "w", "a", "s", "d", "p")
     jaws.on_keydown(["f2","esc"], exit )
-    jaws.on_keydown("s", save )
     jaws.on_keydown("delete",     removeSelected )
     jaws.on_keydown("add", add )
-    jaws.on_keydown("left", left )
-    jaws.on_keydown("right", right )
-    jaws.on_keydown("up", up )
-    jaws.on_keydown("down", down )
-    jaws.on_keydown("a", bigLeft )
-    jaws.on_keydown("d", bigRight )
-    jaws.on_keydown("w", bigUp )
-    jaws.on_keydown("s", bigDown )
-
     jaws.on_keydown("pageup", pageup )
     jaws.on_keydown("pagedown", pagedown )
     jaws.on_keydown("home", home )
@@ -358,6 +348,17 @@ jaws.game_states.Edit = function(options) {
     else {
       log(selected_objects.length + " selected objects", true)
     }
+
+    if(jaws.pressed("left"))   left();
+    if(jaws.pressed("right"))  right();
+    if(jaws.pressed("up"))     up();
+    if(jaws.pressed("down"))   down();
+    if(jaws.pressed("a"))      bigLeft();
+    if(jaws.pressed("d"))      bigRight();
+    if(jaws.pressed("w"))      bigUp();
+    if(jaws.pressed("s"))      bigDown();
+
+    if(jaws.pressedWithoutRepeat("p", true)) save();
 
     if(cursor_object) log(cursor_object.toString());
   }
