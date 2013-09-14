@@ -56,8 +56,9 @@ jaws.Sprite.prototype.default_options = {
  * Call setters from JSON object. Used to parse options.
  */
 jaws.Sprite.prototype.set = function(options) {
+  if(jaws.isString(this.image)) this.image_path = this.image;
   jaws.parseOptions(this, options, this.default_options);
-
+  
   if(this.scale)        this.scale_x = this.scale_y = this.scale;
   if(this.image)        this.setImage(this.image);
   if(this.scale_image)  this.scaleImage(this.scale_image);
