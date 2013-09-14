@@ -1,0 +1,19 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <script src="../jaws.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+  </head>
+<body>
+
+  <canvas width=500 height=300></canvas>
+  <div id="jaws-log"></div>
+
+  <script>
+    jaws.assets.setRoot("assets/").add(["tones.ogg", "tones.mp3", "tones.wav", "tones.mka", "tones.flac"])
+    jaws.assets.loadAll({onload: function() { console.log("...") } })
+  </script>
+
+</body>
+</html>
+

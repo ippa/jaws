@@ -47,16 +47,16 @@ test("Sprite defaults", function() {
   equal(sprite.scale_y, 1, "scale_y defaults to 1 (no scaling)")
   equal(sprite.anchor_x, 0, "anchor_x defaults to 0 (top)")
   equal(sprite.anchor_y, 0, "anchor_y defaults to 0 (left)")
-  equal(sprite.image, null, "image defaults to undefined")
+  //equal(sprite.image, null, "image defaults to undefined")
   equal(sprite.flipped, false, "flipped defaults to false")
   equal(sprite.alpha, 1, "alpha defalts to 1 (zero fading)")
 });
 
 test("Sprite without image", function() {
   sprite = new jaws.Sprite({x:0, y:0})
-  equal(sprite.image, null, "has no image")
-  equal(sprite.width, undefined, "has no width")
-  equal(sprite.height, undefined, "has no width")
+  ok(sprite.image, "sprite without image-argument gets autocreated white rect as image")
+  equal(sprite.width, 16, "autocreated sprite width")
+  equal(sprite.height, 16, "autocreated sprite height")
  
   stop();
   var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: assetsLoaded})
