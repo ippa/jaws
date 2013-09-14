@@ -46,7 +46,10 @@ jaws.game_states.Edit = function(options) {
     var constructor = object._constructor ? eval(object._constructor) : object.constructor
     var new_object = new constructor( object.attributes() );
     new_object._constructor = object._constructor || object.constructor.name
+
     if(new_object.update) new_object.update(); 
+    new_object.context = jaws.context  // Always paint new clonsed objects in game window
+
     return new_object
   }
 
@@ -60,7 +63,6 @@ jaws.game_states.Edit = function(options) {
     var clicked_icon = iconAt(x, y)
     if(clicked_icon) {
       cursor_object = cloneObject(clicked_icon)
-      cursor_object.context = jaws.context  // Paint cursor in game window!
       return false;
     }
   }
