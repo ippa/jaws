@@ -42,7 +42,7 @@ jaws.Animation = function Animation(options) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
     this.frame_size[0] *= options.scale_image
     this.frame_size[1] *= options.scale_image
-    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.scale_image)
+    options.sprite_sheet = jaws.retroScaleImage(image, options.scale_image)
   }
 
   /* Initializing timer-stuff */
