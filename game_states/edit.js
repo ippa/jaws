@@ -248,7 +248,11 @@ jaws.game_states.Edit = function(options) {
   function right()  { scrollRight() }
   function down()   { scrollDown() }
   function left()   { scrollLeft() }
-
+  function pageup()     { if(viewport) viewport.move(0, -viewport.height/2) }
+  function pagedown()   { if(viewport) viewport.move(0, viewport.height/2) }
+  function home()       { if(viewport) viewport.moveTo(undefined, 0) }
+  function end()        { if(viewport) viewport.moveTo(undefined, viewport.max_y) }
+ 
   function scrollRight()  { if(viewport) viewport.move(10, 0); }
   function scrollLeft()   { if(viewport) viewport.move(-10, 0); }
   function scrollUp()     { if(viewport)  viewport.move(0, -10); }
@@ -296,7 +300,7 @@ jaws.game_states.Edit = function(options) {
     };
 
     jaws.log("Editor activated!")
-    jaws.preventDefaultKeys(["left", "right", "up", "down", "ctrl", "f1", "f2"])
+    jaws.preventDefaultKeys("left", "right", "up", "down", "ctrl", "f1", "f2", "home", "end", "pageup", "pagedown")
     jaws.on_keydown(["f2","esc"], exit )
     jaws.on_keydown("s", save )
     jaws.on_keydown("delete",     removeSelected )
@@ -305,6 +309,10 @@ jaws.game_states.Edit = function(options) {
     jaws.on_keydown("right", right )
     jaws.on_keydown("up", up )
     jaws.on_keydown("down", down )
+    jaws.on_keydown("pageup", pageup )
+    jaws.on_keydown("pagedown", pagedown )
+    jaws.on_keydown("home", home )
+    jaws.on_keydown("end", end )
 
     toolbar_tag.addEventListener("mousedown", toolbar_mousedown, false)
     jaws.canvas.addEventListener("mousedown", mousedown, false)
