@@ -1,4 +1,4 @@
-/* Built at 2013-09-07 18:58:26 +0200 */
+/* Built at 2013-09-14 10:55:39 +0200 */
 /**
  * @namespace JawsJS core functions.
  *
@@ -667,22 +667,12 @@ var jaws = (function(jaws) {
     return context
   }
 
-  return jaws;
-})(jaws || {});
-
-var jaws = (function(jaws) {
-  /**
-  * @namespace GFX related helpers
-  *
-  */
-  jaws.gfx = {}
-
   /**
    * scale 'image' by factor 'factor'.
    * Scaling is done using nearest-neighbor ( retro-blocky-style ).
    * Returns a canvas.
    */
-  jaws.gfx.retroScaleImage = function(image, factor) {
+  jaws.retroScaleImage = function(image, factor) {
     var canvas = jaws.isImage(image) ? jaws.imageToCanvas(image) : image
     var context = canvas.getContext("2d")
     var data = context.getImageData(0,0,canvas.width,canvas.height).data
@@ -720,6 +710,7 @@ var jaws = (function(jaws) {
 
   return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
 
   var pressed_keys = {}
@@ -2104,7 +2095,7 @@ jaws.Sprite.prototype.draw = function() {
  */
 jaws.Sprite.prototype.scaleImage = function(factor) {
   if(!this.image) return;
-  this.setImage( jaws.gfx.retroScaleImage(this.image, factor) )
+  this.setImage( jaws.retroScaleImage(this.image, factor) )
   return this
 }
 
@@ -2228,7 +2219,7 @@ jaws.SpriteSheet = function SpriteSheet(options) {
     var image = (jaws.isDrawable(this.image) ? this.image : jaws.assets.get(this.image))
     this.frame_size[0] *= this.scale_image
     this.frame_size[1] *= this.scale_image
-    this.image = jaws.gfx.retroScaleImage(image, this.scale_image)
+    this.image = jaws.retroScaleImage(image, this.scale_image)
   }
 
   var index = 0
@@ -2323,7 +2314,7 @@ jaws.Animation = function Animation(options) {
     var image = (jaws.isDrawable(options.sprite_sheet) ? options.sprite_sheet : jaws.assets.get(options.sprite_sheet))
     this.frame_size[0] *= options.scale_image
     this.frame_size[1] *= options.scale_image
-    options.sprite_sheet = jaws.gfx.retroScaleImage(image, options.scale_image)
+    options.sprite_sheet = jaws.retroScaleImage(image, options.scale_image)
   }
 
   /* Initializing timer-stuff */
@@ -2902,13 +2893,13 @@ jaws.PixelMap = function PixelMap(options) {
     this.setContext(options.image);
 
     if(options.scale_image) {
-      this.setContext(  jaws.gfx.retroScaleImage(this.context.canvas, options.scale_image) )
+      this.setContext(  jaws.retroScaleImage(this.context.canvas, options.scale_image) )
     }
 
     this.width = this.context.canvas.width * this.scale;
     this.height = this.context.canvas.height * this.scale;
   }
-  else { console.log.warn("PixelMap needs an image to work with") }
+  else { jaws.log.warn("PixelMap needs an image to work with") }
   
   this.named_colors = [];
   this.update();
@@ -2928,12 +2919,11 @@ jaws.PixelMap.prototype.setContext = function(image) {
 * Future idea: Only update parts of the array that's been modified.
 */
 jaws.PixelMap.prototype.update = function(x, y, width, height) {
-  if(x === undefined) x = 0;
-  if(y === undefined) y = 0;
-  if(width === undefined)   width = this.width;
-  if(height === undefined)  height = this.height;
+  if(x === undefined || x < 0) x = 0;
+  if(y === undefined || y < 0) y = 0;
+  if(width === undefined || width > this.width)     width = this.width;
+  if(height === undefined || height > this.height)  height = this.height;
  
-  console.log("getImageData", x, " ", y, " - ", width, " ", height);
   // No arguments? Read whole canvas, replace this.data
   if(arguments.length == 0) {
     this.data = this.context.getImageData(x, y, width, height).data
@@ -2941,9 +2931,18 @@ jaws.PixelMap.prototype.update = function(x, y, width, height) {
   // Read a rectangle from the canvas, replacing relevant pixels in this.data
   else {
     var tmp = this.context.getImageData(x, y, width, height).data
-    var offset = (y * this.sprite.width * 4) + (x*4)
-    for(var i=0; i < tmp.length; i++) {
-      this.data[offset + i] = tmp[i];
+    var tmp_count = 0;
+
+    // Some precalculation-optimizations
+    var one_line_down = this.width * 4;
+    var offset = (y * this.width * 4)  + (x*4);
+    var horizontal_line = width*4;
+
+    for(var y2 = 0; y2 < height; y2++) {
+      for(var x2 = 0; x2 < horizontal_line; x2++) {
+        this.data[offset + x2] = tmp[tmp_count++];
+      }  
+      offset += one_line_down;
     }
   }
 }
