@@ -262,11 +262,16 @@ jaws.game_states.Edit = function(options) {
   function pagedown()   { if(viewport) viewport.move(0, viewport.height/2) }
   function home()       { if(viewport) viewport.moveTo(undefined, 0) }
   function end()        { if(viewport) viewport.moveTo(undefined, viewport.max_y) }
+
+  function bigRight()  { if(viewport) viewport.move(grid_size[0]*10, 0); }
+  function bigLeft()   { if(viewport) viewport.move(-grid_size[0]*10, 0); }
+  function bigUp()     { if(viewport) viewport.move(0, -grid_size[1]*10); }
+  function bigDown()   { if(viewport) viewport.move(0, grid_size[1]*10); }
  
-  function scrollRight()  { if(viewport) viewport.move(10, 0); }
-  function scrollLeft()   { if(viewport) viewport.move(-10, 0); }
-  function scrollUp()     { if(viewport)  viewport.move(0, -10); }
-  function scrollDown()   { if(viewport)  viewport.move(0, 10); }
+  function scrollRight()  { if(viewport)  viewport.move(grid_size[0], 0); }
+  function scrollLeft()   { if(viewport)  viewport.move(-grid_size[0], 0); }
+  function scrollUp()     { if(viewport)  viewport.move(0, -grid_size[1]); }
+  function scrollDown()   { if(viewport)  viewport.move(0, grid_size[1]); }
   
   function fillToolbar(toolbar_context) {
     icons = []
@@ -324,6 +329,11 @@ jaws.game_states.Edit = function(options) {
     jaws.on_keydown("right", right )
     jaws.on_keydown("up", up )
     jaws.on_keydown("down", down )
+    jaws.on_keydown("a", bigLeft )
+    jaws.on_keydown("d", bigRight )
+    jaws.on_keydown("w", bigUp )
+    jaws.on_keydown("s", bigDown )
+
     jaws.on_keydown("pageup", pageup )
     jaws.on_keydown("pagedown", pagedown )
     jaws.on_keydown("home", home )
