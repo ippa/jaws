@@ -24,13 +24,8 @@ var jaws = (function(jaws) {
 */
 jaws.Sprite = function Sprite(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
-
   this.set(options)  
-  
-  if(options.context) { 
-    this.context = options.context
-  }
-  if(jaws.context)  this.context = jaws.context;
+  this.context = options.context ? options.context : jaws.context;  // Prefer given canvas-context, fallback to jaws.context
 }
 
 jaws.Sprite.prototype.default_options = {
