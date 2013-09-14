@@ -38,7 +38,9 @@ jaws.game_states.Edit = function(options) {
   var edit_tag
   var cursor_object 
   var objects_dragged
-  
+  var toolbar_canvas = document.getElementById("jaws-toolbar")
+  var toolbar_context;
+
   function cloneObject(object) {
     if(!object) return undefined;
     var constructor = object._constructor ? eval(object._constructor) : object.constructor
@@ -49,14 +51,22 @@ jaws.game_states.Edit = function(options) {
   }
 
   function toolbar_mousedown(e) {
-    // console.log(e)
     // event = (e) ? e : window.event
+    var x = (e.pageX || e.clientX);
+    var y = (e.pageY || e.clientY);
+    x -= toolbar_canvas.offsetLeft;
+    y -= toolbar_canvas.offsetTop;
 
-    var clicked_icon = iconAt(e.pageX, e.pageY)
+    var clicked_icon = iconAt(x, y)
     if(clicked_icon) {
       cursor_object = cloneObject(clicked_icon)
+      cursor_object.context = jaws.context  // Paint cursor in game window!
       return false;
     }
+  }
+  function iconAt(x, y) {
+    console.log("iconAt()", x, "/", y)
+    return icons.filter( function(obj) { return obj.rect().collidePoint(x, y) })[0]
   }
 
   function mousedown(e) {
@@ -195,19 +205,17 @@ jaws.game_states.Edit = function(options) {
       }
     })[0]
   }
-  function iconAt(x, y) {
-    console.log(x + "/" + y)
-    return icons.filter( function(obj) { return obj.rect().collidePoint(x, y) } )[0]
-  }
 
   function removeSelected() {
     game_objects.filter(isSelected).forEach( function(element, index) {
-      game_objects.remove( element )
+      var i = game_objects.indexOf(element)
+      if(i > -1) { game_objects.splice(i, 1) }
     });
   }
 
   /* Remove all event-listeners, hide edit_tag and switch back to previous game state */
   function exit() {
+    toolbar_canvas.parentNode.removeChild(toolbar_canvas)
     edit_tag.style.display = "none"
     jaws.canvas.removeEventListener("mousedown", mousedown, false)
     jaws.canvas.removeEventListener("mouseup", mouseup, false)
@@ -258,31 +266,36 @@ jaws.game_states.Edit = function(options) {
   function scrollUp()     { if(viewport)  viewport.move(0, -10); }
   function scrollDown()   { if(viewport)  viewport.move(0, 10); }
   
-  function fillToolbar(toolbar_tag) {
+  function fillToolbar(toolbar_context) {
     icons = []
 
     var x = 0
     var y = 32
     constructors.forEach( function(constructor) {
-      var icon = new constructor({x: x, y: y, dom: toolbar_tag})
+      var icon = new constructor({x: x, y: y, context: toolbar_context})
       icon.setBottom(y)
       icon._constructor = constructor.name
       if(icon.update) icon.update();
       icons.push( icon )
-      x += icon.width
+      x += icon.width + 10
     });
   }
 
   this.setup = function() {
     viewport = options.viewport || jaws.previous_game_state.viewport
 
-    var toolbar_tag = document.getElementById("jaws-toolbar")
-    if(!toolbar_tag) {
-      toolbar_tag = document.createElement("div")
-      toolbar_tag.id = "jaws-toolbar"
-      document.body.appendChild(toolbar_tag)
+    if(!toolbar_canvas) {
+      toolbar_canvas = document.createElement("canvas");
+      toolbar_canvas.width = jaws.width;
+      toolbar_canvas.height = 100;
+      toolbar_canvas.id = "jaws-toolbar";
+      
+      toolbar_context = toolbar_canvas.getContext("2d");
+      toolbar_context.fillStyle = "black";
+      toolbar_context.fillRect(0, 0, toolbar_canvas.width, toolbar_canvas.height);
+      document.body.appendChild(toolbar_canvas);
     }
-    fillToolbar(toolbar_tag)
+    fillToolbar(toolbar_context)
 
     edit_tag = document.getElementById("jaws-edit")
     if(!edit_tag) {
@@ -290,7 +303,7 @@ jaws.game_states.Edit = function(options) {
       edit_tag.id = "jaws-edit"
       document.body.appendChild(edit_tag)
     }
-    edit_tag.style.display = "block"
+    //edit_tag.style.display = "block"
 
     // Disable right click
     window.oncontextmenu = function(event) {
@@ -314,7 +327,7 @@ jaws.game_states.Edit = function(options) {
     jaws.on_keydown("home", home )
     jaws.on_keydown("end", end )
 
-    toolbar_tag.addEventListener("mousedown", toolbar_mousedown, false)
+    toolbar_canvas.addEventListener("mousedown", toolbar_mousedown, false)
     jaws.canvas.addEventListener("mousedown", mousedown, false)
     jaws.canvas.addEventListener("mouseup", mouseup, false)
     jaws.canvas.addEventListener("mousemove", mousemove, false)
@@ -342,22 +355,15 @@ jaws.game_states.Edit = function(options) {
     jaws.previous_game_state.draw()
     if(grid_size) { drawGrid() }
     
-    if(viewport) {
-      viewport.apply( function() { 
-        if(cursor_object) cursor_object.draw();
-
-        if(isometric) game_objects.filter(isSelected).forEach(drawIsometricRect);
-        else          game_objects.filter(isSelected).forEach(drawRect);
-      });
-    }
-    else { 
-      if(cursor_object) cursor_object.draw();
-
+    function draw() { 
+      if(cursor_object) { cursor_object.draw(); }
       if(isometric) game_objects.filter(isSelected).forEach(drawIsometricRect);
       else          game_objects.filter(isSelected).forEach(drawRect);
     }
+    if(viewport)  viewport.apply(draw);
+    else          draw();
 
-    icons.forEach( function(icon) { icon.draw(); icon.rect().draw(); });
+    jaws.draw(icons)
   }
 
   function mouseX() {
