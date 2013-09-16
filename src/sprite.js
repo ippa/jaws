@@ -157,7 +157,7 @@ jaws.Sprite.prototype.stepToWhile = function(target_x, target_y, continueStep) {
 * @returns  {object}  Object with 2 x/y-properties indicating what plane we moved in when stepWhile was stopped.
 */
 jaws.Sprite.prototype.stepWhile = function(vx, vy, continueStep) { 
-  this.stepToWhile(this.x + vx, this.y + vy, continueStep)
+  return this.stepToWhile(this.x + vx, this.y + vy, continueStep)
 }
 
 /** Flips image vertically, usefull for sidescrollers when player is walking left/right */
