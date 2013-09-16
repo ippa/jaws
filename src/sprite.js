@@ -121,7 +121,8 @@ jaws.Sprite.prototype.setImage =      function(value) {
 }
 
 /** 
-* Steps 1 pixel towards given x/y while continueStep-callback returns true (put your collision detection there :)..)
+* Steps 1 pixel towards the given X/Y. Horizontal and vertical steps are done separately between each callback.
+* Exits when the continueStep-callback returns true for both vertical and horizontal steps or if target X/Y has been reached.
 *
 * @returns  {object}  Object with 2 x/y-properties indicating what plane we moved in when stepToWhile was stopped.
 */
@@ -152,7 +153,8 @@ jaws.Sprite.prototype.stepToWhile = function(target_x, target_y, continueStep) {
   }
 }
 /** 
-* Moves with given vx/vy velocoties by stepping  1 pixel at the time while continueStep-callback returns true.
+* Moves with given vx/vy velocoties by stepping 1 pixel at the time. Horizontal and vertical steps are done separately between each callback.
+* Exits when the continueStep-callback returns true for both vertical and horizontal steps or if target X/Y has been reached.
 *
 * @returns  {object}  Object with 2 x/y-properties indicating what plane we moved in when stepWhile was stopped.
 */
