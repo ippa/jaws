@@ -124,7 +124,7 @@ jaws.PixelMap.prototype.namedColorAt = function(x, y) {
   }
 }
 
-jaws.PixelMap.prototype.nameColor = function(name, color) {
+jaws.PixelMap.prototype.nameColor = function(color, name) {
   this.named_colors.push({name: name, color: color});
 }
 
