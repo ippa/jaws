@@ -22,7 +22,6 @@
         root+"animation.js",
         root+"viewport.js",
         root+"collision_detection.js",
-        root+"gfx.js",
         root+"text.js",
         root+"parallax.js",
         root+"tile_map.js",
