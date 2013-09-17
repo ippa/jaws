@@ -1,4 +1,4 @@
-/* Built at 2013-09-17 21:51:09 +0200 */
+/* Built at 2013-09-17 22:31:22 +0200 */
 /**
  * @namespace JawsJS core functions.
  *
@@ -2970,18 +2970,21 @@ jaws.PixelMap.prototype.draw = function() {
 }
 
 /**
-* Trace the outline of a Rect until a named color found. Returns found color.
+* Trace the outline of a Rect until a named color found.
 *
-* @return truish if color is found
+* @param {object} Rect     Instance of jaws.Rect()
+* @param {string}          Only look for this named color
+*
+* @return {string}  name of found color
 */
-jaws.PixelMap.prototype.namedColorAtRect = function(color, rect) {
+jaws.PixelMap.prototype.namedColorAtRect = function(rect, color) {
   var x = rect.x
   var y = rect.y
 
-  for(; x < rect.right; x++)  if(this.namedColorAt(x, y) == color) return this.namedColorAt(x,y);
-  for(; y < rect.bottom; y++) if(this.namedColorAt(x, y) == color) return this.namedColorAt(x,y);
-  for(; x > rect.x; x--)      if(this.namedColorAt(x, y) == color) return this.namedColorAt(x,y);
-  for(; y > rect.y; y--)      if(this.namedColorAt(x, y) == color) return this.namedColorAt(x,y);
+  for(; x < rect.right; x++)  if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
+  for(; y < rect.bottom; y++) if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
+  for(; x > rect.x; x--)      if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
+  for(; y > rect.y; y--)      if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
 
   return false;
 }
