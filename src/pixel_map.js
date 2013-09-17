@@ -4,6 +4,12 @@ var jaws = (function(jaws) {
 * @constructor
 *  
 * @property {string} image     the map
+*
+* @example
+* tile_map = new jaws.Parallax({image: "map.png"})
+* tile_map.draw() // draw on canvas
+* tile_map.nameColor([0,0,0,255], "ground") // give the color black the name "ground"
+* tile_map.namedColorAtRect("ground", player.rect())  // True if players boundingbox is touching any black pixels on tile_map 
 */
 
 jaws.PixelMap = function PixelMap(options) {
