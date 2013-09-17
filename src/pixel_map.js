@@ -1,17 +1,21 @@
 var jaws = (function(jaws) {
 /**
-* @class PixelPerfect collision map. Created from an image.
+* @class jaws.PixelMap
 * @constructor
+*
+* Worms-style terrain collision detection. Created from a normal image. 
+* Read out specific pixels. Modify as you would do with a canvas.
 *  
-* @property {string} image     the map
+* @property {string} image        the image of the terrain
+* @property {int} scale_image     Scale the image by this factor
 *
 * @example
-* tile_map = new jaws.Parallax({image: "map.png"})
-* tile_map.draw() // draw on canvas
-* tile_map.nameColor([0,0,0,255], "ground") // give the color black the name "ground"
+* tile_map = new jaws.Parallax({image: "map.png", scale_image: 4})  // scale_image: 4 for retro blocky feeling!
+* tile_map.draw()                                     // draw on canvas
+* tile_map.nameColor([0,0,0,255], "ground")           // give the color black the name "ground"
 * tile_map.namedColorAtRect("ground", player.rect())  // True if players boundingbox is touching any black pixels on tile_map 
+*
 */
-
 jaws.PixelMap = function PixelMap(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
@@ -43,8 +47,7 @@ jaws.PixelMap.prototype.setContext = function(image) {
 } 
 
 /**
-* Updates internal datastructure from the canvas. If we modify the 'terrain' we'll need to call this again.
-* Future idea: Only update parts of the array that's been modified.
+* Updates internal pixel-array from the canvas. If we modify the 'terrain' (paint on pixel_map.context) we'll need to call this method.
 */
 jaws.PixelMap.prototype.update = function(x, y, width, height) {
   if(x === undefined || x < 0) x = 0;
@@ -76,12 +79,11 @@ jaws.PixelMap.prototype.update = function(x, y, width, height) {
 }
 
 /**
-* Draws pixelsmaps image like a sprite
+* Draws the pixel map on the maincanvas
 */ 
 jaws.PixelMap.prototype.draw = function() {
   jaws.context.drawImage(this.context.canvas, 0, 0, this.width, this.height)
 }
-
 
 /**
 * Trace the outline of a Rect until a named color found. Returns found color.
@@ -102,7 +104,8 @@ jaws.PixelMap.prototype.namedColorAtRect = function(color, rect) {
 
 /**
 * Read current color at given coordinates X/Y 
-* returns array of 4 numbers [R, G, B, A]
+*
+* @return {array}   4 integers [R, G, B, A] representing the pixel at x/y
 */
 jaws.PixelMap.prototype.at = function(x, y) {
   x = parseInt(x)
@@ -118,8 +121,9 @@ jaws.PixelMap.prototype.at = function(x, y) {
 }
 
 /**
-* Returns a previously named color if it exists at given x/y-coordinates.
+* Get previously named color if it exists at given x/y-coordinates.
 *
+* @return {string} name or color
 */
 jaws.PixelMap.prototype.namedColorAt = function(x, y) {
   var a = this.at(x, y);
@@ -130,6 +134,12 @@ jaws.PixelMap.prototype.namedColorAt = function(x, y) {
   }
 }
 
+/**
+* Give a RGBA-array a name. Later on we can work with names instead of raw colorvalues.
+*
+* @example
+* pixel_map.nameColor([0,0,0,255], "ground")    // Give the color black (with no transparency) the name "ground"
+*/
 jaws.PixelMap.prototype.nameColor = function(color, name) {
   this.named_colors.push({name: name, color: color});
 }
