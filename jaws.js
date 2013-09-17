@@ -1,4 +1,4 @@
-/* Built at 2013-09-14 10:55:39 +0200 */
+/* Built at 2013-09-17 21:51:09 +0200 */
 /**
  * @namespace JawsJS core functions.
  *
@@ -1798,13 +1798,8 @@ var jaws = (function(jaws) {
 */
 jaws.Sprite = function Sprite(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
-
   this.set(options)  
-  
-  if(options.context) { 
-    this.context = options.context
-  }
-  if(jaws.context)  this.context = jaws.context;
+  this.context = options.context ? options.context : jaws.context;  // Prefer given canvas-context, fallback to jaws.context
 }
 
 jaws.Sprite.prototype.default_options = {
@@ -1835,8 +1830,9 @@ jaws.Sprite.prototype.default_options = {
  * Call setters from JSON object. Used to parse options.
  */
 jaws.Sprite.prototype.set = function(options) {
+  if(jaws.isString(this.image)) this.image_path = this.image;
   jaws.parseOptions(this, options, this.default_options);
-
+  
   if(this.scale)        this.scale_x = this.scale_y = this.scale;
   if(this.image)        this.setImage(this.image);
   if(this.scale_image)  this.scaleImage(this.scale_image);
@@ -1899,9 +1895,10 @@ jaws.Sprite.prototype.setImage =      function(value) {
 }
 
 /** 
-* Steps 1 pixel towards given x/y while continueStep-callback returns true (put your collision detection there :)..)
+* Steps 1 pixel towards the given X/Y. Horizontal and vertical steps are done separately between each callback.
+* Exits when the continueStep-callback returns true for both vertical and horizontal steps or if target X/Y has been reached.
 *
-* @returns  {object}  Object with 2 x/y-properties indicating what plane we moved in when stepTo was stopped.
+* @returns  {object}  Object with 2 x/y-properties indicating what plane we moved in when stepToWhile was stopped.
 */
 jaws.Sprite.prototype.stepToWhile = function(target_x, target_y, continueStep) { 
   var step = 1;
@@ -1928,6 +1925,15 @@ jaws.Sprite.prototype.stepToWhile = function(target_x, target_y, continueStep) {
     if( (collision_x || this.x == target_x) && (collision_y || this.y == target_y) )
         return {x: collision_x, y: collision_y};
   }
+}
+/** 
+* Moves with given vx/vy velocoties by stepping 1 pixel at the time. Horizontal and vertical steps are done separately between each callback.
+* Exits when the continueStep-callback returns true for both vertical and horizontal steps or if target X/Y has been reached.
+*
+* @returns  {object}  Object with 2 x/y-properties indicating what plane we moved in when stepWhile was stopped.
+*/
+jaws.Sprite.prototype.stepWhile = function(vx, vy, continueStep) { 
+  return this.stepToWhile(this.x + vx, this.y + vy, continueStep)
 }
 
 /** Flips image vertically, usefull for sidescrollers when player is walking left/right */
@@ -2878,12 +2884,22 @@ var jaws = (function(jaws) {
 
 var jaws = (function(jaws) {
 /**
-* @class PixelPerfect collision map. Created from an image.
+* @class jaws.PixelMap
 * @constructor
+*
+* Worms-style terrain collision detection. Created from a normal image. 
+* Read out specific pixels. Modify as you would do with a canvas.
 *  
-* @property {string} image     the map
+* @property {string} image        the image of the terrain
+* @property {int} scale_image     Scale the image by this factor
+*
+* @example
+* tile_map = new jaws.Parallax({image: "map.png", scale_image: 4})  // scale_image: 4 for retro blocky feeling!
+* tile_map.draw()                                     // draw on canvas
+* tile_map.nameColor([0,0,0,255], "ground")           // give the color black the name "ground"
+* tile_map.namedColorAtRect("ground", player.rect())  // True if players boundingbox is touching any black pixels on tile_map 
+*
 */
-
 jaws.PixelMap = function PixelMap(options) {
   if( !(this instanceof arguments.callee) ) return new arguments.callee( options );
 
@@ -2915,8 +2931,7 @@ jaws.PixelMap.prototype.setContext = function(image) {
 } 
 
 /**
-* Updates internal datastructure from the canvas. If we modify the 'terrain' we'll need to call this again.
-* Future idea: Only update parts of the array that's been modified.
+* Updates internal pixel-array from the canvas. If we modify the 'terrain' (paint on pixel_map.context) we'll need to call this method.
 */
 jaws.PixelMap.prototype.update = function(x, y, width, height) {
   if(x === undefined || x < 0) x = 0;
@@ -2948,12 +2963,11 @@ jaws.PixelMap.prototype.update = function(x, y, width, height) {
 }
 
 /**
-* Draws pixelsmaps image like a sprite
+* Draws the pixel map on the maincanvas
 */ 
 jaws.PixelMap.prototype.draw = function() {
   jaws.context.drawImage(this.context.canvas, 0, 0, this.width, this.height)
 }
-
 
 /**
 * Trace the outline of a Rect until a named color found. Returns found color.
@@ -2974,7 +2988,8 @@ jaws.PixelMap.prototype.namedColorAtRect = function(color, rect) {
 
 /**
 * Read current color at given coordinates X/Y 
-* returns array of 4 numbers [R, G, B, A]
+*
+* @return {array}   4 integers [R, G, B, A] representing the pixel at x/y
 */
 jaws.PixelMap.prototype.at = function(x, y) {
   x = parseInt(x)
@@ -2990,8 +3005,9 @@ jaws.PixelMap.prototype.at = function(x, y) {
 }
 
 /**
-* Returns a previously named color if it exists at given x/y-coordinates.
+* Get previously named color if it exists at given x/y-coordinates.
 *
+* @return {string} name or color
 */
 jaws.PixelMap.prototype.namedColorAt = function(x, y) {
   var a = this.at(x, y);
@@ -3002,7 +3018,13 @@ jaws.PixelMap.prototype.namedColorAt = function(x, y) {
   }
 }
 
-jaws.PixelMap.prototype.nameColor = function(name, color) {
+/**
+* Give a RGBA-array a name. Later on we can work with names instead of raw colorvalues.
+*
+* @example
+* pixel_map.nameColor([0,0,0,255], "ground")    // Give the color black (with no transparency) the name "ground"
+*/
+jaws.PixelMap.prototype.nameColor = function(color, name) {
   this.named_colors.push({name: name, color: color});
 }
 
