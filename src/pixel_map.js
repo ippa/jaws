@@ -88,8 +88,8 @@ jaws.PixelMap.prototype.draw = function() {
 /**
 * Trace the outline of a Rect until a named color found.
 *
-* @param {object} Rect     Instance of jaws.Rect()
-* @param {string}          Only look for this named color
+* @param {object} Rect          Instance of jaws.Rect()
+* @param {string} Color_Filter  Only look for this named color
 *
 * @return {string}  name of found color
 */
