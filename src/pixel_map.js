@@ -21,6 +21,9 @@ jaws.PixelMap = function PixelMap(options) {
 
   this.options = options
   this.scale = options.scale || 1
+  this.x = options.x || 0
+  this.y = options.y || 0
+
   if(options.image) {
     this.setContext(options.image);
 
@@ -82,7 +85,7 @@ jaws.PixelMap.prototype.update = function(x, y, width, height) {
 * Draws the pixel map on the maincanvas
 */ 
 jaws.PixelMap.prototype.draw = function() {
-  jaws.context.drawImage(this.context.canvas, 0, 0, this.width, this.height)
+  jaws.context.drawImage(this.context.canvas, this.x, this.y, this.width, this.height)
 }
 
 /**
