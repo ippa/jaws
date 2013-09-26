@@ -82,7 +82,7 @@ jaws.Rect.prototype.resizeTo = function(width, height) {
 /** Draw rect in color red, useful for debugging */
 jaws.Rect.prototype.draw = function() {
   jaws.context.strokeStyle = "red"
-  jaws.context.strokeRect(this.x, this.y, this.width, this.height)
+  jaws.context.strokeRect(this.x+0.5, this.y+0.5, this.width, this.height)
   return this
 }
 
