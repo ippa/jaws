@@ -302,27 +302,24 @@ var jaws = (function(jaws) {
    *
    */
   jaws.start = function(game_state, options, game_state_setup_options) {
+    if (!options) options = {};
 
-    if (!jaws.isFunction(game_state)) {
-      jaws.log.error("jaws.start: Passed in GameState is not a function.");
+    var fps = options.fps || 60;
+    if (options.loading_screen === undefined) options.loading_screen = true;
+    if (!options.width)                       options.width = 500;
+    if (!options.height)                      options.height = 300;
+    
+    /* Takes care of finding/creating canvas-element and debug-div */
+    jaws.init(options);
+
+    if (!jaws.isFunction(game_state) && !jaws.isObject(game_state)) {
+      jaws.log.error("jaws.start: Passed in GameState is niether function or object");
       return;
     }
     if (!jaws.isObject(game_state_setup_options) && game_state_setup_options !== undefined) {
       jaws.log.error("jaws.start: The setup options for the game state is not an object.");
       return;
     }
-
-    if (!options)
-      options = {};
-    var fps = options.fps || 60;
-    if (options.loading_screen === undefined)
-      options.loading_screen = true;
-    if (!options.width)
-      options.width = 500;
-    if (!options.height)
-      options.height = 300;
-    
-    jaws.init(options);
 
     if (options.loading_screen) {
       jaws.assets.displayProgress(0);
@@ -629,7 +626,7 @@ var jaws = (function(jaws) {
       }
     }
     for (var option in defaults) {
-      if( jaws.isFunction(defaults[option]) ) defaults[option] = defaults[option]();
+      if( jaws.isFunction(defaults[option]) ) defaults[option] = defaults[option](); 
       object[option] = (options[option] !== undefined) ? options[option] : jaws.clone(defaults[option]);
     }
   };
