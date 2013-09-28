@@ -460,7 +460,7 @@ var jaws = (function(jaws) {
     if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
     for(var i=0; i < list.length; i++) {
       if(jaws.isArray(list[i])) jaws.draw(list[i]);  
-      else                      list[i].draw();
+      else                      if(list[i].draw) list[i].draw();
     }
   }
 
@@ -473,7 +473,7 @@ var jaws = (function(jaws) {
     if(list.length == 1 && jaws.isArray(list[0])) list = list[0];
     for(var i=0; i < list.length; i++) {
       if(jaws.isArray(list[i])) jaws.update(list[i]);  
-      else                      list[i].update();
+      else                      if(list[i].update) list[i].update();
     }
   }
 
