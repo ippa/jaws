@@ -1,4 +1,4 @@
-/* Built at 2013-09-17 22:31:22 +0200 */
+/* Built at 2013-09-28 21:53:58 +0200 */
 /**
  * @namespace JawsJS core functions.
  *
@@ -303,27 +303,24 @@ var jaws = (function(jaws) {
    *
    */
   jaws.start = function(game_state, options, game_state_setup_options) {
+    if (!options) options = {};
 
-    if (!jaws.isFunction(game_state)) {
-      jaws.log.error("jaws.start: Passed in GameState is not a function.");
+    var fps = options.fps || 60;
+    if (options.loading_screen === undefined) options.loading_screen = true;
+    if (!options.width)                       options.width = 500;
+    if (!options.height)                      options.height = 300;
+    
+    /* Takes care of finding/creating canvas-element and debug-div */
+    jaws.init(options);
+
+    if (!jaws.isFunction(game_state) && !jaws.isObject(game_state)) {
+      jaws.log.error("jaws.start: Passed in GameState is niether function or object");
       return;
     }
     if (!jaws.isObject(game_state_setup_options) && game_state_setup_options !== undefined) {
       jaws.log.error("jaws.start: The setup options for the game state is not an object.");
       return;
     }
-
-    if (!options)
-      options = {};
-    var fps = options.fps || 60;
-    if (options.loading_screen === undefined)
-      options.loading_screen = true;
-    if (!options.width)
-      options.width = 500;
-    if (!options.height)
-      options.height = 300;
-    
-    jaws.init(options);
 
     if (options.loading_screen) {
       jaws.assets.displayProgress(0);
@@ -630,7 +627,7 @@ var jaws = (function(jaws) {
       }
     }
     for (var option in defaults) {
-      if( jaws.isFunction(defaults[option]) ) defaults[option] = defaults[option]();
+      if( jaws.isFunction(defaults[option]) ) defaults[option] = defaults[option](); 
       object[option] = (options[option] !== undefined) ? options[option] : jaws.clone(defaults[option]);
     }
   };
@@ -1659,6 +1656,19 @@ return jaws;
 
 var jaws = (function(jaws) {
 
+/*
+* 2013-09-28:
+*
+* For a 10x10 sprite in the topleft corner, should sprite.rect().bottom be 9 or 10?
+* There's no right or wrong answer. In some cases 9 makes sense (if checking directly for pixel-values for example).
+* In other cases 10 makes sense (bottom = x + height).
+*
+* The important part is beeing consistent across the lib/game.
+* Jaws started out with bottom = x + height so we'll continue with that way until good reasons to change come up.
+* Therefore correction = 0 for now.
+*/
+var correction = 0;
+
 /**
   @class A Basic rectangle.
   @example
@@ -1678,8 +1688,8 @@ jaws.Rect = function Rect(x, y, width, height) {
   this.y = y
   this.width = width
   this.height = height
-  this.right = x + width
-  this.bottom = y + height
+  this.right = x + width - correction
+  this.bottom = y + height - correction
 }
 
 /** Return position as [x,y] */
@@ -1700,16 +1710,16 @@ jaws.Rect.prototype.move = function(x, y) {
 jaws.Rect.prototype.moveTo = function(x, y) {
   this.x = x
   this.y = y
-  this.right = this.x + this.width
-  this.bottom = this.y + this.height
+  this.right = this.x + this.width - correction
+  this.bottom = this.y + this.height - correction
   return this
 }
 /** Modify width and height */
 jaws.Rect.prototype.resize = function(width, height) {
   this.width += width
   this.height += height
-  this.right = this.x + this.width
-  this.bottom = this.y + this.height
+  this.right = this.x + this.width - correction
+  this.bottom = this.y + this.height - correction
   return this
 }
 
@@ -1724,8 +1734,8 @@ jaws.Rect.prototype.shrink = function(x, y) {
   this.y += y
   this.width -= (x+x)
   this.height -= (y+y)
-  this.right = this.x + this.width
-  this.bottom = this.y + this.height
+  this.right = this.x + this.width - correction
+  this.bottom = this.y + this.height - correction
   return this
 }
 
@@ -1733,15 +1743,15 @@ jaws.Rect.prototype.shrink = function(x, y) {
 jaws.Rect.prototype.resizeTo = function(width, height) {
   this.width = width
   this.height = height
-  this.right = this.x + this.width
-  this.bottom = this.y + this.height
+  this.right = this.x + this.width - correction
+  this.bottom = this.y + this.height - correction
   return this
 }
 
 /** Draw rect in color red, useful for debugging */
 jaws.Rect.prototype.draw = function() {
   jaws.context.strokeStyle = "red"
-  jaws.context.strokeRect(this.x, this.y, this.width, this.height)
+  jaws.context.strokeRect(this.x-0.5, this.y-0.5, this.width, this.height)
   return this
 }
 
@@ -2905,6 +2915,9 @@ jaws.PixelMap = function PixelMap(options) {
 
   this.options = options
   this.scale = options.scale || 1
+  this.x = options.x || 0
+  this.y = options.y || 0
+
   if(options.image) {
     this.setContext(options.image);
 
@@ -2966,14 +2979,14 @@ jaws.PixelMap.prototype.update = function(x, y, width, height) {
 * Draws the pixel map on the maincanvas
 */ 
 jaws.PixelMap.prototype.draw = function() {
-  jaws.context.drawImage(this.context.canvas, 0, 0, this.width, this.height)
+  jaws.context.drawImage(this.context.canvas, this.x, this.y, this.width, this.height)
 }
 
 /**
 * Trace the outline of a Rect until a named color found.
 *
-* @param {object} Rect     Instance of jaws.Rect()
-* @param {string}          Only look for this named color
+* @param {object} Rect          Instance of jaws.Rect()
+* @param {string} Color_Filter  Only look for this named color
 *
 * @return {string}  name of found color
 */
@@ -2981,8 +2994,8 @@ jaws.PixelMap.prototype.namedColorAtRect = function(rect, color) {
   var x = rect.x
   var y = rect.y
 
-  for(; x < rect.right; x++)  if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
-  for(; y < rect.bottom; y++) if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
+  for(; x < rect.right-1; x++)  if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
+  for(; y < rect.bottom-1; y++) if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
   for(; x > rect.x; x--)      if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
   for(; y > rect.y; y--)      if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
 
@@ -3058,15 +3071,13 @@ var jaws = (function(jaws) {
   }
 
   jaws.Parallax.prototype.default_options = {
-    width: function() { jaws.width },
-    height: function() { jaws.height },
+    width: function() { return jaws.width },
+    height: function() { return jaws.height },
     scale: 1,
     repeat_x: null,
     repeat_y: null,
     camera_x: 0,
     camera_y: 0,
-    width: null,
-    height: null,
     layers: []
   }
 
