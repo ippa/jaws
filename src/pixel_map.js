@@ -100,8 +100,8 @@ jaws.PixelMap.prototype.namedColorAtRect = function(rect, color) {
   var x = rect.x
   var y = rect.y
 
-  for(; x < rect.right; x++)  if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
-  for(; y < rect.bottom; y++) if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
+  for(; x < rect.right-1; x++)  if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
+  for(; y < rect.bottom-1; y++) if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
   for(; x > rect.x; x--)      if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
   for(; y > rect.y; y--)      if(this.namedColorAt(x, y) == color || color===undefined) return this.namedColorAt(x,y);
 
