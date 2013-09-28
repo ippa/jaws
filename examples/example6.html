@@ -18,32 +18,31 @@
     </div >
 
     <script>
-    var fps = document.getElementById("fps")
     function ParallaxDemo() {
-      var parallax
-
+      var fps = document.getElementById("fps")
+      
       this.setup = function() {
-        parallax = new jaws.Parallax({repeat_x: true})
-        parallax.addLayer({image: "parallax_1.png", damping: 100})
-        parallax.addLayer({image: "parallax_2.png", damping: 6})
-        parallax.addLayer({image: "parallax_3.png", damping: 4})
-        parallax.addLayer({image: "parallax_4.png", damping: 2})
+        this.parallax = new jaws.Parallax({repeat_x: true})
+        this.parallax.addLayer({image: "parallax_1.png", damping: 100})
+        this.parallax.addLayer({image: "parallax_2.png", damping: 6})
+        this.parallax.addLayer({image: "parallax_3.png", damping: 4})
+        this.parallax.addLayer({image: "parallax_4.png", damping: 2})
       }
 
       this.update = function() {
-        if(jaws.pressed("left"))  { parallax.camera_x -= 10 }
-        if(jaws.pressed("right")) { parallax.camera_x += 10 }
-        else { parallax.camera_x += 2 }
+        if(jaws.pressed("left"))  { this.parallax.camera_x -= 10 }
+        if(jaws.pressed("right")) { this.parallax.camera_x += 10 }
+        else { this.parallax.camera_x += 2 }
         fps.innerHTML = jaws.game_loop.fps
       }
       
       this.draw = function() {
-        parallax.draw()
+        this.parallax.draw();
       }
     }
 
     jaws.onload = function() {
-      jaws.assets.add(["parallax_1.png","parallax_2.png","parallax_3.png","parallax_4.png"])
+      jaws.assets.add("parallax_1.png", "parallax_2.png", "parallax_3.png", "parallax_4.png")
       jaws.start(ParallaxDemo)
     }
   </script>
