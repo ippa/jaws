@@ -23,15 +23,13 @@ var jaws = (function(jaws) {
   }
 
   jaws.Parallax.prototype.default_options = {
-    width: function() { jaws.width },
-    height: function() { jaws.height },
+    width: function() { return jaws.width },
+    height: function() { return jaws.height },
     scale: 1,
     repeat_x: null,
     repeat_y: null,
     camera_x: 0,
     camera_y: 0,
-    width: null,
-    height: null,
     layers: []
   }
 
