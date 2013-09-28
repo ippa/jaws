@@ -1,5 +1,18 @@
 var jaws = (function(jaws) {
 
+/*
+* 2013-09-28:
+*
+* For a 10x10 sprite in the topleft corner, should sprite.rect().bottom be 9 or 10?
+* There's no right or wrong answer. In some cases 9 makes sense (if checking directly for pixel-values for example).
+* In other cases 10 makes sense (bottom = x + height).
+*
+* The important part is beeing consistent across the lib/game.
+* Jaws started out with bottom = x + height so we'll continue with that way until good reasons to change come up.
+* Therefore correction = 0 for now.
+*/
+var correction = 0;
+
 /**
   @class A Basic rectangle.
   @example
@@ -19,8 +32,8 @@ jaws.Rect = function Rect(x, y, width, height) {
   this.y = y
   this.width = width
   this.height = height
-  this.right = x + width
-  this.bottom = y + height
+  this.right = x + width - correction
+  this.bottom = y + height - correction
 }
 
 /** Return position as [x,y] */
@@ -41,16 +54,16 @@ jaws.Rect.prototype.move = function(x, y) {
 jaws.Rect.prototype.moveTo = function(x, y) {
   this.x = x
   this.y = y
-  this.right = this.x + this.width
-  this.bottom = this.y + this.height
+  this.right = this.x + this.width - correction
+  this.bottom = this.y + this.height - correction
   return this
 }
 /** Modify width and height */
 jaws.Rect.prototype.resize = function(width, height) {
   this.width += width
   this.height += height
-  this.right = this.x + this.width
-  this.bottom = this.y + this.height
+  this.right = this.x + this.width - correction
+  this.bottom = this.y + this.height - correction
   return this
 }
 
@@ -65,8 +78,8 @@ jaws.Rect.prototype.shrink = function(x, y) {
   this.y += y
   this.width -= (x+x)
   this.height -= (y+y)
-  this.right = this.x + this.width
-  this.bottom = this.y + this.height
+  this.right = this.x + this.width - correction
+  this.bottom = this.y + this.height - correction
   return this
 }
 
@@ -74,15 +87,15 @@ jaws.Rect.prototype.shrink = function(x, y) {
 jaws.Rect.prototype.resizeTo = function(width, height) {
   this.width = width
   this.height = height
-  this.right = this.x + this.width
-  this.bottom = this.y + this.height
+  this.right = this.x + this.width - correction
+  this.bottom = this.y + this.height - correction
   return this
 }
 
 /** Draw rect in color red, useful for debugging */
 jaws.Rect.prototype.draw = function() {
   jaws.context.strokeStyle = "red"
-  jaws.context.strokeRect(this.x+0.5, this.y+0.5, this.width, this.height)
+  jaws.context.strokeRect(this.x-0.5, this.y-0.5, this.width, this.height)
   return this
 }
 
