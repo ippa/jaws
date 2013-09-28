@@ -7,11 +7,11 @@
   </head>
 <body>
 
-    <div id="canvas"></div>
+  <div id="canvas"></div>
     Move with arrows, shoot with space.
 
     <div id="info">
-      <h1>DOM based sprites</h1>
+      <h1>DOM based sprites *DEPRECATED*</h1>
       To do normal oldschool DOM-based sprites just make a ordinary div (no canvas) -tag with id="canvas".
       Example also demonstrates a slightly more advanced controller scheme.
     </div>
@@ -29,7 +29,7 @@
   */
   function PlayState() {
     var player
-    var bullets = new jaws.SpriteList()
+    var bullets = []; // new jaws.SpriteList()
     var fps = document.getElementById("fps")
 
     this.setup = function() {
@@ -58,7 +58,7 @@
       bullets.forEach( function(item, index, array) {
         if(isOutsideCanvas(item)) {
           jaws.dom.removeChild(item.div)
-          array.splice(index,1)
+          array.splice(index, 1)
         }
       });
 
@@ -71,14 +71,14 @@
       player.vx /= 1.10
       player.vy /= 1.10
 
-      bullets.update()
+      jaws.update(bullets)
       jaws.log("bullets: " + bullets.length + " fps: " + jaws.game_loop.fps + " mouse x/y: " + jaws.mouse_x + "/" + jaws.mouse_y)
 
     }
 
     this.draw = function() {
       player.draw()
-      bullets.draw()
+      jaws.draw(player, bullets)
     }
 
     /* Simular to example1 but now we're using jaws properties to get widthteElement('div'); and height of canvas instead */
