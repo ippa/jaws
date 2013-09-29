@@ -20,8 +20,8 @@ jaws.game_states.Edit = function(options) {
   var game_objects = options.game_objects || []
   var constructors = jaws.forceArray(options.constructors || [])
   var grid_size = options.grid_size || [32,32]
-  var snap_to_grid = options.snap_to_grid || true
-  var track_modified = options.track_modified || true
+  var snap_to_grid = options.snap_to_grid !== undefined ? options.snap_to_grid : true
+  var track_modified = options.track_modified !== undefined ? options.track_modified : true
   var title = options.title || window.location.href
   var isometric = options.isometric
   var url = options.url
