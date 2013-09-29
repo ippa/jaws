@@ -63,7 +63,7 @@ jaws.GameLoop = function GameLoop(game_object, options, game_state_setup_options
     this.current_tick = (new Date()).getTime();
     this.last_tick = (new Date()).getTime(); 
 
-    if(game_object.setup) { game_object.setup(game_state_setup_options) }
+    if(options.setup !== false && game_object.setup) { game_object.setup(game_state_setup_options) }
     step_delay = 1000 / options.fps;
    
     if(options.fps == 60) {

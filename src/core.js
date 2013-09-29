@@ -381,6 +381,7 @@ var jaws = (function(jaws) {
    *
    */
   jaws.switchGameState = function(game_state, options, game_state_setup_options) {
+    if(options === undefined) options = {};
 
     if(jaws.isFunction(game_state)) {
       game_state = new game_state;
@@ -391,13 +392,14 @@ var jaws = (function(jaws) {
     }
 
     var fps = (options && options.fps) || (jaws.game_loop && jaws.game_loop.fps) || 60;
+    var setup = options.setup
 
     jaws.game_loop && jaws.game_loop.stop();
     jaws.clearKeyCallbacks();
 
     jaws.previous_game_state = jaws.game_state;
     jaws.game_state = game_state;
-    jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps}, game_state_setup_options);
+    jaws.game_loop = new jaws.GameLoop(game_state, {fps: fps, setup: setup}, game_state_setup_options);
     jaws.game_loop.start();
   };
 
