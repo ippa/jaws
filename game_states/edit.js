@@ -224,7 +224,7 @@ jaws.game_states.Edit = function(options) {
     jaws.canvas.removeEventListener("mousemove", mousemove, false)
     jaws.canvas.removeEventListener("mousewheel", mousewheel, false)
     jaws.canvas.removeEventListener("DOMMouseSCroll", mousewheel, false)
-    jaws.switchGameState(jaws.previous_game_state)
+    jaws.switchGameState(jaws.previous_game_state, {setup: false})
   }
 
   function save() {
