@@ -20,12 +20,12 @@ jaws.game_states.Edit = function(options) {
   var game_objects = options.game_objects || []
   var constructors = jaws.forceArray(options.constructors || [])
   var grid_size = options.grid_size || [32,32]
-  var snap_to_grid = options.snap_to_grid !== undefined ? options.snap_to_grid : true
-  var track_modified = options.track_modified !== undefined ? options.track_modified : true
+  var snap_to_grid = (options.snap_to_grid !== undefined) ? options.snap_to_grid : true
+  var track_modified = (options.track_modified !== undefined) ? options.track_modified : true
   var title = options.title || window.location.href
   var isometric = options.isometric
   var url = options.url
-
+  
   if(isometric) {
     grid_size[0] = parseInt(grid_size[0] / 2 - 0.5)
     grid_size[1] = parseInt(grid_size[1] / 2 - 0.5)
@@ -48,7 +48,7 @@ jaws.game_states.Edit = function(options) {
     new_object._constructor = object._constructor || object.constructor.name
 
     if(new_object.update) new_object.update(); 
-    new_object.context = jaws.context  // Always paint new clonsed objects in game window
+    new_object.context = jaws.context  // Always paint newly cloned object in default game window
 
     return new_object
   }
@@ -161,9 +161,11 @@ jaws.game_states.Edit = function(options) {
     if(!cursor_object) return;
 
     new_object = cloneObject(cursor_object)
-    new_object.x -= new_object.x % grid_size[0]
-    new_object.y -= new_object.y % grid_size[1]
-    game_objects.push(new_object) 
+    if(snap_to_grid) {
+      new_object.x -= new_object.x % grid_size[0]
+      new_object.y -= new_object.y % grid_size[1]
+    }
+    game_objects.push(new_object)
   }
 
   function forceArray(obj)                { if(!obj) return []; return obj.forEach ? obj : [obj] }
