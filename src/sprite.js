@@ -48,7 +48,8 @@ jaws.Sprite.prototype.default_options = {
   width: 16,
   height: 16,
   _constructor: null,
-  context: null
+  context: null,
+  data: null
 }
 
 /** 
@@ -378,6 +379,8 @@ jaws.Sprite.prototype.attributes = function() {
   object["scale_y"] = this.scale_y;
   object["anchor_x"] = this.anchor_x
   object["anchor_y"] = this.anchor_y
+
+  if(this.data !== null) object["data"] = this.data; // For external data (for example added by the editor) that you want serialized
 
   return object
 }
