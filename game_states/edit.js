@@ -17,7 +17,8 @@ if(!jaws.game_states) jaws.game_states = {}
  */
 jaws.game_states.Edit = function(options) {
   if(! options ) options = {};
-  var game_objects = options.game_objects || []
+  
+  this.game_objects = options.game_objects || []
   var constructors = jaws.forceArray(options.constructors || [])
   var grid_size = options.grid_size || [32,32]
   var snap_to_grid = (options.snap_to_grid !== undefined) ? options.snap_to_grid : true
@@ -92,19 +93,22 @@ jaws.game_states.Edit = function(options) {
     var clicked_object = gameObjectAt(mouseX(), mouseY())
     if(clicked_object) {
       if(!jaws.pressed("ctrl") && !jaws.pressed("shift")) {
-        deselect(game_objects);
+        deselect(that.game_objects);
         select(clicked_object);
       }
       cursor_object = undefined
       objects_dragged = false
 
-       // Detect double clicks on objects and call enter_data() to enter custom data
-      if(recently_clicked_object) { enter_data(clicked_object) }
+      // Detect double clicks on objects and call enter_data() to enter custom data
+      if(recently_clicked_object) { 
+        click_at = false
+        enter_data(clicked_object) 
+      }
       recently_clicked_object = clicked_object
       setTimeout( function() { recently_clicked_object = undefined; }, 300)
     }
     else { 
-      deselect(game_objects);
+      deselect(that.game_objects);
       paintWithCursor(); 
     }
   }
@@ -112,12 +116,12 @@ jaws.game_states.Edit = function(options) {
   function mouseup(e) {
     click_at = undefined
     
-    if(grid_size && snap_to_grid) game_objects.filter(isSelected).forEach(snapToGrid);
+    if(grid_size && snap_to_grid) that.game_objects.filter(isSelected).forEach(snapToGrid);
     var clicked_object = gameObjectAt(mouseX(), mouseY())
 
     if(!objects_dragged) {
       if(jaws.pressed("shift")) { 
-        game_objects.forEach( function(item) { 
+        that.game_objects.forEach( function(item) { 
           if(clicked_object.attributes().image === item.attributes().image) toggle(item);
         });
       }
@@ -136,9 +140,9 @@ jaws.game_states.Edit = function(options) {
 
     if(click_at) {
       
-      if(game_objects.filter(isSelected).length > 0) {  // Do we have selected game objects?
+      if(that.game_objects.filter(isSelected).length > 0) {  // Do we have selected game objects?
         objects_dragged = true
-        game_objects.filter(isSelected).forEach( function(element, index) {
+        that.game_objects.filter(isSelected).forEach( function(element, index) {
           element.move(mouseX() - click_at[0], mouseY() - click_at[1])
           if(track_modified) element.modified = true;
         });
@@ -158,7 +162,7 @@ jaws.game_states.Edit = function(options) {
     if(e.wheelDelta ) delta = e.wheelDelta/120;
     if(e.detail     ) delta = -e.detail/3;
 
-    game_objects.filter(isSelected).forEach( function(element, index) { 
+    that.game_objects.filter(isSelected).forEach( function(element, index) { 
       element.z += delta*4 
       if(track_modified) element.modified = true;
     })
@@ -166,8 +170,15 @@ jaws.game_states.Edit = function(options) {
   }
 
   function enter_data(game_object) {
-    /* placeholder for now */
-    console.log("enter_data()")
+    /* Let's do the simplest possible thing that could work for now, prompt() :) */
+    var name = prompt("Add data to object, name of property?")
+    if(name) {
+      var value = prompt("Value of \"" + name + "\"?")
+      if(value) {
+        if(!game_object.data)  game_object.data = {};
+        game_object.data[name] = value
+      }
+    }
   }
 
   function snapToGrid(object) {
@@ -182,7 +193,7 @@ jaws.game_states.Edit = function(options) {
       new_object.x -= new_object.x % grid_size[0]
       new_object.y -= new_object.y % grid_size[1]
     }
-    game_objects.push(new_object)
+    that.game_objects.push(new_object)
   }
 
   function forceArray(obj)                { if(!obj) return []; return obj.forEach ? obj : [obj] }
@@ -217,7 +228,7 @@ jaws.game_states.Edit = function(options) {
   }
 
   function gameObjectAt(x, y) {
-    return game_objects.filter( function(obj) { 
+    return that.game_objects.filter( function(obj) { 
       try {
         return obj.rect().collidePoint(x, y) 
       }
@@ -228,14 +239,14 @@ jaws.game_states.Edit = function(options) {
   }
 
   function removeSelected() {
-    game_objects.filter(isSelected).forEach( function(element, index) {
-      var i = game_objects.indexOf(element)
-      if(i > -1) { game_objects.splice(i, 1) }
+    that.game_objects.filter(isSelected).forEach( function(element, index) {
+      var i = that.game_objects.indexOf(element)
+      if(i > -1) { that.game_objects.splice(i, 1) }
     });
   }
 
   /* Remove all event-listeners, hide edit_tag and switch back to previous game state */
-  function exit() {
+  this.exit = function() {
     toolbar_canvas.parentNode.removeChild(toolbar_canvas)
     edit_tag.style.display = "none"
     jaws.canvas.removeEventListener("mousedown", mousedown, false)
@@ -246,8 +257,8 @@ jaws.game_states.Edit = function(options) {
     jaws.switchGameState(jaws.previous_game_state, {setup: false})
   }
 
-  function save() {
-    var data = "[" + game_objects.map( function(game_object) { return game_object.toJSON() }) + "]";
+  this.save = function() {
+    var data = "[" + that.game_objects.map( function(game_object) { return game_object.toJSON() }) + "]";
 
     if(url) {
       data = "game_objects=" + data
@@ -270,7 +281,7 @@ jaws.game_states.Edit = function(options) {
     var data = prompt("Enter JSON initialize data, example: { \"image\" : \"block.bmp\" } ")
     data = JSON.parse(data||"{}")
     var object = new constructor(data)
-    game_objects.push(object)
+    that.game_objects.push(object)
   }
 
   function up()     { scrollUp() }
@@ -340,7 +351,7 @@ jaws.game_states.Edit = function(options) {
 
     jaws.log("Editor activated!")
     jaws.preventDefaultKeys("left", "right", "up", "down", "ctrl", "f1", "f2", "home", "end", "pageup", "pagedown", "w", "a", "s", "d", "p")
-    jaws.on_keydown(["f2","esc"], exit )
+    jaws.on_keydown(["f2","esc"], this.exit )
     jaws.on_keydown("delete",     removeSelected )
     jaws.on_keydown("add", add )
     jaws.on_keydown("pageup", pageup )
@@ -360,7 +371,7 @@ jaws.game_states.Edit = function(options) {
     log(mouseX() + " / " + mouseY())
     if(viewport) log(viewport.toString(), true);
 
-    var selected_objects = game_objects.filter(isSelected)
+    var selected_objects = that.game_objects.filter(isSelected)
     if(selected_objects.length == 1) {
       log(selected_objects[0].toString(), true)
     }
@@ -377,7 +388,7 @@ jaws.game_states.Edit = function(options) {
     if(jaws.pressed("w"))      bigUp();
     if(jaws.pressed("s"))      bigDown();
 
-    if(jaws.pressedWithoutRepeat("p", true)) save();
+    if(jaws.pressedWithoutRepeat("p", true)) this.save();
 
     if(cursor_object) log(cursor_object.toString());
   }
@@ -389,8 +400,8 @@ jaws.game_states.Edit = function(options) {
     
     function draw() { 
       if(cursor_object) { cursor_object.draw(); }
-      if(isometric) game_objects.filter(isSelected).forEach(drawIsometricRect);
-      else          game_objects.filter(isSelected).forEach(drawRect);
+      if(isometric) that.game_objects.filter(isSelected).forEach(drawIsometricRect);
+      else          that.game_objects.filter(isSelected).forEach(drawRect);
     }
     if(viewport)  viewport.apply(draw);
     else          draw();
