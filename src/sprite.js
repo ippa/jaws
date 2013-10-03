@@ -384,6 +384,45 @@ jaws.Sprite.prototype.attributes = function() {
 
   return object
 }
+/**
+ * Load/creates sprites from given data
+ *
+ * Argument could either be
+ * - an array of Sprite objects
+ * - an array of JSON objects
+ * - a JSON.stringified string representing an array of JSON objects
+ *
+ *  @return Array of created sprite
+ *
+ */
+jaws.Sprite.parse = function(objects) {
+  var sprites = []
+  
+  if(jaws.isArray(objects)) {
+    // If this is an array of JSON representations, parse it
+    if(objects.every(function(item) { return item._constructor })) {
+      parseArray(objects)
+    } else {
+      // This is already an array of Sprites, load it directly
+      sprites = objects
+    }
+  }
+  else if(jaws.isString(objects)) { parseArray( JSON.parse(objects) ); jaws.log.info(objects) }
+  
+  function parseArray(array) {
+    array.forEach( function(data) {
+      var constructor = data._constructor ? eval(data._constructor) : data.constructor
+      if(jaws.isFunction(constructor)) {
+        jaws.log.info("Creating " + data._constructor + "(" + data.toString() + ")", true)
+        var object = new constructor(data)
+        object._constructor = data._constructor || data.constructor.name
+        sprites.push(object);
+      }
+    });
+  }
+
+  return sprites;
+}
 
 /**
  * returns a JSON-string representing the state of the Sprite.
