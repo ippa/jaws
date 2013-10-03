@@ -380,7 +380,7 @@ jaws.Sprite.prototype.attributes = function() {
   object["anchor_x"] = this.anchor_x
   object["anchor_y"] = this.anchor_y
 
-  if(this.data !== null) object["data"] = this.data; // For external data (for example added by the editor) that you want serialized
+  if(this.data !== null) object["data"] = jaws.clone(this.data); // For external data (for example added by the editor) that you want serialized
 
   return object
 }
