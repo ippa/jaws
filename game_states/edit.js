@@ -40,6 +40,7 @@ jaws.game_states.Edit = function(options) {
   var objects_dragged
   var toolbar_canvas = document.getElementById("jaws-toolbar")
   var toolbar_context;
+  var recently_clicked_object;
 
   function cloneObject(object) {
     if(!object) return undefined;
@@ -73,28 +74,39 @@ jaws.game_states.Edit = function(options) {
 
   function mousedown(e) {
     var code = ( e.keyCode ? e.keyCode : e.which )
-    if(code === 3) {  // Right mouse button
-      cursor_object = cloneObject( gameObjectAt( mouseX(), mouseY() ) )
-    }
-    else {
-      click_at = [mouseX(), mouseY()]
-         
-      var clicked_object = gameObjectAt(mouseX(), mouseY())
-      if(clicked_object) {
-        if(!jaws.pressed("ctrl") && !jaws.pressed("shift")) {
-          deselect(game_objects);
-          select(clicked_object);
-        }
-        cursor_object = undefined
-        objects_dragged = false
-      }
-      else { 
-        deselect(game_objects);
-        paintWithCursor(); 
-      }
-    }
+    
+    if(code === 3)  right_mousedown();
+    else            left_mousedown();
+
     e.preventDefault();
     return false;
+  }
+
+  function right_mousedown() {
+    cursor_object = cloneObject( gameObjectAt( mouseX(), mouseY() ) )
+  }
+
+  function left_mousedown() {
+    click_at = [mouseX(), mouseY()]
+         
+    var clicked_object = gameObjectAt(mouseX(), mouseY())
+    if(clicked_object) {
+      if(!jaws.pressed("ctrl") && !jaws.pressed("shift")) {
+        deselect(game_objects);
+        select(clicked_object);
+      }
+      cursor_object = undefined
+      objects_dragged = false
+
+       // Detect double clicks on objects and call enter_data() to enter custom data
+      if(recently_clicked_object) { enter_data(clicked_object) }
+      recently_clicked_object = clicked_object
+      setTimeout( function() { recently_clicked_object = undefined; }, 300)
+    }
+    else { 
+      deselect(game_objects);
+      paintWithCursor(); 
+    }
   }
   
   function mouseup(e) {
@@ -151,6 +163,11 @@ jaws.game_states.Edit = function(options) {
       if(track_modified) element.modified = true;
     })
     //jaws.log("scroll by: " + delta)
+  }
+
+  function enter_data(game_object) {
+    /* placeholder for now */
+    console.log("enter_data()")
   }
 
   function snapToGrid(object) {
