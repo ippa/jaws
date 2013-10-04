@@ -9,9 +9,10 @@ if(!jaws.game_states) jaws.game_states = {}
  * See example10.html for a demo
  *
  * @property {string} title use this as key when saving game_object properties to localStorage, defaults to current url
- * @property snap_to_grid snap all game objects to predifned grid
+ * @property {bool} snap_to_grid snap all game objects to predifned grid
  * @property {array} grid_size size of grid, mostly make sense with snap_to_grid set to true and TileMap() later on
  * @property {array} game_objects game_objects to paint and modify on screen
+ * @property {function} on_exit callback to execute when editor exists. Can be used to persist the new state.
  * @property {string} url use url to POST game objects to when saving and GET to load. Sends and expects array of JSON as payload.
  *
  */
@@ -23,6 +24,7 @@ jaws.game_states.Edit = function(options) {
   var grid_size = options.grid_size || [32,32]
   var snap_to_grid = (options.snap_to_grid !== undefined) ? options.snap_to_grid : true
   var track_modified = (options.track_modified !== undefined) ? options.track_modified : true
+  var on_exit = options.on_exit
   var title = options.title || window.location.href
   var isometric = options.isometric
   var url = options.url
@@ -247,6 +249,8 @@ jaws.game_states.Edit = function(options) {
 
   /* Remove all event-listeners, hide edit_tag and switch back to previous game state */
   this.exit = function() {
+    if(on_exit) on_exit();
+
     toolbar_canvas.parentNode.removeChild(toolbar_canvas)
     edit_tag.style.display = "none"
     jaws.canvas.removeEventListener("mousedown", mousedown, false)
