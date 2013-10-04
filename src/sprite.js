@@ -367,7 +367,7 @@ jaws.Sprite.prototype.toString = function() { return "[Sprite " + this.x.toFixed
 
 /** returns Sprites state/properties as a pure object */
 jaws.Sprite.prototype.attributes = function() { 
-  var object = this.options                   // Start with all creation time properties
+  var object = {}                   // Starting with this.options could create circular references through "context"
   object["_constructor"] = this._constructor || "jaws.Sprite"
   object["x"] = parseFloat(this.x.toFixed(2))
   object["y"] = parseFloat(this.y.toFixed(2))
@@ -393,7 +393,7 @@ jaws.Sprite.prototype.attributes = function() {
  * - a JSON.stringified string representing an array of JSON objects
  *
  *  @return Array of created sprite
- *
+*
  */
 jaws.Sprite.parse = function(objects) {
   var sprites = []
