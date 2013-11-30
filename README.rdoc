@@ -52,6 +52,7 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/jawsjs/examples/example12.html - jaws.viewport.drawTileMap() - optimized tile map drawing
 
 == Games using Jaws
+* {http://recardona.github.io/BitBot/}[http://recardona.github.io/BitBot/] - BitBot: puzzle, enter commands to the robot to reach the goal
 * {http://ld27.pauljoannon.com//}[http://ld27.pauljoannon.com/] - Castle Clocksworth: Steampunk-style puzzle adventure
 * {http://ippa.se/webgames/the_adventures_of_10_seconds/}[http://ippa.se/webgames/the_adventures_of_10_seconds/] - Small worms-style terrain puzzle-adventure!
 * {http://mcfunkypants.com/LD26/}[http://mcfunkypants.com/LD26/] - Colorful abstract platformer by McFunkypants
