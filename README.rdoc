@@ -267,4 +267,3 @@ Pasting your problematic code in the issue-ticket itself will usually mean a lot
   </script>
   </body>
   </html>
-
