@@ -44,9 +44,8 @@ test("collision detection", function() {
     ok( jaws.collide(sprite1, sprite2), "true if any collisions" )
     ok( jaws.collide(sprites, sprites), "true if any collisions" )
 
-    // TODO: revisit these two tests:
-    //ok( jaws.collide(circle1, circle2), "true if any collisions" )
-    //ok( jaws.collide(circle1, circles), "true if any collisions" )
+    ok( jaws.collide(circle1, circle2), "true if any collisions" )
+    ok( jaws.collide(circle1, circles), "true if any collisions" )
 
     start();
   }
@@ -113,8 +112,12 @@ test("Collision detection with callbacks", function() {
     ok(callback_status, "collide() with circles callback got executed at least once")
 
     callback_status = false
+    jaws.collide(circle1, circle3, function(a, b) { callback_status = true }); 
+    deepEqual(callback_status, false, "collide(circle1, circle3) shouldn't execute callback")
+
+    callback_status = false
     jaws.collide(circle1, circle2, function(a, b) { callback_status = true }); 
-    deepEqual(callback_status, false, "collide(circle1, circle2) shouldn't executed callback")
+    ok(callback_status, "collide(circle1, circle2) shouldn't executed callback")
 
     start();
   }
