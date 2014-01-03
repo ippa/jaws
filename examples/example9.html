@@ -26,9 +26,11 @@
       var fps
       var viewport
       var tile_map
+      var hud
 
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
+        hud = new jaws.Text({text: "Welcome to example 9 - this is a static jaws.Text object", x: 50, y: 10})
         live_info = document.getElementById("live_info")
         blocks = new jaws.SpriteList()
         var world = new jaws.Rect(0,0,320*10,320*2)
@@ -123,6 +125,7 @@
       this.draw = function() {
         jaws.clear()
 
+        hud.draw();
         // the viewport magic. wrap all draw()-calls inside viewport.apply and it will draw those relative to the viewport.
         viewport.apply( function() {
           blocks.draw()
