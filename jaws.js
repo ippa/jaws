@@ -1,4 +1,4 @@
-/* Built at 2013-10-06 21:36:04 +0200 */
+/* Built at 2014-01-03 11:51:42 +0100 */
 /**
  * @namespace JawsJS core functions.
  *
@@ -2918,13 +2918,13 @@ var jaws = (function(jaws) {
    *   jaws.collide(bullets, enemies, function(bullet, enemy) { ... } )
    */
   jaws.collide = function(x, x2, callback) {
-    if (x.rect && x2.forEach)
+    if ((x.rect || x.radius) && x2.forEach)
       return (jaws.collideOneWithMany(x, x2, callback).length > 0);
     if (x.forEach && x2.forEach)
       return (jaws.collideManyWithMany(x, x2, callback).length > 0);
-    if (x.forEach && x2.rect)
+    if (x.forEach && (x2.rect || x2.radius))
       return (jaws.collideOneWithMany(x2, x, callback).length > 0);
-    if (x.rect && x2.rect) {
+    if ((x.rect && x2.rect) || (x.radius && x2.radius)) {
       var result = jaws.collideOneWithOne(x, x2);
       if (callback && result)
         callback(x, x2);
