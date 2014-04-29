@@ -86,6 +86,7 @@ Check out the sourcecode for comments and explanations:
 ... missing your game here? Mail me about it (my email is on my github profilepage). Or create a new issue.
 
 == Libs using Jaws
+* {http://mcfunkypants.com/tower/} - Tower Game Starter Kit
 * {http://mcfunkypants.com/ludus/}[http://mcfunkypants.com/ludus/] - Platformer Game Starter Kit
 * {https://github.com/deisdestiny/Jaws-TS}[https://github.com/deisdestiny/Jaws-TS] - Jaws TypeScript Definitions
 
