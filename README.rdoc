@@ -52,6 +52,7 @@ Check out the sourcecode for comments and explanations:
 * http://jawsjs.com/jawsjs/examples/example12.html - jaws.viewport.drawTileMap() - optimized tile map drawing
 
 == Games using Jaws
+* {http://www.ludumdare.com/compo/ludum-dare-29/?action=preview&uid=21212}[http://www.ludumdare.com/compo/ludum-dare-29/?action=preview&uid=21212] - DrillFish: drill through the levels as a very odd fish - by mezka
 * {http://recardona.github.io/BitBot/}[http://recardona.github.io/BitBot/] - BitBot: puzzle, enter commands to the robot to reach the goal
 * {http://ld27.pauljoannon.com//}[http://ld27.pauljoannon.com/] - Castle Clocksworth: Steampunk-style puzzle adventure
 * {http://ippa.se/webgames/the_adventures_of_10_seconds/}[http://ippa.se/webgames/the_adventures_of_10_seconds/] - Small worms-style terrain puzzle-adventure!
