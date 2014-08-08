@@ -20,8 +20,7 @@ gulp.task('build', function() {
 });
 
 gulp.task('docs', shell.task([
-  'echo fitt',
-  '/usr/bin/jsdoc -D="noGlobal:true" -D="title:JawsJS HTML5 game engine documentation" -d=./docs ./src',
+  '/usr/bin/jsdoc -D="noGlobal:true" -D="title:JawsJS HTML5 game engine documentation" -t=codeview -d=docs src',
   'zip docs/jaws-docs.zip -x jaws-docs.zip -r ./docs/'
 ]));
 
