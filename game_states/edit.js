@@ -344,7 +344,7 @@ jaws.game_states.Edit = function(options) {
       edit_tag.id = "jaws-edit"
       document.body.appendChild(edit_tag)
     }
-    //edit_tag.style.display = "block"
+    edit_tag.style.display = "block"
 
     // Disable right click
     window.oncontextmenu = function(event) {
