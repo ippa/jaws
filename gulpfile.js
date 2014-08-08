@@ -11,7 +11,7 @@ var paths = files.map( function(file) { return "src/" + file } )
 gulp.task('build', function() {  
   gulp.src(paths)
   .pipe(concat("jaws.js"))
-  .pipe(insert.prepend("/* Built at" + (new Date()).toString() + " */\n"))
+  .pipe(insert.prepend("/* Built at: " + (new Date()).toString() + " */\n"))
   .pipe(insert.append(';window.addEventListener("load", function() { if(jaws.onload) jaws.onload(); }, false);'))
   .pipe(gulp.dest("."))
   .pipe(uglify())
