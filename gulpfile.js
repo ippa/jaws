@@ -14,7 +14,7 @@ gulp.task('build', function() {
   .pipe(insert.append(';window.addEventListener("load", function() { if(jaws.onload) jaws.onload(); }, false);'))
   .pipe(gulp.dest("."))
   .pipe(uglify())
-  .pipe(concat("jawsjs.min.js"))
+  .pipe(concat("jaws-min.js"))
   .pipe(gulp.dest("."))
 });
 
