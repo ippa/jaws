@@ -17,7 +17,7 @@
     "gulp-insert": "",
     "gulp-qunit": "",
     "gulp-shell": "^0.2.9",
-    "qunitjs": ""
+    "qunitjs": "^1.15.0"
   },
   "scripts": {
     "test": "gulp test"
