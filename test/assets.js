@@ -135,9 +135,12 @@ test("assets.loadAll()", function() {
     ok(assets.get("droid_11x15.png"), "image loaded")
     ok(assets.get("rect.png"), "image loaded")
 
-    /* IE doesn't support WAV, crazy. */
-    if(is_ie) ok( !assets.get("laser.wav"), "laser.wav isn't loaded in IE");
-    else      ok( assets.get("laser.wav"), "laser.wav is supported in non-IE browsers");
+    /* Only run this test where Audio is supported */
+    if(window["Audio"]) {
+      /* IE doesn't support WAV, crazy. */
+      if(is_ie) ok( !assets.get("laser.wav"), "laser.wav isn't loaded in IE");
+      else      ok( assets.get("laser.wav"), "laser.wav is supported in non-IE browsers");
+    }
 
     ok(assets.get("gamedata.json"), "json loaded")
     equal(assets.get("gamedata.json").type, "Troll", "jsondata got parsed into an object")
