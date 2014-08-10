@@ -187,7 +187,7 @@ test("Performance test: repeat_x=true, repeat_y=true", function() {
 	}
 });
 
-
+/*
 test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 	stop();
   var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded})
@@ -227,8 +227,8 @@ test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 
 		jaws.clear(); start();
 	}
-	
 });
+*/
 
 test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function() {
 	stop();
@@ -280,10 +280,10 @@ test("Performance test: repeat_x=true, repeat_y=true, rectangle=19x19", function
 		jaws.clear(); start();
 	}
 });
-
+/*
 test ("Accuracy test: repeat_x=true, repeat_y=false", function() {
 	stop();
-	jaws.init()
+	// jaws.init()
   jaws.assets.setRoot("assets/").add("rect.png").loadAll({onload: loaded})
   function loaded()	{
 		parallax = new jaws.Parallax({
@@ -359,7 +359,6 @@ test ("Accuracy test: repeat_x=true, repeat_y=false", function() {
 		jaws.clear(); start();	
 	}
 });
-
 
 test ("Accuracy test: repeat_x=false, repeat_y=true", function() {
 	stop();
@@ -841,3 +840,4 @@ test ("Accuracy test: repeat_x=true, repeat_y=false, scale=2x (parallax level)",
 		jaws.clear(); start();	
   }
 });
+*/
