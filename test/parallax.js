@@ -190,7 +190,7 @@ test("Performance test: repeat_x=true, repeat_y=true", function() {
 
 test("Performance test: repeat_x=true, repeat_y=true, scale=2x)", function() {
 	stop();
-  var assets = new Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded})
+  var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded})
 
   function loaded() {
 		parallax = new jaws.Parallax({
