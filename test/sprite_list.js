@@ -89,7 +89,7 @@ test("Remove, and draw() invocation", function() {
   
   sprite_list.push(sprite)
   // Invoking draw() on the sprite list should trigger our exception on the individual sprite
-  raises(function(){
+  throws(function(){
     sprite_list.draw()
   }, DrawError, "sprite_list.draw() must call draw() on each sprite, throwing a DrawError")
   
@@ -116,7 +116,7 @@ test("drawIf()", function() {
   sprite_list.drawIf(false_condition)
   
   // Invoking drawIf() with a true condition should trigger the draw exception
-  raises(function(){ 
+  throws(function(){ 
     sprite_list.drawIf(true_condition)
   }, DrawError, "sprite_list.drawIf(true_condition) must call draw() on each sprite, throwing a DrawError")
 })
@@ -131,7 +131,7 @@ test("Remove and update()", function() {
   
   sprite_list.push(sprite)
   // Invoking update() on the sprite list should trigger our exception on the individual sprite
-  raises(function(){
+  throws(function(){
     sprite_list.update()
   }, UpdateError, "sprite_list.update() must call update() on each sprite, throwing an UpdateError")
   
@@ -158,7 +158,7 @@ test("updateIf()", function() {
   sprite_list.updateIf(false_condition)
   
   // Invoking drawIf() with a true condition should trigger the draw exception
-  raises(function(){ 
+  throws(function(){ 
     sprite_list.updateIf(true_condition)
   }, UpdateError, "sprite_list.updateIf(true_condition) must call update() on each sprite, throwing an UpdateError")
 })
