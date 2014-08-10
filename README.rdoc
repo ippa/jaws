@@ -18,6 +18,10 @@ Jaws also:
 - Often does object literals as arguments for readabillity (ie. new Sprite({image: "player.png", x: 100, y: 100})
 - Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
+== Local build / test
+```npm install```
+```npm test```
+
 == Learn more
 - {http://jawsjs.com/docs/index.html}[http://jawsjs.com/docs/index.html]                  - Jaws documentation
 - {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Overview and design choices.
