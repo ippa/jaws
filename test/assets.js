@@ -23,6 +23,8 @@ test("Image assets", function() {
 });
 
 test("audio assets", function() {
+  if(!window["Audio"])  expect(0);  // For headless tests, don't expect any tests to be run if there's no audio-support
+  
   stop(); 
   jaws.log.use_console = true;
   var assets = new jaws.Assets()
@@ -50,6 +52,8 @@ test("audio assets", function() {
 });
 
 test("audio wildcard assets", function() {
+  if(!window["Audio"])  expect(0);  // For headless tests, don't expect any tests to be run if there's no audio-support
+  
   stop(); 
   jaws.log.use_console = true;
   var assets = new jaws.Assets()
