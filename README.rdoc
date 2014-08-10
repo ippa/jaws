@@ -20,8 +20,8 @@ Jaws also:
 - Builds on lessons learned from years of developing http://github.com/ippa/chingu (Ruby game lib)
 
 == Local build / test
-```npm install```
-```npm test```
+  npm install
+  npm test
 
 == Learn more
 - {http://jawsjs.com/docs/index.html}[http://jawsjs.com/docs/index.html]                  - Jaws documentation
