@@ -8,10 +8,11 @@
   },
   "dependencies": {
     "gulp": "",
-    "requirejs": "2.1.x",
+    "gulp-concat": "",
+    "gulp-qunit": "^0.3.3",
     "gulp-requirejs": "0.1.x",
     "gulp-uglify": "",
-    "gulp-concat": ""
+    "requirejs": "2.1.x"
   },
   "devDependencies": {
     "gulp-insert": "",
