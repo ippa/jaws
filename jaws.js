@@ -1,4 +1,4 @@
-/* Built at 2014-01-03 11:51:42 +0100 */
+/* Built at: Mon Aug 18 2014 00:36:13 GMT+0200 (CEST) */
 /**
  * @namespace JawsJS core functions.
  *
@@ -34,13 +34,14 @@ var jaws = (function(jaws) {
   /*
   * Placeholders for constructors in extras-dir. We define the constructors here to be able to give ppl better error-msgs.
   * When the correct from extras-dir is included, these will be overwritten.
+  *
   */
-  jaws.Parallax = function() { jaws.log.error("To use jaws.Parallax() you need to include src/extras/parallax.js") }
-  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/sprite_list.js") }
-  jaws.TileMap = function() { jaws.log.error("To use TileMap() you need to include src/extras/tile_map.js") }
-  jaws.PixelMap = function() { jaws.log.error("To use PixelMap() you need to include src/extras/pixel_map.js") }
-  jaws.QuadTree = function() { jaws.log.error("To use QuadTree() you need to include src/extras/quadtree.js") }
-  jaws.Audio = function() { jaws.log.error("To use jaws.Audio() you need to include src/extras/audio.js") }
+  //jaws.Parallax = function() { throw("To use jaws.Parallax() you need to include src/extras/parallax.js") }
+  //jaws.QuadTree = function() { throw("To use QuadTree() you need to include src/extras/quadtree.js") }
+  //jaws.PixelMap = function() { throw("To use PixelMap() you need to include src/extras/pixel_map.js") }
+  //jaws.TileMap = function() { throw("To use TileMap() you need to include src/extras/tile_map.js") }
+  jaws.SpriteList = function() { throw("To use SpriteList() you need to include src/extras/sprite_list.js") }
+  jaws.Audio = function() { throw("To use jaws.Audio() you need to include src/extras/audio.js") }
 
   /**
    * Returns or sets contents of title's innerHTML
@@ -710,6 +711,9 @@ var jaws = (function(jaws) {
   return jaws;
 })(jaws || {});
 
+// Support CommonJS require()
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws }
+
 var jaws = (function(jaws) {
 
   var pressed_keys = {}
@@ -996,6 +1000,7 @@ jaws.clearKeyCallbacks = function() {
 
 return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
   /**
    * @fileOverview jaws.assets properties and functions
@@ -1049,21 +1054,31 @@ var jaws = (function(jaws) {
     self.file_type['ogv'] = "video";
     self.file_type['mkv'] = "video";
 
-    var audioTest = new Audio();
-    var videoTest = document.createElement('video');
     self.can_play = {};
-    self.can_play["wav"] = !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, '');
-    self.can_play["ogg"] = !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, '');
-    self.can_play["mp3"] = !!audioTest.canPlayType('audio/mpeg;').replace(/^no$/, '');
-    self.can_play["m4a"] = !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, '');
-    self.can_play["weba"] = !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '');
-    self.can_play["aac"] = !!audioTest.canPlayType('audio/aac;').replace(/^no$/, '');
-    self.can_play["mka"] = !!audioTest.canPlayType('audio/x-matroska;').replace(/^no$/, '');
-    self.can_play["flac"] = !!audioTest.canPlayType('audio/x-flac;').replace(/^no$/, '');
-    self.can_play["mp4"] = !!videoTest.canPlayType('video/mp4;').replace(/^no$/, '');
-    self.can_play["webm"] = !!videoTest.canPlayType('video/webm; codecs="vorbis"').replace(/^no$/, '');
-    self.can_play["ogv"] = !!videoTest.canPlayType('video/ogg; codecs="vorbis"').replace(/^no$/, '');
-    self.can_play["mkv"] = !!videoTest.canPlayType('video/x-matroska;').replace(/^no$/, '');
+    
+    try {
+      var audioTest = new Audio();
+      self.can_play["wav"] = !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, '');
+      self.can_play["ogg"] = !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, '');
+      self.can_play["mp3"] = !!audioTest.canPlayType('audio/mpeg;').replace(/^no$/, '');
+      self.can_play["m4a"] = !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, '');
+      self.can_play["weba"] = !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '');
+      self.can_play["aac"] = !!audioTest.canPlayType('audio/aac;').replace(/^no$/, '');
+      self.can_play["mka"] = !!audioTest.canPlayType('audio/x-matroska;').replace(/^no$/, '');
+      self.can_play["flac"] = !!audioTest.canPlayType('audio/x-flac;').replace(/^no$/, '');
+    }
+    catch(e) {
+    }
+
+    try {
+      var videoTest = document.createElement('video');
+      self.can_play["mp4"] = !!videoTest.canPlayType('video/mp4;').replace(/^no$/, '');
+      self.can_play["webm"] = !!videoTest.canPlayType('video/webm; codecs="vorbis"').replace(/^no$/, '');
+      self.can_play["ogv"] = !!videoTest.canPlayType('video/ogg; codecs="vorbis"').replace(/^no$/, '');
+      self.can_play["mkv"] = !!videoTest.canPlayType('video/x-matroska;').replace(/^no$/, '');
+    }
+    catch(e) {
+    }
 
     /**
      * Returns the length of the resource list
@@ -1523,6 +1538,7 @@ var jaws = (function(jaws) {
   return jaws;
 })(jaws || {});
 
+
 var jaws = (function(jaws) {
 
 // requestAnim shim layer by Paul Irish
@@ -1656,6 +1672,7 @@ function MeanValue(size) {
 return jaws;
 })(jaws || {});
 
+
 var jaws = (function(jaws) {
 
 /*
@@ -1783,6 +1800,7 @@ return jaws;
 
 // Support CommonJS require()
 if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws.Rect }
+
 
 var jaws = (function(jaws) {
 
@@ -2246,6 +2264,7 @@ jaws.Sprite.prototype.scaleWidthTo =  function(value) { this.scale_x = value; re
 jaws.Sprite.prototype.scaleHeightTo = function(value) { this.scale_y = value; return this.cachOfffsets() }
 */
 
+
 var jaws = (function(jaws) {
 
 
@@ -2329,6 +2348,7 @@ jaws.SpriteSheet.prototype.toString = function() { return "[SpriteSheet " + this
 
 return jaws;
 })(jaws || {});
+
 
 var jaws = (function(jaws) {
 
@@ -2497,6 +2517,7 @@ jaws.Animation.prototype.toString = function() { return "[Animation, " + this.fr
 
 return jaws;
 })(jaws || {});
+
 
 var jaws = (function(jaws) {
 
@@ -2711,6 +2732,7 @@ jaws.Viewport.prototype.toString = function() { return "[Viewport " + this.x.toF
 
 return jaws;
 })(jaws || {});
+
 
 /**
  * @fileOverview Collision Detection
@@ -2936,6 +2958,7 @@ var jaws = (function(jaws) {
   return jaws;
 })(jaws || {});
 
+
 var jaws = (function(jaws) {
 /**
 * @class jaws.PixelMap
@@ -3090,6 +3113,7 @@ jaws.PixelMap.prototype.nameColor = function(color, name) {
 
 return jaws;
 })(jaws || {});
+
 var jaws = (function(jaws) {
   /** 
    * @class Manage a parallax scroller with different layers. "Field Summary" contains options for the Parallax()-constructor.
@@ -3197,6 +3221,7 @@ var jaws = (function(jaws) {
 
   return jaws;
 })(jaws || {});
+
 
 /**
  * @fileOverview A jaws.Text object with word-wrapping functionality.
@@ -3817,6 +3842,7 @@ var jaws = (function(jaws) {
 if (typeof module !== "undefined" && ('exports' in module)) {
   module.exports = jaws.Text;
 }
+
 /*
  * @class jaws.QuadTree
  * @property {jaws.Rect}  bounds    Rect(x,y,width,height) defining bounds of tree
