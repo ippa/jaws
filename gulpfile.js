@@ -5,7 +5,7 @@ var qunit = require('gulp-qunit');
 var insert = require('gulp-insert');
 var shell = require('gulp-shell');
 
-var files = ["core.js", "input.js", "assets.js", "game_loop.js", "rect.js", "sprite.js", "sprite_sheet.js", "animation.js", "viewport.js", "collision_detection.js", "pixel_map.js", "parallax.js", "text.js", "quadtree.js"];
+var files = ["core.js", "input.js", "assets.js", "game_loop.js", "rect.js", "sprite.js", "sprite_sheet.js", "animation.js", "viewport.js", "collision_detection.js", "tile_map.js", "pixel_map.js", "parallax.js", "text.js", "quadtree.js"];
 var paths = files.map( function(file) { return "src/" + file } )
  
 gulp.task('build', function() {  
@@ -25,6 +25,6 @@ gulp.task('docs', shell.task([
 ]));
 
 gulp.task('test', function() {
-  return gulp.src("test/index.html")
-  .pipe(qunit())
+  return gulp.src("/www/ippa/jawsjs.com/public/jawsjs/test/index.html")
+  .pipe(qunit()).on('error', function() { console.log("** Exit on failed tests"); process.exit(1) } );
 });
