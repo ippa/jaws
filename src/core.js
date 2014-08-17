@@ -33,13 +33,14 @@ var jaws = (function(jaws) {
   /*
   * Placeholders for constructors in extras-dir. We define the constructors here to be able to give ppl better error-msgs.
   * When the correct from extras-dir is included, these will be overwritten.
+  *
   */
-  jaws.Parallax = function() { jaws.log.error("To use jaws.Parallax() you need to include src/extras/parallax.js") }
-  jaws.SpriteList = function() { jaws.log.error("To use SpriteList() you need to include src/extras/sprite_list.js") }
-  jaws.TileMap = function() { jaws.log.error("To use TileMap() you need to include src/extras/tile_map.js") }
-  jaws.PixelMap = function() { jaws.log.error("To use PixelMap() you need to include src/extras/pixel_map.js") }
-  jaws.QuadTree = function() { jaws.log.error("To use QuadTree() you need to include src/extras/quadtree.js") }
-  jaws.Audio = function() { jaws.log.error("To use jaws.Audio() you need to include src/extras/audio.js") }
+  //jaws.Parallax = function() { throw("To use jaws.Parallax() you need to include src/extras/parallax.js") }
+  //jaws.QuadTree = function() { throw("To use QuadTree() you need to include src/extras/quadtree.js") }
+  //jaws.PixelMap = function() { throw("To use PixelMap() you need to include src/extras/pixel_map.js") }
+  //jaws.TileMap = function() { throw("To use TileMap() you need to include src/extras/tile_map.js") }
+  jaws.SpriteList = function() { throw("To use SpriteList() you need to include src/extras/sprite_list.js") }
+  jaws.Audio = function() { throw("To use jaws.Audio() you need to include src/extras/audio.js") }
 
   /**
    * Returns or sets contents of title's innerHTML
@@ -709,3 +710,5 @@ var jaws = (function(jaws) {
   return jaws;
 })(jaws || {});
 
+// Support CommonJS require()
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = jaws }
