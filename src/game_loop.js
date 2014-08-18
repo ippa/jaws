@@ -1,3 +1,5 @@
+if(typeof require !== "undefined") { var jaws = require("./core.js"); }
+
 var jaws = (function(jaws) {
 
 // requestAnim shim layer by Paul Irish

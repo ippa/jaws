@@ -1,3 +1,5 @@
+if(typeof require !== "undefined") { var jaws = require("./core.js"); }
+
 /**
  * @fileOverview Collision Detection
  * 

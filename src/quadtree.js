@@ -1,3 +1,5 @@
+if(typeof require !== "undefined") { var jaws = require("./core.js"); }
+
 /*
  * @class jaws.QuadTree
  * @property {jaws.Rect}  bounds    Rect(x,y,width,height) defining bounds of tree

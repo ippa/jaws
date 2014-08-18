@@ -1,5 +1,6 @@
-var jaws = (function(jaws) {
+if(typeof require !== "undefined") { var jaws = require("./core.js"); }
 
+var jaws = (function(jaws) {
   /**
    * @class Create and access tilebased 2D maps with very fast access of invidual tiles. "Field Summary" contains options for the TileMap()-constructor.
    *
