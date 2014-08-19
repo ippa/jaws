@@ -243,7 +243,7 @@ var jaws = (function(jaws) {
         self.onload = options.onload;
 
       self.src_list.forEach(function(item) {
-        self.load(item);
+        self.load(item, {load_all: true});
       });
 
       return self;
@@ -276,6 +276,8 @@ var jaws = (function(jaws) {
       asset.src = src;
       asset.onload = options.onload;
       asset.onerror = options.onerror;
+      asset.single_load = !options.load_all; // Keep track of this so we can use processCallbacks() correctly later on
+
       self.loading[src] = true;
       var parser = RegExp('^((f|ht)tp(s)?:)?//');
       if (parser.test(src)) {
@@ -296,8 +298,7 @@ var jaws = (function(jaws) {
           asset.image.addEventListener('error', assetError);
           asset.image.src = resolved_src;
         } catch (e) {
-          jaws.log.error("Cannot load Image resource " + resolved_src +
-                  " (Message: " + e.message + ", Name: " + e.name + ")");
+          jaws.log.error("Cannot load Image resource " + resolved_src + " (Message: " + e.message + ", Name: " + e.name + ")");
         }
       } 
       else if (self.can_play[self.getPostfix(asset.src)]) {
@@ -393,9 +394,9 @@ var jaws = (function(jaws) {
         } else {
           self.data[asset.src] = this.response;
         }
-      } catch (e) {
-        jaws.log.error("Cannot process " + src +
-                  " (Message: " + e.message + ", Name: " + e.name + ")");
+      } 
+      catch (e) {
+        jaws.log.error("Cannot process " + src + " (Message: " + e.message + ", Name: " + e.name + ")");
         self.data[asset.src] = null;
       }
 
@@ -447,8 +448,13 @@ var jaws = (function(jaws) {
      */
     function processCallbacks(asset, ok, event) {
       var percent = parseInt((self.load_count + self.error_count) / self.src_list.length * 100);
+      if(asset.single_load) { 
+        if(ok && asset.onload) asset.onload(event);
+        if(!ok && asset.onerror) asset.onerror(event);
+        return;
+      }
 
-      if (ok) {
+      if(ok) {
         if(self.onprogress)
           self.onprogress(asset.src, percent);
         if(asset.onprogress && event !== undefined)
@@ -461,7 +467,7 @@ var jaws = (function(jaws) {
           asset.onerror(event);
       }
 
-      if (percent === 100) {
+      if(percent === 100) {
         if(self.onload) self.onload();
 
         self.onprogress = null;
