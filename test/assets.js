@@ -78,16 +78,29 @@ test("audio wildcard assets", function() {
 
 });
 
-/*
-test("assets.load()", function() {
-  stop()
+asyncTest("assets.load()", function(assert) {
+  expect(1);
   var assets = new jaws.Assets()
   assets.root = "assets/"
-  var load = function() { ok(jaws.assets.get("rect.png"), "load-callback loaded image"); start() }
-  var error = function() { ok(false, "error callback doesn't get called"); start() } 
-  assets.load("rect.png", {onload: load, onerror: error});     
+  var load = function(event)  { 
+    assert.ok( assets.get("rect.png"), "load-callback loaded image"); 
+    QUnit.start();
+  }
+  // var error = function() { assert.ok(false, "error callback doesn't get called"); } 
+  assets.load("rect.png", {onload: load});  
 });
-*/
+
+asyncTest("assets.load() error", function(assert) {
+  expect(1);
+  var assets = new jaws.Assets()
+  assets.root = "assets/"
+  var error = function(event)  { 
+    assert.ok(true, "error callback should be caled"); 
+    QUnit.start();
+  }
+  assets.load("rect_404.png", {onerror: error});  
+});
+
 
 test("image asset with 404s", function() {
   stop()
