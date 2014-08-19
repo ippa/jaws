@@ -1,5 +1,6 @@
 module("Parallax")
 
+/*
 test ("Performance test: repeat_x=false, repeat_y=false", function() {
 	stop();
   var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded}) 
@@ -42,7 +43,8 @@ test ("Performance test: repeat_x=false, repeat_y=false", function() {
 		start();
 	}
 });
-
+*/
+/*
 test ("Performance test: repeat_x=true, repeat_y=false", function() {
   stop();
   var assets = new jaws.Assets().setRoot("assets/").add("rect.png").loadAll({onload: loaded}) 
@@ -85,6 +87,7 @@ test ("Performance test: repeat_x=true, repeat_y=false", function() {
 		jaws.clear(); start();	
 	}
 });
+*/
 
 test ("Performance test: repeat_x=false, repeat_y=true", function() {
 	stop();
