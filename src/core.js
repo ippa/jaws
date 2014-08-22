@@ -198,25 +198,17 @@ var jaws = (function(jaws) {
     jaws.url_parameters = jaws.getUrlParameters();
 
     jaws.canvas = document.getElementsByTagName('canvas')[0];
-    if (!jaws.canvas) {
-      jaws.dom = document.getElementById("canvas");
-    }
-
-    // Ordinary <canvas>, get context
-    if (jaws.canvas) {
-      jaws.context = jaws.canvas.getContext('2d');
-    } 
-    else if (jaws.dom) {
-      jaws.dom.style.position = "relative";
-    } 
-    else {
+   
+    /* No canvas? Create and append to DOM */ 
+    if(!jaws.canvas) {
       jaws.canvas = document.createElement("canvas");
-      jaws.canvas.width = options.width;
-      jaws.canvas.height = options.height;
-      jaws.context = jaws.canvas.getContext('2d');
       document.body.appendChild(jaws.canvas);
-    }
+    } 
 
+    jaws.context = jaws.canvas.getContext('2d');
+    jaws.canvas.width = options.width;
+    jaws.canvas.height = options.height;
+ 
     /*
      * If debug=1 parameter is present in the URL, let's either find <div id="jaws-log"> or create the tag.
      * jaws.log(message) will use this div for debug/info output to the gamer or developer
