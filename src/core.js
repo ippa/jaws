@@ -202,7 +202,7 @@ var jaws = (function(jaws) {
     /* No canvas? Create and append to DOM */ 
     if(!jaws.canvas) {
       jaws.canvas = document.createElement("canvas");
-      document.body.appendChild(jaws.canvas);
+      document.body.insertBefore(jaws.canvas, document.body.firstChild);
     } 
 
     jaws.context = jaws.canvas.getContext('2d');
