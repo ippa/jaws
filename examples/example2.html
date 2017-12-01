@@ -1,19 +1,20 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #2 - on_keydown(), game states</title>
   </head>
 <body>
-    
+
     <canvas width=500 height=300 id="canvas"></canvas>
     FPS: <span id="fps"></span>. Move with arrows, shoot with space. Select with Return.
 
     <div id="info">
       <h1>Game states</h1>
       Minimalistic example using all jaws convenience methods and game states.
-      Game states are an proven and robust way of separating various parts of the game. 
+      Game states are an proven and robust way of separating various parts of the game.
       For example: An intro, a menu, the actual game play, the high score list. That's 4 different game states right there.
       <br /><br />
       A gamestate is just an normal javascript object with the methods setup(), update() and draw().
@@ -48,7 +49,7 @@
         if(jaws.pressed("right d")) { player.x += 2 }
         if(jaws.pressed("up w"))    { player.y -= 2 }
         if(jaws.pressed("down s"))  { player.y += 2 }
-        if(jaws.pressed("space enter")) { 
+        if(jaws.pressed("space enter")) {
           if(player.can_fire) {
             bullets.push( new Bullet(player.rect().right, player.y) )
             player.can_fire = false
@@ -69,8 +70,8 @@
 
       /* Simular to example1 but now we're using jaws properties to get width and height of canvas instead */
       /* This mainly since we let jaws handle the canvas now */
-      function isOutsideCanvas(item) { 
-        return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height) 
+      function isOutsideCanvas(item) {
+        return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height)
       }
       function forceInsideCanvas(item) {
         if(item.x < 0)                  { item.x = 0  }
@@ -116,7 +117,7 @@
           jaws.context.fillStyle =  (i == index) ? "Red" : "Black"
           jaws.context.strokeStyle =  "rgba(200,200,200,0.0)"
           jaws.context.fillText(items[i], 30, 100 + i * 60)
-        }  
+        }
       }
     }
 

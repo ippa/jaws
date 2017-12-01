@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws.js"></script>
     <title>Jaws Example #14 - TileMap pathfinding</title>
   </head>
@@ -8,38 +9,38 @@
 
   <canvas width="320" height="320" style="background:white;"></canvas>
   <p>FPS: <span id="fps"></span>. Click a dirt tile to move. Find the hiding villain.</p>
-  
+
   <div id="info">
     <h1>Example 14: Pathfinding and Line of Sight in a TileMap</h1>
   </div>
- 
+
   <script>
     function Rouge() {
       var player, evil_player
       var walls
       var fps
-      
+
       var floor
-      
+
       var sprite_sheet
 
       /* Called once when a game state is activated. Use it for one-time setup code. */
       this.setup = function() {
         fps = document.getElementById("fps")
-        
+
         sprite_sheet = new jaws.SpriteSheet({image: "example14/basic-32.png", frame_size: [32,32]})
-        
+
         walls = new jaws.SpriteList()
-        
+
         floor = new jaws.SpriteList()
-        
+
         /* We create some 32x32 blocks and save them in array blocks */
         for (var i=0 ; i<10; i++)
         {
             for (var j=0 ; j<10; j++)
             {
                 floor.push( new Sprite({image: sprite_sheet.frames[5], x: i*32, y: j*32}) )
-                
+
                 if (i==0)
                 {
                     walls.push( new Sprite({image: sprite_sheet.frames[0], x: i, y: j*32}) )
@@ -52,12 +53,12 @@
                 }
             }
         }
-        
+
         // custom placed walls
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 96, y: 64}) )
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 96, y: 96}) )
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 64, y: 96}) )
-        
+
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 128, y: 160}) )
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 128, y: 192}) )
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 128, y: 224}) )
@@ -65,14 +66,14 @@
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 192, y: 160}) )
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 160, y: 224}) )
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 192, y: 224}) )
-        
+
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 32, y: 7*32}) )
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 64, y: 7*32}) )
         walls.push( new Sprite({image: sprite_sheet.frames[0], x: 64, y: 8*32}) )
 
         // A tilemap, each cell is 32x32 pixels. There's 10 such cells across and 10 downwards.
         var wall_map = new jaws.TileMap({size: [10,10], cell_size: [32,32]})
-        
+
         var floor_map = new jaws.TileMap({size: [10,10], cell_size: [32,32]})
         floor_map.push(floor)
 
@@ -83,7 +84,7 @@
         player = new jaws.Sprite({image: "example14/player.png", x:64, y:64, anchor: "top_left"})
         player.destination = false
         player.path = []
-        player.move = function(x, y) 
+        player.move = function(x, y)
         {
           // Have our tile map return the items that occupy the cells which are touched by player.rect
           // If there's any items inside player.rect, reverse the movement (-> stand still)
@@ -96,7 +97,7 @@
           this.y += y
           if(wall_map.atRect(player.rect()).length > 0) { this.y -= y; }
         }
-        
+
         player.moveTo = function(x, y)
         {
           /**
@@ -105,7 +106,7 @@
           this.path = wall_map.findPath([this.x, this.y], [x, y])
           this.setDestination()
         }
-        
+
         player.setDestination = function()
         {
           if (this.path.length > 0)
@@ -114,7 +115,7 @@
           }
           else { this.destination = false }
         }
-        
+
         evil_player = new jaws.Sprite({image: "example14/player.png", x:160, y:192, anchor: "bottom_right", angle:180})
         evil_player.visible = function()
         {
@@ -131,13 +132,13 @@
       this.update = function()
       {
         if (jaws.pressed("left_mouse_button") && !jaws.isOutsideCanvas({x: jaws.mouse_x, y: jaws.mouse_y, width: 1, height: 1}) && !player.destination) { player.moveTo(jaws.mouse_x, jaws.mouse_y) }
-        
+
         //move player
         if (player.x == player.destination.x && player.y == player.destination.y)
         {
           player.setDestination()
         }
-        
+
         if (player.destination)
         {
           if(player.x > player.destination.x)
@@ -174,7 +175,7 @@
         }
       }
     }
-    
+
     jaws.onload = function()
     {
       jaws.unpack()

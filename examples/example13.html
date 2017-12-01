@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <script src="../game_states/edit.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
@@ -11,19 +12,19 @@
   <canvas width=500 height=400></canvas>
 
   <div id="jaws-edit">Editor output will show here.</div>
-  
+
   <div id="info">
     <h1>press SPACE to start editor</h1>
   </div>
-  
+
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
- 
+
   <script>
     var blocks;
     function Example() {
       blocks = new jaws.SpriteList()
-     
+
       this.setup = function() {
         // blocks.load(localStorage[title])  // Load  saved sprites from localStorage
 
@@ -37,7 +38,7 @@
         jaws.preventDefaultKeys(["space"])
         startEdit();
       }
-      
+
       this.draw = function() {
         jaws.clear()
         blocks.draw()
@@ -45,21 +46,21 @@
     }
 
     function startEdit() {
-      jaws.switchGameState( 
+      jaws.switchGameState(
         new jaws.game_states.Edit({constructors: [Grass, Dirt], game_objects: blocks, grid_size: [30,15], isometric: true, title: window.location.href})
       )
     }
 
     var Grass = function(options) { options.image = "isometric_grass.bmp"; options.scale_image=2; jaws.Sprite.call(this, options) }
     var Dirt = function(options)  { options.image = "isometric_dirt.bmp"; options.scale_image=2; jaws.Sprite.call(this, options) }
-    
+
     jaws.onload = function() {
       Grass.prototype = new jaws.Sprite({})
       Grass.prototype.constructor = Grass
-      
+
       Dirt.prototype = new jaws.Sprite({})
       Dirt.prototype.constructor = Dirt
-     
+
       jaws.assets.add(["isometric_grass.bmp", "isometric_dirt.bmp"])
       jaws.start(Example)
     }

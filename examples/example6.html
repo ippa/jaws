@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #6 - Parallax()</title>
@@ -20,7 +21,7 @@
     <script>
     function ParallaxDemo() {
       var fps = document.getElementById("fps")
-      
+
       this.setup = function() {
         this.parallax = new jaws.Parallax({repeat_x: true})
         this.parallax.addLayer({image: "parallax_1.png", damping: 100})
@@ -35,7 +36,7 @@
         else { this.parallax.camera_x += 2 }
         fps.innerHTML = jaws.game_loop.fps
       }
-      
+
       this.draw = function() {
         this.parallax.draw();
       }

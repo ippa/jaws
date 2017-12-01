@@ -1,15 +1,16 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #4 - Collision detection</title>
   <head>
 <body style="width: 800px;">
-  
+
   <canvas width=800 height=400 style="width: 800px; height: 400px;"></canvas>
   FPS: <span id="fps"></span>
-  
+
   <div id="info">
     <h1>Sprite collision detection</h1>
     <code>PLUS / +</code>: Add sprites<br>
@@ -19,10 +20,10 @@
     Every Sprite (that has an image) will have a function rect() which will return a Rect-object just embracing the sprite.
     Then you can <code>sprite.rect.collideRect(rect2)</code> or <code>sprite.rect.collidePoint(x, y)</code>
   </div>
-  
+
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
- 
+
   <script>
     function Example4() {
       var sprites = new jaws.SpriteList()
@@ -52,7 +53,7 @@
           if(collision_detection_mode == "normal")          collision_detection_mode = "quadtree";
           else if(collision_detection_mode == "quadtree")   collision_detection_mode = "normal";
         }
-       
+
         // OLD WAY:
         //if(jaws.pressed("space")) {
         //  if(!space_down & collision_detection_mode == "normal")          collision_detection_mode = "quadtree";
@@ -60,11 +61,11 @@
         //  space_down = true
         //}
         //else { space_down = false }
-        
+
         sprites.forEach(function(sprite, index) {
           sprite.collision = false
           sprite.move(sprite.vx, sprite.vy)
- 
+
           if(sprite.x < 0 || sprite.rect().right > jaws.width)    { sprite.vx = -sprite.vx }
           if(sprite.y < 0 || sprite.rect().bottom > jaws.height)  { sprite.vy = -sprite.vy }
         })
@@ -105,7 +106,7 @@
         return sprite
       }
     }
-    
+
     window.onload = function() {
       jaws.assets.add("rect.png")
       jaws.start(Example4)

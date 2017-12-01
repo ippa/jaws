@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #11 - Sprite(), pressed(), basic game loop</title>
@@ -18,14 +19,14 @@
     This will pre-scale player.png using a nearest neighbor algo (blocky retro style).
     NOTE: Scaling Big images can make browser "hang" for 2-3-4 seconds.
   </div>
- 
+
   <script>
     var player
     var info_tag
     var fps
 
     play_state = {
-      setup: function() {  
+      setup: function() {
         fps = document.getElementById("fps")
         info_tag = document.getElementsByTagName('info')
 
@@ -33,7 +34,7 @@
         player = jaws.Sprite({image: prescaled_image, x: 50, y:50, anchor: "center"}) // jaws.Sprite also works without 'new'
         jaws.preventDefaultKeys("up", "down", "left", "right", "space")
       },
-      
+
       update: function() {
         jaws.forceInsideCanvas(player)
         if(jaws.pressed("left"))  { player.x -= 2 }
@@ -41,9 +42,9 @@
         if(jaws.pressed("up"))    { player.y -= 2 }
         if(jaws.pressed("down"))  { player.y += 2 }
       },
-      
+
       draw: function() {
-        jaws.clear()        
+        jaws.clear()
         player.draw()
         info_tag.innerHTML = "FPS: " + jaws.game_loop.fps + " Player position: " + player.x + "/" + player.y
         fps.innerHTML = jaws.game_loop.fps

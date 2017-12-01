@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #5 - Sprite.anchor()</title>
@@ -9,17 +10,17 @@
 
   <canvas width=1000 height=200></canvas>
   FPS: <span id="fps"></span>
-  
+
   <div id="info">
     <h1>Sprite.anchor</h1>
     Showing off the effects of setting different anchors for different sprites.
     Set anchor when creating a Sprite:
     <code>ship = new Sprite({image: "spaceship.png", anchor: "center"})</code>
   </div>
-  
+
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
- 
+
   <script>
     function Example5() {
       var anchors = ["top_left", "top_center", "top_right", "center_left", "center", "center_bottom", "bottom_left", "bottom_center", "bottom_right"]
@@ -36,7 +37,7 @@
         for(var i=0; i < 9; i++) {
           var sprite = new jaws.Sprite({image: "rect.png", x: (50.5 + i*100), y: 100, anchor: anchors[i]})
           sprites.push(sprite)
-          
+
           jaws.context.fillText(anchors[i], sprite.x, 150)
           jaws.context.fillText("anchor_x: " + sprite.anchor_x, sprite.x, 165)
           jaws.context.fillText("anchor_y: " + sprite.anchor_y, sprite.x, 180)
@@ -45,7 +46,7 @@
         }
         jaws.context.moveTo(0, 100)
         jaws.context.lineTo(jaws.width, 100)
- 
+
         jaws.context.stroke();
       }
 
