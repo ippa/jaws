@@ -27,9 +27,9 @@ Jaws also:
   npm test
 
 == Learn more
-- {http://jawsjs.com/docs/index.html}[http://jawsjs.com/docs/index.html]                  - Jaws documentation
-- {http://jawsjs.com/}[http://jawsjs.com/]                            - Official Jaws homepage. Overview and design choices.
-- {http://jawsjs.com/jawsjs/test/index.html}[http://jawsjs.com/jawsjs/test/index.html]    - Jaws testsuite (QUnit)
+- {https://jawsjs.ippa.se/docs/index.html}[https://jawsjs.ippa.se/docs/index.html]                  - Jaws documentation
+- {https://jawsjs.ippa.se/}[https://jawsjs.ippa.se/]                            - Official Jaws homepage. Overview and design choices.
+- {https://jawsjs.ippa.se/jawsjs/test/index.html}[https://jawsjs.ippa.se/jawsjs/test/index.html]    - Jaws testsuite (QUnit)
 
 == Tutorials
 - {http://videlais.com/2013/05/17/learning-jawsjs-part-1/}[http://videlais.com/2013/05/17/learning-jawsjs-part-1/] - Intro to sprites, collisions and game states by Dan Cox.
@@ -45,19 +45,19 @@ hashing like quad trees to speed things up. Jaws use of canvas makes pixel perfe
 == Simple examples demonstrating certain features
 Check out the sourcecode for comments and explanations:
 
-* http://jawsjs.com/jawsjs/examples/example0.html - get a Jaws-app working with as little code as possible
-* http://jawsjs.com/jawsjs/examples/example1.html - basic example with manual setup of canvas
-* http://jawsjs.com/jawsjs/examples/example2.html - jaws game states
-* http://jawsjs.com/jawsjs/examples/example3.html - jaws.Animation
-* http://jawsjs.com/jawsjs/examples/example4.html - jaws.Rect based collision detection
-* http://jawsjs.com/jawsjs/examples/example5.html - the jaws.Sprite({anchor: "..."}) parameter
-* http://jawsjs.com/jawsjs/examples/example6.html - jaws.Parallax
-* http://jawsjs.com/jawsjs/examples/example7.html - simple DOM-based sprite (DEPRECATED)
-* http://jawsjs.com/jawsjs/examples/example8.html - jaws.TileMap
-* http://jawsjs.com/jawsjs/examples/example9.html - jaws.Viewport (The basics for a sidescrolling platformer right here)
-* http://jawsjs.com/jawsjs/examples/example10.html - jaws.game_states.Edit, a simple map editor
-* http://jawsjs.com/jawsjs/examples/example11.html - jaws.gfx.retroScaleImage and Literal Notion game state
-* http://jawsjs.com/jawsjs/examples/example12.html - jaws.viewport.drawTileMap() - optimized tile map drawing
+* https://jawsjs.ippa.se/jawsjs/examples/example0.html - get a Jaws-app working with as little code as possible
+* https://jawsjs.ippa.se/jawsjs/examples/example1.html - basic example with manual setup of canvas
+* https://jawsjs.ippa.se/jawsjs/examples/example2.html - jaws game states
+* https://jawsjs.ippa.se/jawsjs/examples/example3.html - jaws.Animation
+* https://jawsjs.ippa.se/jawsjs/examples/example4.html - jaws.Rect based collision detection
+* https://jawsjs.ippa.se/jawsjs/examples/example5.html - the jaws.Sprite({anchor: "..."}) parameter
+* https://jawsjs.ippa.se/jawsjs/examples/example6.html - jaws.Parallax
+* https://jawsjs.ippa.se/jawsjs/examples/example7.html - simple DOM-based sprite (DEPRECATED)
+* https://jawsjs.ippa.se/jawsjs/examples/example8.html - jaws.TileMap
+* https://jawsjs.ippa.se/jawsjs/examples/example9.html - jaws.Viewport (The basics for a sidescrolling platformer right here)
+* https://jawsjs.ippa.se/jawsjs/examples/example10.html - jaws.game_states.Edit, a simple map editor
+* https://jawsjs.ippa.se/jawsjs/examples/example11.html - jaws.gfx.retroScaleImage and Literal Notion game state
+* https://jawsjs.ippa.se/jawsjs/examples/example12.html - jaws.viewport.drawTileMap() - optimized tile map drawing
 
 == Games using Jaws
 * {http://www.ludumdare.com/compo/ludum-dare-29/?action=preview&uid=21212}[http://www.ludumdare.com/compo/ludum-dare-29/?action=preview&uid=21212] - DrillFish: drill through the levels as a very odd fish - by mezka
