@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>DOMtest</title>
@@ -45,7 +46,7 @@
       if(jaws.pressed("right")) { player.vx = 4; player.flipped = false; player.angle = 20 }
       if(jaws.pressed("up"))    { player.vy = -4 }
       if(jaws.pressed("down"))  { player.vy = 4 }
-      if(jaws.pressed("space")) { 
+      if(jaws.pressed("space")) {
         if(player.can_fire) {
           var vx = player.flipped ? -10 : 10
           bullets.push( new Bullet({x: player.rect().right, y: player.rect().bottom-5, vx: vx, vy: 0}) )
@@ -83,8 +84,8 @@
 
     /* Simular to example1 but now we're using jaws properties to get widthteElement('div'); and height of canvas instead */
     /* This mainly since we let jaws handle the canvas now */
-    function isOutsideCanvas(item) { 
-      return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height) 
+    function isOutsideCanvas(item) {
+      return (item.x < 0 || item.y < 0 || item.x > jaws.width || item.y > jaws.height)
     }
     function forceInsideCanvas(item) {
       if(item.x < 0)                          { item.x = 0  }
@@ -102,9 +103,9 @@
       delete options.vy
       options.image = "bullet.png"
       jaws.Sprite.call(this, options)
-      
-      this.update = function() { 
-        this.x += this.vx 
+
+      this.update = function() {
+        this.x += this.vx
         this.y += this.vy
       }
     }

@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #1 - Sprite(), pressed(), basic game loop</title>
@@ -18,10 +19,10 @@
     We make our own canvas, instead of having jaws generate one (or several) for us.
     We get the canvas-tag from the DOM, fetch its context and send it to Sprite.
     If you for some reason want to have your own canvas tag this is the way to do it.
-    Add "?debug=1" to the URL and jaws will create a small window with debuginfo: 
+    Add "?debug=1" to the URL and jaws will create a small window with debuginfo:
     <a href="example1.html?debug=1">Switch to debug mode</a> | <a href="example1.html">Remove debug window</a>
   </div>
- 
+
   <script>
     var player
     var canvas
@@ -43,7 +44,7 @@
       jaws.on_keydown("esc", setup)
       jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
     }
-    
+
     /* step1. execute the game logic */
     function update() {
       if(jaws.pressed("left"))  { player.x -= 2 }
@@ -56,18 +57,18 @@
       forceInsideCanvas(player)
       bullets.removeIf(isOutsideCanvas)
     }
-    
+
     /* step2. draw the update state on screen */
     function draw() {
       jaws.clear()        // Same as: context.clearRect(0,0,jaws.width,jaws.height)
-       
+
       player.draw()
       bullets.draw()  // will call draw() on all items in the list
 
       info_tag.innerHTML = "FPS: " + jaws.game_loop.fps + " Player position: " + player.x + "/" + player.y + ". W/H: " + canvas.width + "/" + canvas.height
       fps.innerHTML = jaws.game_loop.fps
     }
-    
+
     /* 2 functions that will help us remove bullets outside the canvas + keep the plane within the canvas. */
     function isOutsideCanvas(item) { return (item.x < 0 || item.y < 0 || item.x > canvas.width || item.y > canvas.height) }
     function forceInsideCanvas(item) {
@@ -84,7 +85,7 @@
       this.draw = function() {
         this.x += 4
         context.beginPath();
-        context.arc(this.x, this.y, 4, 0, Math.PI*2, true); 
+        context.arc(this.x, this.y, 4, 0, Math.PI*2, true);
         context.stroke();
       }
     }

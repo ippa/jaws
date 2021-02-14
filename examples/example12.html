@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #12 - TileMap() and ViewPort()</title>
@@ -9,16 +10,16 @@
 
   <canvas width=500 height=320></canvas>
   FPS: <span id="fps"></span>. Move with arrow keys.
-  
+
   <div id="info">
     <h1>TileMap and ViewPort optimizations</h1>
     Here we have a Huge game world consisting of 700 x 700 tiles ( ~half a million sprites ).
     We don't want to draw them all so we use viewport.drawTileMap( tile_map )
   </div>
-  
+
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
- 
+
   <script>
     function Example() {
       var player
@@ -39,7 +40,7 @@
             blocks.push( new Sprite({image: "grass.png", x: i*32, y: i2*32}) )
           }
         }
-        
+
         //blocks.push( new Sprite({image: "grass.png", x: 0, y: 0}) )
         viewport = new jaws.Viewport({max_x: width*32, max_y: height*32})
 
@@ -51,7 +52,7 @@
         tile_map.push(blocks)
 
         player = new jaws.Sprite({x:10, y:10, scale: 2, anchor: "center"})
-        
+
         var anim = new jaws.Animation({sprite_sheet: "droid_11x15.png", frame_size: [11,15], frame_duration: 100})
         player.anim_default = anim.slice(0,5)
         player.anim_up = anim.slice(6,8)
@@ -78,8 +79,8 @@
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */
       this.draw = function() {
         jaws.clear()
-        /* 
-        * blocks & tile_map  = ~500.000 sprites 
+        /*
+        * blocks & tile_map  = ~500.000 sprites
         */
 
         // Slow
@@ -94,7 +95,7 @@
         viewport.draw( player )
       }
     }
-    
+
     jaws.onload = function() {
       jaws.unpack()
       jaws.assets.add(["droid_11x15.png","block.bmp","grass.png"])

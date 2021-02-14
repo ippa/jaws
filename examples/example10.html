@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <script src="../game_states/edit.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
@@ -11,7 +12,7 @@
   <canvas width=500 height=400></canvas>
 
   <div id="jaws-edit">Editor output will show here.</div>
-  
+
   <div id="info">
     <h1>press SPACE to start editor</h1>
     <h2 style="color: red">** This example is WIP and currently doesn't work as intended ***</h2><br /><br />
@@ -24,15 +25,15 @@
     DEL: removes selected items <br />
     +: Adds new object (exprimental)<br/>
   </div>
-  
+
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
- 
+
 i  <script>
     function Example() {
       var blocks = new jaws.SpriteList()
       var title = window.location.href  // Use URL as unique identifier when saving/fetching game objects from localStorage
-     
+
       this.setup = function() {
         // blocks.load(localStorage[title])  // Load  saved sprites from localStorage
         blocks.load( jaws.assets.get("/game_objects.json") )  // Load
@@ -44,13 +45,13 @@ i  <script>
           }
         }
 
-        jaws.on_keydown(["esc","space"], function() { 
+        jaws.on_keydown(["esc","space"], function() {
           /*
           * Start editor by switching game state to a new isntance of jaws.game_states.Edit
           * By specing an url, editor will POST a dump of all sprites to that url when saving.
           *
           * Example backend in sinatra (Ruby web framework):
-          *  
+          *
           * post "/game_objects.json" do
           *   File.open("public/game_objects.json", "w") do |fh|
           *     fh.puts params[:game_objects]
@@ -62,7 +63,7 @@ i  <script>
         })
         jaws.preventDefaultKeys(["space"])
       }
-      
+
       this.draw = function() {
         jaws.clear()
         blocks.draw()
@@ -71,11 +72,11 @@ i  <script>
 
     var Grass = function(options) { options.image = "grass.png"; jaws.Sprite.call(this, options) }
     var Block = function(options) { options.image = "block.bmp"; jaws.Sprite.call(this, options) }
-    
+
     jaws.onload = function() {
       Grass.prototype = new jaws.Sprite({})
       Grass.prototype.constructor = Grass
-      
+
       Block.prototype = new jaws.Sprite({})
       Block.prototype.constructor = Block
 

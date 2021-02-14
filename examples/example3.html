@@ -1,15 +1,16 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #3 - Animation</title>
   </head>
 <body>
-    
+
   <canvas width=500 height=300></canvas>
   FPS: <span id="fps"></span>. Move with arrow keys.
-    
+
   <div id="info">
     <h1>Animations</h1>
     Showing of a "complex" animation, all cut up from a spritesheet.
@@ -18,7 +19,7 @@
 
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
- 
+
   <script>
     /*
     * A good practice in even a smalish game is to use "game states"
@@ -40,7 +41,7 @@
         player.anim_down = anim.slice(8,10)
         player.anim_left = anim.slice(10,12)
         player.anim_right = anim.slice(12,14)
-      
+
         player.setImage( player.anim_default.next() )
         jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
       }
@@ -57,11 +58,11 @@
 
       /* Directly after each update draw() will be called. Put all your on-screen operations here. */
       this.draw = function() {
-        jaws.clear()       
+        jaws.clear()
         jaws.log(player)
         player.draw()
       }
-    
+
       /* Force given item's x/y to stay within canvas borders */
       function forceInsideCanvas(item) {
         if(item.x < 0)                  { item.x = 0  }
@@ -70,7 +71,7 @@
         if(item.bottom  > jaws.height)  { item.y = jaws.height - item.height }
       }
     }
-    
+
     jaws.onload = function() {
       jaws.assets.add("droid_11x15.png")
       jaws.start(Example3)  // Our convenience function jaws.start() will load assets, call setup and loop update/draw in 60 FPS

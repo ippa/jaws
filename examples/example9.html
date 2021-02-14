@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #9 - Viewport()</title>
@@ -10,15 +11,15 @@
   <canvas width=500 height=320></canvas>
   Move with arrow keys.
   <div id="live_info"></div>
-  
+
   <div id="info">
     <h1>ViewPort and TileMap</h1>
-    Viewport() demo. 
+    Viewport() demo.
   </div>
-  
+
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
- 
+
   <script>
     function Example() {
       var player
@@ -34,7 +35,7 @@
         live_info = document.getElementById("live_info")
         blocks = new jaws.SpriteList()
         var world = new jaws.Rect(0,0,320*10,320*2)
-        
+
         /* We create some 32x32 blocks and save them in array blocks */
         for(var y = 0; y < world.height; y += 32 ) {
           blocks.push( new Sprite({image: "block.bmp", x: 0, y: y}) )
@@ -47,7 +48,7 @@
           blocks.push( new Sprite({image: "block.bmp", x: x, y: world.height-64}) )
         }
         for(var i=0; i < 50; i++) {
-          blocks.push( new Sprite({image: "block.bmp", x: parseInt(Math.random()*100)*32, y: world.height - parseInt(Math.random()*10)*32}) ) 
+          blocks.push( new Sprite({image: "block.bmp", x: parseInt(Math.random()*100)*32, y: world.height - parseInt(Math.random()*10)*32}) )
         }
 
         // A tile map, each cell is 32x32 pixels. There's 100 such cells across and 100 downwards.
@@ -62,17 +63,17 @@
 
         player.move = function() {
           this.x += this.vx
-          if(tile_map.atRect(player.rect()).length > 0) { 
-            this.x -= this.vx 
+          if(tile_map.atRect(player.rect()).length > 0) {
+            this.x -= this.vx
           }
           this.vx = 0
 
           this.y += this.vy
           var block = tile_map.atRect(player.rect())[0]
-          if(block) { 
+          if(block) {
             // Heading downwards
-            if(this.vy > 0) { 
-              this.can_jump = true 
+            if(this.vy > 0) {
+              this.can_jump = true
               this.y = block.rect().y - 1
             }
             // Heading upwards (jumping)
@@ -133,7 +134,7 @@
         });
       }
     }
-    
+
     jaws.onload = function() {
       jaws.unpack()
       jaws.assets.add(["droid_11x15.png","block.bmp"])

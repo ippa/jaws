@@ -1,6 +1,7 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="../jaws-dynamic.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <title>Jaws Example #8 - TileMap()</title>
@@ -9,16 +10,16 @@
 
   <canvas width=500 height=320></canvas>
   FPS: <span id="fps"></span>. Move with arrow keys.
-  
+
   <div id="info">
     <h1>TileMap</h1>
     With TileMap() we can fit game objects into a 2D array, we call it cells. You set the size for the cells, default is 32 x 32 pixels.
     Once we have the objects in our tile map we can lookup game objects very fast.
   </div>
-  
+
   <h3>jaws log</h3>
   <div id="jaws-log"></div>
- 
+
   <script>
     function Example() {
       var player
@@ -29,7 +30,7 @@
       this.setup = function() {
         fps = document.getElementById("fps")
         blocks = new jaws.SpriteList()
-        
+
         /* We create some 32x32 blocks and save them in array blocks */
         blocks.push( new Sprite({image: "block.bmp", x: 0, y: 0}) )
         blocks.push( new Sprite({image: "block.bmp", x: 64, y: 64}) )
@@ -46,7 +47,7 @@
         player = new jaws.Sprite({x:110, y:120, scale: 2, anchor: "center"})
         player.move = function(x, y) {
           jaws.log("Player: " + player.rect().toString())
-          
+
           // Have our tile map return the items that occupy the cells which are touched by player.rect
           // If there's any items inside player.rect, reverse the movement (-> stand still)
           this.x += x
@@ -91,7 +92,7 @@
         // player.rect.draw()
       }
     }
-    
+
     jaws.onload = function() {
       jaws.unpack()
       jaws.assets.add(["droid_11x15.png","block.bmp"])
