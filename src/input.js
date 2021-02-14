@@ -111,15 +111,17 @@ function resetPressedKeys(e) {
  */
 function handleKeyUp(e) {
   event = (e) ? e : window.event
-  var human_names = keycode_to_string[event.keyCode].split(" ")
-  human_names.forEach( function(human_name) {
-   pressed_keys[human_name] = false
-    if(on_keyup_callbacks[human_name]) { 
-      on_keyup_callbacks[human_name](human_name)
-      e.preventDefault()
-    }
-    if(prevent_default_keys[human_name]) { e.preventDefault() }
-  });
+  var human_names = keycode_to_string[event.keyCode]
+  if (human_names) {
+    human_names.split(" ").forEach( function(human_name) {
+     pressed_keys[human_name] = false
+      if(on_keyup_callbacks[human_name]) { 
+        on_keyup_callbacks[human_name](human_name)
+        e.preventDefault()
+      }
+      if(prevent_default_keys[human_name]) { e.preventDefault() }
+    });
+  }
 }
 
 /** @private
@@ -127,15 +129,17 @@ function handleKeyUp(e) {
  */
 function handleKeyDown(e) {
   event = (e) ? e : window.event  
-  var human_names = keycode_to_string[event.keyCode].split(" ")
-  human_names.forEach( function(human_name) {
-    pressed_keys[human_name] = true
-    if(on_keydown_callbacks[human_name]) { 
-      on_keydown_callbacks[human_name](human_name)
-      e.preventDefault()
-    }
-    if(prevent_default_keys[human_name]) { e.preventDefault() }
-  });
+  var human_names = keycode_to_string[event.keyCode]
+  if (human_names) {
+    human_names.split(" ").forEach( function(human_name) {
+      pressed_keys[human_name] = true
+      if(on_keydown_callbacks[human_name]) { 
+        on_keydown_callbacks[human_name](human_name)
+        e.preventDefault()
+      }
+      if(prevent_default_keys[human_name]) { e.preventDefault() }
+    });
+  }
 }
 /** @private
  * handle event "onmousedown" by remembering what button was pressed
